@@ -1,0 +1,17 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class SC_Bastion : SC_Construction {
+
+	public override void DestroyConstruction () {
+
+		gameObject.SetActive (false);
+
+		base.DestroyConstruction ();
+
+		SC_GameManager.GetInstance ().UpdateNeighborWallGraph (SC_GameManager.GetInstance ().GetTileAt ((int)transform.position.x, (int)transform.position.y));
+
+	}
+
+}

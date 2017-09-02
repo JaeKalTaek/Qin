@@ -1,0 +1,118 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class SC_Soldier : SC_Character {
+
+	static Vector2[] spawnPositions = {
+		
+		new Vector2 (28, 8),
+		new Vector2 (28, 6),
+		new Vector2 (28, 4),
+		new Vector2 (28, 10),
+		new Vector2 (25, 6),
+		new Vector2 (22, 8),
+		new Vector2 (23, 6),
+		new Vector2 (23, 10),
+		new Vector2 (21, 4),
+		new Vector2 (27, 10),
+		new Vector2 (26, 10),
+		new Vector2 (24, 7),
+		new Vector2 (25, 5),
+		new Vector2 (22, 12),
+		new Vector2 (23, 13),
+		new Vector2 (23, 9),
+		new Vector2 (21, 7),
+		new Vector2 (27, 4),
+		new Vector2 (26, 5),
+		new Vector2 (24, 11),
+		new Vector2 (23, 2),
+		new Vector2 (25, 1),
+		new Vector2 (26, 4),
+		new Vector2 (24, 3)
+
+	};
+
+    public SC_Weapon weapon;
+
+	[HideInInspector]
+	public bool curse1;
+
+    protected override void Awake() {
+
+		base.Awake ();
+		
+        coalition = false;
+
+    }
+
+    public static Vector2[] GetSpawnPositions() {
+
+        return spawnPositions;
+
+    }
+
+	protected override void OnMouseDown() {
+
+        if (!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) {
+
+		    base.OnMouseDown ();
+        
+            if (canMove) {
+                        
+			    foreach (SC_Tile tile in SC_GameManager.GetInstance().tiles)
+				    tile.SetCanConstruct (false);
+
+			    SC_GameManager.GetInstance().constructWallButton.gameObject.SetActive (true);
+			    SC_GameManager.GetInstance().endConstructionButton.gameObject.SetActive (false);
+                SC_GameManager.GetInstance().workshopPanel.SetActive(false);
+
+                SC_GameManager.GetInstance ().CheckMovements (this);
+
+		    }		
+
+        }
+
+	}
+
+	protected override void ShowStatPanel() {
+
+		base.ShowStatPanel();
+
+		SC_Functions.SetText("WeaponsTitle", " Weapon :");
+		SC_Functions.SetText("Weapon 1", "  - " + weapon.weaponName);
+		SC_Functions.SetText("Weapon 2", "");
+
+		relationshipPanel.SetActive (false);
+
+	}
+
+	public override bool Hit(int damages, bool saving) {
+
+		base.Hit(damages, saving);
+        
+		if (health <= 0) {
+
+			DestroyCharacter (); 
+
+		} else {
+
+			lifebar.UpdateGraph (health, maxHealth);
+			if (selfPanel) ShowStatPanel ();
+
+		}
+
+        return (health <= 0);
+
+	}
+
+    public override void DestroyCharacter() {
+
+        base.DestroyCharacter();
+
+        Destroy(gameObject);
+
+    }
+
+}
