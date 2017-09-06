@@ -20,11 +20,11 @@ public class SC_Matchmaker : MonoBehaviour {
 
 	public void QuickMatchmaking(bool qin) {
 
+		menuManager.SearchingGame ();
 
-
+		selectedSide = qin;
 		NetworkManager.singleton.StartMatchMaker ();
 		NetworkManager.singleton.matchMaker.ListMatches (0, 10, qin ? "Heroes" : "Qin", true, 0, 0, OnMatchList); 
-		selectedSide = qin;
 
 	}
 
@@ -57,7 +57,7 @@ public class SC_Matchmaker : MonoBehaviour {
 
 	public void OnMatchJoined(bool success, string extendedInfo, MatchInfo matchInfo) {
 
-		if (((ulong?)matchInfo.networkId) != createdMatchID)
+		if (createdMatchID != null) //(((ulong?)matchInfo.networkId) != createdMatchID)
 			NetworkManager.singleton.matchMaker.DestroyMatch ((NetworkID)createdMatchID, 0, OnMatchDestroy);
 
 	}
