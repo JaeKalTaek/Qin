@@ -20,33 +20,11 @@ public class SC_Menu : MonoBehaviour {
 
 	}
 
-	public void OnlineGame() {
-
-		mainPanel.SetActive (false);
-		qmPanel.SetActive (false);
-		onlinePanel.SetActive (true);
-
-	}
-
-	public void QuickMatchmaking() {
-
-		onlinePanel.SetActive (false);
-		qmPanel.SetActive (true);
-
-	}
-
-	public void SearchingGame() {
-
-		qmPanel.SetActive (false);
-		searchGamePanel.SetActive (true);
-
-	}
-
-	public void Back(string panel) {
+	public void ShowPanel(GameObject panel) {
 
 		foreach (Transform t in transform)
-			t.gameObject.SetActive (t.name.Equals (panel));
+			t.gameObject.SetActive (t.name.Equals (panel.name));
 
 	}
-
+		
 }
