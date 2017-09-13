@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
-public class SC_GameManager : MonoBehaviour {
+public class SC_GameManager : NetworkBehaviour {
 
 	//Map
     public int SizeMapX, SizeMapY;
@@ -48,6 +49,8 @@ public class SC_GameManager : MonoBehaviour {
 	public bool cantCancelMovement;
 	List<SC_Tile> cursedTiles;
 
+	SC_Player player;
+
     void Awake() {
 
         if (instance == null) instance = this;
@@ -73,7 +76,7 @@ public class SC_GameManager : MonoBehaviour {
 		cursedTiles = new List<SC_Tile> ();
 
     }
-
+		
     #region Generation
     void GenerateMap() {
 
@@ -308,87 +311,93 @@ public class SC_GameManager : MonoBehaviour {
 
     public void NextTurn() {
         
-        turn++;
+		player = GameObject.FindGameObjectWithTag ("Player").GetComponent<SC_Player> ();
 
-        foreach (SC_Tile tile in tiles)
-            tile.RemoveFilter();
+		if(player.Turn(CoalitionTurn())) {
 
-        foreach (SC_Character character in FindObjectsOfType<SC_Character>()) {
+	        turn++;
 
-			SC_Tile under = GetTileAt((int)character.transform.position.x, (int)character.transform.position.y);
+	        foreach (SC_Tile tile in tiles)
+	            tile.RemoveFilter();
 
-			if (character.isHero ())
-				((SC_Hero)character).Regen ();
-			else if (((SC_Soldier)character).curse1)
-				cursedTiles.AddRange (GetNeighbors (under));
+	        foreach (SC_Character character in FindObjectsOfType<SC_Character>()) {
 
-			character.attacking = false;
-			character.UnTired ();
-            
-            under.movementCost = (character.coalition != CoalitionTurn()) ? 5000 : under.baseCost;
-            
-            if (GetConstructionAt (under) == null)               
-                under.attackable = (character.coalition != CoalitionTurn ());
+				SC_Tile under = GetTileAt((int)character.transform.position.x, (int)character.transform.position.y);
 
-        }
+				if (character.isHero ())
+					((SC_Hero)character).Regen ();
+				else if (((SC_Soldier)character).curse1)
+					cursedTiles.AddRange (GetNeighbors (under));
 
-		Curse1 ();
+				character.attacking = false;
+				character.UnTired ();
+	            
+	            under.movementCost = (character.coalition != CoalitionTurn()) ? 5000 : under.baseCost;
+	            
+	            if (GetConstructionAt (under) == null)               
+	                under.attackable = (character.coalition != CoalitionTurn ());
 
-		foreach(SC_Construction construction in FindObjectsOfType<SC_Construction>()) {
-			
-			if (construction.GetType ().Equals (typeof(SC_Wall)) || construction.GetType ().Equals (typeof(SC_Bastion)))
-				GetTileAt((int)construction.transform.position.x, (int)construction.transform.position.y).attackable = CoalitionTurn ();
+	        }
 
-		}
-			
-        SC_Hero.HideWeapons ();
-		SC_Hero.villagePanel.SetActive (false);
-		SC_Hero.HidePower ();
-		SC_Character.HideCancelMovement ();
-		SC_Hero.HideCancelAttack ();
+			Curse1 ();
 
-		foreach (SC_Convoy convoy in FindObjectsOfType<SC_Convoy>()) {
-
-			convoy.MoveConvoy ();
-            SC_Tile under = GetTileAt((int)convoy.transform.position.x, (int)convoy.transform.position.y);
-            under.canSetOn = !CoalitionTurn();
-
-        }
-
-		if (!CoalitionTurn ()) {
-			
-			SC_Qin.IncreaseEnergy (50*SC_Village.number);
-
-			foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
-
-                hero.SetCanMove (!hero.coalition);
-				if (hero.powerUsed) hero.powerBacklash++;
-                if (hero.powerBacklash >= 2) hero.DestroyCharacter();    
-
-            }
-
-			bastion = true;
-			DisplayConstructableTiles ();
-
-		} else {
-
-			constructWallButton.gameObject.SetActive (false);
-			endConstructionButton.gameObject.SetActive (false);
-			powerQinButton.gameObject.SetActive (false);
-			cancelPowerQinButton.gameObject.SetActive (false);
-			sacrificeUnitButton.gameObject.SetActive (false);
-			cancelSacrificeButton.gameObject.SetActive (false);
-
-			foreach (SC_Character character in FindObjectsOfType<SC_Character>()) {
+			foreach(SC_Construction construction in FindObjectsOfType<SC_Construction>()) {
 				
-				character.SetCanMove (character.coalition);
-				if (character.isHero ()) ((SC_Hero)character).berserkTurn = false;
+				if (construction.GetType ().Equals (typeof(SC_Wall)) || construction.GetType ().Equals (typeof(SC_Bastion)))
+					GetTileAt((int)construction.transform.position.x, (int)construction.transform.position.y).attackable = CoalitionTurn ();
+
+			}
+				
+	        SC_Hero.HideWeapons ();
+			SC_Hero.villagePanel.SetActive (false);
+			SC_Hero.HidePower ();
+			SC_Character.HideCancelMovement ();
+			SC_Hero.HideCancelAttack ();
+
+			foreach (SC_Convoy convoy in FindObjectsOfType<SC_Convoy>()) {
+
+				convoy.MoveConvoy ();
+	            SC_Tile under = GetTileAt((int)convoy.transform.position.x, (int)convoy.transform.position.y);
+	            under.canSetOn = !CoalitionTurn();
+
+	        }
+
+			if (!CoalitionTurn ()) {
+				
+				SC_Qin.IncreaseEnergy (50*SC_Village.number);
+
+				foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
+
+	                hero.SetCanMove (!hero.coalition);
+					if (hero.powerUsed) hero.powerBacklash++;
+	                if (hero.powerBacklash >= 2) hero.DestroyCharacter();    
+
+	            }
+
+				bastion = true;
+				DisplayConstructableTiles ();
+
+			} else {
+
+				constructWallButton.gameObject.SetActive (false);
+				endConstructionButton.gameObject.SetActive (false);
+				powerQinButton.gameObject.SetActive (false);
+				cancelPowerQinButton.gameObject.SetActive (false);
+				sacrificeUnitButton.gameObject.SetActive (false);
+				cancelSacrificeButton.gameObject.SetActive (false);
+
+				foreach (SC_Character character in FindObjectsOfType<SC_Character>()) {
 					
+					character.SetCanMove (character.coalition);
+					if (character.isHero ()) ((SC_Hero)character).berserkTurn = false;
+						
+				}
+
 			}
 
-		}
+	        turns.text = (((turn - 1) % 3) == 0) ? "1st Turn - Coalition" : (((turn - 2) % 3) == 0) ? "2nd Turn - Coalition" : "Turn Qin";
 
-        turns.text = (((turn - 1) % 3) == 0) ? "1st Turn - Coalition" : (((turn - 2) % 3) == 0) ? "2nd Turn - Coalition" : "Turn Qin";
+		}
         
     }
 

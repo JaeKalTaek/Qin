@@ -45,6 +45,7 @@ c63db43c730fa2cbb8ca07de15898cb6 UnityEngine.UI.dll:UnityEngine.UI.Toggle
 f61c0793411f10cf5fbfa1473fef5ef2 UnityEngine.UI.dll:UnityEngine.UI.ToggleGroup
 86d36c43c53541d667100dc90b89cfba UnityEngine.UI.dll:UnityEngine.EventSystems.TouchInputModule
 1b8c02d0aa82fbf036a2b9b2d713eec3 UnityEngine.UI.dll:UnityEngine.UI.VerticalLayoutGroup
+9d178a32937c7fac8f23a949ac137f70 Assembly-CSharp.dll:.SC_Lobby_Player
 653648024e2707e64b0af551f62a157c Assembly-CSharp.dll:.SC_Camera
 a35dc9cca2faebc5f5f1aeb9e8e47bbe UnityEngine.UI.dll:UnityEngine.UI.AspectRatioFitter
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.UI.dll:UnityEngine.EventSystems.BaseInput
@@ -78,7 +79,6 @@ c63db43c730fa2cbb8ca07de15898cb6 UnityEngine.UI.dll:UnityEngine.UI.Toggle
 f61c0793411f10cf5fbfa1473fef5ef2 UnityEngine.UI.dll:UnityEngine.UI.ToggleGroup
 86d36c43c53541d667100dc90b89cfba UnityEngine.UI.dll:UnityEngine.EventSystems.TouchInputModule
 1b8c02d0aa82fbf036a2b9b2d713eec3 UnityEngine.UI.dll:UnityEngine.UI.VerticalLayoutGroup
-05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.SC_Matchmaker
 4dd48ba8377f2a22eb0c4b69978ee67d Assembly-CSharp.dll:.SC_Wall
 8cf2c05f15455719e0ac4f71be61c81f Assembly-CSharp.dll:.SC_Hero
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationPlayableAsset
@@ -115,12 +115,13 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.VR.WSA.Spa
 45f3431f0103c41611e8d4eec3d439df UnityEngine.HoloLens.dll:UnityEngine.VR.WSA.SpatialMappingRenderer
 4dd48ba8377f2a22eb0c4b69978ee67d Assembly-CSharp.dll:.SC_Village
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.SC_Lifebar
-af71846164800978376621813d57f1d0 Assembly-CSharp.dll:.SC_Menu
+0f796245969d1549c122a710eaec4125 Assembly-CSharp.dll:.SC_Menu
 8a7a769f380f7591679ef51ba42cb4bb Assembly-CSharp.dll:.SC_Character
 e2b22dd1c722489103301a16dd787411 Assembly-CSharp.dll:.SC_MapPrefab
 4dd48ba8377f2a22eb0c4b69978ee67d Assembly-CSharp.dll:.SC_Bastion
 473084ba5139663c0eaee4b4b06ad996 Assembly-CSharp.dll:.SC_Qin
 537da8f55d83033a4323a84fa68514f5 Assembly-CSharp.dll:.SC_MapEditorScript
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.SC_Player
 9507f2a07a41ff30468bd099446f3951 Assembly-CSharp.dll:.SC_Zhang_Fei
 f438fba3cd186460fc15d939e88112ff Assembly-CSharp.dll:.SC_Tile
 fc1e0f4d8439d9928083474691511a13 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkAnimator
@@ -150,5 +151,4 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.VR.WSA.Spa
 1df9b65532d55718b912dc0c6c9ab3bb Assembly-CSharp.dll:.SC_Weapon
 4dd48ba8377f2a22eb0c4b69978ee67d Assembly-CSharp.dll:.SC_Workshop
 245a8722a615c4884ab3c4b23a4fe478 Assembly-CSharp.dll:.SC_EditorTile
-9d178a32937c7fac8f23a949ac137f70 Assembly-CSharp.dll:.SC_Lobby_Player
 b684027795c03ea8253e603d8afe864a Assembly-CSharp.dll:.SC_Network_Manager
