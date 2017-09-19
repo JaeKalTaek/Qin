@@ -152,11 +152,7 @@ public class SC_Camera : MonoBehaviour {
 
     private static float ClampAngle(float angle, float min, float max) {
 
-        if (angle < -360)
-            angle += 360;
-
-        if (angle > 360)
-            angle -= 360;
+		angle += (angle < -360) ? 360 : ((angle > 360) ? -360 : 0);
 
         return Mathf.Clamp(angle, min, max);
 

@@ -47,32 +47,34 @@ public class SC_Soldier : SC_Character {
 
     }
 
+	protected override void Start () {
+		
+		base.Start ();
+
+		tileManager.SetCharacter (this);
+
+	}
+
     public static Vector2[] GetSpawnPositions() {
 
         return spawnPositions;
 
     }
 
-	protected override void OnMouseDown() {
+	protected override void PrintMovements () {
 
-        if (!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) {
+		if (canMove) {
 
-		    base.OnMouseDown ();
-        
-            if (canMove) {
-                        
-			    foreach (SC_Tile tile in SC_GameManager.GetInstance().tiles)
-				    tile.SetCanConstruct (false);
+			foreach (SC_Tile tile in SC_GameManager.GetInstance().tiles)
+				tile.SetCanConstruct (false);
 
-			    SC_GameManager.GetInstance().constructWallButton.gameObject.SetActive (true);
-			    SC_GameManager.GetInstance().endConstructionButton.gameObject.SetActive (false);
-                SC_GameManager.GetInstance().workshopPanel.SetActive(false);
+			SC_GameManager.GetInstance ().constructWallButton.gameObject.SetActive (true);
+			SC_GameManager.GetInstance ().endConstructionButton.gameObject.SetActive (false);
+			SC_GameManager.GetInstance ().workshopPanel.SetActive (false);
 
-                SC_GameManager.GetInstance ().CheckMovements (this);
+			SC_GameManager.GetInstance ().CheckMovements (this);
 
-		    }		
-
-        }
+		}
 
 	}
 

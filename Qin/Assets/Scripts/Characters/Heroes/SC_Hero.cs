@@ -68,7 +68,9 @@ public class SC_Hero : SC_Character {
 		usePower.SetActive(false);
 		cancelAttackButton.SetActive(false);
 
-		SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y).constructable = false;
+		tileManager.SetHero (this);
+
+		//SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y).constructable = false;
 
 		relationships = new Dictionary<string, int> ();
 
@@ -85,20 +87,14 @@ public class SC_Hero : SC_Character {
 
 	}
 
-	protected override void OnMouseDown() {
+	protected override void PrintMovements () {
+		
+		if ((canMove || (berserk && !berserkTurn)) && (coalition == SC_GameManager.GetInstance().CoalitionTurn())) {
 
-		if (!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) {
+			SC_GameManager.GetInstance ().CheckMovements (this);
 
-			base.OnMouseDown ();
-
-			if ((canMove || (berserk && !berserkTurn)) && (coalition == SC_GameManager.GetInstance().CoalitionTurn())) {
-
-				SC_GameManager.GetInstance ().CheckMovements (this);
-
-				usePower.SetActive (!powerUsed);
-				if(!powerUsed) usePower.GetComponentInChildren<Text> ().name = name;
-
-			}
+			usePower.SetActive (!powerUsed);
+			if(!powerUsed) usePower.GetComponentInChildren<Text> ().name = name;
 
 		}
 

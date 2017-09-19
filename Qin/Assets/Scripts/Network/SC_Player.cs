@@ -10,9 +10,11 @@ public class SC_Player : NetworkBehaviour {
 
 	public override void OnStartLocalPlayer () {
 
-		if (isLocalPlayer)
-			tag = "Player";
+		/*if (isLocalPlayer)			
+			tag = "Player";*/
 
+		//SC_GameManager.GetInstance ().SetPlayer (this);
+		
 	}
 
 	public bool Turn(bool turn) {

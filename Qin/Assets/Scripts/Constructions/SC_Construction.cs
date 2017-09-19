@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
-public class SC_Construction : MonoBehaviour {
+public class SC_Construction : NetworkBehaviour {
 
 	public bool test;
 

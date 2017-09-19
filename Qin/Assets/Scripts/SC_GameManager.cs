@@ -16,6 +16,7 @@ public class SC_GameManager : NetworkBehaviour {
     public GameObject qinPrefab, soldierPrefab, convoyPrefab;
 	public List<GameObject> heroPrefabs;
 	public GameObject bastionPrefab, wallPrefab, workshopPrefab, villagePrefab;
+	public GameObject tileManagerPrefab;
     
 	//Instance
     static SC_GameManager instance;
@@ -26,11 +27,11 @@ public class SC_GameManager : NetworkBehaviour {
 	Dictionary<SC_Tile, float> movementPoints = new Dictionary<SC_Tile, float>();
 	int movementLeft, TotalMovementCost;
 
-	//Turns variables
+	[SyncVar]
     int turn = 1;
-    Text turns;
 
 	//UI
+    public Text turns;
 	public Button constructWallButton, endConstructionButton;
     public Button powerQinButton, cancelPowerQinButton;
     public Button sacrificeUnitButton, cancelSacrificeButton;
@@ -51,36 +52,46 @@ public class SC_GameManager : NetworkBehaviour {
 
 	SC_Player player;
 
-    void Awake() {
+    void Start() {
 
-        if (instance == null) instance = this;
+		if (isServer) {
 
-		turns = GameObject.Find("Turns").GetComponent<Text>();
+			GenerateMap ();
+			if (baseMapPrefab == null) GenerateCharacters ();
+			GenerateBuildings ();
 
-		GenerateMap();
-		GenerateCharacters();
-		GenerateBuildings ();
+		}
 
-        constructWallButton.gameObject.SetActive (false);
-		endConstructionButton.gameObject.SetActive (false);
-		powerQinButton.gameObject.SetActive (false);
-		cancelPowerQinButton.gameObject.SetActive (false);
-		sacrificeUnitButton.gameObject.SetActive (false);
-		cancelSacrificeButton.gameObject.SetActive (false);
-        hideHealthButton.gameObject.SetActive(false);
-        previewFightPanel.SetActive (false);
-        workshopPanel.SetActive(false);
-
-        bastion = true;
+		bastion = true;
 
 		cursedTiles = new List<SC_Tile> ();
 
+		if (instance == null)
+			instance = this;
+
     }
-		
+
     #region Generation
     void GenerateMap() {
 
-		tiles = (baseMapPrefab == null) ? new SC_Tile[SizeMapX, SizeMapY] : new SC_Tile[baseMapPrefab.GetComponent<SC_MapPrefab>().xSize, baseMapPrefab.GetComponent<SC_MapPrefab>().ySize];
+		//tiles = (baseMapPrefab == null) ? new SC_Tile[SizeMapX, SizeMapY] : new SC_Tile[baseMapPrefab.GetComponent<SC_MapPrefab>().xSize, baseMapPrefab.GetComponent<SC_MapPrefab>().ySize];
+
+		GameObject tm = Instantiate (tileManagerPrefab);
+		SC_Tile_Manager stm = tm.GetComponent<SC_Tile_Manager> ();
+
+		if(baseMapPrefab == null) {
+
+			stm.xSize = SizeMapX;
+			stm.ySize = SizeMapY;
+
+		} else {
+
+			stm.xSize = baseMapPrefab.GetComponent<SC_MapPrefab> ().xSize;
+			stm.ySize = baseMapPrefab.GetComponent<SC_MapPrefab> ().ySize;
+
+		}
+
+		NetworkServer.Spawn (tm);
 		 
 		if (baseMapPrefab == null) {
 
@@ -88,20 +99,15 @@ public class SC_GameManager : NetworkBehaviour {
 
 				for (int y = 0; y < SizeMapY; y++) {
 
+					GameObject tilePrefab;
 					int RandomTileMaker = Mathf.FloorToInt (Random.Range (0, 10));
 
-					GameObject tilePrefab = (RandomTileMaker <= 6) ? PlainPrefab : (RandomTileMaker <= 8) ? ForestPrefab : MountainPrefab;
+					tilePrefab = ((x > 25) && (y < 11) && (y > 3)) ? palacePrefab : ((RandomTileMaker <= 6) ? PlainPrefab : (RandomTileMaker <= 8) ? ForestPrefab : MountainPrefab);
 
-					if ((x > 25) && (y < 11) && (y > 3))
-						tilePrefab = palacePrefab;
+					GameObject go = Instantiate (tilePrefab, new Vector3 (x, y, 0), tilePrefab.transform.rotation, GameObject.Find ("Tiles").transform);
+					NetworkServer.Spawn (go);
 
-					GameObject go = Instantiate (tilePrefab, tilePrefab.transform.position + new Vector3 (x, y, 0), tilePrefab.transform.rotation, GameObject.Find ("Tiles").transform);
-
-					Quaternion rot = Quaternion.identity;
-					rot.eulerAngles = new Vector3 (0, 0, Mathf.FloorToInt (Random.Range (0, 4) * 90));
-					if (go.name.Contains ("Mountain") || go.name.Contains ("Forest")) go.transform.rotation = rot;
-
-					tiles [x, y] = go.GetComponent<SC_Tile> ();
+					//tiles [x, y] = go.GetComponent<SC_Tile> ();
 
 				}    
 	                
@@ -116,15 +122,9 @@ public class SC_GameManager : NetworkBehaviour {
 				GameObject tilePrefab = (eTile.tileType == tileType.Plain) ? PlainPrefab : (eTile.tileType == tileType.Forest) ? ForestPrefab : (eTile.tileType == tileType.Mountain) ? MountainPrefab : palacePrefab;
 
 				GameObject go = Instantiate (tilePrefab, eTile.transform.position, eTile.transform.rotation,  GameObject.Find ("Tiles").transform);
+				NetworkServer.Spawn (go);
 
-				Quaternion rot = Quaternion.identity;
-				rot.eulerAngles = new Vector3 (0, 0, Mathf.FloorToInt (Random.Range (0, 4) * 90));
-				if (go.name.Contains ("Mountain") || go.name.Contains ("Forest")) go.transform.rotation = rot;
-
-				int x = (int)go.transform.position.x;
-				int y = (int)go.transform.position.y;
-
-				tiles [x, y] = go.GetComponent<SC_Tile> ();
+				//tiles [(int)go.transform.position.x, (int)go.transform.position.y] = go.GetComponent<SC_Tile> ();
 
 				if (eTile.spawnSoldier || eTile.qin || (eTile.heroPrefab != null) || (eTile.construction != constructionType.None)) {
 
@@ -135,6 +135,8 @@ public class SC_GameManager : NetworkBehaviour {
 					go2.transform.SetPos (eTile.transform);
 
 					go2.transform.parent = (eTile.spawnSoldier) ? GameObject.Find ("Soldiers").transform : (eTile.qin) ? null : (eTile.heroPrefab != null) ? GameObject.Find ("Heroes").transform : (eTile.construction == constructionType.Village) ? GameObject.Find ("Villages").transform : (eTile.construction == constructionType.Workshop) ? GameObject.Find ("Workshops").transform : GameObject.Find("Bastions").transform;
+
+					NetworkServer.Spawn (go2);
 
 				}
 
@@ -151,25 +153,27 @@ public class SC_GameManager : NetworkBehaviour {
     }
 
     void GenerateCharacters() {
+		
+		foreach (GameObject prefab in heroPrefabs) {
+			
+			GameObject go = Instantiate (prefab, GameObject.Find ("Heroes").transform);
+			NetworkServer.Spawn (go);
 
-		if (baseMapPrefab == null) {
+		}
 
-			foreach (GameObject prefab in heroPrefabs)				
-				Instantiate (prefab, GameObject.Find ("Heroes").transform);
+		GameObject qin = Instantiate (qinPrefab);
+		NetworkServer.Spawn (qin);
 
-			Instantiate (qinPrefab);
+		foreach (Vector2 pos in SC_Soldier.GetSpawnPositions()) {
 
-			foreach (Vector2 pos in SC_Soldier.GetSpawnPositions()) {
+			GameObject go = Instantiate (soldierPrefab, GameObject.Find ("Soldiers").transform);
+			go.transform.SetPos (pos);
+			NetworkServer.Spawn (go);
 
-				GameObject go = Instantiate (soldierPrefab, GameObject.Find ("Soldiers").transform);
-				go.transform.SetPos (pos);
+        }
 
-            }
-
-			foreach (SC_Character character in FindObjectsOfType<SC_Character>())
-				character.SetCanMove (character.coalition);
-
-        }		
+		foreach (SC_Character character in FindObjectsOfType<SC_Character>())
+			character.SetCanMove (character.coalition);		
 
     }
 
@@ -179,6 +183,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 			GameObject go = Instantiate (workshopPrefab, GameObject.Find ("Workshops").transform);
 			go.transform.SetPos (pos);
+			NetworkServer.Spawn (go);
 
 		}
 
@@ -186,11 +191,13 @@ public class SC_GameManager : NetworkBehaviour {
 
 			GameObject go = Instantiate (villagePrefab, GameObject.Find ("Villages").transform);
 			go.transform.SetPos (pos);
+			NetworkServer.Spawn (go);
 
 		}
 
 		GameObject b = Instantiate(bastionPrefab, GameObject.Find("Bastions").transform);
 		UpdateWallGraph(b.GetComponent<SC_Construction>(), GetTileAt((int)b.transform.position.x, (int)b.transform.position.y));
+		NetworkServer.Spawn (b);
 
 	}
     #endregion
@@ -308,14 +315,14 @@ public class SC_GameManager : NetworkBehaviour {
         return instance;
 
     }		
-
+		
     public void NextTurn() {
         
-		player = GameObject.FindGameObjectWithTag ("Player").GetComponent<SC_Player> ();
-
 		if(player.Turn(CoalitionTurn())) {
 
 	        turn++;
+
+			print (turn);
 
 	        foreach (SC_Tile tile in tiles)
 	            tile.RemoveFilter();

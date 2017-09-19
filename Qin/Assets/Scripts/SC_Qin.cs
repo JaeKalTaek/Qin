@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
-public class SC_Qin : MonoBehaviour {
+public class SC_Qin : NetworkBehaviour {
 
 	static Text energyText;
 	public int startEnergy;
@@ -12,6 +13,7 @@ public class SC_Qin : MonoBehaviour {
 	static GameObject qinPanel;
     [HideInInspector]
     public static bool selfPanel;
+	SC_Tile_Manager tileManager;
 
     void Awake() {
 
@@ -29,9 +31,22 @@ public class SC_Qin : MonoBehaviour {
 
 		qinPanel.SetActive (false);
 
-		SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y).constructable = false;
+		//SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y).constructable = false;
 
-		SC_GameManager.GetInstance ().GetTileAt ((int)transform.position.x, (int)transform.position.y).movementCost = 10000;
+		//SC_GameManager.GetInstance ().GetTileAt ((int)transform.position.x, (int)transform.position.y).movementCost = 5000;
+
+		tileManager = GameObject.FindObjectOfType<SC_Tile_Manager> ();
+
+		while (tileManager.tiles == null)
+			WaitForSeconds (.001f);
+
+		tileManager.SetQin (this);
+
+	}
+
+	IEnumerator WaitForSeconds(float t) {
+
+		yield return new WaitForSeconds (t);
 
 	}
 
@@ -154,8 +169,7 @@ public class SC_Qin : MonoBehaviour {
 
 	public static void DecreaseEnergy(int amount) {
 
-		energy -= amount;
-		energyText.text = UpdateText(energy);
+		IncreaseEnergy(-amount);
 
 	}
 

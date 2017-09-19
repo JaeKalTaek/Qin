@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class SC_Lifebar : MonoBehaviour {
+public class SC_Lifebar : NetworkBehaviour {
 
     GameObject health, health2, Graphs;
     float maxSize;

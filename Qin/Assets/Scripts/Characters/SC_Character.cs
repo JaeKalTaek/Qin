@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
-public class SC_Character : MonoBehaviour {
+public class SC_Character : NetworkBehaviour {
 
 	//Alignment
 	protected bool _coalition;
@@ -47,6 +48,8 @@ public class SC_Character : MonoBehaviour {
     [HideInInspector]
     public bool selfPanel;
 
+	protected SC_Tile_Manager tileManager;
+
     protected virtual void Awake() {
 
 		baseColor = GetComponent<SpriteRenderer> ().color;
@@ -55,6 +58,11 @@ public class SC_Character : MonoBehaviour {
     }
 
     protected virtual void Start() {
+
+		tileManager = GameObject.FindObjectOfType<SC_Tile_Manager> ();
+
+		while (tileManager.tiles == null)
+			WaitForSeconds (.001f);
 
 		if(statsPanel == null)
 			statsPanel = GameObject.Find ("StatsPanel");
@@ -68,9 +76,9 @@ public class SC_Character : MonoBehaviour {
         statsPanel.SetActive(false);
         cancelMovementButton.SetActive(false);
 
-        GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/P_Lifebar"), transform);
+        /*GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/P_Lifebar"), transform);
         go.transform.localPosition = go.transform.position;
-        lifebar = GetComponentInChildren<SC_Lifebar>();
+        lifebar = GetComponentInChildren<SC_Lifebar>();*/
 
 		health = maxHealth;
 		criticalHit = technique;
@@ -78,65 +86,81 @@ public class SC_Character : MonoBehaviour {
 
 		lastPos = transform.position;
 
-        SC_Tile under = SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y);
+        /*SC_Tile under = SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y);
         under.movementCost = 5000;
         under.canSetOn = false;
 
         if (SC_GameManager.GetInstance().GetConstructionAt(under) == null)
-            under.attackable = (coalition != SC_GameManager.GetInstance().CoalitionTurn());
+            under.attackable = (coalition != SC_GameManager.GetInstance().CoalitionTurn());*/
 
     }
 
+	IEnumerator WaitForSeconds(float t) {
+
+		yield return new WaitForSeconds (t);
+
+	}
+
 	protected virtual void OnMouseDown() {
 
-        SC_Tile under = SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y);
+		if (!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject ()) {
+
+			SC_Tile under = SC_GameManager.GetInstance ().GetTileAt ((int)transform.position.x, (int)transform.position.y);
         
-		if (under.displayMovement && readyToMove) {
+			if (under.displayMovement && readyToMove) {
 			
-			MoveTo ((int)transform.position.x, (int)transform.position.y);
+				MoveTo ((int)transform.position.x, (int)transform.position.y);
 
-		} else if (under.GetDisplayAttack ()) {
+			} else if (under.GetDisplayAttack ()) {
 
-            SC_Character attackingCharacter = GetAttackingCharacter();
-            SC_Tile attackingCharacterTile = SC_GameManager.GetInstance().GetTileAt((int)attackingCharacter.transform.position.x, (int)attackingCharacter.transform.position.y);
-            SC_GameManager.GetInstance().rangedAttack = !SC_GameManager.GetInstance().IsNeighbor(attackingCharacterTile, under);
+				SC_Character attackingCharacter = GetAttackingCharacter ();
+				SC_Tile attackingCharacterTile = SC_GameManager.GetInstance ().GetTileAt ((int)attackingCharacter.transform.position.x, (int)attackingCharacter.transform.position.y);
+				SC_GameManager.GetInstance ().rangedAttack = !SC_GameManager.GetInstance ().IsNeighbor (attackingCharacterTile, under);
 
-            attackingCharacter.attackTarget = under;
+				attackingCharacter.attackTarget = under;
 
-			if (attackingCharacter.isHero ()) {
+				if (attackingCharacter.isHero ()) {
 				
-				((SC_Hero)attackingCharacter).ChooseWeapon ();
+					((SC_Hero)attackingCharacter).ChooseWeapon ();
+
+				} else {
+
+					foreach (SC_Tile tile in SC_GameManager.GetInstance().tiles)
+						tile.RemoveFilter ();
+
+					SC_GameManager.GetInstance ().Attack ();
+
+				}
+
+			} else if (under.displayConstructable && (((SC_Qin.GetEnergy () - 50) > 0) || SC_GameManager.GetInstance ().IsBastion ()) && !isHero ()) {
+
+				SC_GameManager.GetInstance ().ConstructAt (under.transform.position);
+
+				SC_GameManager.GetInstance ().StopConstruction ();
+
+				canMove = false;
+
+			} else if (under.displaySacrifice) {
+
+				SC_Qin.IncreaseEnergy (25);
+
+				canMove = false;
+
+				under.RemoveFilter ();
+
+				DestroyCharacter ();
 
 			} else {
 
-				foreach (SC_Tile tile in SC_GameManager.GetInstance().tiles)
-					tile.RemoveFilter ();
-
-				SC_GameManager.GetInstance ().Attack ();
+				PrintMovements ();
 
 			}
-
-		} else if ( under.canConstruct && ( ((SC_Qin.GetEnergy() - 50) > 0) || SC_GameManager.GetInstance().IsBastion() ) && !isHero() ) {
-
-			SC_GameManager.GetInstance().ConstructAt(under.transform.position);
-
-            SC_GameManager.GetInstance().StopConstruction();
-
-            canMove = false;
-
-		} else if (under.displaySacrifice) {
-
-			SC_Qin.IncreaseEnergy (25);
-
-			canMove = false;
-
-			under.RemoveFilter ();
-
-            DestroyCharacter();
 
 		}
 
 	}
+
+	protected virtual void PrintMovements() { }
 
     protected void OnMouseOver() {
 

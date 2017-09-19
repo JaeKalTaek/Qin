@@ -2,9 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 [System.Serializable]
-public class SC_Tile : MonoBehaviour {
+public class SC_Tile : NetworkBehaviour {
 
     [HideInInspector]
     public bool displayMovement;
@@ -12,7 +13,7 @@ public class SC_Tile : MonoBehaviour {
 	public bool /*relationshipRange,*/ constructable;
 	bool displayAttack;
     [HideInInspector]
-    public bool canConstruct, displaySacrifice, displayResurrection;
+    public bool displayConstructable, displaySacrifice, displayResurrection;
     public int baseCost;
     [HideInInspector]
     public int movementCost;
@@ -37,7 +38,7 @@ public class SC_Tile : MonoBehaviour {
 		
     void OnMouseDown() {
         
-		if ((canConstruct) && (((SC_Qin.GetEnergy () - 50) > 0) || SC_GameManager.GetInstance ().IsBastion ())) {
+		if ((displayConstructable) && (((SC_Qin.GetEnergy () - 50) > 0) || SC_GameManager.GetInstance ().IsBastion ())) {
 
 			SC_GameManager.GetInstance ().ConstructAt (transform.position);
 
@@ -96,7 +97,7 @@ public class SC_Tile : MonoBehaviour {
     public void RemoveFilter() {
 
         displayMovement = false;
-        canConstruct = false;
+        displayConstructable = false;
         displayAttack = false;
 		displaySacrifice = false;
 		displayResurrection = false;
@@ -139,13 +140,13 @@ public class SC_Tile : MonoBehaviour {
 
     public bool CanConstructOn() {
 
-		return canConstruct;
+		return displayConstructable;
 
 	}
 
 	public void SetCanConstruct(bool c) {
 
-		canConstruct = c;
+		displayConstructable = c;
 
 	}
 

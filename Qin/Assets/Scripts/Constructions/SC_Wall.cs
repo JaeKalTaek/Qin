@@ -10,7 +10,7 @@ public class SC_Wall : SC_Construction {
 
         SC_Tile under = SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y);
 
-        if ( under.canConstruct && ( ((SC_Qin.GetEnergy() - 100) > 0) || SC_GameManager.GetInstance().IsBastion() ) ) {
+        if ( under.displayConstructable && ( ((SC_Qin.GetEnergy() - 100) > 0) || SC_GameManager.GetInstance().IsBastion() ) ) {
 
 			SC_GameManager.GetInstance().ConstructAt(under.transform.position);
 

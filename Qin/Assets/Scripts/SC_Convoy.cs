@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class SC_Convoy : MonoBehaviour {
+public class SC_Convoy : NetworkBehaviour {
 
 	protected virtual void Start () {
 
