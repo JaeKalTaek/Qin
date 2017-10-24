@@ -27,7 +27,7 @@ public class SC_Village : SC_Construction {
 
  	protected override void OnMouseDown() {
 
-		SC_Tile under = SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y);
+		SC_Tile under = tileManager.GetTileAt (gameObject); //SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y);
 
 		if (under.displayMovement)
 			SC_Character.GetCharacterToMove().MoveTo ((int)transform.position.x, (int)transform.position.y);

@@ -10,7 +10,7 @@ public class SC_Bastion : SC_Construction {
 
 		base.DestroyConstruction ();
 
-		SC_GameManager.GetInstance ().UpdateNeighborWallGraph (SC_GameManager.GetInstance ().GetTileAt ((int)transform.position.x, (int)transform.position.y));
+		SC_GameManager.GetInstance ().UpdateNeighborWallGraph (tileManager.GetTileAt (gameObject)); //SC_GameManager.GetInstance ().GetTileAt ((int)transform.position.x, (int)transform.position.y));
 
 	}
 

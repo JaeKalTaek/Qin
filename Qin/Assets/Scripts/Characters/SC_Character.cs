@@ -8,23 +8,20 @@ using UnityEngine.Networking;
 public class SC_Character : NetworkBehaviour {
 
 	//Alignment
-	protected bool _coalition;
-	public bool coalition { get { return _coalition; } set { _coalition = value; } }
+	public bool coalition;
 
 	//Actions
 	public int Movement = 5;
 	protected bool canMove, readyToMove;
 
-	protected bool _attacking;
-	public bool attacking { get { return _attacking; } set { _attacking = value; } }
+	public bool attacking;
 
-	protected SC_Tile _attackTarget;
-	public SC_Tile attackTarget { get { return _attackTarget; } set { _attackTarget = value; } }
+	public SC_Tile attackTarget;
 
     protected bool finishMovement;
 
 	[HideInInspector]
-	public Vector3 lastPos;
+	public SC_Tile lastPos;
 
 	//Stats
 	public string characterName;
@@ -39,16 +36,21 @@ public class SC_Character : NetworkBehaviour {
 
 	protected Color baseColor, tiredColor;
 
+	/*
     //UI
     protected static GameObject statsPanel, relationshipPanel;
-    protected static GameObject cancelMovementButton;
+    protected static GameObject cancelMovementButton;*/
     [HideInInspector]
     public SC_Lifebar lifebar;
 
     [HideInInspector]
     public bool selfPanel;
 
-	protected SC_Tile_Manager tileManager;
+	protected static SC_Tile_Manager tileManager;
+
+	protected static SC_GameManager gameManager;
+
+	protected static SC_UI_Manager uiManager;
 
     protected virtual void Awake() {
 
@@ -59,12 +61,16 @@ public class SC_Character : NetworkBehaviour {
 
     protected virtual void Start() {
 
-		tileManager = GameObject.FindObjectOfType<SC_Tile_Manager> ();
+		if (gameManager == null)
+			gameManager = GameObject.FindObjectOfType<SC_GameManager> ();
 
-		while (tileManager.tiles == null)
-			WaitForSeconds (.001f);
+		if (tileManager == null)
+			tileManager = GameObject.FindObjectOfType<SC_Tile_Manager> ();
 
-		if(statsPanel == null)
+		if (uiManager == null)
+			uiManager = GameObject.FindObjectOfType<SC_UI_Manager> ();
+
+		/*if(statsPanel == null)
 			statsPanel = GameObject.Find ("StatsPanel");
 
 		if(relationshipPanel == null)
@@ -74,17 +80,19 @@ public class SC_Character : NetworkBehaviour {
             cancelMovementButton = GameObject.Find("CancelMovement");
 
         statsPanel.SetActive(false);
-        cancelMovementButton.SetActive(false);
+        cancelMovementButton.SetActive(false);*/
 
-        /*GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/P_Lifebar"), transform);
+        GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/P_Lifebar"), transform);
         go.transform.localPosition = go.transform.position;
-        lifebar = GetComponentInChildren<SC_Lifebar>();*/
+        lifebar = GetComponentInChildren<SC_Lifebar>();
 
 		health = maxHealth;
 		criticalHit = technique;
 		dodgeHit = speed;
 
-		lastPos = transform.position;
+		lastPos = tileManager.GetTileAt(gameObject);
+
+		canMove = coalition;
 
         /*SC_Tile under = SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y);
         under.movementCost = 5000;
@@ -95,17 +103,11 @@ public class SC_Character : NetworkBehaviour {
 
     }
 
-	IEnumerator WaitForSeconds(float t) {
-
-		yield return new WaitForSeconds (t);
-
-	}
-
 	protected virtual void OnMouseDown() {
 
 		if (!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject ()) {
 
-			SC_Tile under = SC_GameManager.GetInstance ().GetTileAt ((int)transform.position.x, (int)transform.position.y);
+			SC_Tile under = tileManager.GetTileAt (gameObject); //SC_GameManager.GetInstance ().GetTileAt ((int)transform.position.x, (int)transform.position.y);
         
 			if (under.displayMovement && readyToMove) {
 			
@@ -114,7 +116,7 @@ public class SC_Character : NetworkBehaviour {
 			} else if (under.GetDisplayAttack ()) {
 
 				SC_Character attackingCharacter = GetAttackingCharacter ();
-				SC_Tile attackingCharacterTile = SC_GameManager.GetInstance ().GetTileAt ((int)attackingCharacter.transform.position.x, (int)attackingCharacter.transform.position.y);
+				SC_Tile attackingCharacterTile = tileManager.GetTileAt (attackingCharacter.gameObject); //SC_GameManager.GetInstance ().GetTileAt ((int)attackingCharacter.transform.position.x, (int)attackingCharacter.transform.position.y);
 				SC_GameManager.GetInstance ().rangedAttack = !SC_GameManager.GetInstance ().IsNeighbor (attackingCharacterTile, under);
 
 				attackingCharacter.attackTarget = under;
@@ -134,7 +136,7 @@ public class SC_Character : NetworkBehaviour {
 
 			} else if (under.displayConstructable && (((SC_Qin.GetEnergy () - 50) > 0) || SC_GameManager.GetInstance ().IsBastion ()) && !isHero ()) {
 
-				SC_GameManager.GetInstance ().ConstructAt (under.transform.position);
+				SC_GameManager.GetInstance ().ConstructAt (under);
 
 				SC_GameManager.GetInstance ().StopConstruction ();
 
@@ -142,7 +144,7 @@ public class SC_Character : NetworkBehaviour {
 
 			} else if (under.displaySacrifice) {
 
-				SC_Qin.IncreaseEnergy (25);
+				SC_Qin.ChangeEnergy (25);
 
 				canMove = false;
 
@@ -196,8 +198,9 @@ public class SC_Character : NetworkBehaviour {
 
     protected virtual void ShowStatPanel() {
 
-		statsPanel.SetActive (true);
-		relationshipPanel.SetActive (true);
+		uiManager.statsPanel.SetActive (true);
+
+		//statsPanel.SetActive (true);
 
 		SC_Functions.SetText("Name", characterName);
 		SC_Functions.SetText("Health","Health : " + health + " / " + maxHealth);
@@ -213,7 +216,8 @@ public class SC_Character : NetworkBehaviour {
 
 	public static void HideStatPanel() {
 
-		statsPanel.gameObject.SetActive (false);
+		uiManager.statsPanel.SetActive (false);
+		//statsPanel.gameObject.SetActive (false);
 
 	}
 
@@ -222,18 +226,16 @@ public class SC_Character : NetworkBehaviour {
         foreach (SC_Tile tile in SC_GameManager.GetInstance().tiles)
             tile.RemoveFilter();
 
-        SC_Tile leavingTile = SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y);
-        leavingTile.movementCost = leavingTile.baseCost;
-        leavingTile.canSetOn = true;
+		lastPos = tileManager.GetTileAt (gameObject); //SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y);
+		lastPos.movementCost = lastPos.baseCost;
+		lastPos.canSetOn = true;
 
-        SC_Tile under = SC_GameManager.GetInstance().GetTileAt(x, y);
+		SC_Tile target = tileManager.GetTileAt (x, y); //SC_GameManager.GetInstance().GetTileAt(x, y);
 
-        lastPos = transform.position;
-
-		List<SC_Tile> path = PathFinder(leavingTile, under, SC_GameManager.GetInstance ().GetClosedList ());
+		List<SC_Tile> path = PathFinder(lastPos, target, SC_GameManager.GetInstance ().GetClosedList ());
 
         for(int i = 0; i < path.Count; i++)
-            StartCoroutine(MoveOneTile(leavingTile, path[i], (i == (path.Count - 1)), i * 0.1f));
+			StartCoroutine(MoveOneTile(lastPos, path[i], (i == (path.Count - 1)), i * 0.1f));
 
     }
 
@@ -254,7 +256,7 @@ public class SC_Character : NetworkBehaviour {
         
         if(last) {
 
-			if (SC_GameManager.GetInstance ().GetConstructionAt (leavingTile) == null)
+			if (/*SC_GameManager.GetInstance ().GetConstructionAt (leavingTile)*/ tileManager.GetAt<SC_Construction>(leavingTile) == null)
 				leavingTile.attackable = true;
 
             target.movementCost = 5000;
@@ -269,11 +271,12 @@ public class SC_Character : NetworkBehaviour {
 
 				canMove = (((SC_Hero)this).berserk && !((SC_Hero)this).berserkTurn);
 
-				if (SC_GameManager.GetInstance ().GetConstructionAt (target) != null) {
+				if (/*SC_GameManager.GetInstance ().GetConstructionAt (target)*/ tileManager.GetAt<SC_Construction>(target) != null) {
 			
-					if (SC_GameManager.GetInstance ().GetConstructionAt (target).GetType ().Equals (typeof(SC_Village))) {
+					if (/*SC_GameManager.GetInstance ().GetConstructionAt (target).GetType ().Equals (typeof(SC_Village))*/tileManager.GetAt<SC_Village>(target) != null) {
 
-						SC_Hero.villagePanel.SetActive (true);
+						uiManager.villagePanel.SetActive (true);
+						//SC_Hero.villagePanel.SetActive (true);
 
 					} else { 
 
@@ -284,7 +287,8 @@ public class SC_Character : NetworkBehaviour {
 
 				} else {
 
-					cancelMovementButton.SetActive (true);
+					uiManager.cancelAttackButton.SetActive (true);
+					//cancelMovementButton.SetActive (true);
 					SC_GameManager.GetInstance ().CheckAttack (this);
 
 				}
@@ -294,14 +298,15 @@ public class SC_Character : NetworkBehaviour {
 
             } else {
 
-				if (SC_GameManager.GetInstance ().GetConvoyAt (target) != null) {
+				if (/*SC_GameManager.GetInstance ().GetConvoyAt (target)*/ tileManager.GetAt<SC_Convoy>(target) != null) {
 
-					SC_GameManager.GetInstance ().GetConvoyAt (target).DestroyConvoy ();
+					/*SC_GameManager.GetInstance ().GetConvoyAt (target)*/tileManager.GetAt<SC_Convoy>(target).DestroyConvoy ();
 					SC_GameManager.GetInstance ().cantCancelMovement = true;
 
 				} else {
 
-					cancelMovementButton.SetActive(true);
+					uiManager.cancelAttackButton.SetActive (true);
+					//cancelMovementButton.SetActive(true);
 
 				}
 
@@ -387,7 +392,7 @@ public class SC_Character : NetworkBehaviour {
 
 	}
 
-    public virtual void AnimAttack() {
+    /*public virtual void AnimAttack() {
 
         Vector3 pos = transform.position;
         Vector3 targetPos = (attackTarget != null) ? attackTarget.transform.position : GetAttackingCharacter().transform.position;
@@ -404,7 +409,7 @@ public class SC_Character : NetworkBehaviour {
         transform.rotation = rotation;
         lifebar.transform.parent.rotation = lifebarRotation;
 
-    }
+    }*/
 
     public static void ResetAttacker() {
 
@@ -417,13 +422,14 @@ public class SC_Character : NetworkBehaviour {
 
     public virtual void DestroyCharacter() {
 
-        if(selfPanel)
-            statsPanel.SetActive(false);
+		if (selfPanel)
+			uiManager.statsPanel.SetActive (false);
+			//statsPanel.SetActive(false);
 
-        SC_Tile under = SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y);
+		SC_Tile under = tileManager.GetTileAt (gameObject); //SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y);
         under.movementCost = under.baseCost;
         under.canSetOn = true;
-        if (SC_GameManager.GetInstance().GetConstructionAt(under) == null)
+		if (/*SC_GameManager.GetInstance().GetConstructionAt(under)*/ tileManager.GetAt<SC_Construction>(under) == null)
             under.attackable = true;
 
     }
@@ -471,13 +477,15 @@ public class SC_Character : NetworkBehaviour {
 
 	public static void DisplayCancelMovement() {
 
-		cancelMovementButton.SetActive (true);
+		uiManager.cancelMovementButton.SetActive (true);
+		//cancelMovementButton.SetActive (true);
 
 	}
 
 	public static void HideCancelMovement() {
 
-		cancelMovementButton.SetActive (false);
+		uiManager.cancelMovementButton.SetActive (false);
+		//cancelMovementButton.SetActive (false);
 
 	}
 

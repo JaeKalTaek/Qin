@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SC_Zhang_Fei : SC_Hero {
 
-    public GameObject trapPrefab, trap2Prefab;
+    /*public GameObject trapPrefab, trap2Prefab;
     GameObject trap, trap2;
     List<SC_Tile> column;
     Vector3 upEnd, bottomEnd;
@@ -111,6 +111,6 @@ public class SC_Zhang_Fei : SC_Hero {
 
 		}
 
-    }
+    }*/
 
 }

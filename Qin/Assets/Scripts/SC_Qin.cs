@@ -7,57 +7,53 @@ using UnityEngine.Networking;
 
 public class SC_Qin : NetworkBehaviour {
 
-	static Text energyText;
+	//static Text energyText;
 	public int startEnergy;
 	static int energy;
-	static GameObject qinPanel;
+	//static GameObject qinPanel;
     [HideInInspector]
     public static bool selfPanel;
 	SC_Tile_Manager tileManager;
+	static SC_UI_Manager uiManager;
 
     void Awake() {
 
-        energyText = GameObject.Find("EnergyQin").GetComponent<Text>();
+        //energyText = GameObject.Find("EnergyQin").GetComponent<Text>();
 
-		energy = startEnergy;
-
-		energyText.text = UpdateText(energy);
+		//energyText.text = "Qin's Energy : " + energy;
 
 	}
 
 	void Start() {
 
-		qinPanel = GameObject.Find ("QinPanel");
+		tileManager = GameObject.FindObjectOfType<SC_Tile_Manager> ();
 
-		qinPanel.SetActive (false);
+		uiManager = GameObject.FindObjectOfType<SC_UI_Manager> ();
+
+		energy = startEnergy;
+
+		uiManager.energyText.text = "Qin's Energy : " + energy;
+
+		/*qinPanel = GameObject.Find ("QinPanel");
+
+		qinPanel.SetActive (false);*/
 
 		//SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y).constructable = false;
 
-		//SC_GameManager.GetInstance ().GetTileAt ((int)transform.position.x, (int)transform.position.y).movementCost = 5000;
-
-		tileManager = GameObject.FindObjectOfType<SC_Tile_Manager> ();
-
-		while (tileManager.tiles == null)
-			WaitForSeconds (.001f);
+		//SC_GameManager.GetInstance ().GetTileAt ((int)transform.position.x, (int)transform.position.y).movementCost = 10000;
 
 		tileManager.SetQin (this);
 
 	}
 
-	IEnumerator WaitForSeconds(float t) {
-
-		yield return new WaitForSeconds (t);
-
-	}
-
 	void OnMouseDown() {
 
-		SC_Tile under = SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y);
+		SC_Tile under = tileManager.GetTileAt (gameObject); //SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y);
 
 		if (under.GetDisplayAttack ()) {
 
 			SC_Character attackingCharacter = SC_Character.GetAttackingCharacter();
-			SC_Tile attackingCharacterTile = SC_GameManager.GetInstance().GetTileAt((int)attackingCharacter.transform.position.x, (int)attackingCharacter.transform.position.y);
+			SC_Tile attackingCharacterTile = tileManager.GetTileAt (attackingCharacter.gameObject); //SC_GameManager.GetInstance().GetTileAt((int)attackingCharacter.transform.position.x, (int)attackingCharacter.transform.position.y);
 			SC_GameManager.GetInstance().rangedAttack = !SC_GameManager.GetInstance().IsNeighbor(attackingCharacterTile, under);
 
 			attackingCharacter.attackTarget = under;
@@ -111,14 +107,16 @@ public class SC_Qin : NetworkBehaviour {
 
 	public static void ShowQinPanel() {
 
-		qinPanel.SetActive (true);
-		GameObject.Find ("QinEnergy").GetComponent<Text> ().text = energy.ToString();
+		uiManager.qinPanel.SetActive (true);
+		/*qinPanel.transform.GetChild(1).GetComponent<Text> ().text = energy.ToString();
+		qinPanel.SetActive (true);*/
 
 	}
 
 	public static void HideQinPanel() {
 
-		qinPanel.SetActive (false);
+		uiManager.qinPanel.SetActive (false);
+		//qinPanel.SetActive (false);
 
 	}
 
@@ -127,7 +125,6 @@ public class SC_Qin : NetworkBehaviour {
         SC_Hero hero = SC_GameManager.GetInstance ().lastHeroDead;
 
 		hero.transform.SetPos(pos);
-		hero.gameObject.SetActive (true);
 		hero.coalition = false;
 		hero.powerUsed = false;
 		hero.powerBacklash = 0;
@@ -148,7 +145,9 @@ public class SC_Qin : NetworkBehaviour {
 		hero.transform.rotation = rotation;
 		hero.lifebar.transform.parent.rotation = lifebarRotation;
 
-        DecreaseEnergy(2000);
+		hero.gameObject.SetActive (true);
+
+		ChangeEnergy(-2000);
 
 		SC_GameManager.GetInstance ().lastHeroDead = null;
 
@@ -160,22 +159,11 @@ public class SC_Qin : NetworkBehaviour {
 
 	}
 
-	public static void IncreaseEnergy(int amount) {
+	public static void ChangeEnergy(int amount) {
 
 		energy += amount;
-		energyText.text = UpdateText(energy);
-
-	}
-
-	public static void DecreaseEnergy(int amount) {
-
-		IncreaseEnergy(-amount);
-
-	}
-
-	static string UpdateText(int energy) {
-
-		return "Qin's Energy : " + energy;
+		uiManager.energyText.text = "Qin's Energy : " + energy;
+		//energyText.text = "Qin's Energy : " + energy;
 
 	}
 

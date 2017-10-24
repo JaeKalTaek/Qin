@@ -24,6 +24,8 @@ public class SC_Tile : NetworkBehaviour {
 	[HideInInspector]
 	public SC_Tile parent;
 
+	SC_Tile_Manager tileManager;
+
     void Awake() {
 
         constructable = !(name.Contains("Palace"));
@@ -35,12 +37,18 @@ public class SC_Tile : NetworkBehaviour {
 		attackable = true;
 
     }
+
+	void Start() {
+
+		tileManager = GameObject.FindObjectOfType<SC_Tile_Manager> ();
+
+	}
 		
     void OnMouseDown() {
         
 		if ((displayConstructable) && (((SC_Qin.GetEnergy () - 50) > 0) || SC_GameManager.GetInstance ().IsBastion ())) {
 
-			SC_GameManager.GetInstance ().ConstructAt (transform.position);
+			SC_GameManager.GetInstance ().ConstructAt (this);
 
 			SC_GameManager.GetInstance ().StopConstruction ();
 
@@ -51,7 +59,7 @@ public class SC_Tile : NetworkBehaviour {
 		} else if (displayAttack) {
 
 			SC_Character attackingCharacter = SC_Character.GetAttackingCharacter ();
-			SC_Tile attackingCharacterTile = SC_GameManager.GetInstance ().GetTileAt ((int)attackingCharacter.transform.position.x, (int)attackingCharacter.transform.position.y);
+			SC_Tile attackingCharacterTile = tileManager.GetTileAt (attackingCharacter.gameObject); //SC_GameManager.GetInstance ().GetTileAt ((int)attackingCharacter.transform.position.x, (int)attackingCharacter.transform.position.y);
 			SC_GameManager.GetInstance ().rangedAttack = !SC_GameManager.GetInstance ().IsNeighbor (attackingCharacterTile, this);
 
 			attackingCharacter.attackTarget = this;
@@ -71,11 +79,11 @@ public class SC_Tile : NetworkBehaviour {
 
 		} else if (displaySacrifice) {
 
-			SC_Qin.IncreaseEnergy (25);
+			SC_Qin.ChangeEnergy (25);
 
 			RemoveFilter ();
 
-			Destroy (SC_GameManager.GetInstance ().GetCharacterAt (this).gameObject);
+			Destroy (/*SC_GameManager.GetInstance ().GetCharacterAt (this).gameObject*/ tileManager.GetAt<SC_Character>(this));
 
 		} else if (displayResurrection) {
 
@@ -127,8 +135,10 @@ public class SC_Tile : NetworkBehaviour {
 
 	public bool IsEmpty() {
 
-		SC_GameManager gm = SC_GameManager.GetInstance ();
-		return ((gm.GetConvoyAt (this) == null) && (gm.GetConstructionAt (this) == null) && (gm.GetCharacterAt (this) == null));
+		return tileManager.GetAt<MonoBehaviour> (this);
+
+		/*SC_GameManager gm = SC_GameManager.GetInstance ();
+		return ((gm.GetConvoyAt (this) == null) && (gm.GetConstructionAt (this) == null) && (gm.GetCharacterAt (this) == null));*/
 
 	}
 
