@@ -5,15 +5,15 @@ using UnityEngine.Networking;
 
 public class SC_Lifebar : NetworkBehaviour {
 
-    GameObject health, health2, Graphs;
+	Transform health, health2;
+	GameObject lifebar;
     float maxSize;
 
     void Start() {
 
-        health = transform.Find("Graphs").Find("lifebar_health").gameObject;
-        health2 = transform.Find("Graphs").Find("lifebar_health_2").gameObject;
-        Graphs = transform.Find("Graphs").gameObject;
-        Graphs.SetActive(false);
+		lifebar = transform.GetChild(0).gameObject;
+		health = lifebar.transform.GetChild(0);
+		health2 = lifebar.transform.GetChild(1);
 
     }
 
@@ -21,32 +21,25 @@ public class SC_Lifebar : NetworkBehaviour {
 
         float percentage = (float)h / (float)maxH;
 
-        health.transform.localScale = new Vector3(percentage, 1, 1);
-        health2.transform.localScale = new Vector3(percentage, 1, 1);
+        health.localScale = new Vector3(percentage, 1, 1);
+        health2.localScale = new Vector3(percentage, 1, 1);
 
-        Vector3 pos = health.transform.localPosition;
+        Vector3 pos = health.localPosition;
         float posX = -0.6f + (0.6f * percentage);
-        health.transform.localPosition = new Vector3(posX, pos.y, pos.z);
-        health2.transform.localPosition = new Vector3(posX, pos.y, pos.z);
+        health.localPosition = new Vector3(posX, pos.y, pos.z);
+        health2.localPosition = new Vector3(posX, pos.y, pos.z);
 
     }
 
     public void Show() {
 
-        if (transform.parent.parent.name.Contains("Zhang")) {
-
-            SC_Hero z = GameObject.Find("P_Zhang_Fei(Clone)").GetComponent<SC_Hero>();
-            UpdateGraph(z.health, z.maxHealth);
-
-        }
-
-        Graphs.SetActive(true);
+		lifebar.SetActive(true);
 
     }
 
     public void Hide() {
 
-        Graphs.SetActive(false);
+		lifebar.SetActive(false);
 
     }
 

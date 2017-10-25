@@ -80,7 +80,7 @@ f61c0793411f10cf5fbfa1473fef5ef2 UnityEngine.UI.dll:UnityEngine.UI.ToggleGroup
 86d36c43c53541d667100dc90b89cfba UnityEngine.UI.dll:UnityEngine.EventSystems.TouchInputModule
 1b8c02d0aa82fbf036a2b9b2d713eec3 UnityEngine.UI.dll:UnityEngine.UI.VerticalLayoutGroup
 4dd48ba8377f2a22eb0c4b69978ee67d Assembly-CSharp.dll:.SC_Wall
-29f6e0f84918662c1400fe6cc7aa5d9c Assembly-CSharp.dll:.SC_Hero
+a3843fccee9081afc100e09a53a6d95f Assembly-CSharp.dll:.SC_Hero
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationPlayableAsset
 cac917711d0e84d412d48737b6fc9ae7 UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationTrack
 706b890efe0a474d76b40e459ddb3e76 UnityEngine.Timeline.dll:UnityEngine.Timeline.AnimationPlayableAsset
@@ -116,13 +116,14 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.VR.WSA.Spa
 4dd48ba8377f2a22eb0c4b69978ee67d Assembly-CSharp.dll:.SC_Village
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.SC_Lifebar
 0f796245969d1549c122a710eaec4125 Assembly-CSharp.dll:.SC_Menu
-a9ae76963ecf4127a7a778501ffa5f86 Assembly-CSharp.dll:.SC_Character
+6b730dc2f06965358a892c16561c1390 Assembly-CSharp.dll:.SC_Character
 e2b22dd1c722489103301a16dd787411 Assembly-CSharp.dll:.SC_MapPrefab
 4dd48ba8377f2a22eb0c4b69978ee67d Assembly-CSharp.dll:.SC_Bastion
 473084ba5139663c0eaee4b4b06ad996 Assembly-CSharp.dll:.SC_Qin
 537da8f55d83033a4323a84fa68514f5 Assembly-CSharp.dll:.SC_MapEditorScript
+32e8fe00b63ed946490b898f6024a2f2 Facebook.Unity.Settings.dll:Facebook.Unity.Settings.FacebookSettings
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.SC_Player
-29f6e0f84918662c1400fe6cc7aa5d9c Assembly-CSharp.dll:.SC_Zhang_Fei
+a3843fccee9081afc100e09a53a6d95f Assembly-CSharp.dll:.SC_Zhang_Fei
 1f3298dc52ece58a8ad1756620d8012f Assembly-CSharp.dll:.SC_Tile
 fc1e0f4d8439d9928083474691511a13 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkAnimator
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Networking.dll:UnityEngine.Networking.NetworkBehaviour
@@ -141,7 +142,7 @@ e9bdabf9265d758d56f01bb188916fa8 UnityEngine.Networking.dll:UnityEngine.Networki
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.TestRunner.dll:UnityEngine.TestTools.TestRunner.Callbacks.PlayModeRunnerCallback
 5f2ad81aa8994e8fbe25d1e57afe6773 UnityEngine.TestRunner.dll:UnityEngine.TestTools.TestRunner.PlaymodeTestsController
 64eb32cc721b1cc68a91ed57461e188c UnityEngine.TestRunner.dll:UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender
-aa58a54ee4d7d53d1d527c2bb723adef Assembly-CSharp.dll:.SC_Soldier
+3c492121bbd35f8f0ec355443e67cf3a Assembly-CSharp.dll:.SC_Soldier
 4dd48ba8377f2a22eb0c4b69978ee67d Assembly-CSharp.dll:.SC_Construction
 bc68edb0af574bf79f9550ead8ebae5c UnityEngine.HoloLens.dll:UnityEngine.Audio.AudioSpatializerMicrosoft
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.HoloLens.dll:UnityEngine.EventSystems.HoloLensInput

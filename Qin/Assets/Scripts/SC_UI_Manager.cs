@@ -195,6 +195,8 @@ public class SC_UI_Manager : MonoBehaviour {
 
 	void ShowConstructionsInfos(SC_Construction construction) {
 
+		buildingInfosPanel.SetActive (true);
+
 		SetText("BuildingName", construction.buildingName);
 		SetText("BuildingHealth", (construction.GetType ().Equals (typeof(SC_Village))) ? "" : "Health : " + health + " / " + construction.maxHealth);
 
@@ -212,11 +214,18 @@ public class SC_UI_Manager : MonoBehaviour {
 
 	}
 
-
 	void ShowQinInfos(SC_Qin qin) {
 
+		qinPanel.SetActive (true);
 
 		SetText("QinEnergy", SC_Qin.GetEnergy() + "");
+
+	}
+
+	void UpdateQinEnergy(GameObject g) {
+
+		if(currentGameObject == g)
+			SetText("QinEnergy", SC_Qin.GetEnergy() + "");
 
 	}
 

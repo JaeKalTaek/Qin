@@ -960,7 +960,8 @@ public class SC_GameManager : NetworkBehaviour {
 
 			SC_Qin.ChangeEnergy (-(attacker.GetActiveWeapon ().weaponOrQi ? attacker.strength : attacker.qi));
 
-			if (SC_Qin.selfPanel) SC_Qin.ShowQinPanel ();
+			//if (SC_Qin.selfPanel) SC_Qin.ShowQinPanel ();
+
 
 		}
 

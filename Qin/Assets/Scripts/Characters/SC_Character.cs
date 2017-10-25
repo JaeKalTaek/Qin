@@ -82,9 +82,8 @@ public class SC_Character : NetworkBehaviour {
         statsPanel.SetActive(false);
         cancelMovementButton.SetActive(false);*/
 
-        GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/P_Lifebar"), transform);
-        go.transform.localPosition = go.transform.position;
-        lifebar = GetComponentInChildren<SC_Lifebar>();
+		lifebar = Instantiate(Resources.Load<GameObject>("Prefabs/P_Lifebar"), transform).GetComponent<SC_Lifebar>();
+		lifebar.transform.position += new Vector3 (0, -.44f, 0);
 
 		health = maxHealth;
 		criticalHit = technique;
