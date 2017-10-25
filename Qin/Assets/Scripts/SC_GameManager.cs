@@ -311,7 +311,7 @@ public class SC_GameManager : NetworkBehaviour {
 
         openList.Clear();
         closedList.Clear();
-		movementPoints[aStartingTile] = target.Movement;
+		movementPoints[aStartingTile] = target.movement;
         bool berserk = false;
         if (target.isHero())
             berserk = (((SC_Hero)target).berserk);
@@ -950,7 +950,8 @@ public class SC_GameManager : NetworkBehaviour {
 
 			targetConstruction.lifebar.UpdateGraph (targetConstruction.health, targetConstruction.maxHealth);
 
-			if (targetConstruction.selfPanel) targetConstruction.ShowBuildingPanel ();
+			//if (targetConstruction.selfPanel) targetConstruction.ShowBuildingPanel ();
+			uiManager.UpdateBuildingHealth(targetConstruction.gameObject);
 
 			if (targetConstruction.health <= 0)
 				targetConstruction.DestroyConstruction ();

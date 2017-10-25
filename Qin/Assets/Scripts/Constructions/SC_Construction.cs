@@ -87,7 +87,9 @@ public class SC_Construction : NetworkBehaviour {
 
         if(Input.GetMouseButtonDown(1)) {
 
-            if (selfPanel) {
+			uiManager.ShowHideInfos (gameObject, GetType());
+
+            /*if (selfPanel) {
 
                 HideBuildingPanel();
                 selfPanel = false;
@@ -109,13 +111,13 @@ public class SC_Construction : NetworkBehaviour {
 
                 selfPanel = true;
 
-            }
+            }*/
 
         }
 
     }
 
-	public void ShowBuildingPanel() {
+	/*public void ShowBuildingPanel() {
 
 
 		//buildingInfosPanel.SetActive (true);
@@ -136,7 +138,7 @@ public class SC_Construction : NetworkBehaviour {
 
 		GameObject.Find (id).GetComponent<Text> ().text = text;
 
-	}
+	}*/
 
 	public virtual void DestroyConstruction() {
 

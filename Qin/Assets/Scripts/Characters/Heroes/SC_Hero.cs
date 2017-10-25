@@ -103,9 +103,9 @@ public class SC_Hero : SC_Character {
 
 	}
 
-	protected override void ShowStatPanel() {
+	/*protected override void ShowStatPanel() {
 
-		base.ShowStatPanel();
+		//base.ShowStatPanel();
 
 		uiManager.relationshipPanel.SetActive (true);
 
@@ -135,7 +135,7 @@ public class SC_Hero : SC_Character {
 
 		}
 
-	}
+	}*/
 
 	void OnMouseEnter() {
 
@@ -318,7 +318,8 @@ public class SC_Hero : SC_Character {
 		if (!dead) {
 
 			lifebar.UpdateGraph (health, maxHealth);
-			if (selfPanel) ShowStatPanel ();
+			uiManager.UpdateCharacterHealth (gameObject);
+			//if (selfPanel) ShowStatPanel ();
 
 		}
 

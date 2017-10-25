@@ -79,7 +79,9 @@ public class SC_Qin : NetworkBehaviour {
 
         if(Input.GetMouseButtonDown(1)) {
 
-            if (selfPanel) {
+			uiManager.ShowHideInfos(gameObject, GetType());
+
+            /*if (selfPanel) {
 
                 HideQinPanel();
                 selfPanel = false;
@@ -99,17 +101,17 @@ public class SC_Qin : NetworkBehaviour {
 
                 selfPanel = true;
 
-            }
+            }*/
 
         }
 
     }
 
-	public static void ShowQinPanel() {
+	/*public static void ShowQinPanel() {
 
 		uiManager.qinPanel.SetActive (true);
-		/*qinPanel.transform.GetChild(1).GetComponent<Text> ().text = energy.ToString();
-		qinPanel.SetActive (true);*/
+		qinPanel.transform.GetChild(1).GetComponent<Text> ().text = energy.ToString();
+		qinPanel.SetActive (true);
 
 	}
 
@@ -118,7 +120,7 @@ public class SC_Qin : NetworkBehaviour {
 		uiManager.qinPanel.SetActive (false);
 		//qinPanel.SetActive (false);
 
-	}
+	}*/
 
 	public static void UsePower(Vector3 pos) {
 

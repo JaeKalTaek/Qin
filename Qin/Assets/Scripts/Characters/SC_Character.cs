@@ -11,7 +11,7 @@ public class SC_Character : NetworkBehaviour {
 	public bool coalition;
 
 	//Actions
-	public int Movement = 5;
+	public int movement = 5;
 	protected bool canMove, readyToMove;
 
 	public bool attacking;
@@ -168,7 +168,9 @@ public class SC_Character : NetworkBehaviour {
 
         if(Input.GetMouseButtonDown(1)) {
 
-            if (selfPanel) {
+			uiManager.ShowHideInfos (gameObject, GetType());
+
+            /*if (selfPanel) {
 
                 HideStatPanel();
                 selfPanel = false;
@@ -190,13 +192,13 @@ public class SC_Character : NetworkBehaviour {
 
                 selfPanel = true;
 
-            }
+            }*/
 
         }
 
     }
 
-    protected virtual void ShowStatPanel() {
+    /*protected virtual void ShowStatPanel() {
 
 		uiManager.statsPanel.SetActive (true);
 
@@ -212,14 +214,14 @@ public class SC_Character : NetworkBehaviour {
 		SC_Functions.SetText("Speed", " Speed : " + speed + " (" + dodgeHit + ")");
 		SC_Functions.SetText("Movement", " Movement : " + Movement);
 
-	}
+	}*/
 
-	public static void HideStatPanel() {
+	/*public static void HideStatPanel() {
 
 		uiManager.statsPanel.SetActive (false);
 		//statsPanel.gameObject.SetActive (false);
 
-	}
+	}*/
 
     public virtual void MoveTo(int x, int y) {
 
@@ -422,8 +424,9 @@ public class SC_Character : NetworkBehaviour {
 
     public virtual void DestroyCharacter() {
 
-		if (selfPanel)
-			uiManager.statsPanel.SetActive (false);
+		uiManager.HideInfos (gameObject);
+		/*if (selfPanel)
+			uiManager.statsPanel.SetActive (false);*/
 			//statsPanel.SetActive(false);
 
 		SC_Tile under = tileManager.GetTileAt (gameObject); //SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y);

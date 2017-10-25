@@ -83,7 +83,7 @@ public class SC_Soldier : SC_Character {
 
 	}
 
-	protected override void ShowStatPanel() {
+	/*protected override void ShowStatPanel() {
 
 		base.ShowStatPanel();
 
@@ -91,7 +91,7 @@ public class SC_Soldier : SC_Character {
 		SC_Functions.SetText("Weapon 1", "  - " + weapon.weaponName);
 		SC_Functions.SetText("Weapon 2", "");
 
-	}
+	}*/
 
 	public override bool Hit(int damages, bool saving) {
 
@@ -104,7 +104,8 @@ public class SC_Soldier : SC_Character {
 		} else {
 
 			lifebar.UpdateGraph (health, maxHealth);
-			if (selfPanel) ShowStatPanel ();
+			uiManager.UpdateCharacterHealth (gameObject);
+			//if (selfPanel) ShowStatPanel ();
 
 		}
 
