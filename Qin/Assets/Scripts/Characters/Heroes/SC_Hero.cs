@@ -28,11 +28,6 @@ public class SC_Hero : SC_Character {
 
 	Color berserkColor;
 
-	//UI
-	/*[HideInInspector]
-	public static GameObject villagePanel;
-	static GameObject weaponChoice1, weaponChoice2, usePower, cancelAttackButton;*/
-
 	protected override void Awake() {
 
 		base.Awake ();
@@ -47,30 +42,7 @@ public class SC_Hero : SC_Character {
 
 		base.Start();
 
-		/*if (villagePanel == null)
-			villagePanel = GameObject.Find ("VillagePanel");
-
-		if (weaponChoice1 == null)
-			weaponChoice1 = GameObject.Find("Weapon Choice 1");
-
-		if (weaponChoice2 == null)
-			weaponChoice2 = GameObject.Find("Weapon Choice 2");
-
-		if (usePower == null)
-			usePower = GameObject.Find("PowerHero");
-
-		if (cancelAttackButton == null)
-			cancelAttackButton = GameObject.Find("CancelAttack");
-
-		villagePanel.SetActive(false);
-		weaponChoice1.SetActive(false);
-		weaponChoice2.SetActive(false);
-		usePower.SetActive(false);
-		cancelAttackButton.SetActive(false);*/
-
 		tileManager.SetHero (this);
-
-		//SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y).constructable = false;
 
 		relationships = new Dictionary<string, int> ();
 
@@ -96,50 +68,14 @@ public class SC_Hero : SC_Character {
 			uiManager.usePower.SetActive (!powerUsed);
 			if (powerUsed)
 				uiManager.usePower.GetComponentInChildren<Text> ().name = name;
-			//usePower.SetActive (!powerUsed);
-			//if(!powerUsed) usePower.GetComponentInChildren<Text> ().name = name;
 
 		}
 
 	}
 
-	/*protected override void ShowStatPanel() {
-
-		//base.ShowStatPanel();
-
-		uiManager.relationshipPanel.SetActive (true);
-
-		SC_Functions.SetText("WeaponsTitle", " Weapons :");
-		SC_Functions.SetText("Weapon 1", "  - " + GetWeapon(true).weaponName + " (E)");
-		SC_Functions.SetText("Weapon 2", "  - " + GetWeapon(false).weaponName);
-
-		for (int i = 0; i < relationshipKeys.Count; i++) {
-
-			int value;
-			relationships.TryGetValue(relationshipKeys [i], out value);
-			GameObject.Find ("Relation_" + (i + 1)).GetComponent<Text> ().text = "  " + relationshipKeys [i] + " : " + value;
-
-		}
-
-		SC_Tile under = tileManager.GetTileAt (gameObject); //SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y);
-
-		if (under.GetDisplayAttack ()) {
-
-			GetAttackingCharacter ().attackTarget = under;
-
-			SC_Tile attackingCharacterTile = tileManager.GetTileAt (GetAttackingCharacter ().gameObject); //SC_GameManager.GetInstance().GetTileAt((int)GetAttackingCharacter ().transform.position.x, (int)GetAttackingCharacter ().transform.position.y);
-
-			SC_GameManager.GetInstance().rangedAttack = !SC_GameManager.GetInstance().IsNeighbor(attackingCharacterTile, under);
-
-			SC_GameManager.GetInstance ().PreviewFight (true);
-
-		}
-
-	}*/
-
 	void OnMouseEnter() {
 
-		SC_Tile under = tileManager.GetTileAt (gameObject); //SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y);
+		SC_Tile under = tileManager.GetTileAt (gameObject);
 
 		if (under.GetDisplayAttack() && !GetAttackingCharacter().isHero()) {
 
@@ -155,7 +91,7 @@ public class SC_Hero : SC_Character {
 
 	void OnMouseExit() {
 
-		SC_GameManager.GetInstance().HidePreviewFight();
+		uiManager.previewFightPanel.SetActive (false);
 
 	}
 
@@ -163,47 +99,25 @@ public class SC_Hero : SC_Character {
 
 		uiManager.cancelMovementButton.SetActive (false);
 		uiManager.cancelAttackButton.SetActive (true);
-		//cancelMovementButton.SetActive (false);
-		//cancelAttackButton.SetActive (true);
 
 		foreach (SC_Tile tile in SC_GameManager.GetInstance().tiles)
 			tile.RemoveFilter();
 
 		if(SC_GameManager.GetInstance().rangedAttack) {
 
-			if(weapon1.ranged) {
+			if(weapon1.ranged)
+				uiManager.ShowWeapon (GetWeapon (true), true);
 
-				uiManager.weaponChoice1.SetActive (true);
-				//weaponChoice1.SetActive(true);
-				SC_Functions.SetText("Weapon Choice 1 Text", GetWeapon(true).weaponName);
-
-			}
-
-			if(weapon2.ranged) {
-
-				uiManager.weaponChoice2.SetActive (true);
-				//weaponChoice2.SetActive(true);
-				SC_Functions.SetText("Weapon Choice 2 Text", GetWeapon(false).weaponName);
-
-			}
+			if(weapon2.ranged)
+				uiManager.ShowWeapon (GetWeapon (false), false);
 
 		} else {
 
-			if(!weapon1.IsBow()) {
+			if(!weapon1.IsBow())
+				uiManager.ShowWeapon (GetWeapon (true), true);
 
-				uiManager.weaponChoice1.SetActive (true);
-				//weaponChoice1.SetActive(true);
-				SC_Functions.SetText("Weapon Choice 1 Text", GetWeapon(true).weaponName);
-
-			}
-
-			if(!weapon2.IsBow()) {
-
-				uiManager.weaponChoice2.SetActive (true);
-				//weaponChoice2.SetActive(true);
-				SC_Functions.SetText("Weapon Choice 2 Text", GetWeapon(false).weaponName);
-
-			}
+			if(!weapon2.IsBow())
+				uiManager.ShowWeapon (GetWeapon (false), false);
 
 		}
 
@@ -213,38 +127,24 @@ public class SC_Hero : SC_Character {
 
 		uiManager.weaponChoice1.SetActive (false);
 		uiManager.weaponChoice2.SetActive (false);
-		/*weaponChoice1.SetActive (false);
-		weaponChoice2.SetActive (false);*/
-		SC_GameManager.GetInstance ().HidePreviewFight ();
-
-	}
-
-	public static void HidePower() {
-
-		uiManager.usePower.SetActive (false);
-		//usePower.SetActive (false);
+		uiManager.previewFightPanel.SetActive (false);
 
 	}
 
 	public void ActionVillage(bool destroy) {
 
-		//SC_GameManager.GetInstance ().GetTileAt ((int)transform.position.x, (int)transform.position.y);
-
 		if (destroy) {
 
 			SC_GameManager.GetInstance ().cantCancelMovement = true;
 			tileManager.GetAt<SC_Village> (gameObject).DestroyConstruction ();
-			//((SC_Village)SC_GameManager.GetInstance ().GetConstructionAt (pos)).DestroyConstruction ();
 
 		} else {
 
 			uiManager.cancelMovementButton.SetActive (true);
-			//cancelMovementButton.SetActive (true);
 
 		}
 
 		uiManager.villagePanel.SetActive (false);
-		//villagePanel.SetActive (false);
 
 		SC_GameManager.GetInstance().CheckAttack(this);
 
@@ -252,16 +152,10 @@ public class SC_Hero : SC_Character {
 
 	public void Regen() {
 
-		//SC_Tile pos = SC_GameManager.GetInstance ().GetTileAt ((int)transform.position.x, (int)transform.position.y);
+		if (tileManager.GetAt<SC_Village>(gameObject) != null) {
 
-		if (/*SC_GameManager.GetInstance ().GetConstructionAt (pos)*/ tileManager.GetAt<SC_Village>(gameObject) != null) {
-
-			//if (SC_GameManager.GetInstance ().GetConstructionAt (pos).GetType ().Equals (typeof(SC_Village))) {
-
-				health = ((health + 10) > maxHealth) ? maxHealth : (health + 10);
-				lifebar.UpdateGraph(health, maxHealth);
-
-			//}
+			health = ((health + 10) > maxHealth) ? maxHealth : (health + 10);
+			lifebar.UpdateGraph(health, maxHealth);
 
 		}
 
@@ -319,7 +213,6 @@ public class SC_Hero : SC_Character {
 
 			lifebar.UpdateGraph (health, maxHealth);
 			uiManager.UpdateCharacterHealth (gameObject);
-			//if (selfPanel) ShowStatPanel ();
 
 		}
 
@@ -351,11 +244,6 @@ public class SC_Hero : SC_Character {
 		SC_GameManager.GetInstance ().lastHeroDead = this;
 
 		tileManager.GetTileAt (gameObject).constructable = !tileManager.GetTileAt (gameObject).isPalace ();
-
-		/*int x = (int)transform.position.x;
-		int y = (int)transform.position.y;
-
-		SC_GameManager.GetInstance ().GetTileAt (x, y).constructable = !SC_GameManager.GetInstance ().GetTileAt (x, y).isPalace();*/
 
 		foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
 
@@ -393,13 +281,6 @@ public class SC_Hero : SC_Character {
 			weapon2 = temp;
 
 		}
-
-	}
-
-	public static void HideCancelAttack() {
-
-		uiManager.cancelAttackButton.SetActive (false);
-		//cancelAttackButton.SetActive (false);
 
 	}
 

@@ -87,7 +87,7 @@ public class SC_Construction : NetworkBehaviour {
 
         if(Input.GetMouseButtonDown(1)) {
 
-			uiManager.ShowHideInfos (gameObject, GetType());
+			uiManager.ShowHideInfos (gameObject, typeof(SC_Construction));
 
             /*if (selfPanel) {
 
