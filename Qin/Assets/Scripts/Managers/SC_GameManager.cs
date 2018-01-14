@@ -50,6 +50,12 @@ public class SC_GameManager : NetworkBehaviour {
 	SC_Character characterToMove;
 
 	#region Setup
+	/*void Update() {
+
+		print("Game manager is active");
+
+	}*/
+
     void Start() {
 
 		turn = 1;
@@ -130,6 +136,8 @@ public class SC_GameManager : NetworkBehaviour {
 	}
 
 	void SetupTileManager() {
+
+		print ("Setip tile manager");
 
 		GameObject tm = Instantiate (tileManagerPrefab);
 		SC_Tile_Manager stm = tm.GetComponent<SC_Tile_Manager> ();
