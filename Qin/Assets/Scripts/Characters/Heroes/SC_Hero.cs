@@ -60,14 +60,12 @@ public class SC_Hero : SC_Character {
 	}
 
 	protected override void PrintMovements () {
-		
-		if ((canMove || (berserk && !berserkTurn)) && (coalition == SC_GameManager.GetInstance().CoalitionTurn())) {
 
-			SC_GameManager.GetInstance ().CheckMovements (this);
+		if (canMove || (berserk && !berserkTurn)) {
 
-			uiManager.usePower.SetActive (!powerUsed);
-			if (powerUsed)
-				uiManager.usePower.GetComponentInChildren<Text> ().name = name;
+			gameManager.CheckMovements (this);
+
+			uiManager.ShowHeroPower (powerUsed, name);
 
 		}
 
@@ -81,7 +79,7 @@ public class SC_Hero : SC_Character {
 
 			GetAttackingCharacter().attackTarget = under;
 
-			SC_GameManager.GetInstance().PreviewFight(false);
+			gameManager.PreviewFight(false);
 
 			GetAttackingCharacter().attackTarget = null;
 
@@ -100,34 +98,14 @@ public class SC_Hero : SC_Character {
 		uiManager.cancelMovementButton.SetActive (false);
 		uiManager.cancelAttackButton.SetActive (true);
 
-		foreach (SC_Tile tile in SC_GameManager.GetInstance().tiles)
+		foreach (SC_Tile tile in tileManager.tiles)
 			tile.RemoveFilter();
 
-		if(SC_GameManager.GetInstance().rangedAttack) {
+		if ((gameManager.rangedAttack && weapon1.ranged) || (!gameManager.rangedAttack && !weapon1.IsBow ()))
+			uiManager.ShowWeapon (GetWeapon (true), true);
 
-			if(weapon1.ranged)
-				uiManager.ShowWeapon (GetWeapon (true), true);
-
-			if(weapon2.ranged)
-				uiManager.ShowWeapon (GetWeapon (false), false);
-
-		} else {
-
-			if(!weapon1.IsBow())
-				uiManager.ShowWeapon (GetWeapon (true), true);
-
-			if(!weapon2.IsBow())
-				uiManager.ShowWeapon (GetWeapon (false), false);
-
-		}
-
-	}
-
-	public static void HideWeapons() {
-
-		uiManager.weaponChoice1.SetActive (false);
-		uiManager.weaponChoice2.SetActive (false);
-		uiManager.previewFightPanel.SetActive (false);
+		if ((gameManager.rangedAttack && weapon2.ranged) || (!gameManager.rangedAttack && !weapon2.IsBow ()))
+			uiManager.ShowWeapon (GetWeapon (false), false);
 
 	}
 
@@ -135,7 +113,7 @@ public class SC_Hero : SC_Character {
 
 		if (destroy) {
 
-			SC_GameManager.GetInstance ().cantCancelMovement = true;
+			gameManager.cantCancelMovement = true;
 			tileManager.GetAt<SC_Village> (gameObject).DestroyConstruction ();
 
 		} else {
@@ -146,7 +124,7 @@ public class SC_Hero : SC_Character {
 
 		uiManager.villagePanel.SetActive (false);
 
-		SC_GameManager.GetInstance().CheckAttack(this);
+		gameManager.CheckAttack(this);
 
 	}
 
@@ -179,7 +157,7 @@ public class SC_Hero : SC_Character {
 
 			} else {
 
-				SC_Hero saver = SC_GameManager.GetInstance ().CheckHeroSaved (this, saved);
+				SC_Hero saver = gameManager.CheckHeroSaved (this, saved);
 
 				if (saver != null) {
 
@@ -198,7 +176,7 @@ public class SC_Hero : SC_Character {
 
 		} else if (health <= Mathf.CeilToInt ((float)(maxHealth * 0.2))) {
 
-			canMove = (SC_GameManager.GetInstance().CoalitionTurn());
+			canMove = (gameManager.CoalitionTurn());
 
 			berserkTurn = true;
 
@@ -241,7 +219,7 @@ public class SC_Hero : SC_Character {
 
 		SC_Qin.ChangeEnergy (500);
 
-		SC_GameManager.GetInstance ().lastHeroDead = this;
+		gameManager.lastHeroDead = this;
 
 		tileManager.GetTileAt (gameObject).constructable = !tileManager.GetTileAt (gameObject).isPalace ();
 
@@ -254,7 +232,7 @@ public class SC_Hero : SC_Character {
 
 				hero.berserk = true;
 				hero.berserkTurn = true;
-				hero.canMove = (SC_GameManager.GetInstance().CoalitionTurn());
+				hero.canMove = (gameManager.CoalitionTurn());
 
 				hero.GetComponent<Renderer> ().material.color = Color.cyan;
 

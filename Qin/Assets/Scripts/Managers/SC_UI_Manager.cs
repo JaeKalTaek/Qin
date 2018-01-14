@@ -39,7 +39,16 @@ public class SC_UI_Manager : MonoBehaviour {
 
 	GameObject currentGameObject;
 
-	public void SetupUI(SC_Player p, bool qin) {
+	static SC_GameManager gameManager;
+	static SC_Tile_Manager tileManager;
+
+	public void SetupUI(SC_Player p) {
+
+		if (gameManager == null)
+			gameManager = GetComponent<SC_GameManager> ();
+
+		if (tileManager == null)
+			tileManager = GetComponent<SC_Tile_Manager> ();
 
 		player = p;
 
@@ -238,6 +247,104 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		if(currentGameObject == g)
 			SetText("QinEnergy", SC_Qin.GetEnergy() + "");
+
+	}
+
+	public void PreviewFight(SC_Character attacker, bool rangedAttack) {
+
+		previewFightPanel.SetActive (true);
+
+		SetText ("AttackerName", attacker.characterName);
+
+		SetText ("AttackerWeapon", attacker.GetActiveWeapon ().weaponName);
+
+		SetText ("AttackerCrit", attacker.criticalHit.ToString ());
+
+		SetText ("AttackerDodge", attacker.dodgeHit.ToString ());
+
+		int attackedDamages = 0;
+
+		string attackerDamagesString = "";
+
+		int attackerDamages = attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi;
+
+		string attackedDamagesString = "";
+
+		string attackedName = "";
+
+		string attackedHP = "";
+
+		string attackedWeapon = "";
+
+		string attackedCrit = "";
+
+		string attackedDodge = "";
+
+		if (tileManager.GetAt<SC_Character> (attacker.attackTarget) != null) {
+
+			SC_Character attacked = tileManager.GetAt<SC_Character> (attacker.attackTarget);
+
+			attackedName = attacked.characterName;
+
+			attackedWeapon = attacked.GetActiveWeapon ().weaponName;
+
+			attackerDamages = gameManager.CalcDamages (attacker, attacked, false);
+			attackedDamages = gameManager.CalcDamages (attacked, attacker, true);
+			if (!((rangedAttack && attacked.GetActiveWeapon ().ranged) || (!rangedAttack && !attacked.GetActiveWeapon ().IsBow ())))
+				attackedDamages = 0;
+
+			attackedHP = (attacked.health - attackerDamages).ToString ();
+
+			attackerDamagesString = attackerDamages.ToString ();
+
+			attackedDamagesString = attackedDamages.ToString ();
+
+			attackedCrit = attacked.criticalHit.ToString ();
+
+			attackedDodge = attacked.dodgeHit.ToString ();
+
+		} else {
+
+			int attackedType = (tileManager.GetAt<SC_Construction> (attacker.attackTarget) != null) ? 0 : attacker.attackTarget.Qin () ? 1 : 2;
+
+			attackedName = (attackedType == 0) ? tileManager.GetAt<SC_Construction> (attacker.attackTarget).buildingName : (attackedType == 1) ? "Qin" : "";			
+
+			int attackedHealth = (attackedType == 0) ? tileManager.GetAt<SC_Construction> (attacker.attackTarget).health : (attackedType == 1) ? SC_Qin.GetEnergy () : 0;
+
+			if (attackedType != 2) attackedHP = (attackedHealth - attackerDamages).ToString ();
+
+		}
+
+		SetText("AttackerHP", (attacker.health - attackedDamages).ToString());
+
+		SetText("AttackedName", attackedName);
+
+		SetText("AttackedHP", attackedHP);
+
+		SetText("AttackerDamages", attackerDamagesString);
+		SetText("AttackedDamages", attackedDamagesString);
+
+		SetText("AttackedWeapon", attackedWeapon);
+
+		SetText("AttackedCrit", attackedCrit);
+		SetText("AttackedDodge", attackedDodge);
+
+	}
+
+	public void HideWeapons() {
+
+		weaponChoice1.SetActive (false);
+		weaponChoice2.SetActive (false);
+		previewFightPanel.SetActive (false);
+
+	}
+
+	public void ShowHeroPower(bool show, string heroName) {
+
+		usePower.SetActive (!show);
+
+		if (show)
+			usePower.GetComponentInChildren<Text> ().name = heroName;
 
 	}
 

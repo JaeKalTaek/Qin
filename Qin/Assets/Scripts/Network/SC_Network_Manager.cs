@@ -12,7 +12,6 @@ public class SC_Network_Manager : NetworkLobbyManager {
 	MatchInfo createdMatch = null;
 
 	#region Networking
-
 	void OnEnable() {
 
 		SceneManager.activeSceneChanged += OnSceneChanged;

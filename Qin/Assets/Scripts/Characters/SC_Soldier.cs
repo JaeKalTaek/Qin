@@ -65,33 +65,15 @@ public class SC_Soldier : SC_Character {
 
 		if (canMove) {
 
-			foreach (SC_Tile tile in SC_GameManager.GetInstance().tiles)
-				tile.SetCanConstruct (false);
-
 			uiManager.ToggleButton ("construct");
-			//uiManager.constructWallButton.gameObject.SetActive (true);
-			//uiManager.endConstructionButton.gameObject.SetActive (false);
+
 			uiManager.workshopPanel.gameObject.SetActive (false);
 
-			/*SC_GameManager.GetInstance ().constructWallButton.gameObject.SetActive (true);
-			SC_GameManager.GetInstance ().endConstructionButton.gameObject.SetActive (false);
-			SC_GameManager.GetInstance ().workshopPanel.SetActive (false);*/
-
-			SC_GameManager.GetInstance ().CheckMovements (this);
+			gameManager.CheckMovements (this);
 
 		}
 
 	}
-
-	/*protected override void ShowStatPanel() {
-
-		base.ShowStatPanel();
-
-		SC_Functions.SetText("WeaponsTitle", " Weapon :");
-		SC_Functions.SetText("Weapon 1", "  - " + weapon.weaponName);
-		SC_Functions.SetText("Weapon 2", "");
-
-	}*/
 
 	public override bool Hit(int damages, bool saving) {
 
@@ -105,7 +87,6 @@ public class SC_Soldier : SC_Character {
 
 			lifebar.UpdateGraph (health, maxHealth);
 			uiManager.UpdateCharacterHealth (gameObject);
-			//if (selfPanel) ShowStatPanel ();
 
 		}
 

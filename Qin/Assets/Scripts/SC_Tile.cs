@@ -7,73 +7,77 @@ using UnityEngine.Networking;
 [System.Serializable]
 public class SC_Tile : NetworkBehaviour {
 
-    [HideInInspector]
-    public bool displayMovement;
 	[HideInInspector]
-	public bool /*relationshipRange,*/ constructable;
+	public bool displayMovement;
+	[HideInInspector]
+	public bool constructable;
 	bool displayAttack;
-    [HideInInspector]
-    public bool displayConstructable, displaySacrifice, displayResurrection;
-    public int baseCost;
-    [HideInInspector]
-    public int movementCost;
-    [HideInInspector]
-    public bool canSetOn;
+	[HideInInspector]
+	public bool displayConstructable, displaySacrifice, displayResurrection;
+	public int baseCost;
+	[HideInInspector]
+	public int movementCost;
+	[HideInInspector]
+	public bool canSetOn;
 	[HideInInspector]
 	public bool attackable;
 	[HideInInspector]
 	public SC_Tile parent;
 
+	SC_GameManager gameManager;
+
 	SC_Tile_Manager tileManager;
 
-    void Awake() {
+	void Awake() {
 
-        constructable = !(name.Contains("Palace"));
+		constructable = !(name.Contains("Palace"));
 
-        movementCost = baseCost;
+		movementCost = baseCost;
 
-        canSetOn = true;
+		canSetOn = true;
 
 		attackable = true;
 
-    }
+	}
 
 	void Start() {
+
+		gameManager = GameObject.FindObjectOfType<SC_GameManager> ();
 
 		tileManager = GameObject.FindObjectOfType<SC_Tile_Manager> ();
 
 	}
-		
-    void OnMouseDown() {
-        
-		if ((displayConstructable) && (((SC_Qin.GetEnergy () - 50) > 0) || SC_GameManager.GetInstance ().IsBastion ())) {
 
-			SC_GameManager.GetInstance ().ConstructAt (this);
+	void OnMouseDown() {
 
-			SC_GameManager.GetInstance ().StopConstruction ();
+		if ((displayConstructable) && (((SC_Qin.GetEnergy () - 50) > 0) || gameManager.IsBastion ())) {
+
+			gameManager.ConstructAt (this);
+
+			gameManager.StopConstruction ();
 
 		} else if (displayMovement) {
 
-			SC_Character.GetCharacterToMove ().MoveTo ((int)transform.position.x, (int)transform.position.y);
+			gameManager.GetCharacterToMove().MoveTo(this);
 
 		} else if (displayAttack) {
 
 			SC_Character attackingCharacter = SC_Character.GetAttackingCharacter ();
-			SC_Tile attackingCharacterTile = tileManager.GetTileAt (attackingCharacter.gameObject); //SC_GameManager.GetInstance ().GetTileAt ((int)attackingCharacter.transform.position.x, (int)attackingCharacter.transform.position.y);
-			SC_GameManager.GetInstance ().rangedAttack = !SC_GameManager.GetInstance ().IsNeighbor (attackingCharacterTile, this);
+			SC_Tile attackingCharacterTile = tileManager.GetTileAt (attackingCharacter.gameObject);
+			gameManager.rangedAttack = !gameManager.IsNeighbor (attackingCharacterTile, this);
 
 			attackingCharacter.attackTarget = this;
 
 			if (attackingCharacter.isHero ()) {
-				
+
 				((SC_Hero)attackingCharacter).ChooseWeapon ();
 
 			} else {
-			
-				foreach (SC_Tile tile in SC_GameManager.GetInstance().tiles)
+
+				foreach (SC_Tile tile in tileManager.tiles)
 					tile.RemoveFilter ();
-				
-				SC_GameManager.GetInstance ().Attack ();
+
+				gameManager.Attack ();
 
 			}
 
@@ -83,48 +87,50 @@ public class SC_Tile : NetworkBehaviour {
 
 			RemoveFilter ();
 
-			Destroy (/*SC_GameManager.GetInstance ().GetCharacterAt (this).gameObject*/ tileManager.GetAt<SC_Character>(this));
+			Destroy (tileManager.GetAt<SC_Character>(this));
 
 		} else if (displayResurrection) {
 
-			SC_GameManager.GetInstance ().HideResurrectionTiles ();
+			gameManager.HideResurrectionTiles ();
 
 			SC_Qin.UsePower (transform.position);
 
 		}
-        
-    }
 
-    public void SetFilter(string filterName) {
-        
-        foreach(SpriteRenderer sprite in GetComponentsInChildren<SpriteRenderer>())
-            if (sprite.name.Equals(filterName)) sprite.enabled = true;
-  
-    }
+	}
 
-    public void RemoveFilter() {
+	public void SetFilter(string filterName) {
 
-        displayMovement = false;
-        displayConstructable = false;
-        displayAttack = false;
+		foreach(SpriteRenderer sprite in GetComponentsInChildren<SpriteRenderer>())
+			if (sprite.name.Equals(filterName)) sprite.enabled = true;
+
+	}
+
+	public void RemoveFilter() {
+
+		displayMovement = false;
+		displayConstructable = false;
+		displayAttack = false;
 		displaySacrifice = false;
 		displayResurrection = false;
 
-        foreach (SpriteRenderer sprite in GetComponentsInChildren<SpriteRenderer>())
-            sprite.enabled = false;
+		foreach (SpriteRenderer sprite in GetComponentsInChildren<SpriteRenderer>())
+			sprite.enabled = false;
 
-    }
+	}
 
-    public void DisplayMovement(bool valid) { 
+	public void DisplayMovement(bool valid) { 
 
-        if(valid) {
+		displayMovement = valid;
 
-            displayMovement = true;
-            SetFilter("T_DisplayMovement");
+		/*if(valid) {
 
-        }
+			displayMovement = true;
+			SetFilter("T_DisplayMovement");
 
-    }
+        }*/
+
+	}
 
 	public bool Qin() {
 
@@ -137,18 +143,15 @@ public class SC_Tile : NetworkBehaviour {
 
 		return tileManager.GetAt<MonoBehaviour> (this);
 
-		/*SC_GameManager gm = SC_GameManager.GetInstance ();
-		return ((gm.GetConvoyAt (this) == null) && (gm.GetConstructionAt (this) == null) && (gm.GetCharacterAt (this) == null));*/
+	}
+
+	public bool isPalace() {
+
+		return name.Contains("Palace");
 
 	}
 
-    public bool isPalace() {
-
-        return name.Contains("Palace");
-
-    }
-
-    public bool CanConstructOn() {
+	public bool CanConstructOn() {
 
 		return displayConstructable;
 

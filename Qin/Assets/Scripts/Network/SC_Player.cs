@@ -12,14 +12,14 @@ public class SC_Player : NetworkBehaviour {
 
 	public override void OnStartLocalPlayer () {
 
-		if (isLocalPlayer)			
+		//if (isLocalPlayer)			
 			tag = "Player";
 
-		FindObjectOfType<SC_UI_Manager> ().SetupUI (this, qin);
+		/*<SC_UI_Manager> ().SetupUI (this, qin);
 
 		gameManager = FindObjectOfType<SC_GameManager> ();
 
-		//SC_GameManager.GetInstance ().SetPlayer (this);
+		SC_GameManager.GetInstance ().SetPlayer (this);*/
 		
 	}
 

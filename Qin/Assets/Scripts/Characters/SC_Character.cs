@@ -12,13 +12,13 @@ public class SC_Character : NetworkBehaviour {
 
 	//Actions
 	public int movement = 5;
-	protected bool canMove, readyToMove;
+	protected bool canMove;
 
 	public bool attacking;
 
 	public SC_Tile attackTarget;
 
-    protected bool finishMovement;
+	protected bool finishMovement;
 
 	[HideInInspector]
 	public SC_Tile lastPos;
@@ -26,7 +26,7 @@ public class SC_Character : NetworkBehaviour {
 	//Stats
 	public string characterName;
 	public int maxHealth;
-    [HideInInspector]
+	[HideInInspector]
 	public int health;
 	public int strength, armor;
 	public int qi, resistance;
@@ -36,11 +36,11 @@ public class SC_Character : NetworkBehaviour {
 
 	protected Color baseColor, tiredColor;
 
-    [HideInInspector]
-    public SC_Lifebar lifebar;
+	[HideInInspector]
+	public SC_Lifebar lifebar;
 
-    [HideInInspector]
-    public bool selfPanel;
+	[HideInInspector]
+	public bool selfPanel;
 
 	protected static SC_Tile_Manager tileManager;
 
@@ -48,14 +48,14 @@ public class SC_Character : NetworkBehaviour {
 
 	protected static SC_UI_Manager uiManager;
 
-    protected virtual void Awake() {
+	protected virtual void Awake() {
 
 		baseColor = GetComponent<SpriteRenderer> ().color;
 		tiredColor = new Color (.15f, .15f, .15f);
 
-    }
+	}
 
-    protected virtual void Start() {
+	protected virtual void Start() {
 
 		if (gameManager == null)
 			gameManager = GameObject.FindObjectOfType<SC_GameManager> ();
@@ -77,44 +77,44 @@ public class SC_Character : NetworkBehaviour {
 
 		canMove = coalition;
 
-    }
+	}
 
 	protected virtual void OnMouseDown() {
 
 		if (!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject ()) {
 
 			SC_Tile under = tileManager.GetTileAt (gameObject);
-        
-			if (under.displayMovement && readyToMove) {
-			
-				MoveTo ((int)transform.position.x, (int)transform.position.y);
+
+			if (under.displayMovement) {
+
+				MoveTo (under);
 
 			} else if (under.GetDisplayAttack ()) {
 
 				SC_Character attackingCharacter = GetAttackingCharacter ();
 				SC_Tile attackingCharacterTile = tileManager.GetTileAt (attackingCharacter.gameObject);
-				SC_GameManager.GetInstance ().rangedAttack = !SC_GameManager.GetInstance ().IsNeighbor (attackingCharacterTile, under);
+				gameManager.rangedAttack = !gameManager.IsNeighbor (attackingCharacterTile, under);
 
 				attackingCharacter.attackTarget = under;
 
 				if (attackingCharacter.isHero ()) {
-				
+
 					((SC_Hero)attackingCharacter).ChooseWeapon ();
 
 				} else {
 
-					foreach (SC_Tile tile in SC_GameManager.GetInstance().tiles)
+					foreach (SC_Tile tile in tileManager.tiles)
 						tile.RemoveFilter ();
 
-					SC_GameManager.GetInstance ().Attack ();
+					gameManager.Attack ();
 
 				}
 
-			} else if (under.displayConstructable && (((SC_Qin.GetEnergy () - 50) > 0) || SC_GameManager.GetInstance ().IsBastion ()) && !isHero ()) {
+			} else if (under.displayConstructable && (((SC_Qin.GetEnergy () - 50) > 0) || gameManager.IsBastion ()) && !isHero ()) {
 
-				SC_GameManager.GetInstance ().ConstructAt (under);
+				gameManager.ConstructAt (under);
 
-				SC_GameManager.GetInstance ().StopConstruction ();
+				gameManager.StopConstruction ();
 
 				canMove = false;
 
@@ -140,92 +140,90 @@ public class SC_Character : NetworkBehaviour {
 
 	protected virtual void PrintMovements() { }
 
-    protected void OnMouseOver() {
+	protected void OnMouseOver() {
 
-        if(Input.GetMouseButtonDown(1))
+		if(Input.GetMouseButtonDown(1))
 			uiManager.ShowHideInfos (gameObject, GetType());
 
-    }
+	}
 
-    public virtual void MoveTo(int x, int y) {
+	public virtual void MoveTo(SC_Tile target) {
 
-        foreach (SC_Tile tile in SC_GameManager.GetInstance().tiles)
-            tile.RemoveFilter();
+		foreach (SC_Tile tile in tileManager.tiles)
+			tile.RemoveFilter();
 
 		lastPos = tileManager.GetTileAt (gameObject);
 		lastPos.movementCost = lastPos.baseCost;
 		lastPos.canSetOn = true;
 
-		SC_Tile target = tileManager.GetTileAt (x, y);
+		List<SC_Tile> path = PathFinder(lastPos, target, gameManager.GetClosedList ());
 
-		List<SC_Tile> path = PathFinder(lastPos, target, SC_GameManager.GetInstance ().GetClosedList ());
-
-        for(int i = 0; i < path.Count; i++)
+		for(int i = 0; i < path.Count; i++)
 			StartCoroutine(MoveOneTile(lastPos, path[i], (i == (path.Count - 1)), i * 0.1f));
 
-    }
+	}
 
-    IEnumerator MoveOneTile(SC_Tile leavingTile, SC_Tile target, bool last, float delay) {
+	IEnumerator MoveOneTile(SC_Tile leavingTile, SC_Tile target, bool last, float delay) {
 
-        yield return new WaitForSeconds(delay);
+		yield return new WaitForSeconds(delay);
 
-        float startTime = Time.time;
+		float startTime = Time.time;
 
-        while (Time.time < startTime + 0.15f) {
+		while (Time.time < startTime + 0.15f) {
 
 			transform.SetPos(Vector3.Lerp(transform.position, target.transform.position, (Time.time - startTime) / 0.2f));
-            yield return null;
+			yield return null;
 
-        }
+		}
 
 		transform.SetPos(target.transform);
-        
-        if(last) {
+
+		if(last) {
 
 			if (tileManager.GetAt<SC_Construction>(leavingTile) == null)
 				leavingTile.attackable = true;
 
-            target.movementCost = 5000;
-            target.canSetOn = false;
-			target.attackable = (coalition != SC_GameManager.GetInstance ().CoalitionTurn ());
+			target.movementCost = 5000;
+			target.canSetOn = false;
+			target.attackable = (coalition != gameManager.CoalitionTurn ());
 
-            canMove = false;
+			canMove = false;
 
-            attacking = true;
+			attacking = true;
 
 			if (isHero ()) {
 
 				canMove = (((SC_Hero)this).berserk && !((SC_Hero)this).berserkTurn);
 
 				if (tileManager.GetAt<SC_Construction>(target) != null) {
-			
+
 					if (tileManager.GetAt<SC_Village>(target) != null) {
 
 						uiManager.villagePanel.SetActive (true);
 
 					} else { 
 
-						SC_GameManager.GetInstance ().cantCancelMovement = true;
-						SC_GameManager.GetInstance ().CheckAttack (this);
+						gameManager.cantCancelMovement = true;
+						gameManager.CheckAttack (this);
 
 					}
 
 				} else {
 
 					uiManager.cancelAttackButton.SetActive (true);
-					SC_GameManager.GetInstance ().CheckAttack (this);
+					gameManager.CheckAttack (this);
 
 				}
 
 				leavingTile.constructable = !leavingTile.isPalace ();
-                target.constructable = false;
+				target.constructable = false;
 
-            } else {
+			} else {
 
 				if (tileManager.GetAt<SC_Convoy>(target) != null) {
-			
+
 					tileManager.GetAt<SC_Convoy>(target).DestroyConvoy ();
-					SC_GameManager.GetInstance ().cantCancelMovement = true;
+					gameManager.cantCancelMovement = true;
 
 				} else {
 
@@ -233,13 +231,13 @@ public class SC_Character : NetworkBehaviour {
 
 				}
 
-				SC_GameManager.GetInstance().CheckAttack(this);
+				gameManager.CheckAttack(this);
 
 			}
 
-        }
+		}
 
-    }
+	}
 
 	protected List<SC_Tile> PathFinder(SC_Tile start, SC_Tile end, List<SC_Tile> range) {
 
@@ -251,11 +249,11 @@ public class SC_Character : NetworkBehaviour {
 		openList.Add (start);
 
 		while (!openList.Contains (end)) {
-			
+
 			foreach (SC_Tile tile in openList) {
-				
-				foreach (SC_Tile neighbor in SC_GameManager.GetInstance ().GetNeighbors (tile)) {
-					
+
+				foreach (SC_Tile neighbor in tileManager.GetNeighbors (tile)) {
+
 					if (!closedList.Contains (neighbor) && range.Contains (neighbor) && !tempList.Contains (neighbor)) {
 
 						tempList.Add (neighbor);
@@ -264,11 +262,11 @@ public class SC_Character : NetworkBehaviour {
 					}
 
 				}
-				
+
 				closedList.Add (tile);
 
 			}
-				
+
 			openList = new List<SC_Tile>(tempList);
 			tempList.Clear ();
 
@@ -284,23 +282,12 @@ public class SC_Character : NetworkBehaviour {
 
 		}
 
-		foreach (SC_Tile tile in SC_GameManager.GetInstance().tiles)
+		foreach (SC_Tile tile in tileManager.tiles)
 			tile.parent = null;
 
 		path.Reverse ();
-        if(path.Count > 1) path.RemoveAt (0);
+		if(path.Count > 1) path.RemoveAt (0);
 		return path;
-
-	}
-		
-    public static SC_Character GetCharacterToMove() {
-
-		SC_Character characterToMove = null;
-
-		foreach (SC_Character character in FindObjectsOfType<SC_Character>())
-			if(character.readyToMove) characterToMove = character;
-
-		return characterToMove;
 
 	}
 
@@ -315,41 +302,41 @@ public class SC_Character : NetworkBehaviour {
 
 	}
 
-    public static void ResetAttacker() {
+	public static void ResetAttacker() {
 
 		foreach (SC_Character character in FindObjectsOfType<SC_Character>()) {
 			if (character.attacking) character.Tire ();
 			character.attacking = false;
 		}
 
-    }
+	}
 
-    public virtual void DestroyCharacter() {
+	public virtual void DestroyCharacter() {
 
 		uiManager.HideInfos (gameObject);
 
 		SC_Tile under = tileManager.GetTileAt (gameObject);
-        under.movementCost = under.baseCost;
-        under.canSetOn = true;
+		under.movementCost = under.baseCost;
+		under.canSetOn = true;
 		if (tileManager.GetAt<SC_Construction>(under) == null)
-            under.attackable = true;
+			under.attackable = true;
 
-    }
-		
-    public SC_Weapon GetActiveWeapon() {
+	}
 
-        return isHero() ? ((SC_Hero)this).GetWeapon(true) : ((SC_Soldier)this).weapon;
+	public SC_Weapon GetActiveWeapon() {
 
-    }
+		return isHero() ? ((SC_Hero)this).GetWeapon(true) : ((SC_Soldier)this).weapon;
 
-    public bool HasRange() {
+	}
 
-        if (isHero())
-            return (((SC_Hero)this).weapon1.ranged || ((SC_Hero)this).weapon2.ranged);
-        else
-            return ((SC_Soldier)this).weapon.ranged;
+	public bool HasRange() {
 
-    }
+		if (isHero())
+			return (((SC_Hero)this).weapon1.ranged || ((SC_Hero)this).weapon2.ranged);
+		else
+			return ((SC_Soldier)this).weapon.ranged;
+
+	}
 
 	public virtual bool Hit(int damages, bool saving) {
 
@@ -359,47 +346,35 @@ public class SC_Character : NetworkBehaviour {
 
 	}
 
-    public bool isHero() {
+	public bool isHero() {
 
-        return (GetType().Equals(typeof(SC_Hero)) || GetType().IsSubclassOf(typeof(SC_Hero)));
+		return (GetType().Equals(typeof(SC_Hero)) || GetType().IsSubclassOf(typeof(SC_Hero)));
 
-    }
+	}
 
-    public virtual void Tire() {
+	public virtual void Tire() {
 
 		GetComponent<SpriteRenderer> ().color = tiredColor;
 
-    }
+	}
 
 	public virtual void UnTired() {
-		
+
 		GetComponent<SpriteRenderer> ().color = baseColor;
 
 	}
 
-    public bool GetCanMove() {
+	public bool GetCanMove() {
 
-        return canMove;
+		return canMove;
 
-    }
+	}
 
-    public void SetCanMove(bool c) {
+	public void SetCanMove(bool c) {
 
-        canMove = c;
+		canMove = c;
 
-    }
-
-    public bool IsReadyToMove() {
-
-        return readyToMove;
-
-    }
-
-    public void SetReadyToMove(bool r) {
-
-        readyToMove = r;
-
-    }
+	}
 
 	public void SetBaseColor(Color c) {
 

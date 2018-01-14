@@ -7,7 +7,7 @@ using System;
 public class SC_Tile_Manager : NetworkBehaviour {
 
 	public GameObject baseMapPrefab;
-	public GameObject PlainPrefab, ForestPrefab, MountainPrefab, palacePrefab;
+	public GameObject plainPrefab, ForestPrefab, MountainPrefab, palacePrefab;
 
 	[SyncVar]
 	public int xSize, ySize;
@@ -78,6 +78,78 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 	}
 	#endregion
+
+	public List<SC_Tile> GetRange(GameObject center) {
+
+		List<SC_Tile> range = new List<SC_Tile> ();
+
+		int x = (int)center.transform.position.x;
+		int y = (int)center.transform.position.y;
+
+		for (int i = (x - 2); i <= (x + 2); i++) {
+
+			for (int j = (y - 2); j <= (y + 2); j++) {
+
+				if ((i >= 0) && (i < xSize) && (j >= 0) && (j < ySize)) {
+
+					bool validTile = true;
+
+					if ( ( (i == (x - 2)) || (i == (x + 2)) ) && (j != y))	validTile = false;
+					if ( ( (j == (y - 2)) || (j == (y + 2)) ) && (i != x))	validTile = false;
+					if ( ( (i == (x - 1)) || (i == (x + 1)) ) && ( (j < (y - 1)) || (j > (y + 1)) ) ) validTile = false;
+					if ( ( (j == (y - 1)) || (j == (y + 1)) ) && ( (i < (x - 1)) || (i > (x + 1)) ) ) validTile = false;
+
+					if (validTile) range.Add (tiles [i, j]);
+
+				}
+
+			}
+
+		}
+
+		return range;
+
+	}
+
+	public List<SC_Tile> GetNeighbors(SC_Tile tileParam) {
+
+		List<SC_Tile> neighbors = new List<SC_Tile>();
+		int x = (int)tileParam.transform.position.x;
+		int y = (int)tileParam.transform.position.y;
+
+		if ((x - 1) >= 0)
+			neighbors.Add(tiles[x - 1, y]);
+
+		if ((x + 1) < tiles.GetLength(0))
+			neighbors.Add(tiles[x + 1, y]);
+
+		if ((y - 1) >= 0)
+			neighbors.Add(tiles[x, y - 1]);
+
+		if ((y + 1) < tiles.GetLength(1))
+			neighbors.Add(tiles[x, y + 1]);
+
+		return neighbors;
+
+	}
+
+	public bool TryToMoveCharacter(GameObject target) {
+
+		SC_Tile tile = GetTileAt (target);
+
+		if (tile.displayMovement) {
+
+			gameManager.GetCharacterToMove ().MoveTo (tile);
+
+			return true;
+
+		} else {
+
+			return false;
+
+		} 
+
+	}
 
 	public SC_Tile GetTileAt(GameObject g) {
 
