@@ -59,6 +59,13 @@ public class SC_Hero : SC_Character {
 
 	}
 
+	protected override void OnMouseDown () {
+
+		if(!gameManager.player.IsQin())
+			base.OnMouseDown ();
+
+	}
+
 	protected override void PrintMovements () {
 
 		if (canMove || (berserk && !berserkTurn)) {
@@ -99,7 +106,7 @@ public class SC_Hero : SC_Character {
 		uiManager.cancelAttackButton.SetActive (true);
 
 		foreach (SC_Tile tile in tileManager.tiles)
-			tile.RemoveFilter();
+			tile.RemoveFilters();
 
 		if ((gameManager.rangedAttack && weapon1.ranged) || (!gameManager.rangedAttack && !weapon1.IsBow ()))
 			uiManager.ShowWeapon (GetWeapon (true), true);

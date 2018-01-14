@@ -6,9 +6,9 @@ public class SC_Camera : MonoBehaviour {
 		
 	public float moveSpeed, zoomSpeed;
 
-	public void Setup(SC_GameManager gm) {
+	public void Setup(int sizeX, int sizeY) {
 
-		transform.position = new Vector3 ((gm.SizeMapX - 1) / 2, (gm.SizeMapY - 1) / 2, -16);
+		transform.position = new Vector3 ((sizeX - 1) / 2, (sizeY - 1) / 2, -16);
 
 	}
 

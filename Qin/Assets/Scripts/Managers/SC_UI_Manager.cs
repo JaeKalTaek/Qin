@@ -42,7 +42,7 @@ public class SC_UI_Manager : MonoBehaviour {
 	static SC_GameManager gameManager;
 	static SC_Tile_Manager tileManager;
 
-	public void SetupUI(SC_Player p) {
+	/*public void SetupUI(SC_Player p) {
 
 		if (gameManager == null)
 			gameManager = GetComponent<SC_GameManager> ();
@@ -53,6 +53,23 @@ public class SC_UI_Manager : MonoBehaviour {
 		player = p;
 
 		if (!player.IsQin()) {
+
+			usePower.SetActive (true);
+			endTurn.SetActive (true);
+
+		}
+
+	}*/
+
+	public void SetupUI(bool qin) {
+
+		if (gameManager == null)
+			gameManager = GetComponent<SC_GameManager> ();
+
+		if (tileManager == null)
+			tileManager = GetComponent<SC_Tile_Manager> ();
+
+		if (!qin) {
 
 			usePower.SetActive (true);
 			endTurn.SetActive (true);

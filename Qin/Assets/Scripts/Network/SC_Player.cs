@@ -11,16 +11,52 @@ public class SC_Player : NetworkBehaviour {
 	SC_GameManager gameManager;
 
 	public override void OnStartLocalPlayer () {
-
-		//if (isLocalPlayer)			
-			tag = "Player";
-
-		/*<SC_UI_Manager> ().SetupUI (this, qin);
+		
+		tag = "Player";
 
 		gameManager = FindObjectOfType<SC_GameManager> ();
 
-		SC_GameManager.GetInstance ().SetPlayer (this);*/
+		if(gameManager)
+			gameManager.player = this;
+
+		//<SC_UI_Manager> ().SetupUI (this, qin);
 		
+	}
+
+	#region Commands
+	[Command]
+	public void CmdDisplayMovement(GameObject tile) {
+
+		RpcDisplayMovement (tile);
+
+	}
+
+	[ClientRpc]
+	void RpcDisplayMovement(GameObject tile) {
+
+		tile.GetComponent<SC_Tile> ().DisplayMovement (true);
+
+	}
+
+	[Command]
+	public void CmdRemoveFilters(GameObject tile) {
+
+		RpcRemoveFilters (tile);
+
+	}
+
+	[ClientRpc]
+	void RpcRemoveFilters(GameObject tile) {
+
+		tile.GetComponent<SC_Tile> ().RemoveFilters ();
+
+	}
+	#endregion
+
+	public void SetGameManager(SC_GameManager gm) {
+
+		gameManager = gm; 
+
 	}
 
 	public bool Turn() {

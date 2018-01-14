@@ -75,7 +75,7 @@ public class SC_Tile : NetworkBehaviour {
 			} else {
 
 				foreach (SC_Tile tile in tileManager.tiles)
-					tile.RemoveFilter ();
+					tile.RemoveFilters ();
 
 				gameManager.Attack ();
 
@@ -85,7 +85,7 @@ public class SC_Tile : NetworkBehaviour {
 
 			SC_Qin.ChangeEnergy (25);
 
-			RemoveFilter ();
+			RemoveFilters ();
 
 			Destroy (tileManager.GetAt<SC_Character>(this));
 
@@ -106,7 +106,7 @@ public class SC_Tile : NetworkBehaviour {
 
 	}
 
-	public void RemoveFilter() {
+	public void RemoveFilters() {
 
 		displayMovement = false;
 		displayConstructable = false;
@@ -121,14 +121,13 @@ public class SC_Tile : NetworkBehaviour {
 
 	public void DisplayMovement(bool valid) { 
 
-		displayMovement = valid;
-
-		/*if(valid) {
-
+		if (valid) {
+			
 			displayMovement = true;
-			SetFilter("T_DisplayMovement");
 
-        }*/
+			SetFilter ("T_DisplayMovement");
+
+		}
 
 	}
 

@@ -83,54 +83,58 @@ public class SC_Character : NetworkBehaviour {
 
 		if (!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject ()) {
 
-			SC_Tile under = tileManager.GetTileAt (gameObject);
+			if (gameManager.player.Turn()) {
 
-			if (under.displayMovement) {
+				SC_Tile under = tileManager.GetTileAt (gameObject);
 
-				MoveTo (under);
+				if (under.displayMovement) {
 
-			} else if (under.GetDisplayAttack ()) {
+					MoveTo (under);
 
-				SC_Character attackingCharacter = GetAttackingCharacter ();
-				SC_Tile attackingCharacterTile = tileManager.GetTileAt (attackingCharacter.gameObject);
-				gameManager.rangedAttack = !gameManager.IsNeighbor (attackingCharacterTile, under);
+				} else if (under.GetDisplayAttack ()) {
 
-				attackingCharacter.attackTarget = under;
+					SC_Character attackingCharacter = GetAttackingCharacter ();
+					SC_Tile attackingCharacterTile = tileManager.GetTileAt (attackingCharacter.gameObject);
+					gameManager.rangedAttack = !gameManager.IsNeighbor (attackingCharacterTile, under);
 
-				if (attackingCharacter.isHero ()) {
+					attackingCharacter.attackTarget = under;
 
-					((SC_Hero)attackingCharacter).ChooseWeapon ();
+					if (attackingCharacter.isHero ()) {
+
+						((SC_Hero)attackingCharacter).ChooseWeapon ();
+
+					} else {
+
+						foreach (SC_Tile tile in tileManager.tiles)
+							tile.RemoveFilters ();
+
+						gameManager.Attack ();
+
+					}
+
+				} else if (under.displayConstructable && (((SC_Qin.GetEnergy () - 50) > 0) || gameManager.IsBastion ()) && !isHero ()) {
+
+					gameManager.ConstructAt (under);
+
+					gameManager.StopConstruction ();
+
+					canMove = false;
+
+				} else if (under.displaySacrifice) {
+
+					SC_Qin.ChangeEnergy (25);
+
+					canMove = false;
+
+					under.RemoveFilters ();
+
+					DestroyCharacter ();
 
 				} else {
 
-					foreach (SC_Tile tile in tileManager.tiles)
-						tile.RemoveFilter ();
-
-					gameManager.Attack ();
+					PrintMovements ();
 
 				}
-
-			} else if (under.displayConstructable && (((SC_Qin.GetEnergy () - 50) > 0) || gameManager.IsBastion ()) && !isHero ()) {
-
-				gameManager.ConstructAt (under);
-
-				gameManager.StopConstruction ();
-
-				canMove = false;
-
-			} else if (under.displaySacrifice) {
-
-				SC_Qin.ChangeEnergy (25);
-
-				canMove = false;
-
-				under.RemoveFilter ();
-
-				DestroyCharacter ();
-
-			} else {
-
-				PrintMovements ();
 
 			}
 
@@ -150,7 +154,7 @@ public class SC_Character : NetworkBehaviour {
 	public virtual void MoveTo(SC_Tile target) {
 
 		foreach (SC_Tile tile in tileManager.tiles)
-			tile.RemoveFilter();
+			tile.RemoveFilters();
 
 		lastPos = tileManager.GetTileAt (gameObject);
 		lastPos.movementCost = lastPos.baseCost;

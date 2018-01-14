@@ -7,8 +7,7 @@ using UnityEngine.Networking;
 public class SC_GameManager : NetworkBehaviour {
 
 	//Map
-    public int SizeMapX, SizeMapY;
-	public SC_Tile[,] tiles;
+    //public int SizeMapX, SizeMapY;
 
     //Prefabs
 	public GameObject baseMapPrefab;
@@ -41,7 +40,9 @@ public class SC_GameManager : NetworkBehaviour {
 	public bool cantCancelMovement;
 	List<SC_Tile> cursedTiles;
 
-	SC_Player player;
+	[SerializeField]
+	public SC_Player player { get { return Player; } set { Player = value; } }
+	SC_Player Player;
 
 	SC_UI_Manager uiManager;
 
@@ -50,12 +51,6 @@ public class SC_GameManager : NetworkBehaviour {
 	SC_Character characterToMove;
 
 	#region Setup
-	/*void Update() {
-
-		print("Game manager is active");
-
-	}*/
-
     void Start() {
 
 		turn = 1;
@@ -74,14 +69,13 @@ public class SC_GameManager : NetworkBehaviour {
 		if (instance == null)
 			instance = this;
 
-		uiManager = GameObject.FindObjectOfType<SC_UI_Manager> ();
-
-		FindObjectOfType<SC_Camera> ().Setup (this);
-
 		if(GameObject.FindGameObjectWithTag ("Player"))
 			player = GameObject.FindGameObjectWithTag ("Player").GetComponent<SC_Player> ();
 
-		if (player != null) {
+		if (player)
+			player.SetGameManager (this);
+
+		/*if (player != null) {
 
 			uiManager = GetComponent<SC_UI_Manager> ();
 			uiManager.SetupUI (player);
@@ -90,13 +84,16 @@ public class SC_GameManager : NetworkBehaviour {
 
 			print ("Player is null");
 
-		}
+		}*/
+
+		uiManager = GetComponent<SC_UI_Manager> ();
+		uiManager.SetupUI (FindObjectOfType<SC_Network_Manager>().IsQinHost() == isServer);
 
     }
 
 	void GenerateMap() {
 
-		tiles = /*(baseMapPrefab == null) ? new SC_Tile[SizeMapX, SizeMapY] :*/ new SC_Tile[baseMapPrefab.GetComponent<SC_MapPrefab>().xSize, baseMapPrefab.GetComponent<SC_MapPrefab>().ySize];
+		//tiles = /*(baseMapPrefab == null) ? new SC_Tile[SizeMapX, SizeMapY] :*/ new SC_Tile[baseMapPrefab.GetComponent<SC_MapPrefab>().xSize, baseMapPrefab.GetComponent<SC_MapPrefab>().ySize];
 
 		/*if (baseMapPrefab == null) {
 
@@ -125,7 +122,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 				GameObject tilePrefab = (eTile.tileType == tileType.Plain) ? plainPrefab : (eTile.tileType == tileType.Forest) ? forestPrefab : (eTile.tileType == tileType.Mountain) ? mountainPrefab : palacePrefab;
 
-				GameObject go = Instantiate (tilePrefab, eTile.transform.position, eTile.transform.rotation,  GameObject.Find ("Tiles").transform);
+				GameObject go = Instantiate (tilePrefab, new Vector3(eTile.transform.position.x, eTile.transform.position.y, 0), eTile.transform.rotation,  GameObject.Find ("Tiles").transform);
 
 				NetworkServer.Spawn (go);
 
@@ -136,8 +133,6 @@ public class SC_GameManager : NetworkBehaviour {
 	}
 
 	void SetupTileManager() {
-
-		print ("Setip tile manager");
 
 		GameObject tm = Instantiate (tileManagerPrefab);
 		SC_Tile_Manager stm = tm.GetComponent<SC_Tile_Manager> ();
@@ -151,6 +146,8 @@ public class SC_GameManager : NetworkBehaviour {
 
 			stm.xSize = baseMapPrefab.GetComponent<SC_MapPrefab>().xSize;
 			stm.ySize = baseMapPrefab.GetComponent<SC_MapPrefab>().ySize;
+
+		FindObjectOfType<SC_Camera> ().Setup (stm.xSize, stm.ySize);
 
 		//}
 
@@ -297,21 +294,25 @@ public class SC_GameManager : NetworkBehaviour {
         
 		characterToMove = target;
 
-        foreach (SC_Tile tile in tiles)
-            tile.RemoveFilter();
+		foreach (SC_Tile tile in tileManager.tiles)
+			player.CmdRemoveFilters (tile.gameObject);
+			//tile.RemoveFilter();
         
 		uiManager.HideWeapons();
 		uiManager.villagePanel.SetActive (false);
 		uiManager.cancelMovementButton.SetActive (false);
 		uiManager.cancelAttackButton.SetActive (false);
 
-        CalcRange(tiles[(int)target.transform.position.x, (int)target.transform.position.y], target);
-        
-        foreach (SC_Tile tile in closedList)
-            tile.DisplayMovement(tile.canSetOn);
+		SC_Tile tileTarget = tileManager.GetTileAt (target.gameObject);
 
-		tileManager.GetTileAt (target.gameObject).displayMovement = true;
-		tileManager.GetTileAt (target.gameObject).SetFilter("T_DisplayMovement");
+		CalcRange(tileTarget, target);
+        
+		foreach (SC_Tile tile in closedList)
+			player.CmdDisplayMovement (tile.gameObject);
+			//tile.DisplayMovement(tile.canSetOn);
+
+		//tileTarget.DisplayMovement (true);
+		player.CmdDisplayMovement (tileTarget.gameObject);
 
     }
 
@@ -323,20 +324,20 @@ public class SC_GameManager : NetworkBehaviour {
         bool berserk = false;
         if (target.isHero())
             berserk = (((SC_Hero)target).berserk);
-		ExpandTile(aStartingTile, target.coalition, berserk);
+		ExpandTile(aStartingTile, berserk);
 
         while (openList.Count > 0) {
 			
             openList.Sort((a, b) => movementPoints[a].CompareTo(movementPoints[b]));
             var tile = openList[openList.Count - 1];
             openList.RemoveAt(openList.Count - 1);
-			ExpandTile(tile, target.coalition, berserk);
+			ExpandTile(tile, berserk);
 
         }
 
     }
     
-    void ExpandTile(SC_Tile aTile, bool targetCoalition, bool berserk) {
+    void ExpandTile(SC_Tile aTile, bool berserk) {
         
         float parentPoints = movementPoints[aTile];
 		closedList.Add(aTile);
@@ -368,13 +369,13 @@ public class SC_GameManager : NetworkBehaviour {
         if ((x - 1) >= 0)
 			neighbors.Add(tileManager.tiles[x - 1, y]);
 
-        if ((x + 1) < SizeMapX)
+		if ((x + 1) < tileManager.xSize)
 			neighbors.Add(tileManager.tiles[x + 1, y]);
 
         if ((y - 1) >= 0)
 			neighbors.Add(tileManager.tiles[x, y - 1]);
 
-        if ((y + 1) < SizeMapY)
+		if ((y + 1) < tileManager.ySize)
 			neighbors.Add(tileManager.tiles[x, y + 1]);
 
         return neighbors;
@@ -391,8 +392,8 @@ public class SC_GameManager : NetworkBehaviour {
 
 	    turn++;
 
-        foreach (SC_Tile tile in tiles)
-            tile.RemoveFilter();
+		foreach (SC_Tile tile in tileManager.tiles)
+            tile.RemoveFilters();
 
         foreach (SC_Character character in FindObjectsOfType<SC_Character>()) {
 
@@ -478,8 +479,8 @@ public class SC_GameManager : NetworkBehaviour {
 
 	public void DisplayConstructableTiles() {
 
-		foreach (SC_Tile tile in tiles)
-            tile.RemoveFilter();
+		foreach (SC_Tile tile in tileManager.tiles)
+            tile.RemoveFilters();
 
         SC_Character.ResetAttacker();
 
@@ -518,7 +519,7 @@ public class SC_GameManager : NetworkBehaviour {
 
         } else {
 			
-            foreach (SC_Tile tile in tiles)
+			foreach (SC_Tile tile in tileManager.tiles)
                 if (tile.constructable) constructableTiles.Add(tile);
             
         }
@@ -611,8 +612,8 @@ public class SC_GameManager : NetworkBehaviour {
 
 	public void StopConstruction() {
 
-		foreach (SC_Tile tile in tiles)
-			tile.RemoveFilter();
+		foreach (SC_Tile tile in tileManager.tiles)
+			tile.RemoveFilters();
 
 		if (bastion) {
 
@@ -635,8 +636,8 @@ public class SC_GameManager : NetworkBehaviour {
 
 	public void EndConstruction() {
 
-		foreach (SC_Tile tile in tiles)
-			tile.RemoveFilter();
+		foreach (SC_Tile tile in tileManager.tiles)
+			tile.RemoveFilters();
 
 		uiManager.ToggleButton ("construct");
 
@@ -650,8 +651,8 @@ public class SC_GameManager : NetworkBehaviour {
 
 		uiManager.cancelMovementButton.SetActive (false);
 
-        foreach (SC_Tile tile in tiles)
-			tile.RemoveFilter();
+		foreach (SC_Tile tile in tileManager.tiles)
+			tile.RemoveFilters();
 
 		SC_Character.ResetAttacker();
 
@@ -668,8 +669,8 @@ public class SC_GameManager : NetworkBehaviour {
 
 		uiManager.ToggleButton ("sacrifice");
 
-		foreach (SC_Tile tile in tiles)
-			tile.RemoveFilter();
+		foreach (SC_Tile tile in tileManager.tiles)
+			tile.RemoveFilters();
 
 	}
 
@@ -694,9 +695,9 @@ public class SC_GameManager : NetworkBehaviour {
 
 			}
             
-            foreach (SC_Tile tile in tiles) {
+			foreach (SC_Tile tile in tileManager.tiles) {
 
-                tile.RemoveFilter();
+                tile.RemoveFilters();
 
                 if (tile.attackable && tile.constructable) {
 
@@ -708,7 +709,7 @@ public class SC_GameManager : NetworkBehaviour {
             }
 
             foreach(SC_Wall wall in FindObjectsOfType<SC_Wall>())
-				tileManager.GetTileAt(wall.gameObject).RemoveFilter();
+				tileManager.GetTileAt(wall.gameObject).RemoveFilters();
 
 			uiManager.ToggleButton ("powerQin");
 
@@ -720,15 +721,15 @@ public class SC_GameManager : NetworkBehaviour {
 
 		uiManager.ToggleButton ("powerQin");
 
-		foreach (SC_Tile tile in tiles)
-			tile.RemoveFilter ();
+		foreach (SC_Tile tile in tileManager.tiles)
+			tile.RemoveFilters ();
 
 	}
 
 	public void CheckAttack(SC_Character attacker) {
 
-        foreach (SC_Tile tile in tiles)
-            tile.RemoveFilter();
+		foreach (SC_Tile tile in tileManager.tiles)
+            tile.RemoveFilters();
 
 		uiManager.HideWeapons();
 
@@ -974,7 +975,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 			for (int j = (y - 2); j <= (y + 2); j++) {
 
-				if ((i >= 0) && (i < SizeMapX) && (j >= 0) && (j < SizeMapY)) {
+				if ((i >= 0) && (i < tileManager.xSize) && (j >= 0) && (j < tileManager.ySize)) {
 					
 					bool validTile = true;
 
@@ -983,7 +984,7 @@ public class SC_GameManager : NetworkBehaviour {
 					if ( ( (i == (x - 1)) || (i == (x + 1)) ) && ( (j < (y - 1)) || (j > (y + 1)) ) ) validTile = false;
 					if ( ( (j == (y - 1)) || (j == (y + 1)) ) && ( (i < (x - 1)) || (i > (x + 1)) ) ) validTile = false;
 
-					if (validTile) range.Add (tiles [i, j]);
+					if (validTile) range.Add (tileManager.tiles [i, j]);
 
 				}
 
@@ -1095,8 +1096,8 @@ public class SC_GameManager : NetworkBehaviour {
 			uiManager.ToggleButton ("construct");
 			uiManager.ToggleButton("sacrifice");
 
-            foreach (SC_Tile tile in tiles)
-                tile.RemoveFilter();
+			foreach (SC_Tile tile in tileManager.tiles)
+                tile.RemoveFilters();
 
             SC_Character.ResetAttacker();
 
@@ -1116,8 +1117,8 @@ public class SC_GameManager : NetworkBehaviour {
 
 		SC_Character.ResetAttacker ();
 
-		foreach (SC_Tile tile in tiles)
-			tile.RemoveFilter ();
+		foreach (SC_Tile tile in tileManager.tiles)
+			tile.RemoveFilters ();
 
 		SC_Tile leavingTile = tileManager.GetTileAt (characterToMove.gameObject);
 
@@ -1226,12 +1227,6 @@ public class SC_GameManager : NetworkBehaviour {
 	public void SetCharacterToMove(SC_Character chara) {
 
 		characterToMove = chara;
-
-	}
-
-	public SC_Player GetPlayer() {
-
-		return player;
 
 	}
 

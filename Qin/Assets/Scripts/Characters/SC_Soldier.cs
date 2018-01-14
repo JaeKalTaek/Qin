@@ -61,6 +61,13 @@ public class SC_Soldier : SC_Character {
 
     }
 
+	protected override void OnMouseDown () {
+
+		if(gameManager.player.IsQin())
+			base.OnMouseDown ();
+
+	}
+
 	protected override void PrintMovements () {
 
 		if (canMove) {
