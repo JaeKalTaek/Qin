@@ -131,6 +131,22 @@ public class SC_Tile : NetworkBehaviour {
 
 	}
 
+	public void DisplayAttack() { 
+
+		displayAttack = true;
+
+		SetFilter ("T_DisplayAttack");
+
+	}
+
+	public void DisplayConstructable() { 
+
+		displayConstructable = true;
+
+		SetFilter ("T_CanConstruct");
+
+	}
+
 	public bool Qin() {
 
 		Vector3 qinPos = FindObjectOfType<SC_Qin> ().transform.position;
@@ -150,27 +166,15 @@ public class SC_Tile : NetworkBehaviour {
 
 	}
 
-	public bool CanConstructOn() {
+	/*public bool GetDisplayConstructable() {
 
 		return displayConstructable;
 
-	}
-
-	public void SetCanConstruct(bool c) {
-
-		displayConstructable = c;
-
-	}
+	}*/
 
 	public bool GetDisplayAttack() {
 
 		return displayAttack;
-
-	}
-
-	public void SetDisplayAttack(bool d) {
-
-		displayAttack = d;
 
 	}
 

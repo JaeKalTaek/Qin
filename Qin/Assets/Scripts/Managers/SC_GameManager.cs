@@ -307,12 +307,30 @@ public class SC_GameManager : NetworkBehaviour {
 
 		CalcRange(tileTarget, target);
         
-		foreach (SC_Tile tile in closedList)
-			player.CmdDisplayMovement (tile.gameObject);
+		int[] xArray = new int[closedList.Count + 1];
+		int[] yArray = new int[closedList.Count + 1];
+
+		int i = 0;
+
+		foreach (SC_Tile tile in closedList) {
+
+			xArray [i] = (int)tile.transform.position.x;
+			yArray [i] = (int)tile.transform.position.y;
+
+			i++;
+
+			//player.CmdDisplayMovement (tile.gameObject);
 			//tile.DisplayMovement(tile.canSetOn);
 
+		}			
+			
+		xArray [i] = (int)tileTarget.transform.position.x;
+		yArray [i] = (int)tileTarget.transform.position.y;
+
+		player.CmdDisplayMovement (xArray, yArray);
+
+		//player.CmdDisplayMovement (tileTarget.gameObject);
 		//tileTarget.DisplayMovement (true);
-		player.CmdDisplayMovement (tileTarget.gameObject);
 
     }
 
@@ -524,12 +542,8 @@ public class SC_GameManager : NetworkBehaviour {
             
         }
         
-		foreach (SC_Tile tile in constructableTiles) {
-
-			tile.SetCanConstruct (true);
-			tile.SetFilter("T_CanConstruct");
-
-		}
+		foreach (SC_Tile tile in constructableTiles)
+			player.CmdDisplayConstructable (tile.gameObject);
 
 	}
 
@@ -749,12 +763,8 @@ public class SC_GameManager : NetworkBehaviour {
 		foreach (SC_Tile tile in attackableTilesTemp)
 			if (!tile.attackable) attackableTiles.Remove (tile);
 
-		foreach (SC_Tile tile in attackableTiles) {
-
-			tile.SetDisplayAttack (true);
-			tile.SetFilter("T_DisplayAttack");
-
-		}
+		foreach (SC_Tile tile in attackableTiles)
+			player.CmdDisplayAttack (tile.gameObject);
 
 	}
 
@@ -1118,7 +1128,8 @@ public class SC_GameManager : NetworkBehaviour {
 		SC_Character.ResetAttacker ();
 
 		foreach (SC_Tile tile in tileManager.tiles)
-			tile.RemoveFilters ();
+			player.CmdRemoveFilters (tile.gameObject);
+			//tile.RemoveFilters ();
 
 		SC_Tile leavingTile = tileManager.GetTileAt (characterToMove.gameObject);
 
@@ -1128,7 +1139,8 @@ public class SC_GameManager : NetworkBehaviour {
             leavingTile.attackable = true;
 		leavingTile.constructable = !leavingTile.isPalace ();
 
-		characterToMove.transform.SetPos (characterToMove.lastPos.transform);
+		player.CmdMove (characterToMove.gameObject, characterToMove.lastPos.transform.position);
+		//characterToMove.transform.SetPos (characterToMove.lastPos.transform);
 
 		characterToMove.lastPos.movementCost = 5000;
 		characterToMove.lastPos.canSetOn = false;

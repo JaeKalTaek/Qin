@@ -21,5 +21,5 @@ public static class SC_ExtensionMethods {
 		trans.position = new Vector3 (v2.x, v2.y, trans.position.z);
 
 	}
-
+		
 }

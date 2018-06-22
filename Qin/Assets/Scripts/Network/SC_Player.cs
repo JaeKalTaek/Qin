@@ -10,6 +10,8 @@ public class SC_Player : NetworkBehaviour {
 
 	SC_GameManager gameManager;
 
+	SC_Tile_Manager tileManager;
+
 	public override void OnStartLocalPlayer () {
 		
 		tag = "Player";
@@ -19,22 +21,69 @@ public class SC_Player : NetworkBehaviour {
 		if(gameManager)
 			gameManager.player = this;
 
+		tileManager = FindObjectOfType<SC_Tile_Manager> ();
+
 		//<SC_UI_Manager> ().SetupUI (this, qin);
 		
 	}
 
 	#region Commands
-	[Command]
+	/*[Command]
 	public void CmdDisplayMovement(GameObject tile) {
 
 		RpcDisplayMovement (tile);
 
+	}*/
+
+	[Command]
+	public void CmdDisplayMovement(int[] xArray, int[] yArray) {
+
+		RpcDisplayMovement (xArray, yArray);
+
 	}
 
-	[ClientRpc]
+	/*[ClientRpc]
 	void RpcDisplayMovement(GameObject tile) {
 
 		tile.GetComponent<SC_Tile> ().DisplayMovement (true);
+
+	}*/
+
+	[ClientRpc]
+	void RpcDisplayMovement(int[] xArray, int[] yArray) {
+
+		//tile.GetComponent<SC_Tile> ().DisplayMovement (true);
+
+		for (int i = 0; i < xArray.Length; i++)
+			tileManager.GetTileAt (xArray [0], yArray [0]).DisplayMovement (true);
+
+	}
+
+	[Command]
+	public void CmdDisplayAttack(GameObject tile) {
+
+		RpcDisplayAttack (tile);
+
+	}
+
+	[ClientRpc]
+	void RpcDisplayAttack(GameObject tile) {
+
+		tile.GetComponent<SC_Tile> ().DisplayAttack ();
+
+	}
+
+	[Command]
+	public void CmdDisplayConstructable(GameObject tile) {
+
+		RpcDisplayConstructable (tile);
+
+	}
+
+	[ClientRpc]
+	void RpcDisplayConstructable(GameObject tile) {
+
+		tile.GetComponent<SC_Tile> ().DisplayConstructable ();
 
 	}
 
@@ -49,6 +98,13 @@ public class SC_Player : NetworkBehaviour {
 	void RpcRemoveFilters(GameObject tile) {
 
 		tile.GetComponent<SC_Tile> ().RemoveFilters ();
+
+	}
+
+	[Command]
+	public void CmdMove(GameObject toMove, Vector3 pos) {
+
+		toMove.transform.SetPos (pos);
 
 	}
 	#endregion

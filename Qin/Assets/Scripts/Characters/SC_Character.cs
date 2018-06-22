@@ -154,7 +154,8 @@ public class SC_Character : NetworkBehaviour {
 	public virtual void MoveTo(SC_Tile target) {
 
 		foreach (SC_Tile tile in tileManager.tiles)
-			tile.RemoveFilters();
+			gameManager.player.CmdRemoveFilters (tile.gameObject);
+			//tile.RemoveFilters();
 
 		lastPos = tileManager.GetTileAt (gameObject);
 		lastPos.movementCost = lastPos.baseCost;
@@ -169,18 +170,21 @@ public class SC_Character : NetworkBehaviour {
 
 	IEnumerator MoveOneTile(SC_Tile leavingTile, SC_Tile target, bool last, float delay) {
 
-		yield return new WaitForSeconds(delay);
+		//yield return new WaitForSeconds(delay);
 
 		float startTime = Time.time;
 
 		while (Time.time < startTime + 0.15f) {
 
-			transform.SetPos(Vector3.Lerp(transform.position, target.transform.position, (Time.time - startTime) / 0.2f));
+			gameManager.player.CmdMove (gameObject, Vector3.Lerp (transform.position, target.transform.position, (Time.time - startTime) / 0.2f));
+			//transform.SetPos(Vector3.Lerp(transform.position, target.transform.position, (Time.time - startTime) / 0.2f));
+
 			yield return null;
 
 		}
 
-		transform.SetPos(target.transform);
+		gameManager.player.CmdMove (gameObject, target.transform.position);
+		//transform.SetPos(target.transform);
 
 		if(last) {
 
@@ -199,15 +203,16 @@ public class SC_Character : NetworkBehaviour {
 
 				canMove = (((SC_Hero)this).berserk && !((SC_Hero)this).berserkTurn);
 
-				if (tileManager.GetAt<SC_Construction>(target) != null) {
+				if (tileManager.GetAt<SC_Construction>(target)) {
 
-					if (tileManager.GetAt<SC_Village>(target) != null) {
+					if (tileManager.GetAt<SC_Village>(target)) {
 
 						uiManager.villagePanel.SetActive (true);
 
 					} else { 
 
 						gameManager.cantCancelMovement = true;
+
 						gameManager.CheckAttack (this);
 
 					}
@@ -224,7 +229,7 @@ public class SC_Character : NetworkBehaviour {
 
 			} else {
 
-				if (tileManager.GetAt<SC_Convoy>(target) != null) {
+				if (tileManager.GetAt<SC_Convoy>(target)) {
 
 					tileManager.GetAt<SC_Convoy>(target).DestroyConvoy ();
 					gameManager.cantCancelMovement = true;
