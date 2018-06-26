@@ -27,8 +27,15 @@ namespace Prototype.NetworkLobby
         public RectTransform mainMenuPanel;
         public RectTransform lobbyPanel;
 
-        public LobbyInfoPanel infoPanel;
-        public LobbyCountdownPanel countdownPanel;
+        public LobbyInfoPanel infoPanel;        
+
+		public class LobbyCountdownPanel : MonoBehaviour
+		{
+			public Text UIText;
+		}
+
+		public GameObject countdownPanel;
+
         public GameObject addPlayerButton;
 
         protected RectTransform currentPanel;
@@ -51,12 +58,9 @@ namespace Prototype.NetworkLobby
         
         protected ulong _currentMatchID;
 
-        protected LobbyHook _lobbyHooks;
-
         void Start()
         {
             s_Singleton = this;
-            _lobbyHooks = GetComponent<Prototype.NetworkLobby.LobbyHook>();
 
 			currentPanel = mainMenu;
 
@@ -337,16 +341,22 @@ namespace Prototype.NetworkLobby
 
         }
 
-        public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
-        {
-            //This hook allows you to apply state data from the lobby-player to the game-player
-            //just subclass "LobbyHook" and add it to the lobby object.
+		public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
+		{
+			LobbyPlayer lobby = lobbyPlayer.GetComponent<LobbyPlayer>();
+			/*NetworkSpaceship spaceship = gamePlayer.GetComponent<NetworkSpaceship>();
 
-            if (_lobbyHooks)
-                _lobbyHooks.OnLobbyServerSceneLoadedForPlayer(this, lobbyPlayer, gamePlayer);
+			spaceship.name = lobby.name;
+			spaceship.color = lobby.playerColor;
+			spaceship.score = 0;
+			spaceship.lifeCount = 3;*/
 
-            return true;
-        }
+			SC_Player p = gamePlayer.GetComponent<SC_Player> ();
+
+			p.side = lobby.playerSide;
+
+			return true;
+		}
 
         // --- Countdown management
 
