@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4248336690770014}
   - component: {fileID: 114554336070224978}
+  - component: {fileID: 114377495257782562}
   m_Layer: 0
   m_Name: TileManager
   m_TagString: Untagged
@@ -40,6 +41,38 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114377495257782562
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1194137946969194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 233
+    i1: 128
+    i2: 72
+    i3: 123
+    i4: 154
+    i5: 246
+    i6: 196
+    i7: 212
+    i8: 24
+    i9: 179
+    i10: 164
+    i11: 151
+    i12: 10
+    i13: 105
+    i14: 50
+    i15: 148
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!114 &114554336070224978
 MonoBehaviour:
   m_ObjectHideFlags: 1

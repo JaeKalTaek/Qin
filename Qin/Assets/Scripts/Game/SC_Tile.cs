@@ -16,19 +16,6 @@ public class SC_Tile : NetworkBehaviour {
 
 	}
 
-	void OnMouseDown() {
-
-		CmdMouseDown ();
-
-	}
-
-	[Command]
-	void CmdMouseDown() {
-
-		status = (status == "") ? "destination" : "";
-
-	}
-
 	void OnStatusChanged(string newStatus) {
 
 		status = newStatus;
