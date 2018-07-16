@@ -55,7 +55,7 @@ public class SC_Player : NetworkBehaviour {
 		//tile.GetComponent<SC_Tile> ().DisplayMovement (true);
 
 		for (int i = 0; i < xArray.Length; i++)
-			tileManager.GetTileAt (xArray [0], yArray [0]).DisplayMovement (true);
+			tileManager.GetTileAt (xArray [i], yArray [i]).DisplayMovement ();
 
 	}
 

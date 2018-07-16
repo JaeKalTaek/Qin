@@ -7,30 +7,35 @@ using UnityEngine.Networking;
 [System.Serializable]
 public class SC_Tile : NetworkBehaviour {
 
-	[HideInInspector]
-	public bool displayMovement;
-	[HideInInspector]
-	public bool constructable;
+	public bool displayMovement { get; set; }
+
+	public bool constructable { get; set; }
+
 	bool displayAttack;
-	[HideInInspector]
-	public bool displayConstructable, displaySacrifice, displayResurrection;
+
+	public bool displayConstructable { get; set; }
+
+	public bool displaySacrifice { get; set; }
+
+	public bool displayResurrection { get; set; }
+
 	public int baseCost;
-	[HideInInspector]
-	public int movementCost;
-	[HideInInspector]
-	public bool canSetOn;
-	[HideInInspector]
-	public bool attackable;
-	[HideInInspector]
-	public SC_Tile parent;
 
-	SC_GameManager gameManager;
+	public int movementCost  { get; set; }
 
-	SC_Tile_Manager tileManager;
+	public bool canSetOn  { get; set; }
+
+	public bool attackable  { get; set; }
+
+	public SC_Tile parent  { get; set; }
+
+	static SC_GameManager gameManager;
+
+	static SC_Tile_Manager tileManager;
 
 	void Awake() {
 
-		constructable = !(name.Contains("Palace"));
+		constructable = !name.Contains("Palace");
 
 		movementCost = baseCost;
 
@@ -42,15 +47,17 @@ public class SC_Tile : NetworkBehaviour {
 
 	void Start() {
 
-		gameManager = GameObject.FindObjectOfType<SC_GameManager> ();
+		if(gameManager == null)
+			gameManager = GameObject.FindObjectOfType<SC_GameManager> ();
 
-		tileManager = GameObject.FindObjectOfType<SC_Tile_Manager> ();
+		if(tileManager == null)
+			tileManager = GameObject.FindObjectOfType<SC_Tile_Manager> ();
 
 	}
 
 	void OnMouseDown() {
 
-		if ((displayConstructable) && (((SC_Qin.GetEnergy () - 50) > 0) || gameManager.IsBastion ())) {
+		if (displayConstructable && (((SC_Qin.GetEnergy () - 50) > 0) || gameManager.IsBastion ())) {
 
 			gameManager.ConstructAt (this);
 
@@ -102,7 +109,7 @@ public class SC_Tile : NetworkBehaviour {
 	public void SetFilter(string filterName) {
 
 		foreach(SpriteRenderer sprite in GetComponentsInChildren<SpriteRenderer>())
-			if (sprite.name.Equals(filterName)) sprite.enabled = true;
+			sprite.enabled = sprite.name.Equals(filterName);
 
 	}
 
@@ -119,15 +126,11 @@ public class SC_Tile : NetworkBehaviour {
 
 	}
 
-	public void DisplayMovement(bool valid) { 
-
-		if (valid) {
+	public void DisplayMovement() { 
 			
-			displayMovement = true;
+		displayMovement = true;
 
-			SetFilter ("T_DisplayMovement");
-
-		}
+		SetFilter ("T_DisplayMovement");
 
 	}
 
@@ -156,7 +159,7 @@ public class SC_Tile : NetworkBehaviour {
 
 	public bool IsEmpty() {
 
-		return tileManager.GetAt<MonoBehaviour> (this);
+		return tileManager.GetAt<MonoBehaviour> (this) == null;
 
 	}
 

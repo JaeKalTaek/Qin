@@ -16,6 +16,8 @@ public class SC_Network_Manager : NetworkLobbyManager {
 
 		SceneManager.activeSceneChanged += OnSceneChanged;
 
+		Application.wantsToQuit += WantsToQuit;
+
 	}
 
 	public override void OnStopClient () {
@@ -132,15 +134,19 @@ public class SC_Network_Manager : NetworkLobbyManager {
 
 	}
 
-	void OnApplicationQuit() {
+	bool WantsToQuit() {
 
 		if ((!quitting) && isNetworkActive) {
 
 			quitting = true;
 
-			Application.CancelQuit ();
-
 			CancelMatchmaking ();
+
+			return false;
+
+		} else {
+
+			return true;
 
 		}
 

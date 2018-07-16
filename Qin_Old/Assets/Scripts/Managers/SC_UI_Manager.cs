@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using UnityEngine.Networking;
 
 public class SC_UI_Manager : MonoBehaviour {
+
+	[Header("Other")]
+	public GameObject loadingPanel;
 
 	[Header("Game")]
 	public Text turns;

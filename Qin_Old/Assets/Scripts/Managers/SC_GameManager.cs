@@ -89,7 +89,17 @@ public class SC_GameManager : NetworkBehaviour {
 		uiManager = GetComponent<SC_UI_Manager> ();
 		uiManager.SetupUI (FindObjectOfType<SC_Network_Manager>().IsQinHost() == isServer);
 
+		if (isServer)
+			RpcFinishLoading ();
+
     }
+
+	[ClientRpc]
+	void RpcFinishLoading() {
+
+		uiManager.loadingPanel.SetActive(false);
+
+	}
 
 	void GenerateMap() {
 
