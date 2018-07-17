@@ -55,6 +55,12 @@ public class SC_GameManager : NetworkBehaviour {
 
 		turn = 1;
 
+		if(GameObject.FindGameObjectWithTag ("Player"))
+			player = GameObject.FindGameObjectWithTag ("Player").GetComponent<SC_Player> ();
+
+		if (player)
+			player.SetGameManager (this);
+
 		if (isServer) {
 
 			GenerateMap ();
@@ -69,12 +75,6 @@ public class SC_GameManager : NetworkBehaviour {
 		if (instance == null)
 			instance = this;
 
-		if(GameObject.FindGameObjectWithTag ("Player"))
-			player = GameObject.FindGameObjectWithTag ("Player").GetComponent<SC_Player> ();
-
-		if (player)
-			player.SetGameManager (this);
-
 		/*if (player != null) {
 
 			uiManager = GetComponent<SC_UI_Manager> ();
@@ -86,7 +86,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 		}*/
 
-		uiManager = GetComponent<SC_UI_Manager> ();
+		uiManager = FindObjectOfType<SC_UI_Manager> (); //GetComponent<SC_UI_Manager> ();
 		uiManager.SetupUI (FindObjectOfType<SC_Network_Manager>().IsQinHost() == isServer);
 
 		if (isServer)

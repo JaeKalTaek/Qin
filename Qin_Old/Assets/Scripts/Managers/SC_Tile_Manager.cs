@@ -20,12 +20,22 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 		gameManager = GameObject.FindObjectOfType<SC_GameManager> ();
 
+		print ("Start Tile Manager, " + (gameManager.player != null));
+
 		tiles = new SC_Tile[xSize, ySize];
 
 		foreach (SC_Tile t in GameObject.FindObjectsOfType<SC_Tile>())
 			tiles [(int)t.transform.position.x, (int)t.transform.position.y] = t;
 
 		gameManager.FinishSetup ();
+
+		if (gameManager.player) {
+		
+			print ("Hello");
+
+			gameManager.player.SetTileManager (this);
+
+		}
 
 	}
 

@@ -13,7 +13,9 @@ public class SC_Player : NetworkBehaviour {
 	SC_Tile_Manager tileManager;
 
 	public override void OnStartLocalPlayer () {
-		
+
+		print ("Start Local Player, " + (FindObjectOfType<SC_Tile_Manager> () != null));
+
 		tag = "Player";
 
 		gameManager = FindObjectOfType<SC_GameManager> ();
@@ -21,20 +23,14 @@ public class SC_Player : NetworkBehaviour {
 		if(gameManager)
 			gameManager.player = this;
 
-		tileManager = FindObjectOfType<SC_Tile_Manager> ();
+		if(FindObjectOfType<SC_Tile_Manager> () != null)
+			tileManager = FindObjectOfType<SC_Tile_Manager> ();
 
 		//<SC_UI_Manager> ().SetupUI (this, qin);
 		
 	}
 
 	#region Commands
-	/*[Command]
-	public void CmdDisplayMovement(GameObject tile) {
-
-		RpcDisplayMovement (tile);
-
-	}*/
-
 	[Command]
 	public void CmdDisplayMovement(int[] xArray, int[] yArray) {
 
@@ -42,20 +38,19 @@ public class SC_Player : NetworkBehaviour {
 
 	}
 
-	/*[ClientRpc]
-	void RpcDisplayMovement(GameObject tile) {
-
-		tile.GetComponent<SC_Tile> ().DisplayMovement (true);
-
-	}*/
-
 	[ClientRpc]
 	void RpcDisplayMovement(int[] xArray, int[] yArray) {
 
-		//tile.GetComponent<SC_Tile> ().DisplayMovement (true);
+		print (tag);
 
-		for (int i = 0; i < xArray.Length; i++)
-			tileManager.GetTileAt (xArray [i], yArray [i]).DisplayMovement ();
+		if (isLocalPlayer) {
+
+			print (tileManager);
+
+			for (int i = 0; i < xArray.Length; i++)
+				tileManager.GetTileAt (xArray [i], yArray [i]).DisplayMovement ();
+
+		}
 
 	}
 
@@ -115,6 +110,14 @@ public class SC_Player : NetworkBehaviour {
 
 	}
 
+	public void SetTileManager(SC_Tile_Manager tm) {
+
+		print ("Set Tile Manager to : " + tm);
+
+		tileManager = tm;
+
+	}
+
 	public bool Turn() {
 
 		return (qin == (!gameManager.CoalitionTurn()));
@@ -130,6 +133,12 @@ public class SC_Player : NetworkBehaviour {
 	public void SetSide(bool side) {
 
 		qin = side;
+
+	}
+
+	void Update() {
+
+		print ("Tile Manager Is : " + tileManager);
 
 	}
 
