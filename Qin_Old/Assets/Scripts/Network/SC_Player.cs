@@ -34,6 +34,8 @@ public class SC_Player : NetworkBehaviour {
 	[Command]
 	public void CmdDisplayMovement(int[] xArray, int[] yArray) {
 
+		print ("Command  - display movement");
+
 		RpcDisplayMovement (xArray, yArray);
 
 	}
@@ -41,7 +43,7 @@ public class SC_Player : NetworkBehaviour {
 	[ClientRpc]
 	void RpcDisplayMovement(int[] xArray, int[] yArray) {
 
-		print (tag);
+		print ("RPC - display movement, player tag : " + tag);
 
 		if (isLocalPlayer) {
 

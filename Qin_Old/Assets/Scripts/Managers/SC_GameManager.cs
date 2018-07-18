@@ -55,11 +55,12 @@ public class SC_GameManager : NetworkBehaviour {
 
 		turn = 1;
 
-		if(GameObject.FindGameObjectWithTag ("Player"))
+		if(GameObject.FindGameObjectWithTag ("Player")) {
+			
 			player = GameObject.FindGameObjectWithTag ("Player").GetComponent<SC_Player> ();
-
-		if (player)
 			player.SetGameManager (this);
+
+		}
 
 		if (isServer) {
 
