@@ -12,6 +12,8 @@ public class SC_Player : NetworkBehaviour {
 
 	SC_Tile_Manager tileManager;
 
+	static SC_Player localPlayer;
+
 	public override void OnStartLocalPlayer () {
 
 		print ("Start Local Player, " + (FindObjectOfType<SC_Tile_Manager> () != null));
@@ -25,6 +27,8 @@ public class SC_Player : NetworkBehaviour {
 
 		if(FindObjectOfType<SC_Tile_Manager> () != null)
 			tileManager = FindObjectOfType<SC_Tile_Manager> ();
+
+		localPlayer = this;
 
 		//<SC_UI_Manager> ().SetupUI (this, qin);
 		
@@ -43,7 +47,9 @@ public class SC_Player : NetworkBehaviour {
 	[ClientRpc]
 	void RpcDisplayMovement(int[] xArray, int[] yArray) {
 
-		print ("RPC - display movement, player tag : " + tag);
+		localPlayer.DisplayMovement (xArray, yArray);
+
+		/*print ("RPC - display movement, player tag : " + tag);
 
 		if (isLocalPlayer) {
 
@@ -52,7 +58,14 @@ public class SC_Player : NetworkBehaviour {
 			for (int i = 0; i < xArray.Length; i++)
 				tileManager.GetTileAt (xArray [i], yArray [i]).DisplayMovement ();
 
-		}
+		}*/
+
+	}
+
+	void DisplayMovement(int[] xArray, int[] yArray) {
+
+		for (int i = 0; i < xArray.Length; i++)
+			tileManager.GetTileAt (xArray [i], yArray [i]).DisplayMovement ();
 
 	}
 
