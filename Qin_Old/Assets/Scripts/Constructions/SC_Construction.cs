@@ -75,8 +75,10 @@ public class SC_Construction : NetworkBehaviour {
 		under.constructable = !under.isPalace();
 		under.attackable = true;
 
-		if(isServer)
-			Network.Destroy (gameObject);
+        SC_Player.localPlayer.CmdDestroyGameObject(gameObject);
+
+		/*if(isServer)
+			Network.Destroy (gameObject);*/
 
 	}
 
