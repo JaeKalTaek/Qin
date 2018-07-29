@@ -27,8 +27,6 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 		gameManager.FinishSetup ();
 
-		print ("Start Tile Manager, " + (gameManager.player != null));
-
 		if (gameManager.player)
 			gameManager.player.SetTileManager (this);
 

@@ -122,7 +122,9 @@ public class SC_Character : NetworkBehaviour {
 
 				} else if (under.displaySacrifice) {
 
-					SC_Qin.ChangeEnergy (25);
+					//SC_Qin.ChangeEnergy (25);
+
+					SC_Player.localPlayer.CmdChangeQinEnergy (25);
 
 					canMove = false;
 

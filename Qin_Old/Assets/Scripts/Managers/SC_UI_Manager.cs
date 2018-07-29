@@ -7,14 +7,13 @@ using UnityEngine.Networking;
 
 public class SC_UI_Manager : MonoBehaviour {
 
-	[Header("Other")]
-	public GameObject loadingPanel;
-
 	[Header("Game")]
+	public GameObject loadingPanel;
 	public Text turns;
 	public Transform health;
 	public GameObject previewFightPanel;
 	public GameObject endTurn;
+	public GameObject victoryPanel;
 
 	[Header("Characters")]
 	public GameObject statsPanel;
@@ -38,8 +37,6 @@ public class SC_UI_Manager : MonoBehaviour {
 	public Transform qinPower;
 	public Transform sacrifice;
 	public GameObject workshopPanel;
-
-	SC_Player player;
 
 	GameObject currentGameObject;
 
@@ -68,10 +65,10 @@ public class SC_UI_Manager : MonoBehaviour {
 	public void SetupUI(bool qin) {
 
 		if (gameManager == null)
-			gameManager = GetComponent<SC_GameManager> ();
+			gameManager = FindObjectOfType<SC_GameManager> ();
 
 		if (tileManager == null)
-			tileManager = GetComponent<SC_Tile_Manager> ();
+			tileManager = FindObjectOfType<SC_Tile_Manager> ();
 
 		if (!qin) {
 
@@ -82,52 +79,58 @@ public class SC_UI_Manager : MonoBehaviour {
 
 	}
 
-	public void NextTurn() {
+	public void NextTurn(bool coalition, int turn) {
 
-		/*constructWallButton.SetActive (false);
-		endConstructionButton.SetActive (false);
-		powerQinButton.SetActive (false);
-		cancelPowerQinButton.SetActive (false);
-		sacrificeUnitButton.SetActive (false);
-		cancelSacrificeButton.SetActive (false);
+		HideWeapons();
 
-		if (player.Turn ()) {
+		villagePanel.SetActive (false);
+		usePower.SetActive (coalition && !gameManager.player.IsQin());
+		cancelMovementButton.SetActive (false);
+		cancelAttackButton.SetActive (false);
 
-			endTurn.SetActive (true);
+		if (coalition) {
 
-			if (!player.IsQin ()) {
+			construct.gameObject.SetActive (false);
+			qinPower.gameObject.SetActive (false);
+			sacrifice.gameObject.SetActive (false);
 
-				usePower.SetActive (true);
+		}
 
-			}
+		/*if(coalition)
+			foreach (string s in new string[] { "construct", "qinPower", "sacrifice" })
+				Hide (s);*/
 
-		}*/
+		turns.text = (((turn - 1) % 3) == 0) ? "1st Turn - Coalition" : (((turn - 2) % 3) == 0) ? "2nd Turn - Coalition" : "Turn Qin";
 
 	}
 
 	public void ToggleButton(string id) {
 
 		Transform parent = (Transform)typeof(SC_UI_Manager).GetField (id).GetValue(this);
-		bool turnedOn = !parent.GetChild (0).gameObject.activeSelf;
-		parent.GetChild (0).gameObject.SetActive (turnedOn);
-		parent.GetChild (1).gameObject.SetActive (!turnedOn);
+		bool turnedOn = parent.GetChild (0).gameObject.activeSelf;
+		parent.GetChild (0).gameObject.SetActive (!turnedOn);
+		parent.GetChild (1).gameObject.SetActive (turnedOn);
 
 	}
 
-	public void HideButton(string id) {
+	/*public void Hide(string id) {
 
-		Transform parent = (Transform)typeof(SC_UI_Manager).GetField (id).GetValue(this);
-		parent.GetChild (0).gameObject.SetActive (false);
-		parent.GetChild (1).gameObject.SetActive (false);
+		((GameObject)typeof(SC_UI_Manager).GetField (id).GetValue (this)).SetActive (false);
 
-	}
-
-	public void ShowButton(string id) {
-
-		Transform parent = (Transform)typeof(SC_UI_Manager).GetField (id).GetValue(this);
-		parent.GetChild (0).gameObject.SetActive (true);
+		//Transform parent = (Transform)typeof(SC_UI_Manager).GetField (id).GetValue(this);		
+		//parent.GetChild (0).gameObject.SetActive (false);
+		//parent.GetChild (1).gameObject.SetActive (false);
 
 	}
+
+	public void Show(string id) {
+
+		((GameObject)typeof(SC_UI_Manager).GetField (id).GetValue (this)).SetActive (true);
+
+		//Transform parent = (Transform)typeof(SC_UI_Manager).GetField (id).GetValue(this);
+		//parent.GetChild (0).gameObject.SetActive (true);
+
+	}*/
 
 	public void ShowHideInfos(GameObject g, Type t) {
 
@@ -369,15 +372,16 @@ public class SC_UI_Manager : MonoBehaviour {
 
 	}
 
-	public void SetTurnText(int turn) {
-
-		turns.text = (((turn - 1) % 3) == 0) ? "1st Turn - Coalition" : (((turn - 2) % 3) == 0) ? "2nd Turn - Coalition" : "Turn Qin";
-
-	}
-
 	void SetText(string id, string text) {
 
 		GameObject.Find (id).GetComponent<Text> ().text = text;
+
+	}
+
+	public void ShowVictory(bool qinWon) {
+
+		SetText ("Victory_Text", (qinWon ? "Qin" : "The Heroes") + " won the war !");
+		victoryPanel.SetActive (true);
 
 	}
 

@@ -90,7 +90,9 @@ public class SC_Tile : NetworkBehaviour {
 
 		} else if (displaySacrifice) {
 
-			SC_Qin.ChangeEnergy (25);
+			//SC_Qin.ChangeEnergy (25);
+
+			SC_Player.localPlayer.CmdChangeQinEnergy (25);
 
 			RemoveFilters ();
 

@@ -12,11 +12,9 @@ public class SC_Player : NetworkBehaviour {
 
 	SC_Tile_Manager tileManager;
 
-	static SC_Player localPlayer;
+	public static SC_Player localPlayer;
 
 	public override void OnStartLocalPlayer () {
-
-		print ("Start Local Player, " + (FindObjectOfType<SC_Tile_Manager> () != null));
 
 		tag = "Player";
 
@@ -38,8 +36,6 @@ public class SC_Player : NetworkBehaviour {
 	[Command]
 	public void CmdDisplayMovement(int[] xArray, int[] yArray) {
 
-		print ("Command  - display movement");
-
 		RpcDisplayMovement (xArray, yArray);
 
 	}
@@ -48,17 +44,6 @@ public class SC_Player : NetworkBehaviour {
 	void RpcDisplayMovement(int[] xArray, int[] yArray) {
 
 		localPlayer.DisplayMovement (xArray, yArray);
-
-		/*print ("RPC - display movement, player tag : " + tag);
-
-		if (isLocalPlayer) {
-
-			print (tileManager);
-
-			for (int i = 0; i < xArray.Length; i++)
-				tileManager.GetTileAt (xArray [i], yArray [i]).DisplayMovement ();
-
-		}*/
 
 	}
 
@@ -82,21 +67,7 @@ public class SC_Player : NetworkBehaviour {
 		tile.GetComponent<SC_Tile> ().DisplayAttack ();
 
 	}
-
-	[Command]
-	public void CmdDisplayConstructable(GameObject tile) {
-
-		RpcDisplayConstructable (tile);
-
-	}
-
-	[ClientRpc]
-	void RpcDisplayConstructable(GameObject tile) {
-
-		tile.GetComponent<SC_Tile> ().DisplayConstructable ();
-
-	}
-
+		
 	[Command]
 	public void CmdRemoveFilters(GameObject tile) {
 
@@ -117,6 +88,61 @@ public class SC_Player : NetworkBehaviour {
 		toMove.transform.SetPos (pos);
 
 	}
+
+	[Command]
+	public void CmdNextTurn() {
+		
+		RpcNextTurn ();
+
+	}
+
+	[ClientRpc]
+	void RpcNextTurn() {  
+
+		localPlayer.gameManager.NextTurnFunction ();
+
+	}
+		
+	[Command]
+	public void CmdConstructAt(int x, int y) {
+
+		RpcConstructAt (x, y);
+
+	}
+
+	[ClientRpc]
+	void RpcConstructAt(int x, int y) {
+
+		localPlayer.gameManager.ConstructAt (x, y);
+
+	}
+
+	[Command]
+	public void CmdChangeQinEnergy(int amount) {
+
+		RpcChangeQinEnergy (amount);
+
+	}
+
+	[ClientRpc]
+	void RpcChangeQinEnergy(int amount) {
+
+		SC_Qin.ChangeEnergy (amount);
+
+	}
+
+	[Command]
+	public void CmdDestroyGameObject(GameObject go) {
+
+		if(go.name != "dead") {
+
+			go.name = "dead";
+
+			NetworkServer.Destroy (go);
+
+		}
+
+	}
 	#endregion
 
 	public void SetGameManager(SC_GameManager gm) {
@@ -126,8 +152,6 @@ public class SC_Player : NetworkBehaviour {
 	}
 
 	public void SetTileManager(SC_Tile_Manager tm) {
-
-		print ("Set Tile Manager to : " + tm);
 
 		tileManager = tm;
 
@@ -148,12 +172,6 @@ public class SC_Player : NetworkBehaviour {
 	public void SetSide(bool side) {
 
 		qin = side;
-
-	}
-
-	void Update() {
-
-		print ("Tile Manager Is : " + tileManager);
 
 	}
 

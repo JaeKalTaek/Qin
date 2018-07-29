@@ -28,6 +28,8 @@ public class SC_Hero : SC_Character {
 
 	Color berserkColor;
 
+	static int heroesAlive;
+
 	protected override void Awake() {
 
 		base.Awake ();
@@ -56,6 +58,8 @@ public class SC_Hero : SC_Character {
 			}
 
 		}
+
+		heroesAlive++;
 
 	}
 
@@ -139,7 +143,7 @@ public class SC_Hero : SC_Character {
 
 		if (tileManager.GetAt<SC_Village>(gameObject) != null) {
 
-			health = ((health + 10) > maxHealth) ? maxHealth : (health + 10);
+			health = Mathf.Max (health + 10, maxHealth);
 			lifebar.UpdateGraph(health, maxHealth);
 
 		}
@@ -224,7 +228,7 @@ public class SC_Hero : SC_Character {
 
 		base.DestroyCharacter();
 
-		SC_Qin.ChangeEnergy (500);
+		SC_Qin.ChangeEnergy (SC_Qin.Qin.energyWhenHeroDies);
 
 		gameManager.lastHeroDead = this;
 
@@ -248,6 +252,11 @@ public class SC_Hero : SC_Character {
 		}
 
 		gameObject.SetActive (false);
+
+		heroesAlive--;
+
+		if (heroesAlive <= 0)
+			uiManager.ShowVictory (true);
 
 	}
 

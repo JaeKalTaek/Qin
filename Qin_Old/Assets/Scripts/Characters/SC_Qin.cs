@@ -7,10 +7,20 @@ using UnityEngine.Networking;
 
 public class SC_Qin : NetworkBehaviour {
 
-	//static Text energyText;
+	[Header("Qin variables")]
+	[Tooltip("Energy of Qin at the start of the game")]
 	public int startEnergy;
 	static int energy;
-	//static GameObject qinPanel;
+
+	[Tooltip("Energy necessary for Qin to win the game")]
+	public int energyToWin;
+
+	[Tooltip("Cost of the power of Qin")]
+	public int powerCost;
+
+	[Tooltip("Energy won when a hero dis")]
+	public int energyWhenHeroDies;
+
 	[HideInInspector]
 	public static bool selfPanel;
 
@@ -20,15 +30,11 @@ public class SC_Qin : NetworkBehaviour {
 
 	static SC_UI_Manager uiManager;
 
-	void Awake() {
-
-		//energyText = GameObject.Find("EnergyQin").GetComponent<Text>();
-
-		//energyText.text = "Qin's Energy : " + energy;
-
-	}
+	public static SC_Qin Qin;
 
 	void Start() {
+
+		Qin = this;
 
 		gameManager = GameObject.FindObjectOfType<SC_GameManager> ();
 
@@ -115,7 +121,7 @@ public class SC_Qin : NetworkBehaviour {
 
 		hero.gameObject.SetActive (true);
 
-		ChangeEnergy(-2000);
+		ChangeEnergy(-Qin.powerCost);
 
 		gameManager.lastHeroDead = null;
 
@@ -130,7 +136,13 @@ public class SC_Qin : NetworkBehaviour {
 	public static void ChangeEnergy(int amount) {
 
 		energy += amount;
-		uiManager.energyText.text = "Qin's Energy : " + energy;
+
+		if (energy > Qin.energyToWin)
+			uiManager.ShowVictory (true);
+		else if (energy > 0)
+			uiManager.energyText.text = "Qin's Energy : " + energy;
+		else
+			uiManager.ShowVictory (false);
 
 	}
 

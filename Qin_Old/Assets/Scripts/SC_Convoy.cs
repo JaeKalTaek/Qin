@@ -5,9 +5,12 @@ using UnityEngine.Networking;
 
 public class SC_Convoy : NetworkBehaviour {
 
+	SC_GameManager gameManager;
 	SC_Tile_Manager tileManager;
 
 	void Start () {
+
+		gameManager = GameObject.FindObjectOfType<SC_GameManager> ();
 
 		tileManager = GameObject.FindObjectOfType<SC_Tile_Manager> ();
 
@@ -41,7 +44,7 @@ public class SC_Convoy : NetworkBehaviour {
 
 				SC_Tile posTile = tileManager.GetTileAt (targetPos); 
 				posTile.constructable = false;
-				posTile.canSetOn = false;
+				posTile.canSetOn = !gameManager.CoalitionTurn();
 				posTile.attackable = false;
 
 			} else {

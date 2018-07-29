@@ -105,7 +105,7 @@ public class SC_Soldier : SC_Character {
 
         base.DestroyCharacter();
 
-        Destroy(gameObject);
+		SC_Player.localPlayer.CmdDestroyGameObject (gameObject);
 
     }
 

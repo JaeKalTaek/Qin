@@ -74,7 +74,9 @@ public class SC_Construction : NetworkBehaviour {
 		under.movementCost = under.baseCost;
 		under.constructable = !under.isPalace();
 		under.attackable = true;
-		Destroy (gameObject);
+
+		if(isServer)
+			Network.Destroy (gameObject);
 
 	}
 
