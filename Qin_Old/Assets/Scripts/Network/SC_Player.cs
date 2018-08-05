@@ -128,14 +128,15 @@ public class SC_Player : NetworkBehaviour {
 	[Command]
 	public void CmdConstructAt(int x, int y) {
 
-		RpcConstructAt (x, y);
+        localPlayer.gameManager.ConstructAt(x, y);
+        //RpcConstructAt (x, y);
 
-	}
+    }
 
 	[ClientRpc]
 	void RpcConstructAt(int x, int y) {
 
-		localPlayer.gameManager.ConstructAt (x, y);
+        localPlayer.gameManager.ConstructAt (x, y);
 
 	}
 

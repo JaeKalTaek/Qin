@@ -90,17 +90,17 @@ public class SC_GameManager : NetworkBehaviour {
 		uiManager = FindObjectOfType<SC_UI_Manager> (); //GetComponent<SC_UI_Manager> ();
 		uiManager.SetupUI (FindObjectOfType<SC_Network_Manager>().IsQinHost() == isServer);
 
-		if (isServer)
-			RpcFinishLoading ();
+		/*if (isServer)
+			RpcFinishLoading ();*/
 
     }
 
-	[ClientRpc]
+	/*[ClientRpc]
 	void RpcFinishLoading() {
 
 		uiManager.loadingPanel.SetActive(false);
 
-	}
+	}*/
 
 	void GenerateMap() {
 
@@ -571,7 +571,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 		if (tileManager.GetAt<SC_Character> (tile) != null) {
 
-            SC_Qin.ChangeEnergy(SC_Qin.Qin.sacrificeValue);
+            player.CmdChangeQinEnergy(SC_Qin.Qin.sacrificeValue);
 			tileManager.GetAt<SC_Character> (tile).DestroyCharacter();
 
         }
@@ -581,17 +581,17 @@ public class SC_GameManager : NetworkBehaviour {
 
 		Transform parentGo = GameObject.Find (bastion ? "Bastions" : "Walls").transform;
 		GameObject go = bastion ? Instantiate (bastionPrefab, parentGo) : Instantiate (wallPrefab, parentGo);
-		go.transform.SetPos (tile.transform);		
-
-		UpdateWallGraph (go.GetComponent<SC_Construction>(), tile);
+		go.transform.SetPos (tile.transform);				
 
         if (isServer)
             NetworkServer.Spawn(go);
 
+        UpdateWallGraph(go.GetComponent<SC_Construction>(), tile);
+
         UpdateNeighborWallGraph (tile);
 
 		if (!bastion)
-            SC_Qin.ChangeEnergy (-SC_Qin.Qin.wallCost);
+            player.CmdChangeQinEnergy(-SC_Qin.Qin.wallCost);
 
         StopConstruction();
 
@@ -768,7 +768,8 @@ public class SC_GameManager : NetworkBehaviour {
 
 	}
 
-	public void CheckAttack(SC_Character attacker) {
+    #region Combat
+    public void CheckAttack(SC_Character attacker) {
 
 		foreach (SC_Tile tile in tileManager.tiles)
             tile.RemoveFilters();
@@ -989,9 +990,9 @@ public class SC_GameManager : NetworkBehaviour {
 
 		return saver;
 
-	}
+	}    
 
-	public SC_Tile NearestTile(SC_Character target) {
+    public SC_Tile NearestTile(SC_Character target) {
 
 		SC_Tile t = null;
 
@@ -1084,8 +1085,10 @@ public class SC_GameManager : NetworkBehaviour {
 		Attack ();
 
     }
+    #endregion
 
-	public void ActionVillage(bool destroy) {
+    #region Actions
+    public void ActionVillage(bool destroy) {
 
 		if (characterToMove.isHero())
 			((SC_Hero)characterToMove).ActionVillage (destroy);
@@ -1150,8 +1153,10 @@ public class SC_GameManager : NetworkBehaviour {
 		uiManager.workshopPanel.SetActive (false);
 
     }
+    #endregion
 
-	public void CancelMovement() {
+    #region Cancel 
+    public void CancelMovement() {
 
 		SC_Character.ResetAttacker ();
 
@@ -1196,8 +1201,9 @@ public class SC_GameManager : NetworkBehaviour {
 		uiManager.cancelAttackButton.SetActive (false);
 
 	}
+    #endregion
 
-	public void UseHeroPower() {
+    public void UseHeroPower() {
 
 		SC_Hero hero = GameObject.Find (GameObject.Find ("PowerHero").GetComponentInChildren<Text> ().name).GetComponent<SC_Hero>();
 		hero.powerUsed = true;

@@ -42,11 +42,11 @@ public class SC_Qin : NetworkBehaviour {
 
 		Qin = this;
 
-		gameManager = GameObject.FindObjectOfType<SC_GameManager> ();
+		gameManager = FindObjectOfType<SC_GameManager> ();
 
-		tileManager = GameObject.FindObjectOfType<SC_Tile_Manager> ();
+		tileManager = FindObjectOfType<SC_Tile_Manager> ();
 
-		uiManager = GameObject.FindObjectOfType<SC_UI_Manager> ();
+		uiManager = FindObjectOfType<SC_UI_Manager> ();
 
 		energy = startEnergy;
 
@@ -143,7 +143,7 @@ public class SC_Qin : NetworkBehaviour {
 
 		energy += amount;
 
-		if (energy > Qin.energyToWin)
+		if (energy >= Qin.energyToWin)
 			uiManager.ShowVictory (true);
 		else if (energy > 0)
 			uiManager.energyText.text = "Qin's Energy : " + energy;
