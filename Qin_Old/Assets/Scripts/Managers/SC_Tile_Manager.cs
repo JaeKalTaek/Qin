@@ -18,11 +18,11 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 	void Start () {
 
-		gameManager = GameObject.FindObjectOfType<SC_GameManager> ();
+		gameManager = FindObjectOfType<SC_GameManager> ();
 
 		tiles = new SC_Tile[xSize, ySize];
 
-		foreach (SC_Tile t in GameObject.FindObjectsOfType<SC_Tile>())
+		foreach (SC_Tile t in FindObjectsOfType<SC_Tile>())
 			tiles [(int)t.transform.position.x, (int)t.transform.position.y] = t;
 
 		gameManager.FinishSetup ();
@@ -190,7 +190,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 		foreach (T t in FindObjectsOfType<T>()) {
 
-			if ((t.transform.position.x == (int)tile.transform.position.x) && (t.transform.position.y == (int)tile.transform.position.y) && (!t.Equals(tile)))
+			if ((t.transform.position.x == (int)tile.transform.position.x) && (t.transform.position.y == (int)tile.transform.position.y) && (t.GetType() != typeof(SC_Tile)))
 				objectToReturn = t;
 
 		}
@@ -198,5 +198,27 @@ public class SC_Tile_Manager : NetworkBehaviour {
 		return objectToReturn;
 
 	}
+
+    public int[][] GetArraysFromList<T>(List<T> list) where T : MonoBehaviour {
+
+        int[][] array = new int[2][];
+
+        array[0] = new int[list.Count];
+        array[1] = new int[list.Count];
+
+        int i = 0;
+
+        foreach (MonoBehaviour m in list) {
+
+            array[0][i] = (int)m.gameObject.transform.position.x;
+            array[1][i] = (int)m.gameObject.transform.position.y;
+
+            i++;
+
+        }
+
+        return array;
+
+    }
 
 }

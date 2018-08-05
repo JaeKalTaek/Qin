@@ -43,25 +43,6 @@ public class SC_UI_Manager : MonoBehaviour {
 	static SC_GameManager gameManager;
 	static SC_Tile_Manager tileManager;
 
-	/*public void SetupUI(SC_Player p) {
-
-		if (gameManager == null)
-			gameManager = GetComponent<SC_GameManager> ();
-
-		if (tileManager == null)
-			tileManager = GetComponent<SC_Tile_Manager> ();
-
-		player = p;
-
-		if (!player.IsQin()) {
-
-			usePower.SetActive (true);
-			endTurn.SetActive (true);
-
-		}
-
-	}*/
-
 	public void SetupUI(bool qin) {
 
 		if (gameManager == null)
@@ -96,11 +77,11 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		}
 
-		/*if(coalition)
-			foreach (string s in new string[] { "construct", "qinPower", "sacrifice" })
-				Hide (s);*/
-
 		turns.text = (((turn - 1) % 3) == 0) ? "1st Turn - Coalition" : (((turn - 2) % 3) == 0) ? "2nd Turn - Coalition" : "Turn Qin";
+
+        bool pNotQin = !SC_Player.localPlayer.IsQin();
+
+        endTurn.SetActive(pNotQin == coalition && pNotQin);
 
 	}
 
@@ -112,25 +93,6 @@ public class SC_UI_Manager : MonoBehaviour {
 		parent.GetChild (1).gameObject.SetActive (turnedOn);
 
 	}
-
-	/*public void Hide(string id) {
-
-		((GameObject)typeof(SC_UI_Manager).GetField (id).GetValue (this)).SetActive (false);
-
-		//Transform parent = (Transform)typeof(SC_UI_Manager).GetField (id).GetValue(this);		
-		//parent.GetChild (0).gameObject.SetActive (false);
-		//parent.GetChild (1).gameObject.SetActive (false);
-
-	}
-
-	public void Show(string id) {
-
-		((GameObject)typeof(SC_UI_Manager).GetField (id).GetValue (this)).SetActive (true);
-
-		//Transform parent = (Transform)typeof(SC_UI_Manager).GetField (id).GetValue(this);
-		//parent.GetChild (0).gameObject.SetActive (true);
-
-	}*/
 
 	public void ShowHideInfos(GameObject g, Type t) {
 
@@ -380,8 +342,9 @@ public class SC_UI_Manager : MonoBehaviour {
 
 	public void ShowVictory(bool qinWon) {
 
-		SetText ("Victory_Text", (qinWon ? "Qin" : "The Heroes") + " won the war !");
-		victoryPanel.SetActive (true);
+        victoryPanel.GetComponentInChildren<Text>().text = (qinWon ? "Qin" : "The Heroes") + " won the war !";
+
+        victoryPanel.SetActive(true);
 
 	}
 

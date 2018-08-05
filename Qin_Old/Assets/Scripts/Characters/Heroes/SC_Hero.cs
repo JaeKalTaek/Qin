@@ -232,7 +232,7 @@ public class SC_Hero : SC_Character {
 
 		gameManager.lastHeroDead = this;
 
-		tileManager.GetTileAt (gameObject).constructable = !tileManager.GetTileAt (gameObject).isPalace ();
+		tileManager.GetTileAt (gameObject).constructable = !tileManager.GetTileAt (gameObject).IsPalace ();
 
 		foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
 

@@ -48,63 +48,61 @@ public class SC_Tile : NetworkBehaviour {
 	void Start() {
 
 		if(gameManager == null)
-			gameManager = GameObject.FindObjectOfType<SC_GameManager> ();
+			gameManager = FindObjectOfType<SC_GameManager> ();
 
 		if(tileManager == null)
-			tileManager = GameObject.FindObjectOfType<SC_Tile_Manager> ();
+			tileManager = FindObjectOfType<SC_Tile_Manager> ();
 
 	}
 
 	void OnMouseDown() {
 
-		if (displayConstructable && (((SC_Qin.GetEnergy () - 50) > 0) || gameManager.IsBastion ())) {
+        if (displayConstructable && (((SC_Qin.GetEnergy() - 50) > 0) || gameManager.IsBastion())) {
 
-			gameManager.ConstructAt (this);
+            gameManager.ConstructAt(this);
 
-			gameManager.StopConstruction ();
+        } else if (displayMovement) {
 
-		} else if (displayMovement) {
+            gameManager.GetCharacterToMove().MoveTo(this);
 
-			gameManager.GetCharacterToMove().MoveTo(this);
+        } else if (displayAttack) {
 
-		} else if (displayAttack) {
+            SC_Character attackingCharacter = SC_Character.GetAttackingCharacter();
+            SC_Tile attackingCharacterTile = tileManager.GetTileAt(attackingCharacter.gameObject);
+            gameManager.rangedAttack = !gameManager.IsNeighbor(attackingCharacterTile, this);
 
-			SC_Character attackingCharacter = SC_Character.GetAttackingCharacter ();
-			SC_Tile attackingCharacterTile = tileManager.GetTileAt (attackingCharacter.gameObject);
-			gameManager.rangedAttack = !gameManager.IsNeighbor (attackingCharacterTile, this);
+            attackingCharacter.attackTarget = this;
 
-			attackingCharacter.attackTarget = this;
+            if (attackingCharacter.isHero()) {
 
-			if (attackingCharacter.isHero ()) {
+                ((SC_Hero)attackingCharacter).ChooseWeapon();
 
-				((SC_Hero)attackingCharacter).ChooseWeapon ();
+            } else {
 
-			} else {
+                foreach (SC_Tile tile in tileManager.tiles)
+                    tile.RemoveFilters();
 
-				foreach (SC_Tile tile in tileManager.tiles)
-					tile.RemoveFilters ();
+                gameManager.Attack();
 
-				gameManager.Attack ();
+            }
 
-			}
+        } /*else if (displaySacrifice) {
 
-		} else if (displaySacrifice) {
+            //SC_Qin.ChangeEnergy (25);
 
-			//SC_Qin.ChangeEnergy (25);
+            SC_Player.localPlayer.CmdChangeQinEnergy(25);
 
-			SC_Player.localPlayer.CmdChangeQinEnergy (25);
+            RemoveFilters();
 
-			RemoveFilters ();
+            Destroy(tileManager.GetAt<SC_Character>(this));
 
-			Destroy (tileManager.GetAt<SC_Character>(this));
+        }*/ else if (displayResurrection) {
 
-		} else if (displayResurrection) {
+            gameManager.HideResurrectionTiles();
 
-			gameManager.HideResurrectionTiles ();
+            SC_Qin.UsePower(transform.position);
 
-			SC_Qin.UsePower (transform.position);
-
-		}
+        }
 
 	}
 
@@ -144,7 +142,15 @@ public class SC_Tile : NetworkBehaviour {
 
 	}
 
-	public void DisplayConstructable() { 
+    public void DisplaySacrifice() {
+
+        displaySacrifice = true;
+
+        SetFilter("T_DisplaySacrifice");
+
+    }
+
+    public void DisplayConstructable() { 
 
 		displayConstructable = true;
 
@@ -165,17 +171,11 @@ public class SC_Tile : NetworkBehaviour {
 
 	}
 
-	public bool isPalace() {
+	public bool IsPalace() {
 
 		return name.Contains("Palace");
 
 	}
-
-	/*public bool GetDisplayConstructable() {
-
-		return displayConstructable;
-
-	}*/
 
 	public bool GetDisplayAttack() {
 

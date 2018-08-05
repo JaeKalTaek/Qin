@@ -67,8 +67,30 @@ public class SC_Player : NetworkBehaviour {
 		tile.GetComponent<SC_Tile> ().DisplayAttack ();
 
 	}
-		
-	[Command]
+
+    [Command]
+    public void CmdDisplaySacrifice(int[] xArray, int[] yArray) {
+
+        RpcDisplaySacrifice(xArray, yArray);
+
+    }
+
+    [ClientRpc]
+    void RpcDisplaySacrifice(int[] xArray, int[] yArray) {
+
+        if(localPlayer.IsQin())
+            localPlayer.DisplaySacrifice(xArray, yArray);
+
+    }
+
+    void DisplaySacrifice(int[] xArray, int[] yArray) {
+
+        for (int i = 0; i < xArray.Length; i++)
+            tileManager.GetTileAt(xArray[i], yArray[i]).DisplaySacrifice();
+
+	}
+
+    [Command]
 	public void CmdRemoveFilters(GameObject tile) {
 
 		RpcRemoveFilters (tile);
@@ -134,7 +156,7 @@ public class SC_Player : NetworkBehaviour {
 	[Command]
 	public void CmdDestroyGameObject(GameObject go) {
 
-		if(go.name != "dead") {
+		if(go && (go.name != "dead")) {
 
 			go.name = "dead";
 

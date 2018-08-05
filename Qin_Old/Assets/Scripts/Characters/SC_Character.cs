@@ -87,7 +87,7 @@ public class SC_Character : NetworkBehaviour {
 
 				SC_Tile under = tileManager.GetTileAt (gameObject);
 
-				if (under.displayMovement) {
+                if (under.displayMovement) {
 
 					MoveTo (under);
 
@@ -116,15 +116,11 @@ public class SC_Character : NetworkBehaviour {
 
 					gameManager.ConstructAt (under);
 
-					gameManager.StopConstruction ();
-
 					canMove = false;
 
 				} else if (under.displaySacrifice) {
 
-					//SC_Qin.ChangeEnergy (25);
-
-					SC_Player.localPlayer.CmdChangeQinEnergy (25);
+					SC_Player.localPlayer.CmdChangeQinEnergy (SC_Qin.Qin.sacrificeValue);
 
 					canMove = false;
 
@@ -134,7 +130,7 @@ public class SC_Character : NetworkBehaviour {
 
 				} else {
 
-					PrintMovements ();
+                    PrintMovements ();
 
 				}
 
@@ -226,7 +222,7 @@ public class SC_Character : NetworkBehaviour {
 
 				}
 
-				leavingTile.constructable = !leavingTile.isPalace ();
+				leavingTile.constructable = !leavingTile.IsPalace ();
 				target.constructable = false;
 
 			} else {

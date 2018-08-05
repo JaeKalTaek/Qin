@@ -285,7 +285,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 	#region Display Movements
     public void CheckMovements(SC_Character target) {
-        
+
         cantCancelMovement = false;
 
         foreach (SC_Character character in FindObjectsOfType<SC_Character>()) {
@@ -317,8 +317,14 @@ public class SC_GameManager : NetworkBehaviour {
 		SC_Tile tileTarget = tileManager.GetTileAt (target.gameObject);
 
 		CalcRange(tileTarget, target);
-        
-		int[] xArray = new int[closedList.Count + 1];
+
+        List<SC_Tile> temp = new List<SC_Tile>(closedList) { tileTarget };
+
+        int[][] array = tileManager.GetArraysFromList(temp);
+
+        player.CmdDisplayMovement(array[0], array[1]);
+
+       /*int[] xArray = new int[closedList.Count + 1];
 		int[] yArray = new int[closedList.Count + 1];
 
 		int i = 0;
@@ -335,7 +341,7 @@ public class SC_GameManager : NetworkBehaviour {
 		xArray [i] = (int)tileTarget.transform.position.x;
 		yArray [i] = (int)tileTarget.transform.position.y;
 
-		player.CmdDisplayMovement (xArray, yArray);
+		player.CmdDisplayMovement (xArray, yArray);*/
 
     }
 
@@ -565,7 +571,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 		if (tileManager.GetAt<SC_Character> (tile) != null) {
 
-            SC_Qin.ChangeEnergy(25);
+            SC_Qin.ChangeEnergy(SC_Qin.Qin.sacrificeValue);
 			tileManager.GetAt<SC_Character> (tile).DestroyCharacter();
 
         }
@@ -575,17 +581,19 @@ public class SC_GameManager : NetworkBehaviour {
 
 		Transform parentGo = GameObject.Find (bastion ? "Bastions" : "Walls").transform;
 		GameObject go = bastion ? Instantiate (bastionPrefab, parentGo) : Instantiate (wallPrefab, parentGo);
-		go.transform.SetPos (tile.transform);
-
-		if(isServer)
-			NetworkServer.Spawn (go);
+		go.transform.SetPos (tile.transform);		
 
 		UpdateWallGraph (go.GetComponent<SC_Construction>(), tile);
 
-		UpdateNeighborWallGraph (tile);
+        if (isServer)
+            NetworkServer.Spawn(go);
+
+        UpdateNeighborWallGraph (tile);
 
 		if (!bastion)
-            SC_Qin.ChangeEnergy (-50);
+            SC_Qin.ChangeEnergy (-SC_Qin.Qin.wallCost);
+
+        StopConstruction();
 
     }
 
@@ -650,9 +658,13 @@ public class SC_GameManager : NetworkBehaviour {
 			foreach (SC_Character character in FindObjectsOfType<SC_Character>())
 				character.SetCanMove (!character.coalition);
 
-			uiManager.construct.gameObject.SetActive (true);
-			uiManager.qinPower.gameObject.SetActive (true); 
-			uiManager.sacrifice.gameObject.SetActive (true);
+            if (player.IsQin()) {
+
+                uiManager.construct.gameObject.SetActive(true);
+                uiManager.qinPower.gameObject.SetActive(true);
+                uiManager.sacrifice.gameObject.SetActive(true);
+
+            }
 
 			bastion = false;
 
@@ -686,12 +698,12 @@ public class SC_GameManager : NetworkBehaviour {
 
 		SC_Character.ResetAttacker();
 
-		foreach (SC_Soldier soldier in FindObjectsOfType<SC_Soldier>()) {
+        /*int[][] array = tileManager.GetArraysFromList(new List<SC_Soldier>(FindObjectsOfType<SC_Soldier>()));
 
-			tileManager.GetTileAt(soldier.gameObject).displaySacrifice = true;
-			tileManager.GetTileAt(soldier.gameObject).SetFilter ("T_DisplaySacrifice");
+        player.CmdDisplaySacrifice(array[0], array[1]);*/
 
-		}
+		foreach (SC_Soldier soldier in FindObjectsOfType<SC_Soldier>())
+            tileManager.GetTileAt(soldier.gameObject).DisplaySacrifice();
 
 	}
 
@@ -956,7 +968,7 @@ public class SC_GameManager : NetworkBehaviour {
                 leavingTile.canSetOn = true;
 				if (tileManager.GetAt<SC_Construction>(leavingTile) == null)
                     leavingTile.attackable = true;
-                leavingTile.constructable = !leavingTile.isPalace();
+                leavingTile.constructable = !leavingTile.IsPalace();
 
 				saver.transform.SetPos(NearestTile (toSave).transform);
 
@@ -1153,7 +1165,7 @@ public class SC_GameManager : NetworkBehaviour {
         leavingTile.canSetOn = true;
 		if (tileManager.GetAt<SC_Construction> (leavingTile) == null)
             leavingTile.attackable = true;
-		leavingTile.constructable = !leavingTile.isPalace ();
+		leavingTile.constructable = !leavingTile.IsPalace ();
 
 		player.CmdMove (characterToMove.gameObject, characterToMove.lastPos.transform.position);
 		//characterToMove.transform.SetPos (characterToMove.lastPos.transform);

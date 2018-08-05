@@ -34,7 +34,7 @@ public class SC_Convoy : NetworkBehaviour {
 		if(tileManager.GetTileAt (targetPos).IsEmpty()) {
 
 			SC_Tile leavingTile = tileManager.GetTileAt (gameObject);
-			leavingTile.constructable = !leavingTile.isPalace();
+			leavingTile.constructable = !leavingTile.IsPalace();
 			leavingTile.canSetOn = true;
 			leavingTile.attackable = true;
 
