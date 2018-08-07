@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Networking;
 
 public class SC_Player : NetworkBehaviour {
@@ -129,18 +127,38 @@ public class SC_Player : NetworkBehaviour {
 	public void CmdConstructAt(int x, int y) {
 
         localPlayer.gameManager.ConstructAt(x, y);
-        //RpcConstructAt (x, y);
 
     }
 
-	[ClientRpc]
-	void RpcConstructAt(int x, int y) {
+    [Command]
+    public void CmdUpdateWallGraph(int x, int y) {
 
-        localPlayer.gameManager.ConstructAt (x, y);
+        RpcUpdateWallGraph(x, y);
 
-	}
+    }
 
-	[Command]
+    [ClientRpc]
+    void RpcUpdateWallGraph(int x, int y) {
+
+        localPlayer.gameManager.UpdateWallGraph(localPlayer.tileManager.GetTileAt(x, y));
+
+    }
+
+    [Command]
+    public void CmdUpdateNeighborWallsGraph(int x, int y) {
+
+        RpcUpdateNeighborWallsGraph(x, y);
+
+    }
+
+    [ClientRpc]
+    void RpcUpdateNeighborWallsGraph(int x, int y) {
+
+        localPlayer.gameManager.UpdateNeighborWallGraph(localPlayer.tileManager.GetTileAt(x, y));
+
+    }
+
+    [Command]
 	public void CmdChangeQinEnergy(int amount) {
 
 		RpcChangeQinEnergy (amount);

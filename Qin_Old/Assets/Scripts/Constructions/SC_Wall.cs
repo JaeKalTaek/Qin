@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class SC_Wall : SC_Bastion {
+﻿public class SC_Wall : SC_Bastion {
 
 	protected override void OnMouseDown() {
 

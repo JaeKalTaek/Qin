@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class SC_Zhang_Fei : SC_Hero {
+﻿public class SC_Zhang_Fei : SC_Hero {
 
     /*public GameObject trapPrefab, trap2Prefab;
     GameObject trap, trap2;

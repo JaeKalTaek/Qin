@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
@@ -41,8 +40,7 @@ public class SC_GameManager : NetworkBehaviour {
 	List<SC_Tile> cursedTiles;
 
 	[SerializeField]
-	public SC_Player player { get { return Player; } set { Player = value; } }
-	SC_Player Player;
+	public SC_Player player { get; set; }
 
 	SC_UI_Manager uiManager;
 
@@ -168,7 +166,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 	public void FinishSetup() {
 
-		tileManager = GameObject.FindObjectOfType<SC_Tile_Manager> ();
+		tileManager = FindObjectOfType<SC_Tile_Manager> ();
 
 		if (isServer) {
 
@@ -225,14 +223,8 @@ public class SC_GameManager : NetworkBehaviour {
 
 		}
 
-		foreach (SC_Construction construction in FindObjectsOfType<SC_Construction>()) {
-
-			if (construction.GetType ().Equals (typeof(SC_Bastion)) || construction.GetType ().Equals (typeof(SC_Wall)))
-				UpdateWallGraph (construction, tileManager.GetTileAt (construction.gameObject));
-
+		foreach (SC_Construction construction in FindObjectsOfType<SC_Construction>())
 			NetworkServer.Spawn (construction.gameObject);
-
-		}
 
 	}
 
@@ -581,14 +573,13 @@ public class SC_GameManager : NetworkBehaviour {
 
 		Transform parentGo = GameObject.Find (bastion ? "Bastions" : "Walls").transform;
 		GameObject go = bastion ? Instantiate (bastionPrefab, parentGo) : Instantiate (wallPrefab, parentGo);
-		go.transform.SetPos (tile.transform);				
+		go.transform.SetPos (tile.transform);
+        
+        NetworkServer.Spawn(go);
 
-        if (isServer)
-            NetworkServer.Spawn(go);
+        player.CmdUpdateWallGraph(x, y);
 
-        UpdateWallGraph(go.GetComponent<SC_Construction>(), tile);
-
-        UpdateNeighborWallGraph (tile);
+        player.CmdUpdateNeighborWallsGraph(x, y);
 
 		if (!bastion)
             player.CmdChangeQinEnergy(-SC_Qin.Qin.wallCost);
@@ -602,13 +593,15 @@ public class SC_GameManager : NetworkBehaviour {
 		foreach (SC_Tile tile in GetNeighbors(center)) {
 
 			if((tileManager.GetAt<SC_Bastion> (tile) != null) || (tileManager.GetAt<SC_Wall> (tile) != null))
-				UpdateWallGraph (tileManager.GetAt<SC_Construction> (tile), tile);
+				UpdateWallGraph (tile);
 
 		}
 
 	}
 
-	public void UpdateWallGraph(SC_Construction construction, SC_Tile under) {
+	public void UpdateWallGraph(SC_Tile under) {
+
+        SC_Construction construction = tileManager.GetAt<SC_Construction>(under);
 
 		bool left = false;
 		bool right = false;
