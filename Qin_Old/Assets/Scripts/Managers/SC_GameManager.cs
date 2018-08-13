@@ -294,12 +294,10 @@ public class SC_GameManager : NetworkBehaviour {
 			character.attacking = false;
                                                 
         }
-        
-		characterToMove = target;
 
-		foreach (SC_Tile tile in tileManager.tiles)
-			player.CmdRemoveFilters (tile.gameObject);
-			//tile.RemoveFilter();
+        player.CmdSetCharacterToMove((int)target.transform.position.x, (int)target.transform.position.y);
+
+		player.CmdRemoveAllFilters ();
         
 		uiManager.HideWeapons();
 		uiManager.villagePanel.SetActive (false);
@@ -315,25 +313,6 @@ public class SC_GameManager : NetworkBehaviour {
         int[][] array = tileManager.GetArraysFromList(temp);
 
         player.CmdDisplayMovement(array[0], array[1]);
-
-       /*int[] xArray = new int[closedList.Count + 1];
-		int[] yArray = new int[closedList.Count + 1];
-
-		int i = 0;
-
-		foreach (SC_Tile tile in closedList) {
-
-			xArray [i] = (int)tile.transform.position.x;
-			yArray [i] = (int)tile.transform.position.y;
-
-			i++;
-
-		}			
-			
-		xArray [i] = (int)tileTarget.transform.position.x;
-		yArray [i] = (int)tileTarget.transform.position.y;
-
-		player.CmdDisplayMovement (xArray, yArray);*/
 
     }
 
@@ -1148,16 +1127,21 @@ public class SC_GameManager : NetworkBehaviour {
     }
     #endregion
 
-    #region Cancel 
+    #region Cancel
     public void CancelMovement() {
+
+        player.CmdCancelMovement();
+
+    }
+
+    public void CancelMovementFunction() {
 
 		SC_Character.ResetAttacker ();
 
-		foreach (SC_Tile tile in tileManager.tiles)
-			player.CmdRemoveFilters (tile.gameObject);
-			//tile.RemoveFilters ();
+        foreach(SC_Tile tile in tileManager.tiles)
+            tile.RemoveFilters();
 
-		SC_Tile leavingTile = tileManager.GetTileAt (characterToMove.gameObject);
+        SC_Tile leavingTile = tileManager.GetTileAt (characterToMove.gameObject);
 
         leavingTile.movementCost = leavingTile.baseCost;
         leavingTile.canSetOn = true;
@@ -1165,13 +1149,12 @@ public class SC_GameManager : NetworkBehaviour {
             leavingTile.attackable = true;
 		leavingTile.constructable = !leavingTile.IsPalace ();
 
-		player.CmdMove (characterToMove.gameObject, characterToMove.lastPos.transform.position);
-		//characterToMove.transform.SetPos (characterToMove.lastPos.transform);
+		characterToMove.transform.SetPos (characterToMove.lastPos.transform);
 
 		characterToMove.lastPos.movementCost = 5000;
 		characterToMove.lastPos.canSetOn = false;
 		if (tileManager.GetAt<SC_Construction> (characterToMove.lastPos) == null)
-			characterToMove.lastPos.attackable = (characterToMove.coalition != SC_GameManager.GetInstance ().CoalitionTurn ());
+			characterToMove.lastPos.attackable = (characterToMove.coalition != GetInstance ().CoalitionTurn ());
 		characterToMove.lastPos.constructable = !characterToMove.isHero();
 
 		characterToMove.SetCanMove (true);
@@ -1263,10 +1246,10 @@ public class SC_GameManager : NetworkBehaviour {
 
 	}
 
-	public void SetCharacterToMove(SC_Character chara) {
+    public void SetCharacterToMove(SC_Character c) {
 
-		characterToMove = chara;
+        characterToMove = c;
 
-	}
+    }
 
 }

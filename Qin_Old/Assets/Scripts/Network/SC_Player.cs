@@ -52,7 +52,49 @@ public class SC_Player : NetworkBehaviour {
 
 	}
 
-	[Command]
+    [Command]
+    public void CmdSetCharacterToMove(int x, int y) {
+
+        RpcSetCharacterToMove(x, y);
+
+    }
+
+    [ClientRpc]
+    void RpcSetCharacterToMove(int x, int y) {
+
+        localPlayer.gameManager.SetCharacterToMove(localPlayer.tileManager.GetAt<SC_Character>(x, y));
+
+    }
+
+    [Command]
+    public void CmdMoveCharacterTo(int x, int y) {
+
+        RpcMoveCharacterTo(x, y);
+
+    }
+
+    [ClientRpc]
+    void RpcMoveCharacterTo(int x, int y) {
+
+        localPlayer.gameManager.GetCharacterToMove().MoveTo(localPlayer.tileManager.GetTileAt(x, y));
+
+    }
+
+    [Command]
+    public void CmdCancelMovement() {
+
+        RpcCancelMovement();
+
+    }
+
+    [ClientRpc]
+    void RpcCancelMovement() {
+
+        localPlayer.gameManager.CancelMovementFunction();
+
+    }
+
+    [Command]
 	public void CmdDisplayAttack(GameObject tile) {
 
 		RpcDisplayAttack (tile);
@@ -89,23 +131,17 @@ public class SC_Player : NetworkBehaviour {
 	}
 
     [Command]
-	public void CmdRemoveFilters(GameObject tile) {
+	public void CmdRemoveAllFilters() {
 
-		RpcRemoveFilters (tile);
+		RpcRemoveAllFilters ();
 
 	}
 
 	[ClientRpc]
-	void RpcRemoveFilters(GameObject tile) {
+	void RpcRemoveAllFilters() {
 
-		tile.GetComponent<SC_Tile> ().RemoveFilters ();
-
-	}
-
-	[Command]
-	public void CmdMove(GameObject toMove, Vector3 pos) {
-
-		toMove.transform.SetPos (pos);
+        foreach(SC_Tile tile in localPlayer.tileManager.tiles)
+		    tile.RemoveFilters ();
 
 	}
 

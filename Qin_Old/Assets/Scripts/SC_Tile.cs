@@ -60,7 +60,7 @@ public class SC_Tile : NetworkBehaviour {
 
         } else if (displayMovement) {
 
-            gameManager.GetCharacterToMove().MoveTo(this);
+            SC_Player.localPlayer.CmdMoveCharacterTo((int)transform.position.x, (int)transform.position.y);
 
         } else if (displayAttack) {
 

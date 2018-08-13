@@ -31,6 +31,7 @@ public class SC_Character : NetworkBehaviour {
 	public int technique, speed;
 	[HideInInspector]
 	public int criticalHit, dodgeHit;
+    public float moveSpeed;
 
 	protected Color baseColor, tiredColor;
 
@@ -46,7 +47,9 @@ public class SC_Character : NetworkBehaviour {
 
 	protected static SC_UI_Manager uiManager;
 
-	protected virtual void Awake() {
+    List<SC_Tile> path;
+
+    protected virtual void Awake() {
 
 		baseColor = GetComponent<SpriteRenderer> ().color;
 		tiredColor = new Color (.15f, .15f, .15f);
@@ -55,14 +58,15 @@ public class SC_Character : NetworkBehaviour {
 
 	protected virtual void Start() {
 
-		if (gameManager == null)
-			gameManager = GameObject.FindObjectOfType<SC_GameManager> ();
+        if(gameManager == null) {
 
-		if (tileManager == null)
-			tileManager = GameObject.FindObjectOfType<SC_Tile_Manager> ();
+            gameManager = FindObjectOfType<SC_GameManager>();
 
-		if (uiManager == null)
-			uiManager = GameObject.FindObjectOfType<SC_UI_Manager> ();
+            tileManager = FindObjectOfType<SC_Tile_Manager>();
+
+            uiManager = FindObjectOfType<SC_UI_Manager>();
+
+        }
 
 		lifebar = Instantiate(Resources.Load<GameObject>("Prefabs/P_Lifebar"), transform).GetComponent<SC_Lifebar>();
 		lifebar.transform.position += new Vector3 (0, -.44f, 0);
@@ -87,7 +91,7 @@ public class SC_Character : NetworkBehaviour {
 
                 if (under.displayMovement) {
 
-					MoveTo (under);
+                    SC_Player.localPlayer.CmdMoveCharacterTo((int)under.transform.position.x, (int)under.transform.position.y);
 
 				} else if (under.GetDisplayAttack ()) {
 
@@ -149,150 +153,189 @@ public class SC_Character : NetworkBehaviour {
 
 	public virtual void MoveTo(SC_Tile target) {
 
-		foreach (SC_Tile tile in tileManager.tiles)
-			gameManager.player.CmdRemoveFilters (tile.gameObject);
-			//tile.RemoveFilters();
+        SC_Player.localPlayer.CmdRemoveAllFilters();
 
-		lastPos = tileManager.GetTileAt (gameObject);
+        lastPos = tileManager.GetTileAt (gameObject);
 		lastPos.movementCost = lastPos.baseCost;
 		lastPos.canSetOn = true;
 
-		List<SC_Tile> path = PathFinder(lastPos, target, gameManager.GetClosedList ());
+		path = PathFinder(lastPos, target, gameManager.GetClosedList ());
 
-		for(int i = 0; i < path.Count; i++)
-			StartCoroutine(MoveOneTile(lastPos, path[i], (i == (path.Count - 1)), i * 0.1f));
+        //lastPos, path[i], (i == (path.Count - 1)), i * 0.1f
 
-	}
+        if(path == null)
+            FinishMovement(false);
+        else
+            StartCoroutine(Move());
 
-	IEnumerator MoveOneTile(SC_Tile leavingTile, SC_Tile target, bool last, float delay) {
+    }    
 
-		//yield return new WaitForSeconds(delay);
+	IEnumerator Move(/*SC_Tile leavingTile, SC_Tile target, bool last, float delay*/) {
 
-		float startTime = Time.time;
+        int pathIndex = 0;
 
-		while (Time.time < startTime + 0.15f) {
+        float movementTimer = 0;
 
-			gameManager.player.CmdMove (gameObject, Vector3.Lerp (transform.position, target.transform.position, (Time.time - startTime) / 0.2f));
-			//transform.SetPos(Vector3.Lerp(transform.position, target.transform.position, (Time.time - startTime) / 0.2f));
+        Vector3 currentStart = transform.position;
+
+        Vector3 currentEnd = path[0].transform.position;
+
+        while ((pathIndex < path.Count) && (movementTimer < moveSpeed)) {
+
+            movementTimer = Mathf.Min(movementTimer + Time.deltaTime, 1);
+
+            transform.SetPos(Vector3.Lerp(currentStart, currentEnd, movementTimer/moveSpeed));
+
+            if(movementTimer == 1) {
+
+                pathIndex++;
+
+                movementTimer = 0;
+
+                currentStart = transform.position;
+
+                currentEnd = path[pathIndex].transform.position;
+
+            }
 
 			yield return null;
 
 		}
 
-		gameManager.player.CmdMove (gameObject, target.transform.position);
-		//transform.SetPos(target.transform);
+        FinishMovement(true);
 
-		if(last) {
+    }
 
-			if (tileManager.GetAt<SC_Construction>(leavingTile) == null)
-				leavingTile.attackable = true;
+    void FinishMovement(bool moved) {
 
-			target.movementCost = 5000;
-			target.canSetOn = false;
-			target.attackable = (coalition != gameManager.CoalitionTurn ());
+        SC_Tile leavingTile = path[0];
+        SC_Tile target = path[path.Count - 1];
 
-			canMove = false;
+        if(moved) {
 
-			attacking = true;
+            if(tileManager.GetAt<SC_Construction>(leavingTile) == null)
+                leavingTile.attackable = true;
 
-			if (isHero ()) {
+            target.movementCost = 5000;
+            target.canSetOn = false;
+            target.attackable = (coalition != gameManager.CoalitionTurn());
 
-				canMove = (((SC_Hero)this).berserk && !((SC_Hero)this).berserkTurn);
+        }
 
-				if (tileManager.GetAt<SC_Construction>(target)) {
+        canMove = false;
 
-					if (tileManager.GetAt<SC_Village>(target)) {
+        attacking = true;
 
-						uiManager.villagePanel.SetActive (true);
+        if(isHero()) {
 
-					} else { 
+            canMove = (((SC_Hero)this).berserk && !((SC_Hero)this).berserkTurn);
 
-						gameManager.cantCancelMovement = true;
+            if(tileManager.GetAt<SC_Construction>(target) && moved) {
 
-						gameManager.CheckAttack (this);
+                if(tileManager.GetAt<SC_Village>(target)) {
 
-					}
+                    uiManager.villagePanel.SetActive(true);
 
-				} else {
+                } else {
 
-					uiManager.cancelAttackButton.SetActive (true);
-					gameManager.CheckAttack (this);
+                    gameManager.cantCancelMovement = true;
 
-				}
+                    gameManager.CheckAttack(this);
 
-				leavingTile.constructable = !leavingTile.IsPalace ();
-				target.constructable = false;
+                }
 
-			} else {
+            } else {
 
-				if (tileManager.GetAt<SC_Convoy>(target)) {
+                uiManager.cancelAttackButton.SetActive(true);
+                gameManager.CheckAttack(this);
 
-					tileManager.GetAt<SC_Convoy>(target).DestroyConvoy ();
-					gameManager.cantCancelMovement = true;
+            }
 
-				} else {
+            if(moved) {
 
-					uiManager.cancelAttackButton.SetActive (true);
+                leavingTile.constructable = !leavingTile.IsPalace();
+                target.constructable = false;
 
-				}
+            }
 
-				gameManager.CheckAttack(this);
+        } else {
 
-			}
+            if(tileManager.GetAt<SC_Convoy>(target) && moved) {
 
-		}
+                tileManager.GetAt<SC_Convoy>(target).DestroyConvoy();
+                gameManager.cantCancelMovement = true;
 
-	}
+            } else {
 
-	protected List<SC_Tile> PathFinder(SC_Tile start, SC_Tile end, List<SC_Tile> range) {
+                uiManager.cancelAttackButton.SetActive(true);
 
-		List<SC_Tile> openList = new List<SC_Tile>();
-		List<SC_Tile> tempList = new List<SC_Tile>();
-		List<SC_Tile> closedList = new List<SC_Tile>();
+            }
 
-		start.parent = null;
-		openList.Add (start);
+            gameManager.CheckAttack(this);
 
-		while (!openList.Contains (end)) {
+        }
 
-			foreach (SC_Tile tile in openList) {
+    }
 
-				foreach (SC_Tile neighbor in tileManager.GetNeighbors (tile)) {
+    protected List<SC_Tile> PathFinder(SC_Tile start, SC_Tile end, List<SC_Tile> range) {
 
-					if (!closedList.Contains (neighbor) && range.Contains (neighbor) && !tempList.Contains (neighbor)) {
+        List<SC_Tile> openList = new List<SC_Tile>();
+        List<SC_Tile> tempList = new List<SC_Tile>();
+        List<SC_Tile> closedList = new List<SC_Tile>();
 
-						tempList.Add (neighbor);
-						neighbor.parent = tile;
+        start.parent = null;
+        openList.Add(start);
 
-					}
+        while(!openList.Contains(end)) {
 
-				}
+            foreach(SC_Tile tile in openList) {
 
-				closedList.Add (tile);
+                foreach(SC_Tile neighbor in tileManager.GetNeighbors(tile)) {
 
-			}
+                    if(!closedList.Contains(neighbor) && range.Contains(neighbor) && !tempList.Contains(neighbor)) {
 
-			openList = new List<SC_Tile>(tempList);
-			tempList.Clear ();
+                        tempList.Add(neighbor);
+                        neighbor.parent = tile;
 
-		}
+                    }
 
-		List<SC_Tile> path = new List<SC_Tile>();
-		SC_Tile currentParent = end;
+                }
 
-		while (!path.Contains (start)) {
+                closedList.Add(tile);
 
-			path.Add (currentParent);
-			currentParent = currentParent.parent;
+            }
 
-		}
+            openList = new List<SC_Tile>(tempList);
+            tempList.Clear();
 
-		foreach (SC_Tile tile in tileManager.tiles)
-			tile.parent = null;
+        }
 
-		path.Reverse ();
-		if(path.Count > 1) path.RemoveAt (0);
-		return path;
+        List<SC_Tile> path = new List<SC_Tile>();
+        SC_Tile currentParent = end;
+
+        while(!path.Contains(start)) {
+
+            path.Add(currentParent);
+            currentParent = currentParent.parent;
+
+        }
+
+        foreach(SC_Tile tile in tileManager.tiles)
+            tile.parent = null;
+
+        path.Reverse();
+
+        if(path.Count > 1) {            
+
+            path.RemoveAt(0);
+
+            return path;
+
+        } else {
+
+            return null;
+
+        }
 
 	}
 

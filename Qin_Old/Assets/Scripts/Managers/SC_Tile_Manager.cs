@@ -140,7 +140,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 		if (tile.displayMovement) {
 
-			gameManager.GetCharacterToMove ().MoveTo (tile);
+            SC_Player.localPlayer.CmdMoveCharacterTo((int)tile.transform.position.x, (int)tile.transform.position.y);
 
 			return true;
 
@@ -196,6 +196,28 @@ public class SC_Tile_Manager : NetworkBehaviour {
 		return objectToReturn;
 
 	}
+
+    public int[][] GetArraysFromArray<T>(T[,] arrayP) where T : MonoBehaviour {
+
+        int[][] array = new int[2][];
+
+        array[0] = new int[0];
+        array[1] = new int[0];
+
+        int i = 0;
+
+        foreach(MonoBehaviour m in arrayP) {
+
+            array[0][i] = (int)m.gameObject.transform.position.x;
+            array[1][i] = (int)m.gameObject.transform.position.y;
+
+            i++;
+
+        }
+
+        return array;
+
+    }
 
     public int[][] GetArraysFromList<T>(List<T> list) where T : MonoBehaviour {
 
