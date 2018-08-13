@@ -180,21 +180,25 @@ public class SC_Character : NetworkBehaviour {
 
         Vector3 currentEnd = path[0].transform.position;
 
-        while ((pathIndex < path.Count) && (movementTimer < moveSpeed)) {
+        while (pathIndex < path.Count) {
 
-            movementTimer = Mathf.Min(movementTimer + Time.deltaTime, 1);
+            movementTimer = Mathf.Min(movementTimer + Time.deltaTime, moveSpeed);
 
             transform.SetPos(Vector3.Lerp(currentStart, currentEnd, movementTimer/moveSpeed));
 
-            if(movementTimer == 1) {
+            if(movementTimer == moveSpeed) {
 
                 pathIndex++;
 
-                movementTimer = 0;
+                if(pathIndex < path.Count) {
 
-                currentStart = transform.position;
+                    movementTimer = 0;
 
-                currentEnd = path[pathIndex].transform.position;
+                    currentStart = transform.position;
+
+                    currentEnd = path[pathIndex].transform.position;
+
+                }
 
             }
 
