@@ -295,9 +295,10 @@ public class SC_GameManager : NetworkBehaviour {
                                                 
         }
 
-        player.CmdSetCharacterToMove((int)target.transform.position.x, (int)target.transform.position.y);
+        characterToMove = target;
 
-		player.CmdRemoveAllFilters ();
+        foreach(SC_Tile tile in tileManager.tiles)
+            tile.RemoveFilters();
         
 		uiManager.HideWeapons();
 		uiManager.villagePanel.SetActive (false);
@@ -308,11 +309,8 @@ public class SC_GameManager : NetworkBehaviour {
 
 		CalcRange(tileTarget, target);
 
-        List<SC_Tile> temp = new List<SC_Tile>(closedList) { tileTarget };
-
-        int[][] array = tileManager.GetArraysFromList(temp);
-
-        player.CmdDisplayMovement(array[0], array[1]);
+        foreach(SC_Tile tile in new List<SC_Tile>(closedList) { tileTarget })
+            tile.DisplayMovement();
 
     }
 
@@ -1158,9 +1156,10 @@ public class SC_GameManager : NetworkBehaviour {
 		characterToMove.lastPos.constructable = !characterToMove.isHero();
 
 		characterToMove.SetCanMove (true);
-		CheckMovements (characterToMove);
+        SC_Player.localPlayer.CmdCheckMovements((int)characterToMove.transform.position.x, (int)characterToMove.transform.position.y);
+        //CheckMovements (characterToMove);
 
-		characterToMove.UnTired ();
+        characterToMove.UnTired ();
 
 		uiManager.cancelMovementButton.SetActive (false);
 

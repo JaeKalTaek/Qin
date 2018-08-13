@@ -71,9 +71,13 @@ public class SC_Soldier : SC_Character {
 
 			uiManager.ToggleButton ("construct");
 
-			uiManager.workshopPanel.gameObject.SetActive (false);
+            uiManager.ToggleButton("sacrifice");
 
-			gameManager.CheckMovements (this);
+            uiManager.workshopPanel.gameObject.SetActive (false);
+
+            SC_Player.localPlayer.CmdCheckMovements((int)transform.position.x, (int)transform.position.y);
+
+			//gameManager.CheckMovements (this);
 
 		}
 

@@ -31,6 +31,20 @@ public class SC_Player : NetworkBehaviour {
 	}
 
 	#region Commands
+    [Command]
+    public void CmdCheckMovements(int x, int y) {
+
+        RpcCheckMovements(x, y);
+
+    }
+
+    [ClientRpc]
+    void RpcCheckMovements(int x, int y) {
+
+        localPlayer.gameManager.CheckMovements(localPlayer.tileManager.GetAt<SC_Character>(x, y));
+
+    }
+
 	[Command]
 	public void CmdDisplayMovement(int[] xArray, int[] yArray) {
 

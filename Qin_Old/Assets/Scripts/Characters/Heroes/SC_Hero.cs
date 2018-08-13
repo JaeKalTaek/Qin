@@ -71,9 +71,11 @@ public class SC_Hero : SC_Character {
 
 		if (canMove || (berserk && !berserkTurn)) {
 
-			gameManager.CheckMovements (this);
+            SC_Player.localPlayer.CmdCheckMovements((int)transform.position.x, (int)transform.position.y);
 
-			uiManager.ShowHeroPower (powerUsed, name);
+            //gameManager.CheckMovements (this);
+
+            uiManager.ShowHeroPower (powerUsed, name);
 
 		}
 

@@ -159,7 +159,7 @@ public class SC_Character : NetworkBehaviour {
 		lastPos.movementCost = lastPos.baseCost;
 		lastPos.canSetOn = true;
 
-		path = PathFinder(lastPos, target, gameManager.GetClosedList ());
+        path = PathFinder(lastPos, target, gameManager.GetClosedList ());
 
         //lastPos, path[i], (i == (path.Count - 1)), i * 0.1f
 
