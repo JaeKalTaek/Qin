@@ -31,7 +31,7 @@ public class SC_Character : NetworkBehaviour {
 	public int technique, speed;
 	[HideInInspector]
 	public int criticalHit, dodgeHit;
-    public float moveSpeed;
+    public float moveSpeed = .25f;
 
 	protected Color baseColor, tiredColor;
 
