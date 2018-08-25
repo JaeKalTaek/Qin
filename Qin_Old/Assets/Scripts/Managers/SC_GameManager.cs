@@ -548,7 +548,30 @@ public class SC_GameManager : NetworkBehaviour {
 		if (!bastion)
             player.CmdChangeQinEnergy(-SC_Qin.Qin.wallCost);
 
-        StopConstruction();
+        foreach(SC_Tile tile2 in tileManager.tiles)
+            tile2.RemoveFilters();
+
+        if(bastion) {
+
+            foreach(SC_Character character in FindObjectsOfType<SC_Character>())
+                character.SetCanMove(!character.coalition);
+
+            if(player.IsQin()) {
+
+                uiManager.construct.gameObject.SetActive(true);
+                uiManager.qinPower.gameObject.SetActive(true);
+                uiManager.sacrifice.gameObject.SetActive(true);
+                uiManager.endTurn.SetActive(true);
+
+            }
+
+            bastion = false;
+
+        } else {
+
+            DisplayConstructableTiles();
+
+        }
 
     }
 
@@ -604,42 +627,14 @@ public class SC_GameManager : NetworkBehaviour {
 
 	}
 
-	public void StopConstruction() {
-
-		foreach (SC_Tile tile in tileManager.tiles)
-			tile.RemoveFilters();
-
-		if (bastion) {
-
-			foreach (SC_Character character in FindObjectsOfType<SC_Character>())
-				character.SetCanMove (!character.coalition);
-
-            if (player.IsQin()) {
-
-                uiManager.construct.gameObject.SetActive(true);
-                uiManager.qinPower.gameObject.SetActive(true);
-                uiManager.sacrifice.gameObject.SetActive(true);
-
-            }
-
-			bastion = false;
-
-		} else {
-
-			DisplayConstructableTiles ();
-
-		}
-
-	}
-
-	public void EndConstruction() {
+	/*public void EndConstruction() {
 
 		foreach (SC_Tile tile in tileManager.tiles)
 			tile.RemoveFilters();
 
 		uiManager.ToggleButton ("construct");
 
-	}
+	}*/
 
 	public void DisplaySacrifices() {
 
