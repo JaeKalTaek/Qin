@@ -48,33 +48,24 @@ public class SC_Qin : NetworkBehaviour {
 
 		uiManager.energyText.text = "Qin's Energy : " + energy;
 
-		/*qinPanel = GameObject.Find ("QinPanel");
-
-		qinPanel.SetActive (false);*/
-
-		//SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y).constructable = false;
-
-		//SC_GameManager.GetInstance ().GetTileAt ((int)transform.position.x, (int)transform.position.y).movementCost = 10000;
-
 		tileManager.SetQin (this);
 
 	}
 
 	void OnMouseDown() {
 
-		SC_Tile under = tileManager.GetTileAt (gameObject); //SC_GameManager.GetInstance().GetTileAt((int)transform.position.x, (int)transform.position.y);
+		SC_Tile under = tileManager.GetTileAt (gameObject);
 
 		if (under.GetDisplayAttack ()) {
-
-			SC_Character attackingCharacter = SC_Character.GetAttackingCharacter();
-			SC_Tile attackingCharacterTile = tileManager.GetTileAt (attackingCharacter.gameObject); //SC_GameManager.GetInstance().GetTileAt((int)attackingCharacter.transform.position.x, (int)attackingCharacter.transform.position.y);
+			
+			SC_Tile attackingCharacterTile = tileManager.GetTileAt (SC_Character.attackingCharacter.gameObject);
 			gameManager.rangedAttack = !gameManager.IsNeighbor(attackingCharacterTile, under);
 
-			attackingCharacter.attackTarget = under;
+            SC_Character.attackingCharacter.attackTarget = under;
 
-			if (attackingCharacter.isHero ()) {
+			if (SC_Character.attackingCharacter.IsHero ()) {
 
-				((SC_Hero)attackingCharacter).ChooseWeapon ();
+				((SC_Hero)SC_Character.attackingCharacter).ChooseWeapon ();
 
 			} else {
 

@@ -85,13 +85,13 @@ public class SC_Hero : SC_Character {
 
 		SC_Tile under = tileManager.GetTileAt (gameObject);
 
-		if (under.GetDisplayAttack() && !GetAttackingCharacter().isHero()) {
+		if (under.GetDisplayAttack() && !attackingCharacter.IsHero()) {
 
-			GetAttackingCharacter().attackTarget = under;
+            attackingCharacter.attackTarget = under;
 
 			gameManager.PreviewFight(false);
 
-			GetAttackingCharacter().attackTarget = null;
+            attackingCharacter.attackTarget = null;
 
 		}
 

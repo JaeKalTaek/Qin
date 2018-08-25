@@ -12,8 +12,6 @@ public class SC_Character : NetworkBehaviour {
 	public int movement = 5;
 	protected bool canMove;
 
-	public bool attacking;
-
 	public SC_Tile attackTarget;
 
 	protected bool finishMovement;
@@ -48,6 +46,8 @@ public class SC_Character : NetworkBehaviour {
 	protected static SC_UI_Manager uiManager;
 
     List<SC_Tile> path;
+
+    public static SC_Character attackingCharacter;
 
     protected virtual void Awake() {
 
@@ -95,13 +95,12 @@ public class SC_Character : NetworkBehaviour {
 
 				} else if (under.GetDisplayAttack ()) {
 
-					SC_Character attackingCharacter = GetAttackingCharacter ();
 					SC_Tile attackingCharacterTile = tileManager.GetTileAt (attackingCharacter.gameObject);
 					gameManager.rangedAttack = !gameManager.IsNeighbor (attackingCharacterTile, under);
 
 					attackingCharacter.attackTarget = under;
 
-					if (attackingCharacter.isHero ()) {
+					if (attackingCharacter.IsHero ()) {
 
 						((SC_Hero)attackingCharacter).ChooseWeapon ();
 
@@ -114,7 +113,7 @@ public class SC_Character : NetworkBehaviour {
 
 					}
 
-				} else if (under.displayConstructable && (((SC_Qin.GetEnergy () - 50) > 0) || gameManager.IsBastion ()) && !isHero ()) {
+				} else if (under.displayConstructable && (((SC_Qin.GetEnergy () - 50) > 0) || gameManager.IsBastion ()) && !IsHero ()) {
 
 					gameManager.ConstructAt (under);
 
@@ -182,6 +181,8 @@ public class SC_Character : NetworkBehaviour {
 
         while (pathIndex < path.Count) {
 
+            print("Hello");
+
             movementTimer = Mathf.Min(movementTimer + Time.deltaTime, moveSpeed);
 
             transform.SetPos(Vector3.Lerp(currentStart, currentEnd, movementTimer/moveSpeed));
@@ -212,10 +213,13 @@ public class SC_Character : NetworkBehaviour {
 
     void FinishMovement(bool moved) {
 
-        SC_Tile leavingTile = path[0];
-        SC_Tile target = path[path.Count - 1];
+        SC_Tile leavingTile = null;
+        SC_Tile target = null;
 
         if(moved) {
+
+            leavingTile = path[0];
+            target = path[path.Count - 1];
 
             if(tileManager.GetAt<SC_Construction>(leavingTile) == null)
                 leavingTile.attackable = true;
@@ -228,15 +232,15 @@ public class SC_Character : NetworkBehaviour {
 
         canMove = false;
 
-        attacking = true;
+        attackingCharacter = this;
 
-        if(isHero()) {
+        if(IsHero()) {
 
             canMove = (((SC_Hero)this).berserk && !((SC_Hero)this).berserkTurn);
 
-            if(tileManager.GetAt<SC_Construction>(target) && moved) {
+            if(moved && tileManager.GetAt<SC_Construction>(target)) {
 
-                if(tileManager.GetAt<SC_Village>(target)) {
+                if(tileManager.GetAt<SC_Village>(target) && SC_Player.localPlayer.Turn()) {
 
                     uiManager.villagePanel.SetActive(true);
 
@@ -250,7 +254,9 @@ public class SC_Character : NetworkBehaviour {
 
             } else {
 
-                uiManager.cancelAttackButton.SetActive(true);
+                if(SC_Player.localPlayer.Turn())
+                    uiManager.cancelAttackButton.SetActive(true);
+
                 gameManager.CheckAttack(this);
 
             }
@@ -269,7 +275,7 @@ public class SC_Character : NetworkBehaviour {
                 tileManager.GetAt<SC_Convoy>(target).DestroyConvoy();
                 gameManager.cantCancelMovement = true;
 
-            } else {
+            } else if(SC_Player.localPlayer.Turn()) {
 
                 uiManager.cancelAttackButton.SetActive(true);
 
@@ -343,25 +349,16 @@ public class SC_Character : NetworkBehaviour {
 
 	}
 
-	public static SC_Character GetAttackingCharacter() {
-
-		SC_Character attackingCharacter = null;
-
-		foreach (SC_Character character in FindObjectsOfType<SC_Character>())
-			if(character.attacking) attackingCharacter = character;
-
-		return attackingCharacter;
-
-	}
-
 	public static void ResetAttacker() {
 
-		foreach (SC_Character character in FindObjectsOfType<SC_Character>()) {
-			if (character.attacking) character.Tire ();
-			character.attacking = false;
-		}
+        attackingCharacter.Tire();
 
-	}
+        if(attackingCharacter.IsHero())
+            ((SC_Hero)attackingCharacter).berserkTurn = ((SC_Hero)attackingCharacter).berserk;
+
+        attackingCharacter = null;
+
+    }
 
 	public virtual void DestroyCharacter() {
 
@@ -377,13 +374,13 @@ public class SC_Character : NetworkBehaviour {
 
 	public SC_Weapon GetActiveWeapon() {
 
-		return isHero() ? ((SC_Hero)this).GetWeapon(true) : ((SC_Soldier)this).weapon;
+		return IsHero() ? ((SC_Hero)this).GetWeapon(true) : ((SC_Soldier)this).weapon;
 
 	}
 
 	public bool HasRange() {
 
-		if (isHero())
+		if (IsHero())
 			return (((SC_Hero)this).weapon1.ranged || ((SC_Hero)this).weapon2.ranged);
 		else
 			return ((SC_Soldier)this).weapon.ranged;
@@ -398,7 +395,7 @@ public class SC_Character : NetworkBehaviour {
 
 	}
 
-	public bool isHero() {
+	public bool IsHero() {
 
 		return (GetType().Equals(typeof(SC_Hero)) || GetType().IsSubclassOf(typeof(SC_Hero)));
 

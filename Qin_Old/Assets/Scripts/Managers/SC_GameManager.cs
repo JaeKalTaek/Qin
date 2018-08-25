@@ -280,20 +280,7 @@ public class SC_GameManager : NetworkBehaviour {
 
         cantCancelMovement = false;
 
-        foreach (SC_Character character in FindObjectsOfType<SC_Character>()) {
-
-			if (character.attacking) {
-				
-                character.Tire ();
-
-                if (character.isHero())					
-                    ((SC_Hero)character).berserkTurn = ((SC_Hero)character).berserk;
-				
-            }
-
-			character.attacking = false;
-                                                
-        }
+        SC_Character.ResetAttacker();
 
         characterToMove = target;
 
@@ -320,7 +307,7 @@ public class SC_GameManager : NetworkBehaviour {
         closedList.Clear();
 		movementPoints[aStartingTile] = target.movement;
         bool berserk = false;
-        if (target.isHero())
+        if (target.IsHero())
             berserk = (((SC_Hero)target).berserk);
 		ExpandTile(aStartingTile, berserk);
 
@@ -403,7 +390,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 			SC_Tile under = tileManager.GetTileAt (character.gameObject);
 
-			if (character.isHero ()) {
+			if (character.IsHero ()) {
 				
 				SC_Hero hero = ((SC_Hero)character);
 
@@ -425,8 +412,6 @@ public class SC_GameManager : NetworkBehaviour {
 				cursedTiles.AddRange (GetNeighbors (under));
 
 			}
-
-			character.attacking = false;
 			character.UnTired ();
             
 			bool turn = character.coalition == CoalitionTurn ();
@@ -440,9 +425,11 @@ public class SC_GameManager : NetworkBehaviour {
 
         }
 
-		//Curse1 ();
+        SC_Character.attackingCharacter = null;
 
-		foreach(SC_Construction construction in FindObjectsOfType<SC_Construction>()) {
+        //Curse1 ();
+
+        foreach(SC_Construction construction in FindObjectsOfType<SC_Construction>()) {
 			
 			if (construction.GetType ().Equals (typeof(SC_Wall)) || construction.GetType ().Equals (typeof(SC_Bastion)))
 				tileManager.GetTileAt (construction.gameObject).attackable = CoalitionTurn ();
@@ -505,7 +492,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 				} else if (tileManager.GetAt<SC_Character> (tile) != null) {
 						
-					if (tileManager.GetAt<SC_Character> (tile).isHero ())
+					if (tileManager.GetAt<SC_Character> (tile).IsHero ())
 						constructableTiles.Remove (tile);
 
 				}
@@ -689,23 +676,10 @@ public class SC_GameManager : NetworkBehaviour {
 	public void DisplayResurrectionTiles() {
 
 		if ((lastHeroDead != null) && (SC_Qin.GetEnergy() > SC_Qin.Qin.powerCost)) {
-			
-			foreach (SC_Character character in FindObjectsOfType<SC_Character>()) {
 
-				characterToMove = null;
+            characterToMove = null;
 
-				if (character.attacking) {
-
-					character.Tire ();
-
-					if (character.isHero())					
-						((SC_Hero)character).berserkTurn = ((SC_Hero)character).berserk;
-
-				}
-
-				character.attacking = false;
-
-			}
+            SC_Character.ResetAttacker();
             
 			foreach (SC_Tile tile in tileManager.tiles) {
 
@@ -773,7 +747,7 @@ public class SC_GameManager : NetworkBehaviour {
 		uiManager.cancelMovementButton.SetActive (false);
 		uiManager.cancelAttackButton.SetActive (false);
 
-		SC_Character attacker = SC_Character.GetAttackingCharacter ();
+		SC_Character attacker = SC_Character.attackingCharacter;
 
         attacker.Tire();
 
@@ -788,7 +762,7 @@ public class SC_GameManager : NetworkBehaviour {
             bool killed = attacked.Hit (CalcDamages (attacker, attacked, false), false);
 			SetCritDodge (attacker, attacked);
 
-			if (attacker.isHero () && killed)
+			if (attacker.IsHero () && killed)
 				IncreaseRelationships ((SC_Hero)attacker);
 
 			if(counterAttack) {
@@ -796,7 +770,7 @@ public class SC_GameManager : NetworkBehaviour {
                 killed = attacker.Hit(CalcDamages(attacked, attacker, true), false);
                 SetCritDodge(attacked, attacker);
 
-                if (attacked.isHero() && killed)
+                if (attacked.IsHero() && killed)
 					IncreaseRelationships ((SC_Hero)attacked);
 
 			}
@@ -816,12 +790,12 @@ public class SC_GameManager : NetworkBehaviour {
 
 			SC_Qin.ChangeEnergy (-(attacker.GetActiveWeapon ().weaponOrQi ? attacker.strength : attacker.qi));
 
-		}
-
-        attacker.attacking = false;
+		}     
         
-        if (attacker.isHero())
+        if (attacker.IsHero())
             ((SC_Hero)attacker).berserkTurn = ((SC_Hero)attacker).berserk;
+
+        SC_Character.attackingCharacter = null;
 
     }
 
@@ -834,8 +808,8 @@ public class SC_GameManager : NetworkBehaviour {
 		
 	public int CalcDamages(SC_Character attacker, SC_Character attacked, bool counter) {  
 
-        bool heroAttacker = attacker.isHero();
-        bool heroAttacked = attacked.isHero();
+        bool heroAttacker = attacker.IsHero();
+        bool heroAttacked = attacked.IsHero();
 
         int damages = attacker.GetActiveWeapon ().weaponOrQi ? attacker.strength : attacker.qi;
 
@@ -1009,7 +983,7 @@ public class SC_GameManager : NetworkBehaviour {
 
             if (character != null) {
 				
-				if (character.isHero () && character.coalition) {
+				if (character.IsHero () && character.coalition) {
 					
 					if (!character.characterName.Equals (target.characterName) && !heroesInRange.Contains(((SC_Hero)character)))
 						heroesInRange.Add ((SC_Hero)character);
@@ -1026,13 +1000,13 @@ public class SC_GameManager : NetworkBehaviour {
 
 	public void PreviewFight(bool activeWeapon) {
 
-		SC_Character attacker = SC_Character.GetAttackingCharacter ();
+		SC_Character attacker = SC_Character.attackingCharacter;
 
-		if (attacker.isHero ())	((SC_Hero)attacker).SetWeapon (activeWeapon);
+		if (attacker.IsHero ())	((SC_Hero)attacker).SetWeapon (activeWeapon);
 
 		uiManager.PreviewFight (attacker, rangedAttack);
 
-		if (attacker.isHero ())	((SC_Hero)attacker).SetWeapon (activeWeapon);
+		if (attacker.IsHero ())	((SC_Hero)attacker).SetWeapon (activeWeapon);
 
 	}
 
@@ -1051,7 +1025,7 @@ public class SC_GameManager : NetworkBehaviour {
 
     public void SetAttackWeapon(bool usedActiveWeapon) {
 
-        ((SC_Hero)SC_Character.GetAttackingCharacter()).SetWeapon(usedActiveWeapon);
+        ((SC_Hero)SC_Character.attackingCharacter).SetWeapon(usedActiveWeapon);
 		Attack ();
 
     }
@@ -1060,7 +1034,7 @@ public class SC_GameManager : NetworkBehaviour {
     #region Actions
     public void ActionVillage(bool destroy) {
 
-		if (characterToMove.isHero())
+		if (characterToMove.IsHero())
 			((SC_Hero)characterToMove).ActionVillage (destroy);
 
 	}
@@ -1153,7 +1127,7 @@ public class SC_GameManager : NetworkBehaviour {
 		characterToMove.lastPos.canSetOn = false;
 		if (tileManager.GetAt<SC_Construction> (characterToMove.lastPos) == null)
 			characterToMove.lastPos.attackable = (characterToMove.coalition != GetInstance ().CoalitionTurn ());
-		characterToMove.lastPos.constructable = !characterToMove.isHero();
+		characterToMove.lastPos.constructable = !characterToMove.IsHero();
 
 		characterToMove.SetCanMove (true);
         SC_Player.localPlayer.CmdCheckMovements((int)characterToMove.transform.position.x, (int)characterToMove.transform.position.y);
@@ -1169,7 +1143,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 		uiManager.HideWeapons();
 
-		CheckAttack (SC_Character.GetAttackingCharacter ());
+		CheckAttack (SC_Character.attackingCharacter);
 
 		if(!cantCancelMovement) uiManager.cancelMovementButton.SetActive (true);
 

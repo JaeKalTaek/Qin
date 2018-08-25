@@ -64,15 +64,14 @@ public class SC_Tile : NetworkBehaviour {
 
         } else if (displayAttack) {
 
-            SC_Character attackingCharacter = SC_Character.GetAttackingCharacter();
-            SC_Tile attackingCharacterTile = tileManager.GetTileAt(attackingCharacter.gameObject);
+            SC_Tile attackingCharacterTile = tileManager.GetTileAt(SC_Character.attackingCharacter.gameObject);
             gameManager.rangedAttack = !gameManager.IsNeighbor(attackingCharacterTile, this);
 
-            attackingCharacter.attackTarget = this;
+            SC_Character.attackingCharacter.attackTarget = this;
 
-            if (attackingCharacter.isHero()) {
+            if (SC_Character.attackingCharacter.IsHero()) {
 
-                ((SC_Hero)attackingCharacter).ChooseWeapon();
+                ((SC_Hero)SC_Character.attackingCharacter).ChooseWeapon();
 
             } else {
 

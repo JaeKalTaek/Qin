@@ -43,13 +43,12 @@ public class SC_Construction : NetworkBehaviour {
 
 		if (under.GetDisplayAttack ()) {
 
-			SC_Character attackingCharacter = SC_Character.GetAttackingCharacter ();
-			SC_Tile attackingCharacterTile = tileManager.GetTileAt (attackingCharacter.gameObject);
+			SC_Tile attackingCharacterTile = tileManager.GetTileAt (SC_Character.attackingCharacter.gameObject);
 			gameManager.rangedAttack = !gameManager.IsNeighbor (attackingCharacterTile, under);
 
-			attackingCharacter.attackTarget = under;
+            SC_Character.attackingCharacter.attackTarget = under;
 
-			((SC_Hero)attackingCharacter).ChooseWeapon ();
+			((SC_Hero)SC_Character.attackingCharacter).ChooseWeapon ();
 
 		}
 
