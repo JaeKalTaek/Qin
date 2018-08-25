@@ -351,12 +351,16 @@ public class SC_Character : NetworkBehaviour {
 
 	public static void ResetAttacker() {
 
-        attackingCharacter.Tire();
+        if(attackingCharacter) {
 
-        if(attackingCharacter.IsHero())
-            ((SC_Hero)attackingCharacter).berserkTurn = ((SC_Hero)attackingCharacter).berserk;
+            attackingCharacter.Tire();
 
-        attackingCharacter = null;
+            if(attackingCharacter.IsHero())
+                ((SC_Hero)attackingCharacter).berserkTurn = ((SC_Hero)attackingCharacter).berserk;
+
+            attackingCharacter = null;
+
+        }
 
     }
 

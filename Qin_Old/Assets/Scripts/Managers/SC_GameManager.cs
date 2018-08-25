@@ -571,7 +571,6 @@ public class SC_GameManager : NetworkBehaviour {
 		bool right = false;
 		bool top = false;
 		int count = 0;
-		bool isBastion = construction.GetType ().Equals (typeof(SC_Bastion));
 
 		foreach (SC_Tile tile in GetNeighbors(under)) {
 
@@ -593,7 +592,7 @@ public class SC_GameManager : NetworkBehaviour {
 		string rotation = "";
 
         if (count == 1)
-			rotation = !isBastion ? ((right || left) ? "Horizontal" : "Vertical" ) : (right ? "Right" : left ? "Left" : top ? "Top" : "Bottom");
+			rotation = right ? "Right" : left ? "Left" : top ? "Top" : "Bottom";
 		else if (count == 2)
 			rotation = right ? (left ? "RightLeft" : top ? "RightTop" : "RightBottom") : left ? (top ? "LeftTop" : "LeftBottom") : "TopBottom";
 		else if (count == 3)
@@ -601,7 +600,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 		if (!rotation.Equals ("")) rotation = "_" + rotation;
 
-		construction.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/" + (isBastion ? "Bastion/" : "Wall/") + count.ToString () + rotation);
+		construction.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/" + (construction.GetType().Equals(typeof(SC_Bastion)) ? "Bastion/" : "Wall/") + count.ToString () + rotation);
 
 	}
 
