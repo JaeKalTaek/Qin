@@ -28,8 +28,8 @@ public class SC_GameManager : NetworkBehaviour {
     int turn;
 
 	//Other
-	bool bastion;
-	[HideInInspector]
+	public bool Bastion { get; set; }
+    [HideInInspector]
 	public SC_Hero lastHeroDead;
     [HideInInspector]
     public bool rangedAttack;
@@ -56,6 +56,9 @@ public class SC_GameManager : NetworkBehaviour {
 		if(GameObject.FindGameObjectWithTag ("Player")) {
 			
 			player = GameObject.FindGameObjectWithTag ("Player").GetComponent<SC_Player> ();
+
+            player.SetSide();
+
 			player.SetGameManager (this);
 
 		}
@@ -67,7 +70,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 		}
 
-		bastion = true;
+		Bastion = true;
 
 		cursedTiles = new List<SC_Tile> ();
 
@@ -443,7 +446,7 @@ public class SC_GameManager : NetworkBehaviour {
 			
 			SC_Qin.ChangeEnergy (50 * SC_Village.number);
 
-			bastion = true;
+			Bastion = true;
 
 			DisplayConstructableTiles ();
 
@@ -468,7 +471,7 @@ public class SC_GameManager : NetworkBehaviour {
 
         List<SC_Tile> constructableTiles = new List<SC_Tile>();
 
-        if (!bastion) {
+        if (!Bastion) {
 
 			uiManager.ToggleButton ("construct");
 			uiManager.ToggleButton ("sacrifice");
@@ -523,7 +526,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 	public void ConstructAt(int x, int y) {
 
-		SC_Tile tile = tileManager.GetTileAt (x, y);
+        SC_Tile tile = tileManager.GetTileAt (x, y);
 
 		if (tileManager.GetAt<SC_Character> (tile) != null) {
 
@@ -535,37 +538,37 @@ public class SC_GameManager : NetworkBehaviour {
 		if (tileManager.GetAt<SC_Construction> (tile) != null)
 			tileManager.GetAt<SC_Construction> (tile).DestroyConstruction();
 
-		Transform parentGo = GameObject.Find (bastion ? "Bastions" : "Walls").transform;
-		GameObject go = bastion ? Instantiate (bastionPrefab, parentGo) : Instantiate (wallPrefab, parentGo);
+		Transform parentGo = GameObject.Find (Bastion ? "Bastions" : "Walls").transform;
+		GameObject go = Bastion ? Instantiate (bastionPrefab, parentGo) : Instantiate (wallPrefab, parentGo);
 		go.transform.SetPos (tile.transform);
         
         NetworkServer.Spawn(go);
 
-        player.CmdUpdateWallGraph(x, y);
+        player.CmdUpdateWallGraph(go);
 
         player.CmdUpdateNeighborWallsGraph(x, y);
 
-		if (!bastion)
+		if (!Bastion)
             player.CmdChangeQinEnergy(-SC_Qin.Qin.wallCost);
 
-        foreach(SC_Tile tile2 in tileManager.tiles)
-            tile2.RemoveFilters();
+        player.CmdFinishConstruction();
 
-        if(bastion) {
+    }
+
+    public void FinishConstruction() {
+
+        foreach(SC_Tile tile in tileManager.tiles)
+            tile.RemoveFilters();
+
+        if(Bastion) {
 
             foreach(SC_Character character in FindObjectsOfType<SC_Character>())
                 character.SetCanMove(!character.coalition);
 
-            if(player.IsQin()) {
-
-                uiManager.construct.gameObject.SetActive(true);
-                uiManager.qinPower.gameObject.SetActive(true);
-                uiManager.sacrifice.gameObject.SetActive(true);
-                uiManager.endTurn.SetActive(true);
-
-            }
-
-            bastion = false;
+            uiManager.construct.gameObject.SetActive(true);
+            uiManager.qinPower.gameObject.SetActive(true);
+            uiManager.sacrifice.gameObject.SetActive(true);
+            uiManager.endTurn.SetActive(true);
 
         } else {
 
@@ -580,17 +583,19 @@ public class SC_GameManager : NetworkBehaviour {
 		foreach (SC_Tile tile in GetNeighbors(center)) {
 
 			if((tileManager.GetAt<SC_Bastion> (tile) != null) || (tileManager.GetAt<SC_Wall> (tile) != null))
-				UpdateWallGraph (tile);
+				UpdateWallGraph (tileManager.GetAt<SC_Construction>(tile).gameObject);
 
 		}
 
 	}
 
-	public void UpdateWallGraph(SC_Tile under) {
+	public void UpdateWallGraph(GameObject go) {
 
-        SC_Construction construction = tileManager.GetAt<SC_Construction>(under);
+        SC_Construction construction = go.GetComponent<SC_Construction>();
 
-		bool left = false;
+        SC_Tile under = tileManager.GetTileAt(go);
+
+        bool left = false;
 		bool right = false;
 		bool top = false;
 		int count = 0;
@@ -623,18 +628,18 @@ public class SC_GameManager : NetworkBehaviour {
 
 		if (!rotation.Equals ("")) rotation = "_" + rotation;
 
-		construction.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/" + (construction.GetType().Equals(typeof(SC_Bastion)) ? "Bastion/" : "Wall/") + count.ToString () + rotation);
+		construction.GetComponentInChildren<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/" + (construction.GetType().Equals(typeof(SC_Bastion)) ? "Bastion/" : "Wall/") + count.ToString () + rotation);
 
 	}
 
-	/*public void EndConstruction() {
+	public void EndConstruction() {
 
 		foreach (SC_Tile tile in tileManager.tiles)
 			tile.RemoveFilters();
 
 		uiManager.ToggleButton ("construct");
 
-	}*/
+	}
 
 	public void DisplaySacrifices() {
 
@@ -1070,7 +1075,7 @@ public class SC_GameManager : NetworkBehaviour {
 
     public void DisplayWorkshopPanel() {
 
-		if((!CoalitionTurn()) && !bastion && (tileManager.GetAt<SC_Character>(currentWorkshop.gameObject) == null)) {
+		if((!CoalitionTurn()) && !Bastion && (tileManager.GetAt<SC_Character>(currentWorkshop.gameObject) == null)) {
 
 			uiManager.ToggleButton ("construct");
 			uiManager.ToggleButton("sacrifice");
@@ -1181,12 +1186,6 @@ public class SC_GameManager : NetworkBehaviour {
 			tileManager.GetAt<SC_Soldier>(tile).Hit(2, false);
 
 		cursedTiles = new List<SC_Tile> ();
-
-	}
-
-	public bool IsBastion() {
-
-		return bastion;
 
 	}
 

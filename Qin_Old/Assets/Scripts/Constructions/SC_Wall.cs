@@ -4,10 +4,10 @@
 
 		base.OnMouseDown ();
 
-		SC_Tile under = tileManager.GetTileAt (gameObject);
+		/*SC_Tile under = tileManager.GetTileAt (gameObject);
 
-		if (under.displayConstructable && ( ((SC_Qin.GetEnergy() - 100) > 0) || gameManager.IsBastion()))
-			gameManager.ConstructAt(under);
+        if(under.displayConstructable && (((SC_Qin.GetEnergy() - 100) > 0) || gameManager.Bastion))
+            gameManager.ConstructAt(under);*/
 
 	}
 

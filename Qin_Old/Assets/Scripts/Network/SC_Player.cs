@@ -14,7 +14,9 @@ public class SC_Player : NetworkBehaviour {
 
 	public override void OnStartLocalPlayer () {
 
-		tag = "Player";
+        SetSide();
+
+        tag = "Player";
 
 		gameManager = FindObjectOfType<SC_GameManager> ();
 
@@ -25,8 +27,6 @@ public class SC_Player : NetworkBehaviour {
 			tileManager = FindObjectOfType<SC_Tile_Manager> ();
 
 		localPlayer = this;
-
-		//<SC_UI_Manager> ().SetupUI (this, qin);
 		
 	}
 
@@ -181,16 +181,33 @@ public class SC_Player : NetworkBehaviour {
     }
 
     [Command]
-    public void CmdUpdateWallGraph(int x, int y) {
+    public void CmdFinishConstruction() {
 
-        RpcUpdateWallGraph(x, y);
+        RpcFinishConstruction();
 
     }
 
     [ClientRpc]
-    void RpcUpdateWallGraph(int x, int y) {
+    void RpcFinishConstruction() {        
 
-        localPlayer.gameManager.UpdateWallGraph(localPlayer.tileManager.GetTileAt(x, y));
+        if(localPlayer.IsQin())
+            localPlayer.gameManager.FinishConstruction();
+
+        localPlayer.gameManager.Bastion = false;
+
+    }
+
+    [Command]
+    public void CmdUpdateWallGraph(GameObject go) {
+
+        RpcUpdateWallGraph(go);
+
+    }
+
+    [ClientRpc]
+    void RpcUpdateWallGraph(GameObject go) {
+
+        localPlayer.gameManager.UpdateWallGraph(go);
 
     }
 
@@ -260,10 +277,10 @@ public class SC_Player : NetworkBehaviour {
 
 	}
 
-	public void SetSide(bool side) {
+	public void SetSide() {
 
-		qin = side;
+        qin = FindObjectOfType<SC_Network_Manager>().IsQinHost() == isServer;
 
-	}
+    }
 
 }

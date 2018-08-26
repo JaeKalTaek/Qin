@@ -54,7 +54,7 @@ public class SC_Tile : NetworkBehaviour {
 
 	void OnMouseDown() {
 
-        if (displayConstructable && (((SC_Qin.GetEnergy() - 50) > 0) || gameManager.IsBastion())) {
+        if (displayConstructable && (((SC_Qin.GetEnergy() - 50) > 0) || gameManager.Bastion)) {
 
             gameManager.ConstructAt(this);
 

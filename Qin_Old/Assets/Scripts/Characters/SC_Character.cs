@@ -113,7 +113,7 @@ public class SC_Character : NetworkBehaviour {
 
 					}
 
-				} else if (under.displayConstructable && (((SC_Qin.GetEnergy () - 50) > 0) || gameManager.IsBastion ()) && !IsHero ()) {
+				} else if (under.displayConstructable && (((SC_Qin.GetEnergy () - 50) > 0) || gameManager.Bastion) && !IsHero ()) {
 
 					gameManager.ConstructAt (under);
 
@@ -160,28 +160,24 @@ public class SC_Character : NetworkBehaviour {
 
         path = PathFinder(lastPos, target, gameManager.GetClosedList ());
 
-        //lastPos, path[i], (i == (path.Count - 1)), i * 0.1f
-
         if(path == null)
             FinishMovement(false);
         else
-            StartCoroutine(Move());
+            StartCoroutine("Move");
 
     }    
 
-	IEnumerator Move(/*SC_Tile leavingTile, SC_Tile target, bool last, float delay*/) {
+	IEnumerator Move() {
 
-        int pathIndex = 0;
+        int pathIndex = 1;
 
         float movementTimer = 0;
 
         Vector3 currentStart = transform.position;
 
-        Vector3 currentEnd = path[0].transform.position;
+        Vector3 currentEnd = path[1].transform.position;
 
         while (pathIndex < path.Count) {
-
-            print("Hello");
 
             movementTimer = Mathf.Min(movementTimer + Time.deltaTime, moveSpeed);
 
@@ -213,13 +209,10 @@ public class SC_Character : NetworkBehaviour {
 
     void FinishMovement(bool moved) {
 
-        SC_Tile leavingTile = null;
-        SC_Tile target = null;
+        SC_Tile leavingTile = path[0];
+        SC_Tile target = path[path.Count - 1];
 
         if(moved) {
-
-            leavingTile = path[0];
-            target = path[path.Count - 1];
 
             if(tileManager.GetAt<SC_Construction>(leavingTile) == null)
                 leavingTile.attackable = true;
@@ -270,7 +263,7 @@ public class SC_Character : NetworkBehaviour {
 
         } else {
 
-            if(tileManager.GetAt<SC_Convoy>(target) && moved) {
+            if(moved && tileManager.GetAt<SC_Convoy>(target)) {
 
                 tileManager.GetAt<SC_Convoy>(target).DestroyConvoy();
                 gameManager.cantCancelMovement = true;
@@ -335,17 +328,7 @@ public class SC_Character : NetworkBehaviour {
 
         path.Reverse();
 
-        if(path.Count > 1) {            
-
-            path.RemoveAt(0);
-
-            return path;
-
-        } else {
-
-            return null;
-
-        }
+        return (path.Count > 1) ? path : null;
 
 	}
 

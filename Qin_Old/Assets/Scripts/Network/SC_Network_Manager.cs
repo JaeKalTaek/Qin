@@ -28,8 +28,6 @@ public class SC_Network_Manager : NetworkLobbyManager {
 
 	public override bool OnLobbyServerSceneLoadedForPlayer (GameObject lobbyPlayer, GameObject gamePlayer) {
 
-		gamePlayer.GetComponent<SC_Player> ().SetSide (lobbyPlayer.GetComponent<SC_Lobby_Player> ().GetSide());
-
 		return true;
 
 	}
@@ -50,7 +48,7 @@ public class SC_Network_Manager : NetworkLobbyManager {
 
 		if (newScene.name.Equals(offlineScene) && stoppedMatchmaking) {
 
-			SC_Menu menu = GameObject.FindObjectOfType<SC_Menu> ();
+			SC_Menu menu = FindObjectOfType<SC_Menu> ();
 			
 			menu.ShowPanel (menu.qmPanel);
 
