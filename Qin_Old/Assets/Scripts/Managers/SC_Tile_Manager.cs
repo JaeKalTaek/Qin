@@ -43,7 +43,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 		SC_Tile t = GetTileAt (character.gameObject);
 
-		t.movementCost = 5000;
+		t.movementCost = character.coalition ? 1 : 5000;
 		t.canSetOn = false;
 
 		//if (GetAt<SC_Construction> (t) == null)

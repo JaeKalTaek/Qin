@@ -22,7 +22,7 @@ public class SC_GameManager : NetworkBehaviour {
 	//Variables used to determine the movements possible
 	List<SC_Tile> openList = new List<SC_Tile>();
 	List<SC_Tile> closedList = new List<SC_Tile>();
-	Dictionary<SC_Tile, float> movementPoints = new Dictionary<SC_Tile, float>();
+	Dictionary<SC_Tile, int> movementPoints = new Dictionary<SC_Tile, int>();
 
 	[SyncVar]
     int turn;
@@ -300,7 +300,8 @@ public class SC_GameManager : NetworkBehaviour {
 		CalcRange(tileTarget, target);
 
         foreach(SC_Tile tile in new List<SC_Tile>(closedList) { tileTarget })
-            tile.DisplayMovement();
+            if(tile.canSetOn)
+                tile.DisplayMovement();
 
     }
 
@@ -308,17 +309,23 @@ public class SC_GameManager : NetworkBehaviour {
 
         openList.Clear();
         closedList.Clear();
+
 		movementPoints[aStartingTile] = target.movement;
+
         bool berserk = false;
         if (target.IsHero())
             berserk = (((SC_Hero)target).berserk);
+
 		ExpandTile(aStartingTile, berserk);
 
         while (openList.Count > 0) {
 			
             openList.Sort((a, b) => movementPoints[a].CompareTo(movementPoints[b]));
-            var tile = openList[openList.Count - 1];
+
+            SC_Tile tile = openList[openList.Count - 1];
+
             openList.RemoveAt(openList.Count - 1);
+
 			ExpandTile(tile, berserk);
 
         }
@@ -327,18 +334,20 @@ public class SC_GameManager : NetworkBehaviour {
     
     void ExpandTile(SC_Tile aTile, bool berserk) {
         
-        float parentPoints = movementPoints[aTile];
+        int parentPoints = movementPoints[aTile];
+
 		closedList.Add(aTile);
         
         foreach (SC_Tile tile in GetNeighbors(aTile)) {
             
             if (closedList.Contains(tile) || openList.Contains(tile)) continue;
 
-			float points = parentPoints - ((berserk && (tile.movementCost != 10000)) ? 1 : tile.movementCost);
+			int points = parentPoints - ((berserk && (tile.movementCost != 10000)) ? 1 : tile.movementCost);
 
             if (points >= 0) {
 
 				openList.Add(tile);
+
 				movementPoints[tile] = points;
 
 			}
@@ -653,10 +662,6 @@ public class SC_GameManager : NetworkBehaviour {
 			tile.RemoveFilters();
 
 		SC_Character.ResetAttacker();
-
-        /*int[][] array = tileManager.GetArraysFromList(new List<SC_Soldier>(FindObjectsOfType<SC_Soldier>()));
-
-        player.CmdDisplaySacrifice(array[0], array[1]);*/
 
 		foreach (SC_Soldier soldier in FindObjectsOfType<SC_Soldier>())
             tileManager.GetTileAt(soldier.gameObject).DisplaySacrifice();
@@ -1130,7 +1135,6 @@ public class SC_GameManager : NetworkBehaviour {
 
 		characterToMove.SetCanMove (true);
         SC_Player.localPlayer.CmdCheckMovements((int)characterToMove.transform.position.x, (int)characterToMove.transform.position.y);
-        //CheckMovements (characterToMove);
 
         characterToMove.UnTired ();
 

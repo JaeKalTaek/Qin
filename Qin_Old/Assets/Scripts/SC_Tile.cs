@@ -52,7 +52,14 @@ public class SC_Tile : NetworkBehaviour {
 
 	}
 
-	void OnMouseDown() {
+    private void Update() {
+
+        if(transform.position == new Vector3(34, 7, 0))
+            print(movementCost);
+
+    }
+
+    void OnMouseDown() {
 
         if (displayConstructable && (((SC_Qin.GetEnergy() - 50) > 0) || gameManager.Bastion)) {
 
