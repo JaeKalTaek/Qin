@@ -77,7 +77,7 @@ public class SC_Player : NetworkBehaviour {
     [ClientRpc]
     void RpcSetCharacterToMove(int x, int y) {
 
-        localPlayer.gameManager.SetCharacterToMove(localPlayer.tileManager.GetAt<SC_Character>(x, y));
+        localPlayer.gameManager.characterToMove = localPlayer.tileManager.GetAt<SC_Character>(x, y);
 
     }
 
@@ -91,7 +91,7 @@ public class SC_Player : NetworkBehaviour {
     [ClientRpc]
     void RpcMoveCharacterTo(int x, int y) {
 
-        localPlayer.gameManager.GetCharacterToMove().MoveTo(localPlayer.tileManager.GetTileAt(x, y));
+        localPlayer.gameManager.characterToMove.MoveTo(localPlayer.tileManager.GetTileAt(x, y));
 
     }
 

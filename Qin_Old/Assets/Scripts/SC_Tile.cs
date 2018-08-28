@@ -59,7 +59,7 @@ public class SC_Tile : NetworkBehaviour {
         } else if (CurrentDisplay == TDisplay.Attack) {
 
             SC_Tile attackingCharacterTile = tileManager.GetTileAt(SC_Character.attackingCharacter.gameObject);
-            gameManager.rangedAttack = !gameManager.IsNeighbor(attackingCharacterTile, this);
+            gameManager.rangedAttack = !tileManager.IsNeighbor(attackingCharacterTile, this);
 
             SC_Character.attackingCharacter.attackTarget = this;
 
@@ -116,16 +116,13 @@ public class SC_Tile : NetworkBehaviour {
 
         CurrentDisplay = d;
 
-        int i = (int)d;
-
-        SetFilter("T_Display" + ((i == 1) ? "Movement" : (i == 2) ? "Attack" : (i == 3) ? "Construct" : (i == 4) ? "Sacrifice" : "Resurrection"));
+        SetFilter("T_Display" + d);
 
     }
 
 	public bool Qin() {
 
-		Vector3 qinPos = FindObjectOfType<SC_Qin> ().transform.position;
-		return ((transform.position.x == qinPos.x) && (transform.position.y == qinPos.y));
+        return tileManager.GetAt<SC_Qin>(this) != null;
 
 	}
 

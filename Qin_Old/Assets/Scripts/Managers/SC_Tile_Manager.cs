@@ -47,7 +47,6 @@ public class SC_Tile_Manager : NetworkBehaviour {
 		t.movementCost = character.coalition ? 1 : 5000;
 		t.canSetOn = false;
 
-		//if (GetAt<SC_Construction> (t) == null)
 		t.attackable = (character.coalition != gameManager.CoalitionTurn());			
 
 		return t;
@@ -119,13 +118,13 @@ public class SC_Tile_Manager : NetworkBehaviour {
 		int x = (int)tileParam.transform.position.x;
 		int y = (int)tileParam.transform.position.y;
 
-		if ((x - 1) >= 0)
+		if (x >= 1)
 			neighbors.Add(tiles[x - 1, y]);
 
 		if ((x + 1) < tiles.GetLength(0))
 			neighbors.Add(tiles[x + 1, y]);
 
-		if ((y - 1) >= 0)
+		if (y >= 1)
 			neighbors.Add(tiles[x, y - 1]);
 
 		if ((y + 1) < tiles.GetLength(1))
@@ -135,7 +134,19 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 	}
 
-	public bool TryToMoveCharacter(GameObject target) {
+    public bool IsNeighbor(SC_Tile pos, SC_Tile target) {
+
+        bool neighbor = false;
+
+        foreach(SC_Tile tile in GetNeighbors(pos))
+            if(tile.transform.position == target.transform.position)
+                neighbor = true;
+
+        return neighbor;
+
+    }
+
+    public bool TryToMoveCharacter(GameObject target) {
 
 		SC_Tile tile = GetTileAt (target);
 
@@ -189,7 +200,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 		foreach (T t in FindObjectsOfType<T>()) {
 
-			if ((t.transform.position.x == (int)tile.transform.position.x) && (t.transform.position.y == (int)tile.transform.position.y) && (t.GetType() != typeof(SC_Tile)))
+			if ((t.GetType() != typeof(SC_Tile)) && (t.transform.position.x == (int)tile.transform.position.x) && (t.transform.position.y == (int)tile.transform.position.y))
 				objectToReturn = t;
 
 		}

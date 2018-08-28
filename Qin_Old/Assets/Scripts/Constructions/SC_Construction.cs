@@ -45,7 +45,7 @@ public class SC_Construction : NetworkBehaviour {
 		if (under.CurrentDisplay == TDisplay.Attack) {
 
 			SC_Tile attackingCharacterTile = tileManager.GetTileAt (SC_Character.attackingCharacter.gameObject);
-			gameManager.rangedAttack = !gameManager.IsNeighbor (attackingCharacterTile, under);
+			gameManager.rangedAttack = !tileManager.IsNeighbor (attackingCharacterTile, under);
 
             SC_Character.attackingCharacter.attackTarget = under;
 
