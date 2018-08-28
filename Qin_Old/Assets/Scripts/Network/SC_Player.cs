@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
+using static SC_Enums;
 
 public class SC_Player : NetworkBehaviour {
 
@@ -61,8 +62,8 @@ public class SC_Player : NetworkBehaviour {
 
 	void DisplayMovement(int[] xArray, int[] yArray) {
 
-		for (int i = 0; i < xArray.Length; i++)
-			tileManager.GetTileAt (xArray [i], yArray [i]).DisplayMovement ();
+        for(int i = 0; i < xArray.Length; i++)
+            tileManager.GetTileAt(xArray[i], yArray[i]).ChangeDisplay(TDisplay.Movement);
 
 	}
 
@@ -118,7 +119,7 @@ public class SC_Player : NetworkBehaviour {
 	[ClientRpc]
 	void RpcDisplayAttack(GameObject tile) {
 
-		tile.GetComponent<SC_Tile> ().DisplayAttack ();
+        tile.GetComponent<SC_Tile>().ChangeDisplay(TDisplay.Attack);
 
 	}
 
@@ -139,8 +140,8 @@ public class SC_Player : NetworkBehaviour {
 
     void DisplaySacrifice(int[] xArray, int[] yArray) {
 
-        for (int i = 0; i < xArray.Length; i++)
-            tileManager.GetTileAt(xArray[i], yArray[i]).DisplaySacrifice();
+        for(int i = 0; i < xArray.Length; i++)
+            tileManager.GetTileAt(xArray[i], yArray[i]).ChangeDisplay(TDisplay.Sacrifice);
 
 	}
 
@@ -155,7 +156,7 @@ public class SC_Player : NetworkBehaviour {
 	void RpcRemoveAllFilters() {
 
         foreach(SC_Tile tile in localPlayer.tileManager.tiles)
-		    tile.RemoveFilters ();
+		    tile.RemoveFilter ();
 
 	}
 

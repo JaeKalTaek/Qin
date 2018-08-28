@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using static SC_Enums;
 
 public class SC_Tile_Manager : NetworkBehaviour {
 
@@ -138,7 +139,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 		SC_Tile tile = GetTileAt (target);
 
-		if (tile.displayMovement) {
+		if (tile.CurrentDisplay == TDisplay.Movement) {
 
             SC_Player.localPlayer.CmdMoveCharacterTo((int)tile.transform.position.x, (int)tile.transform.position.y);
 

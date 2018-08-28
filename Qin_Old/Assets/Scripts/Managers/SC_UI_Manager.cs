@@ -222,14 +222,14 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		qinPanel.SetActive (true);
 
-		SetText("QinEnergy", SC_Qin.GetEnergy() + "");
+		SetText("QinEnergy", SC_Qin.Energy + "");
 
 	}
 
 	void UpdateQinEnergy(GameObject g) {
 
 		if(currentGameObject == g)
-			SetText("QinEnergy", SC_Qin.GetEnergy() + "");
+			SetText("QinEnergy", SC_Qin.Energy + "");
 
 	}
 
@@ -292,7 +292,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
 			attackedName = (attackedType == 0) ? tileManager.GetAt<SC_Construction> (attacker.attackTarget).buildingName : (attackedType == 1) ? "Qin" : "";			
 
-			int attackedHealth = (attackedType == 0) ? tileManager.GetAt<SC_Construction> (attacker.attackTarget).health : (attackedType == 1) ? SC_Qin.GetEnergy () : 0;
+			int attackedHealth = (attackedType == 0) ? tileManager.GetAt<SC_Construction> (attacker.attackTarget).health : (attackedType == 1) ? SC_Qin.Energy : 0;
 
 			if (attackedType != 2) attackedHP = (attackedHealth - attackerDamages).ToString ();
 

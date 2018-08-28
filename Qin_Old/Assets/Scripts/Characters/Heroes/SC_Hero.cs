@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using static SC_Enums;
 
 public class SC_Hero : SC_Character {
 
@@ -85,7 +86,7 @@ public class SC_Hero : SC_Character {
 
 		SC_Tile under = tileManager.GetTileAt (gameObject);
 
-		if (under.GetDisplayAttack() && !attackingCharacter.IsHero()) {
+		if ((under.CurrentDisplay == TDisplay.Attack) && !attackingCharacter.IsHero()) {
 
             attackingCharacter.attackTarget = under;
 
@@ -109,7 +110,7 @@ public class SC_Hero : SC_Character {
 		uiManager.cancelAttackButton.SetActive (true);
 
 		foreach (SC_Tile tile in tileManager.tiles)
-			tile.RemoveFilters();
+			tile.RemoveFilter();
 
 		if ((gameManager.rangedAttack && weapon1.ranged) || (!gameManager.rangedAttack && !weapon1.IsBow ()))
 			uiManager.ShowWeapon (GetWeapon (true), true);

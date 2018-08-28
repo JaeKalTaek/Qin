@@ -1,30 +1,24 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
+using static SC_Enums;
 
 [System.Serializable]
 public class SC_Tile : NetworkBehaviour {
 
-	public bool displayMovement { get; set; }
+    public TDisplay CurrentDisplay { get; set; }
 
-	public bool constructable { get; set; }
+    public int baseCost;
 
-	bool displayAttack;
+	public int movementCost { get; set; }
 
-	public bool displayConstructable { get; set; }
+	public bool canSetOn { get; set; }
 
-	public bool displaySacrifice { get; set; }
+	public bool attackable { get; set; }
 
-	public bool displayResurrection { get; set; }
+    public bool constructable { get; set; }
 
-	public int baseCost;
-
-	public int movementCost  { get; set; }
-
-	public bool canSetOn  { get; set; }
-
-	public bool attackable  { get; set; }
-
-	public SC_Tile parent  { get; set; }
+    // Used for PathFinder
+    public SC_Tile parent { get; set; }
 
 	static SC_GameManager gameManager;
 
@@ -52,24 +46,17 @@ public class SC_Tile : NetworkBehaviour {
 
 	}
 
-    private void Update() {
-
-        if(transform.position == new Vector3(34, 7, 0))
-            print(movementCost);
-
-    }
-
     void OnMouseDown() {
 
-        if (displayConstructable && (((SC_Qin.GetEnergy() - 50) > 0) || gameManager.Bastion)) {
+        if ((CurrentDisplay == TDisplay.Construct) && ((SC_Qin.Energy > SC_Qin.Qin.wallCost) || gameManager.Bastion)) {
 
             gameManager.ConstructAt(this);
 
-        } else if (displayMovement) {
+        } else if (CurrentDisplay == TDisplay.Movement) {
 
             SC_Player.localPlayer.CmdMoveCharacterTo((int)transform.position.x, (int)transform.position.y);
 
-        } else if (displayAttack) {
+        } else if (CurrentDisplay == TDisplay.Attack) {
 
             SC_Tile attackingCharacterTile = tileManager.GetTileAt(SC_Character.attackingCharacter.gameObject);
             gameManager.rangedAttack = !gameManager.IsNeighbor(attackingCharacterTile, this);
@@ -83,7 +70,7 @@ public class SC_Tile : NetworkBehaviour {
             } else {
 
                 foreach (SC_Tile tile in tileManager.tiles)
-                    tile.RemoveFilters();
+                    tile.RemoveFilter();
 
                 gameManager.Attack();
 
@@ -99,7 +86,7 @@ public class SC_Tile : NetworkBehaviour {
 
             Destroy(tileManager.GetAt<SC_Character>(this));
 
-        }*/ else if (displayResurrection) {
+        }*/ else if (CurrentDisplay == TDisplay.Resurrection) {
 
             gameManager.HideResurrectionTiles();
 
@@ -116,50 +103,24 @@ public class SC_Tile : NetworkBehaviour {
 
 	}
 
-	public void RemoveFilters() {
+	public void RemoveFilter() {
 
-		displayMovement = false;
-		displayConstructable = false;
-		displayAttack = false;
-		displaySacrifice = false;
-		displayResurrection = false;
+        CurrentDisplay = TDisplay.None;
 
 		foreach (SpriteRenderer sprite in GetComponentsInChildren<SpriteRenderer>())
 			sprite.enabled = false;
 
 	}
 
-	public void DisplayMovement() { 
-			
-		displayMovement = true;
+    public void ChangeDisplay(TDisplay d) {
 
-		SetFilter ("T_DisplayMovement");
+        CurrentDisplay = d;
 
-	}
+        int i = (int)d;
 
-	public void DisplayAttack() { 
-
-		displayAttack = true;
-
-		SetFilter ("T_DisplayAttack");
-
-	}
-
-    public void DisplaySacrifice() {
-
-        displaySacrifice = true;
-
-        SetFilter("T_DisplaySacrifice");
+        SetFilter("T_Display" + ((i == 1) ? "Movement" : (i == 2) ? "Attack" : (i == 3) ? "Construct" : (i == 4) ? "Sacrifice" : "Resurrection"));
 
     }
-
-    public void DisplayConstructable() { 
-
-		displayConstructable = true;
-
-		SetFilter ("T_CanConstruct");
-
-	}
 
 	public bool Qin() {
 
@@ -177,12 +138,6 @@ public class SC_Tile : NetworkBehaviour {
 	public bool IsPalace() {
 
 		return name.Contains("Palace");
-
-	}
-
-	public bool GetDisplayAttack() {
-
-		return displayAttack;
 
 	}
 

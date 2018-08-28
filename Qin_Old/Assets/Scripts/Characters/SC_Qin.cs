@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
+using static SC_Enums;
 
 public class SC_Qin : NetworkBehaviour {
 
 	[Header("Qin variables")]
 	[Tooltip("Energy of Qin at the start of the game")]
 	public int startEnergy;
-	static int energy;
+	public static int Energy { get; set; }
 
 	[Tooltip("Energy necessary for Qin to win the game")]
 	public int energyToWin;
@@ -23,8 +24,10 @@ public class SC_Qin : NetworkBehaviour {
     [Tooltip("Energy won when Qin sacrifices a soldier")]
     public int sacrificeValue;
 
-	[HideInInspector]
-	public static bool selfPanel;
+    [Tooltip("Cost in energy for Qin to create a soldier from a workshop")]
+    public int soldierCost;
+
+    public static bool SelfPanel { get; set; }
 
 	static SC_GameManager gameManager;
 
@@ -44,9 +47,9 @@ public class SC_Qin : NetworkBehaviour {
 
 		uiManager = FindObjectOfType<SC_UI_Manager> ();
 
-		energy = startEnergy;
+        Energy = startEnergy;
 
-		uiManager.energyText.text = "Qin's Energy : " + energy;
+		uiManager.energyText.text = "Qin's Energy : " + Energy;
 
 		tileManager.SetQin (this);
 
@@ -56,7 +59,7 @@ public class SC_Qin : NetworkBehaviour {
 
 		SC_Tile under = tileManager.GetTileAt (gameObject);
 
-		if (under.GetDisplayAttack ()) {
+		if (under.CurrentDisplay == TDisplay.Attack) {
 			
 			SC_Tile attackingCharacterTile = tileManager.GetTileAt (SC_Character.attackingCharacter.gameObject);
 			gameManager.rangedAttack = !gameManager.IsNeighbor(attackingCharacterTile, under);
@@ -70,7 +73,7 @@ public class SC_Qin : NetworkBehaviour {
 			} else {
 
 				foreach (SC_Tile tile in tileManager.tiles)
-					tile.RemoveFilters ();
+					tile.RemoveFilter ();
 
 				gameManager.Attack ();
 
@@ -120,20 +123,14 @@ public class SC_Qin : NetworkBehaviour {
 
 	}
 
-	public static int GetEnergy() {
-
-		return energy;
-
-	}
-
 	public static void ChangeEnergy(int amount) {
 
-		energy += amount;
+		Energy += amount;
 
-		if (energy >= Qin.energyToWin)
+		if (Energy >= Qin.energyToWin)
 			uiManager.ShowVictory (true);
-		else if (energy > 0)
-			uiManager.energyText.text = "Qin's Energy : " + energy;
+		else if (Energy > 0)
+			uiManager.energyText.text = "Qin's Energy : " + Energy;
 		else
 			uiManager.ShowVictory (false);
 

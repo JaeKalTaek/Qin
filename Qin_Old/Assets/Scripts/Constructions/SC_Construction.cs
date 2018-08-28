@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
+using static SC_Enums;
 
 public class SC_Construction : NetworkBehaviour {
 
@@ -41,7 +42,7 @@ public class SC_Construction : NetworkBehaviour {
 
 		SC_Tile under = tileManager.GetTileAt (gameObject);
 
-		if (under.GetDisplayAttack ()) {
+		if (under.CurrentDisplay == TDisplay.Attack) {
 
 			SC_Tile attackingCharacterTile = tileManager.GetTileAt (SC_Character.attackingCharacter.gameObject);
 			gameManager.rangedAttack = !gameManager.IsNeighbor (attackingCharacterTile, under);

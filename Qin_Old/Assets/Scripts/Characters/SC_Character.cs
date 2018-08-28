@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using static SC_Enums;
 
 public class SC_Character : NetworkBehaviour {
 
@@ -89,11 +90,11 @@ public class SC_Character : NetworkBehaviour {
 
 				SC_Tile under = tileManager.GetTileAt (gameObject);
 
-                if (under.displayMovement) {
+                if (under.CurrentDisplay == TDisplay.Movement) {
 
                     SC_Player.localPlayer.CmdMoveCharacterTo((int)under.transform.position.x, (int)under.transform.position.y);
 
-				} else if (under.GetDisplayAttack ()) {
+				} else if (under.CurrentDisplay == TDisplay.Attack) {
 
 					SC_Tile attackingCharacterTile = tileManager.GetTileAt (attackingCharacter.gameObject);
 					gameManager.rangedAttack = !gameManager.IsNeighbor (attackingCharacterTile, under);
@@ -107,25 +108,25 @@ public class SC_Character : NetworkBehaviour {
 					} else {
 
 						foreach (SC_Tile tile in tileManager.tiles)
-							tile.RemoveFilters ();
+							tile.RemoveFilter ();
 
 						gameManager.Attack ();
 
 					}
 
-				} else if (under.displayConstructable && (((SC_Qin.GetEnergy () - 50) > 0) || gameManager.Bastion) && !IsHero ()) {
+				} else if ((under.CurrentDisplay == TDisplay.Construct) && ((SC_Qin.Energy > SC_Qin.Qin.wallCost) || gameManager.Bastion) && !IsHero ()) {
 
 					gameManager.ConstructAt (under);
 
 					canMove = false;
 
-				} else if (under.displaySacrifice) {
+				} else if (under.CurrentDisplay == TDisplay.Sacrifice) {
 
 					SC_Player.localPlayer.CmdChangeQinEnergy (SC_Qin.Qin.sacrificeValue);
 
 					canMove = false;
 
-					under.RemoveFilters ();
+					under.RemoveFilter ();
 
 					DestroyCharacter ();
 
