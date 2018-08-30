@@ -69,15 +69,12 @@ public class SC_Soldier : SC_Character {
 
 		if (canMove) {
 
-			uiManager.ToggleButton ("construct");
-
-            uiManager.ToggleButton("sacrifice");
-
+			uiManager.SetButtonActivated ("construct", true);
+            uiManager.SetButtonActivated("sacrifice", true);
+            uiManager.SetButtonActivated("qinPower", true);
             uiManager.workshopPanel.gameObject.SetActive (false);
 
             SC_Player.localPlayer.CmdCheckMovements((int)transform.position.x, (int)transform.position.y);
-
-			//gameManager.CheckMovements (this);
 
 		}
 

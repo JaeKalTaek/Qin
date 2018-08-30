@@ -109,8 +109,7 @@ public class SC_Hero : SC_Character {
 		uiManager.cancelMovementButton.SetActive (false);
 		uiManager.cancelAttackButton.SetActive (true);
 
-		foreach (SC_Tile tile in tileManager.tiles)
-			tile.RemoveFilter();
+        tileManager.RemoveAllFilters();
 
 		if ((gameManager.rangedAttack && weapon1.ranged) || (!gameManager.rangedAttack && !weapon1.IsBow ()))
 			uiManager.ShowWeapon (GetWeapon (true), true);
@@ -135,7 +134,7 @@ public class SC_Hero : SC_Character {
 
 		uiManager.villagePanel.SetActive (false);
 
-		gameManager.CheckAttack(this);
+		CheckAttack();
 
 	}
 

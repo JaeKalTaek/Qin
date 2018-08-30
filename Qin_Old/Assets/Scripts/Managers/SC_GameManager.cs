@@ -71,20 +71,10 @@ public class SC_GameManager : NetworkBehaviour {
 		if (instance == null)
 			instance = this;
 
-		uiManager = FindObjectOfType<SC_UI_Manager> (); //GetComponent<SC_UI_Manager> ();
+		uiManager = FindObjectOfType<SC_UI_Manager> ();
 		uiManager.SetupUI (FindObjectOfType<SC_Network_Manager>().IsQinHost() == isServer);
 
-		/*if (isServer)
-			RpcFinishLoading ();*/
-
     }
-
-	/*[ClientRpc]
-	void RpcFinishLoading() {
-
-		uiManager.loadingPanel.SetActive(false);
-
-	}*/
 
 	void GenerateMap() {
 
@@ -184,12 +174,11 @@ public class SC_GameManager : NetworkBehaviour {
 
         cantCancelMovement = false;
 
-        SC_Character.ResetAttacker();
+        SC_Character.CancelAttack();
 
         characterToMove = target;
 
-        foreach(SC_Tile tile in tileManager.tiles)
-            tile.RemoveFilter();
+        tileManager.RemoveAllFilters();
         
 		uiManager.HideWeapons();
 		uiManager.villagePanel.SetActive (false);
@@ -274,8 +263,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 	    turn++;
 
-		foreach (SC_Tile tile in tileManager.tiles)
-            tile.RemoveFilter();
+        tileManager.RemoveAllFilters();
 
         foreach (SC_Character character in FindObjectsOfType<SC_Character>()) {
 
@@ -331,7 +319,8 @@ public class SC_GameManager : NetworkBehaviour {
 
 			Bastion = true;
 
-			DisplayConstructableTiles ();
+            if(player.IsQin())
+                DisplayConstructableTiles ();
 
 		}
 
@@ -345,21 +334,13 @@ public class SC_GameManager : NetworkBehaviour {
 
     }
 
-	public void DisplayConstructableTiles() {
-
-		foreach (SC_Tile tile in tileManager.tiles)
-            tile.RemoveFilter();
-
-        SC_Character.ResetAttacker();
+	public void DisplayConstructableTiles() {		
 
         List<SC_Tile> constructableTiles = new List<SC_Tile>();
 
         if (!Bastion) {
 
-			uiManager.ToggleButton ("construct");
-			uiManager.ToggleButton ("sacrifice");
-			uiManager.workshopPanel.SetActive (false);
-			uiManager.cancelMovementButton.SetActive (false);
+            uiManager.StartQinAction("construct");
 
             foreach (SC_Construction construction in FindObjectsOfType<SC_Construction>()) {
 
@@ -390,14 +371,10 @@ public class SC_GameManager : NetworkBehaviour {
 			foreach (SC_Tile tile in tileManager.tiles)
                 if (tile.constructable) constructableTiles.Add(tile);
             
-        }
-        
-		if (player.IsQin ()) {
+        }        
 
-            foreach(SC_Tile tile in constructableTiles)
-                tile.GetComponent<SC_Tile>().ChangeDisplay(TDisplay.Construct);
-
-		}
+        foreach(SC_Tile tile in constructableTiles)
+            tile.GetComponent<SC_Tile>().ChangeDisplay(TDisplay.Construct);
 
 	}
 
@@ -440,8 +417,7 @@ public class SC_GameManager : NetworkBehaviour {
 
     public void FinishConstruction() {
 
-        foreach(SC_Tile tile in tileManager.tiles)
-            tile.RemoveFilter();
+        tileManager.RemoveAllFilters();
 
         if(Bastion) {
 
@@ -515,39 +491,12 @@ public class SC_GameManager : NetworkBehaviour {
 
 	}
 
-	public void EndConstruction() {
-
-		foreach (SC_Tile tile in tileManager.tiles)
-			tile.RemoveFilter();
-
-		uiManager.ToggleButton ("construct");
-
-	}
-
 	public void DisplaySacrifices() {
 
-		uiManager.ToggleButton ("construct");
-		uiManager.ToggleButton("sacrifice");
-		uiManager.workshopPanel.SetActive (false);
-
-		uiManager.cancelMovementButton.SetActive (false);
-
-		foreach (SC_Tile tile in tileManager.tiles)
-			tile.RemoveFilter();
-
-		SC_Character.ResetAttacker();
+        uiManager.StartQinAction("sacrifice");
 
         foreach(SC_Soldier soldier in FindObjectsOfType<SC_Soldier>())
             tileManager.GetTileAt(soldier.gameObject).ChangeDisplay(TDisplay.Sacrifice);
-
-	}
-
-	public void HideSacrifices() {
-
-		uiManager.ToggleButton ("sacrifice");
-
-		foreach (SC_Tile tile in tileManager.tiles)
-			tile.RemoveFilter();
 
 	}
 
@@ -555,66 +504,19 @@ public class SC_GameManager : NetworkBehaviour {
 
 		if ((lastHeroDead != null) && (SC_Qin.Energy > SC_Qin.Qin.powerCost)) {
 
+            uiManager.StartQinAction("qinPower");
+
             characterToMove = null;
-
-            SC_Character.ResetAttacker();
             
-			foreach (SC_Tile tile in tileManager.tiles) {
-
-                tile.RemoveFilter();
-
-                if(tile.attackable && tile.constructable)
-                    tile.ChangeDisplay(TDisplay.Resurrection);           
-
-            }
-
-            foreach(SC_Wall wall in FindObjectsOfType<SC_Wall>())
-				tileManager.GetTileAt(wall.gameObject).RemoveFilter();
-
-			uiManager.ToggleButton ("powerQin");
+			foreach (SC_Tile tile in tileManager.tiles)
+                if(tile.IsEmpty())
+                    tile.ChangeDisplay(TDisplay.Resurrection);                  
 
 		}
-
-	}
-
-	public void HideResurrectionTiles() {
-
-		uiManager.ToggleButton ("powerQin");
-
-		foreach (SC_Tile tile in tileManager.tiles)
-			tile.RemoveFilter ();
 
 	}
 
     #region Combat
-    public void CheckAttack(SC_Character attacker) {
-
-		foreach (SC_Tile tile in tileManager.tiles)
-            tile.RemoveFilter();
-
-		uiManager.HideWeapons();
-
-        List<SC_Tile> attackableTiles = new List<SC_Tile>();
-
-		attackableTiles.AddRange (tileManager.GetNeighbors (tileManager.GetTileAt (attacker.gameObject)));
-
-		if (attacker.HasRange()) {
-
-			foreach (SC_Tile tile in tileManager.GetNeighbors(tileManager.GetTileAt(attacker.gameObject)))
-				attackableTiles.AddRange(tileManager.GetNeighbors(tile));
-
-		}
-
-		List<SC_Tile> attackableTilesTemp = new List<SC_Tile> (attackableTiles);
-
-		foreach (SC_Tile tile in attackableTilesTemp)
-			if (!tile.attackable) attackableTiles.Remove (tile);
-
-		foreach (SC_Tile tile in attackableTiles)
-			player.CmdDisplayAttack (tile.gameObject);
-
-	}
-
 	public void Attack() {
 
 		uiManager.HideWeapons();
@@ -950,19 +852,8 @@ public class SC_GameManager : NetworkBehaviour {
 
     public void DisplayWorkshopPanel() {
 
-		if((!CoalitionTurn()) && !Bastion && (tileManager.GetAt<SC_Character>(currentWorkshop.gameObject) == null)) {
-
-			uiManager.ToggleButton ("construct");
-			uiManager.ToggleButton("sacrifice");
-
-			foreach (SC_Tile tile in tileManager.tiles)
-                tile.RemoveFilter();
-
-            SC_Character.ResetAttacker();
-
-			uiManager.workshopPanel.SetActive (true);
-
-        }
+		if((!CoalitionTurn()) && !Bastion && (tileManager.GetAt<SC_Character>(currentWorkshop.gameObject) == null))
+            uiManager.StartQinAction("workshop");
 
     }
 
@@ -974,25 +865,21 @@ public class SC_GameManager : NetworkBehaviour {
     #endregion
 
     #region Cancel
-    public void CancelMovement() {
+    public void ResetMovement() {
 
-        player.CmdCancelMovement();
+        player.CmdResetMovement();
 
     }
 
-    public void CancelMovementFunction() {
+    public void ResetMovementFunction() {
 
-        SC_Character.ResetAttacker ();
-
-        foreach(SC_Tile tile in tileManager.tiles)
-            tile.RemoveFilter();
+        tileManager.RemoveAllFilters();
 
         SC_Tile leavingTile = tileManager.GetTileAt (characterToMove.gameObject);
 
         leavingTile.movementCost = leavingTile.baseCost;
         leavingTile.canSetOn = true;
-		if (tileManager.GetAt<SC_Construction> (leavingTile) == null)
-            leavingTile.attackable = true;
+        leavingTile.attackable = tileManager.GetAt<SC_Construction>(leavingTile) == null;
 		leavingTile.constructable = !leavingTile.IsPalace ();
 
 		characterToMove.transform.SetPos (characterToMove.lastPos.transform);
@@ -1004,7 +891,8 @@ public class SC_GameManager : NetworkBehaviour {
 		characterToMove.lastPos.constructable = !characterToMove.IsHero();
 
 		characterToMove.SetCanMove (true);
-        SC_Player.localPlayer.CmdCheckMovements((int)characterToMove.transform.position.x, (int)characterToMove.transform.position.y);
+
+        CheckMovements(characterToMove);
 
         characterToMove.UnTired ();
 
@@ -1012,13 +900,13 @@ public class SC_GameManager : NetworkBehaviour {
 
     }
 
-	public void CancelAttack() {
+	public void ResetAttackChoice() {
 
 		uiManager.HideWeapons();
 
-		CheckAttack (SC_Character.attackingCharacter);
+		SC_Character.attackingCharacter.CheckAttack();
 
-		if(!cantCancelMovement) uiManager.cancelMovementButton.SetActive (true);
+		uiManager.cancelMovementButton.SetActive (!cantCancelMovement);
 
 		uiManager.cancelAttackButton.SetActive (false);
 
@@ -1033,15 +921,6 @@ public class SC_GameManager : NetworkBehaviour {
 		GameObject.Find ("PowerHero").SetActive (false);
 
         print("Implement Power");
-
-	}
-
-	public void ToggleHealth() {
-
-		foreach (SC_Lifebar lifebar in FindObjectsOfType<SC_Lifebar>())
-			lifebar.Toggle();
-
-		uiManager.ToggleButton("health");
 
 	}	
 

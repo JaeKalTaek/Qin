@@ -107,8 +107,7 @@ public class SC_Character : NetworkBehaviour {
 
 					} else {
 
-						foreach (SC_Tile tile in tileManager.tiles)
-							tile.RemoveFilter ();
+                        tileManager.RemoveAllFilters();
 
 						gameManager.Attack ();
 
@@ -242,16 +241,16 @@ public class SC_Character : NetworkBehaviour {
 
                     gameManager.cantCancelMovement = true;
 
-                    gameManager.CheckAttack(this);
+                    CheckAttack();
 
                 }
 
             } else {
 
                 if(SC_Player.localPlayer.Turn())
-                    uiManager.cancelAttackButton.SetActive(true);
+                    uiManager.cancelMovementButton.SetActive(true);
 
-                gameManager.CheckAttack(this);
+                CheckAttack();
 
             }
 
@@ -271,11 +270,11 @@ public class SC_Character : NetworkBehaviour {
 
             } else if(SC_Player.localPlayer.Turn()) {
 
-                uiManager.cancelAttackButton.SetActive(true);
+                uiManager.cancelMovementButton.SetActive(true);
 
             }
 
-            gameManager.CheckAttack(this);
+            CheckAttack();
 
         }
 
@@ -333,7 +332,37 @@ public class SC_Character : NetworkBehaviour {
 
 	}
 
-	public static void ResetAttacker() {
+    public void CheckAttack() {
+
+        tileManager.RemoveAllFilters();
+
+        //uiManager.HideWeapons();
+
+        List<SC_Tile> attackableTiles = new List<SC_Tile>(tileManager.GetNeighbors(tileManager.GetTileAt(gameObject)));
+
+        if(HasRange()) {
+
+            foreach(SC_Tile tile in tileManager.GetNeighbors(tileManager.GetTileAt(gameObject)))
+                attackableTiles.AddRange(tileManager.GetNeighbors(tile));
+
+        }
+
+        foreach(SC_Tile tile in attackableTiles)
+            if(tile.attackable)
+                tile.ChangeDisplay(TDisplay.Attack);
+
+        /*List<SC_Tile> attackableTilesTemp = new List<SC_Tile>(attackableTiles);
+
+        foreach(SC_Tile tile in attackableTilesTemp)
+            if(!tile.attackable)
+                attackableTiles.Remove(tile);
+
+        foreach(SC_Tile tile in attackableTiles)
+            tile.ChangeDisplay(TDisplay.Attack);*/
+
+    }
+
+    public static void CancelAttack() {
 
         if(attackingCharacter) {
 
@@ -353,10 +382,12 @@ public class SC_Character : NetworkBehaviour {
 		uiManager.HideInfos (gameObject);
 
 		SC_Tile under = tileManager.GetTileAt (gameObject);
+
 		under.movementCost = under.baseCost;
+
 		under.canSetOn = true;
-		if (tileManager.GetAt<SC_Construction>(under) == null)
-			under.attackable = true;
+
+		under.attackable = tileManager.GetAt<SC_Construction>(under) == null;
 
 	}
 

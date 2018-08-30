@@ -24,6 +24,8 @@ public class SC_Tile : NetworkBehaviour {
 
 	static SC_Tile_Manager tileManager;
 
+    static SC_UI_Manager uiManager;
+
 	void Awake() {
 
 		constructable = !name.Contains("Palace");
@@ -38,11 +40,15 @@ public class SC_Tile : NetworkBehaviour {
 
 	void Start() {
 
-		if(gameManager == null)
-			gameManager = FindObjectOfType<SC_GameManager> ();
+        if(gameManager == null) {
 
-		if(tileManager == null)
-			tileManager = FindObjectOfType<SC_Tile_Manager> ();
+            gameManager = FindObjectOfType<SC_GameManager>();
+
+            tileManager = FindObjectOfType<SC_Tile_Manager>();
+
+            uiManager = FindObjectOfType<SC_UI_Manager>();
+
+        }
 
 	}
 
@@ -69,8 +75,7 @@ public class SC_Tile : NetworkBehaviour {
 
             } else {
 
-                foreach (SC_Tile tile in tileManager.tiles)
-                    tile.RemoveFilter();
+                tileManager.RemoveAllFilters();
 
                 gameManager.Attack();
 
@@ -88,7 +93,9 @@ public class SC_Tile : NetworkBehaviour {
 
         }*/ else if (CurrentDisplay == TDisplay.Resurrection) {
 
-            gameManager.HideResurrectionTiles();
+            uiManager.EndQinAction("qinPower");
+
+            //SC_UI_Manager.
 
             SC_Qin.UsePower(transform.position);
 

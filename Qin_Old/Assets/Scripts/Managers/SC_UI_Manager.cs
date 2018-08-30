@@ -7,7 +7,7 @@ public class SC_UI_Manager : MonoBehaviour {
 	[Header("Game")]
 	public GameObject loadingPanel;
 	public Text turns;
-	public Transform health;
+	public GameObject health;
 	public GameObject previewFightPanel;
 	public GameObject endTurn;
 	public GameObject victoryPanel;
@@ -38,15 +38,11 @@ public class SC_UI_Manager : MonoBehaviour {
 	GameObject currentGameObject;
 
 	static SC_GameManager gameManager;
-	static SC_Tile_Manager tileManager;
 
 	public void SetupUI(bool qin) {
 
 		if (gameManager == null)
 			gameManager = FindObjectOfType<SC_GameManager> ();
-
-		if (tileManager == null)
-			tileManager = FindObjectOfType<SC_Tile_Manager> ();
 
 		if (!qin) {
 
@@ -82,16 +78,27 @@ public class SC_UI_Manager : MonoBehaviour {
 
 	}
 
-	public void ToggleButton(string id) {
+	/*public void ToggleButton(string id) {
 
-		Transform parent = (Transform)typeof(SC_UI_Manager).GetField (id).GetValue(this);
-		bool turnedOn = parent.GetChild (0).gameObject.activeSelf;
-		parent.GetChild (0).gameObject.SetActive (!turnedOn);
-		parent.GetChild (1).gameObject.SetActive (turnedOn);
+        foreach(Transform t in (Transform)typeof(SC_UI_Manager).GetField(id).GetValue(this))
+            t.gameObject.SetActive(t.gameObject.activeSelf);
 
-	}
+	}*/
 
-	public void ShowHideInfos(GameObject g, Type t) {
+    public void SetButtonActivated(string id, bool active) {
+
+        ((Transform)typeof(SC_UI_Manager).GetField(id).GetValue(this)).GetChild(0).gameObject.SetActive(active);
+        ((Transform)typeof(SC_UI_Manager).GetField(id).GetValue(this)).GetChild(1).gameObject.SetActive(!active);
+
+    }
+
+    public void SetButtonActivated(string b, string id) {
+
+        SetButtonActivated(b, b != id);
+
+    }
+
+    public void ShowHideInfos(GameObject g, Type t) {
 
 		if(!HideInfos (g)) {
 
@@ -263,9 +270,9 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		string attackedDodge = "";
 
-		if (tileManager.GetAt<SC_Character> (attacker.attackTarget) != null) {
+		if (SC_Tile_Manager.Instance.GetAt<SC_Character> (attacker.attackTarget) != null) {
 
-			SC_Character attacked = tileManager.GetAt<SC_Character> (attacker.attackTarget);
+			SC_Character attacked = SC_Tile_Manager.Instance.GetAt<SC_Character> (attacker.attackTarget);
 
 			attackedName = attacked.characterName;
 
@@ -288,11 +295,13 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		} else {
 
-			int attackedType = (tileManager.GetAt<SC_Construction> (attacker.attackTarget) != null) ? 0 : attacker.attackTarget.Qin () ? 1 : 2;
+            SC_Construction attackedConstruction = SC_Tile_Manager.Instance.GetAt<SC_Construction>(attacker.attackTarget);
 
-			attackedName = (attackedType == 0) ? tileManager.GetAt<SC_Construction> (attacker.attackTarget).buildingName : (attackedType == 1) ? "Qin" : "";			
+            int attackedType = (attackedConstruction != null) ? 0 : attacker.attackTarget.Qin () ? 1 : 2;
 
-			int attackedHealth = (attackedType == 0) ? tileManager.GetAt<SC_Construction> (attacker.attackTarget).health : (attackedType == 1) ? SC_Qin.Energy : 0;
+			attackedName = (attackedType == 0) ? attackedConstruction.buildingName : (attackedType == 1) ? "Qin" : "";			
+
+			int attackedHealth = (attackedType == 0) ? attackedConstruction.health : (attackedType == 1) ? SC_Qin.Energy : 0;
 
 			if (attackedType != 2) attackedHP = (attackedHealth - attackerDamages).ToString ();
 
@@ -344,5 +353,38 @@ public class SC_UI_Manager : MonoBehaviour {
         victoryPanel.SetActive(true);
 
 	}
+
+    public void StartQinAction(string action) {
+
+        SetButtonActivated("construct", action);
+        SetButtonActivated("sacrifice", action);
+        SetButtonActivated("qinPower", action);
+
+        workshopPanel.SetActive(action == "workshop");
+
+        cancelMovementButton.SetActive(false);
+
+        SC_Tile_Manager.Instance.RemoveAllFilters();
+
+        SC_Player.localPlayer.CmdRemoveAllFiltersOnClient(false);
+
+        SC_Character.CancelAttack();
+
+    }
+
+    public void EndQinAction(string action) {
+
+        SC_Tile_Manager.Instance.RemoveAllFilters();
+
+        SetButtonActivated(action, true);
+
+    }
+
+    public void ToggleHealth() {
+
+        foreach(SC_Lifebar lifebar in FindObjectsOfType<SC_Lifebar>())
+            lifebar.Toggle();
+
+    }
 
 }

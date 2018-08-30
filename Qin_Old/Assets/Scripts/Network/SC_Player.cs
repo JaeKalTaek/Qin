@@ -96,16 +96,16 @@ public class SC_Player : NetworkBehaviour {
     }
 
     [Command]
-    public void CmdCancelMovement() {
+    public void CmdResetMovement() {
 
-        RpcCancelMovement();
+        RpcResetMovement();
 
     }
 
     [ClientRpc]
-    void RpcCancelMovement() {
+    void RpcResetMovement() {
 
-        localPlayer.gameManager.CancelMovementFunction();
+        localPlayer.gameManager.ResetMovementFunction();
 
     }
 
@@ -150,17 +150,31 @@ public class SC_Player : NetworkBehaviour {
 
 		RpcRemoveAllFilters ();
 
-	}
+	}    
 
-	[ClientRpc]
+    [ClientRpc]
 	void RpcRemoveAllFilters() {
 
-        foreach(SC_Tile tile in localPlayer.tileManager.tiles)
-		    tile.RemoveFilter ();
+        localPlayer.tileManager.RemoveAllFilters();
 
-	}
+    }
 
-	[Command]
+    [Command]
+    public void CmdRemoveAllFiltersOnClient(bool qin) {
+
+        RpcRemoveAllFiltersForClient(qin);
+
+    }
+
+    [ClientRpc]
+    void RpcRemoveAllFiltersForClient(bool qin) {
+
+        if(localPlayer.qin == qin)
+            localPlayer.tileManager.RemoveAllFilters();
+
+    }
+
+    [Command]
 	public void CmdNextTurn() {
 		
 		RpcNextTurn ();

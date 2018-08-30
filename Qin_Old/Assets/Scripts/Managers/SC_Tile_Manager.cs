@@ -15,7 +15,15 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 	SC_GameManager gameManager;
 
-	void Start () {
+    public static SC_Tile_Manager Instance { get; set; }
+
+    private void Awake() {
+
+        Instance = this;
+
+    }
+
+    void Start () {
 
 		gameManager = FindObjectOfType<SC_GameManager> ();
 
@@ -250,6 +258,13 @@ public class SC_Tile_Manager : NetworkBehaviour {
         }
 
         return array;
+
+    }
+
+    public void RemoveAllFilters() {
+
+        foreach(SC_Tile tile in tiles)
+            tile.RemoveFilter();
 
     }
 

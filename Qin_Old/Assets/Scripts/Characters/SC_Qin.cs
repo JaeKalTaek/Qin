@@ -72,8 +72,7 @@ public class SC_Qin : NetworkBehaviour {
 
 			} else {
 
-				foreach (SC_Tile tile in tileManager.tiles)
-					tile.RemoveFilter ();
+                tileManager.RemoveAllFilters();
 
 				gameManager.Attack ();
 
