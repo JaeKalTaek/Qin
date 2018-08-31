@@ -95,8 +95,6 @@ public class SC_Tile : NetworkBehaviour {
 
             uiManager.EndQinAction("qinPower");
 
-            //SC_UI_Manager.
-
             SC_Qin.UsePower(transform.position);
 
         }

@@ -127,9 +127,9 @@ public class SC_Character : NetworkBehaviour {
 
 					under.RemoveFilter ();
 
-					DestroyCharacter ();
+                    SC_Player.localPlayer.CmdDestroyCharacter(gameObject);
 
-				} else {
+                } else {
 
                     PrintMovements ();
 
@@ -208,6 +208,8 @@ public class SC_Character : NetworkBehaviour {
     }
 
     void FinishMovement(bool moved) {
+
+        print(transform.position + "\n" + tileManager.GetTileAt(gameObject));
 
         SC_Tile leavingTile = path[0];
         SC_Tile target = path[path.Count - 1];
@@ -350,15 +352,6 @@ public class SC_Character : NetworkBehaviour {
         foreach(SC_Tile tile in attackableTiles)
             if(tile.attackable)
                 tile.ChangeDisplay(TDisplay.Attack);
-
-        /*List<SC_Tile> attackableTilesTemp = new List<SC_Tile>(attackableTiles);
-
-        foreach(SC_Tile tile in attackableTilesTemp)
-            if(!tile.attackable)
-                attackableTiles.Remove(tile);
-
-        foreach(SC_Tile tile in attackableTiles)
-            tile.ChangeDisplay(TDisplay.Attack);*/
 
     }
 

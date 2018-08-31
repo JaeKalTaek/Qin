@@ -254,6 +254,20 @@ public class SC_Player : NetworkBehaviour {
 
 	}
 
+    [Command]
+    public void CmdDestroyCharacter(GameObject c) {
+
+        RpcDestroyCharacter(c);
+
+    }
+
+    [ClientRpc]
+    void RpcDestroyCharacter(GameObject c) {
+
+        c.GetComponent<SC_Character>().DestroyCharacter();
+
+    }
+
 	[Command]
 	public void CmdDestroyGameObject(GameObject go) {
 
