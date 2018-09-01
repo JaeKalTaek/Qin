@@ -349,32 +349,16 @@ public class SC_GameManager : NetworkBehaviour {
 
 			}
 
-		    List<SC_Tile> constructableTilesTemp = new List<SC_Tile> (constructableTiles);
-
-		    foreach (SC_Tile tile in constructableTilesTemp) {
-
-				if (tileManager.GetAt<SC_Construction> (tile) != null) {
-					
-					constructableTiles.Remove (tile);
-
-				} else if (tileManager.GetAt<SC_Character> (tile) != null) {
-						
-					if (tileManager.GetAt<SC_Character> (tile).IsHero ())
-						constructableTiles.Remove (tile);
-
-				}
-
-            }
-
         } else {
-			
-			foreach (SC_Tile tile in tileManager.tiles)
-                if (tile.constructable) constructableTiles.Add(tile);
+
+            foreach (SC_Tile tile in tileManager.tiles)
+                constructableTiles.Add(tile);
             
         }        
 
         foreach(SC_Tile tile in constructableTiles)
-            tile.GetComponent<SC_Tile>().ChangeDisplay(TDisplay.Construct);
+            if(tile.constructable && (Bastion || (tileManager.GetAt<SC_Wall>(tile) == null)))
+                tile.GetComponent<SC_Tile>().ChangeDisplay(TDisplay.Construct);
 
 	}
 

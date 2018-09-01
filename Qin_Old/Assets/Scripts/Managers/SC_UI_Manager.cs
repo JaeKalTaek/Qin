@@ -62,13 +62,19 @@ public class SC_UI_Manager : MonoBehaviour {
 		cancelMovementButton.SetActive (false);
 		cancelAttackButton.SetActive (false);
 
-		if (coalition) {
+        if(!coalition) {
 
-			construct.gameObject.SetActive (false);
-			qinPower.gameObject.SetActive (false);
-			sacrifice.gameObject.SetActive (false);
+            SetButtonActivated("construct", true);
+            SetButtonActivated("sacrifice", true);
+            SetButtonActivated("qinPower", true);
 
-		}
+        } else {
+
+            construct.gameObject.SetActive(false);
+            qinPower.gameObject.SetActive(false);
+            sacrifice.gameObject.SetActive(false);
+
+        }
 
 		turns.text = (((turn - 1) % 3) == 0) ? "1st Turn - Coalition" : (((turn - 2) % 3) == 0) ? "2nd Turn - Coalition" : "Turn Qin";
 
