@@ -390,7 +390,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 		if (tileManager.GetAt<SC_Character> (tile) != null) {
 
-            player.CmdChangeQinEnergy(SC_Qin.Qin.sacrificeValue);
+            SC_Qin.ChangeEnergy(SC_Qin.Qin.sacrificeValue);
 			tileManager.GetAt<SC_Character> (tile).DestroyCharacter();
 
         }
@@ -398,42 +398,65 @@ public class SC_GameManager : NetworkBehaviour {
 		if (tileManager.GetAt<SC_Construction> (tile) != null)
 			tileManager.GetAt<SC_Construction> (tile).DestroyConstruction();
 
-		Transform parentGo = GameObject.Find (Bastion ? "Bastions" : "Walls").transform;
-		GameObject go = Bastion ? Instantiate (bastionPrefab, parentGo) : Instantiate (wallPrefab, parentGo);
-		go.transform.SetPos (tile.transform);
-        
-        NetworkServer.Spawn(go);
+        if(isServer) {
 
-        player.CmdUpdateWallGraph(go);
+            GameObject go = Instantiate(Bastion ? bastionPrefab : wallPrefab, GameObject.Find(Bastion ? "Bastions" : "Walls").transform);
+            go.transform.SetPos(tile.transform);
 
-        player.CmdUpdateNeighborWallsGraph(x, y);
+            NetworkServer.Spawn(go);
 
-		if (!Bastion)
-            player.CmdChangeQinEnergy(-SC_Qin.Qin.wallCost);
+        }
 
-        player.CmdFinishConstruction();
+        if(!Bastion)
+            SC_Qin.ChangeEnergy(-SC_Qin.Qin.wallCost);
+
+        if(player.IsQin()) {
+
+            tileManager.RemoveAllFilters();
+
+            if(Bastion) {
+
+                foreach(SC_Character character in FindObjectsOfType<SC_Character>())
+                    character.SetCanMove(!character.coalition);
+
+                uiManager.construct.gameObject.SetActive(true);
+                uiManager.qinPower.gameObject.SetActive(true);
+                uiManager.sacrifice.gameObject.SetActive(true);
+                uiManager.endTurn.SetActive(true);
+
+            }
+
+        }
+
+        Bastion = false;
 
     }
 
     public void FinishConstruction() {
 
-        tileManager.RemoveAllFilters();
+        if(player.IsQin()) {
 
-        if(Bastion) {
+            tileManager.RemoveAllFilters();
 
-            foreach(SC_Character character in FindObjectsOfType<SC_Character>())
-                character.SetCanMove(!character.coalition);
+            if(Bastion) {
 
-            uiManager.construct.gameObject.SetActive(true);
-            uiManager.qinPower.gameObject.SetActive(true);
-            uiManager.sacrifice.gameObject.SetActive(true);
-            uiManager.endTurn.SetActive(true);
+                foreach(SC_Character character in FindObjectsOfType<SC_Character>())
+                    character.SetCanMove(!character.coalition);
 
-        } else {
+                uiManager.construct.gameObject.SetActive(true);
+                uiManager.qinPower.gameObject.SetActive(true);
+                uiManager.sacrifice.gameObject.SetActive(true);
+                uiManager.endTurn.SetActive(true);
 
-            DisplayConstructableTiles();
+            } else {
+
+                DisplayConstructableTiles();
+
+            }
 
         }
+
+        Bastion = false;
 
     }
 

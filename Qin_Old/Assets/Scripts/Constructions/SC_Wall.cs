@@ -1,14 +1,12 @@
 ﻿public class SC_Wall : SC_Bastion {
 
-	protected override void OnMouseDown() {
+    protected override void Start() {
 
-		base.OnMouseDown ();
+        base.Start();
 
-		/*SC_Tile under = tileManager.GetTileAt (gameObject);
+        if(SC_Player.localPlayer.IsQin())
+            gameManager.DisplayConstructableTiles();
 
-        if(under.displayConstructable && (((SC_Qin.GetEnergy() - 100) > 0) || gameManager.Bastion))
-            gameManager.ConstructAt(under);*/
-
-	}
+    }
 
 }

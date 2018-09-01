@@ -268,4 +268,11 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }
 
+    public void DisplaySacrifice(int[] xArray, int[] yArray) {
+
+        for(int i = 0; i < xArray.Length; i++)
+            GetTileAt(xArray[i], yArray[i]).ChangeDisplay(TDisplay.Sacrifice);
+
+    }
+
 }

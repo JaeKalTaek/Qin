@@ -31,7 +31,9 @@ public class SC_Player : NetworkBehaviour {
 		
 	}
 
-	#region Commands
+    #region Commands
+
+    #region Characters movements
     [Command]
     public void CmdCheckMovements(int x, int y) {
 
@@ -108,7 +110,9 @@ public class SC_Player : NetworkBehaviour {
         localPlayer.gameManager.ResetMovementFunction();
 
     }
+    #endregion
 
+    #region Display Attack
     [Command]
 	public void CmdDisplayAttack(GameObject tile) {
 
@@ -122,7 +126,9 @@ public class SC_Player : NetworkBehaviour {
         tile.GetComponent<SC_Tile>().ChangeDisplay(TDisplay.Attack);
 
 	}
+    #endregion
 
+    #region Display Sacrifice
     [Command]
     public void CmdDisplaySacrifice(int[] xArray, int[] yArray) {
 
@@ -134,17 +140,12 @@ public class SC_Player : NetworkBehaviour {
     void RpcDisplaySacrifice(int[] xArray, int[] yArray) {
 
         if(localPlayer.IsQin())
-            localPlayer.DisplaySacrifice(xArray, yArray);
+            localPlayer.tileManager.DisplaySacrifice(xArray, yArray);
 
-    }
+    }    
+    #endregion
 
-    void DisplaySacrifice(int[] xArray, int[] yArray) {
-
-        for(int i = 0; i < xArray.Length; i++)
-            tileManager.GetTileAt(xArray[i], yArray[i]).ChangeDisplay(TDisplay.Sacrifice);
-
-	}
-
+    #region Remove filters
     [Command]
 	public void CmdRemoveAllFilters() {
 
@@ -173,73 +174,41 @@ public class SC_Player : NetworkBehaviour {
             localPlayer.tileManager.RemoveAllFilters();
 
     }
+    #endregion
 
+    #region Next Turn
     [Command]
 	public void CmdNextTurn() {
 		
 		RpcNextTurn ();
 
 	}
-
-	[ClientRpc]
+    
+    [ClientRpc]
 	void RpcNextTurn() {  
 
 		localPlayer.gameManager.NextTurnFunction ();
 
 	}
-		
-	[Command]
+    #endregion
+
+    #region Construction
+    [Command]
 	public void CmdConstructAt(int x, int y) {
+
+        RpcConstructAt(x, y);
+
+    }
+
+    [ClientRpc]
+    public void RpcConstructAt(int x, int y) {
 
         localPlayer.gameManager.ConstructAt(x, y);
 
     }
+    #endregion
 
-    [Command]
-    public void CmdFinishConstruction() {
-
-        RpcFinishConstruction();
-
-    }
-
-    [ClientRpc]
-    void RpcFinishConstruction() {        
-
-        if(localPlayer.IsQin())
-            localPlayer.gameManager.FinishConstruction();
-
-        localPlayer.gameManager.Bastion = false;
-
-    }
-
-    [Command]
-    public void CmdUpdateWallGraph(GameObject go) {
-
-        RpcUpdateWallGraph(go);
-
-    }
-
-    [ClientRpc]
-    void RpcUpdateWallGraph(GameObject go) {
-
-        localPlayer.gameManager.UpdateWallGraph(go);
-
-    }
-
-    [Command]
-    public void CmdUpdateNeighborWallsGraph(int x, int y) {
-
-        RpcUpdateNeighborWallsGraph(x, y);
-
-    }
-
-    [ClientRpc]
-    void RpcUpdateNeighborWallsGraph(int x, int y) {
-
-        localPlayer.gameManager.UpdateNeighborWallGraph(localPlayer.tileManager.GetTileAt(x, y));
-
-    }
-
+    #region Change Qin Energy
     [Command]
 	public void CmdChangeQinEnergy(int amount) {
 
@@ -253,7 +222,9 @@ public class SC_Player : NetworkBehaviour {
 		SC_Qin.ChangeEnergy (amount);
 
 	}
+    #endregion
 
+    #region Destroy Character
     [Command]
     public void CmdDestroyCharacter(GameObject c) {
 
@@ -267,8 +238,9 @@ public class SC_Player : NetworkBehaviour {
         c.GetComponent<SC_Character>().DestroyCharacter();
 
     }
+    #endregion
 
-	[Command]
+    [Command]
 	public void CmdDestroyGameObject(GameObject go) {
 
 		if(go && (go.name != "dead")) {
