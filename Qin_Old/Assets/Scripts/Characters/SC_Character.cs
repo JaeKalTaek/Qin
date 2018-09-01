@@ -113,13 +113,13 @@ public class SC_Character : NetworkBehaviour {
 
 					}
 
-				} else if ((under.CurrentDisplay == TDisplay.Construct) && ((SC_Qin.Energy > SC_Qin.Qin.wallCost) || gameManager.Bastion) && !IsHero ()) {
+				} /*else if ((under.CurrentDisplay == TDisplay.Construct) && ((SC_Qin.Energy > SC_Qin.Qin.wallCost) || gameManager.Bastion) && !IsHero ()) {
 
 					gameManager.ConstructAt (under);
 
 					canMove = false;
 
-				} else if (under.CurrentDisplay == TDisplay.Sacrifice) {
+				}*/ else if (under.CurrentDisplay == TDisplay.Sacrifice) {
 
 					SC_Player.localPlayer.CmdChangeQinEnergy (SC_Qin.Qin.sacrificeValue);
 
@@ -129,7 +129,7 @@ public class SC_Character : NetworkBehaviour {
 
                     SC_Player.localPlayer.CmdDestroyCharacter(gameObject);
 
-                } else {
+                } else if (under.CurrentDisplay != TDisplay.Construct) {
 
                     PrintMovements ();
 

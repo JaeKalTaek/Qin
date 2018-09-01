@@ -432,34 +432,6 @@ public class SC_GameManager : NetworkBehaviour {
 
     }
 
-    public void FinishConstruction() {
-
-        if(player.IsQin()) {
-
-            tileManager.RemoveAllFilters();
-
-            if(Bastion) {
-
-                foreach(SC_Character character in FindObjectsOfType<SC_Character>())
-                    character.SetCanMove(!character.coalition);
-
-                uiManager.construct.gameObject.SetActive(true);
-                uiManager.qinPower.gameObject.SetActive(true);
-                uiManager.sacrifice.gameObject.SetActive(true);
-                uiManager.endTurn.SetActive(true);
-
-            } else {
-
-                DisplayConstructableTiles();
-
-            }
-
-        }
-
-        Bastion = false;
-
-    }
-
 	public void UpdateNeighborWallGraph(SC_Tile center) {
 
 		foreach (SC_Tile tile in tileManager.GetNeighbors(center)) {
