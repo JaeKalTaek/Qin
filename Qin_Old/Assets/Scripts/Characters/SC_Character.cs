@@ -84,11 +84,12 @@ public class SC_Character : NetworkBehaviour {
 
 	protected virtual void OnMouseDown() {
 
-		if (!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject ()) {
+		if ((coalition != SC_Player.localPlayer.IsQin()) && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject ()) {
 
-			if (gameManager.player.Turn()) {
+			if (gameManager.player.Turn() && (tileManager.GetTileAt(gameObject).CurrentDisplay == TDisplay.None))
+                PrintMovements();               
 
-				SC_Tile under = tileManager.GetTileAt (gameObject);
+				/*SC_Tile under = tileManager.GetTileAt (gameObject);
 
                 if (under.CurrentDisplay == TDisplay.Movement) {
 
@@ -119,7 +120,7 @@ public class SC_Character : NetworkBehaviour {
 
 					canMove = false;
 
-				}*/ else if (under.CurrentDisplay == TDisplay.Sacrifice) {
+				} else if (under.CurrentDisplay == TDisplay.Sacrifice) {
 
 					SC_Player.localPlayer.CmdChangeQinEnergy (SC_Qin.Qin.sacrificeValue);
 
@@ -129,13 +130,14 @@ public class SC_Character : NetworkBehaviour {
 
                     SC_Player.localPlayer.CmdDestroyCharacter(gameObject);
 
-                } else if (under.CurrentDisplay != TDisplay.Construct) {
+                } else if (under.CurrentDisplay == TDisplay.None) {                    
 
                     PrintMovements ();
 
 				}
 
-			}
+
+            }*/
 
 		}
 
@@ -152,7 +154,7 @@ public class SC_Character : NetworkBehaviour {
 
 	public virtual void MoveTo(SC_Tile target) {
 
-        SC_Player.localPlayer.CmdRemoveAllFilters();
+        tileManager.RemoveAllFilters();
 
         lastPos = tileManager.GetTileAt (gameObject);
 		lastPos.movementCost = lastPos.baseCost;
@@ -211,8 +213,8 @@ public class SC_Character : NetworkBehaviour {
 
         print(transform.position + "\n" + tileManager.GetTileAt(gameObject));
 
-        SC_Tile leavingTile = path[0];
-        SC_Tile target = path[path.Count - 1];
+        SC_Tile leavingTile = moved ? path[0] : null;
+        SC_Tile target = moved ? path[path.Count - 1] : null;
 
         if(moved) {
 

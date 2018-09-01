@@ -70,20 +70,6 @@ public class SC_Player : NetworkBehaviour {
 	}
 
     [Command]
-    public void CmdSetCharacterToMove(int x, int y) {
-
-        RpcSetCharacterToMove(x, y);
-
-    }
-
-    [ClientRpc]
-    void RpcSetCharacterToMove(int x, int y) {
-
-        localPlayer.gameManager.characterToMove = localPlayer.tileManager.GetAt<SC_Character>(x, y);
-
-    }
-
-    [Command]
     public void CmdMoveCharacterTo(int x, int y) {
 
         RpcMoveCharacterTo(x, y);

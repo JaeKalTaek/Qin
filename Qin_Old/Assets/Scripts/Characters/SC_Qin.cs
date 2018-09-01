@@ -55,7 +55,7 @@ public class SC_Qin : NetworkBehaviour {
 
 	}
 
-	void OnMouseDown() {
+	/*void OnMouseDown() {
 
 		SC_Tile under = tileManager.GetTileAt (gameObject);
 
@@ -80,7 +80,7 @@ public class SC_Qin : NetworkBehaviour {
 
 		}
 
-	}
+	}*/
 
 	void OnMouseOver() {
 

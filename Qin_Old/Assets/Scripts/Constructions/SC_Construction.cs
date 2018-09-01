@@ -38,7 +38,7 @@ public class SC_Construction : NetworkBehaviour {
 
 	}
 
-	protected virtual void OnMouseDown() {
+	/*protected virtual void OnMouseDown() {
 
 		SC_Tile under = tileManager.GetTileAt (gameObject);
 
@@ -53,7 +53,7 @@ public class SC_Construction : NetworkBehaviour {
 
 		}
 
-	}
+	}*/
 
 	protected void OnMouseOver() {
 

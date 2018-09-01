@@ -190,7 +190,7 @@ public class SC_GameManager : NetworkBehaviour {
 		CalcRange(tileTarget, target);
 
         foreach(SC_Tile tile in new List<SC_Tile>(closedList) { tileTarget })
-            if(tile.canSetOn)
+            if(tile.canSetOn || (tile == tileTarget))
                 tile.ChangeDisplay(TDisplay.Movement);
 
     }
@@ -484,8 +484,6 @@ public class SC_GameManager : NetworkBehaviour {
 		if ((lastHeroDead != null) && (SC_Qin.Energy > SC_Qin.Qin.powerCost)) {
 
             uiManager.StartQinAction("qinPower");
-
-            characterToMove = null;
             
 			foreach (SC_Tile tile in tileManager.tiles)
                 if(tile.IsEmpty())

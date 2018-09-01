@@ -23,7 +23,7 @@ public class SC_Village : SC_Construction {
 
 	}
 
-	protected override void OnMouseDown() {
+	public void OnMouseDown() {
 
 		tileManager.TryToMoveCharacter(gameObject);
 

@@ -81,17 +81,19 @@ public class SC_Tile : NetworkBehaviour {
 
             }
 
-        } /*else if (displaySacrifice) {
+        } else if (CurrentDisplay == TDisplay.Sacrifice) {
 
-            //SC_Qin.ChangeEnergy (25);
+            SC_Character chara = tileManager.GetAt<SC_Character>(this);
 
             SC_Player.localPlayer.CmdChangeQinEnergy(25);
 
-            RemoveFilters();
+            RemoveFilter();
 
-            Destroy(tileManager.GetAt<SC_Character>(this));
+            chara.SetCanMove(false);
 
-        }*/ else if (CurrentDisplay == TDisplay.Resurrection) {
+            SC_Player.localPlayer.CmdDestroyCharacter(chara.gameObject);
+
+        } else if (CurrentDisplay == TDisplay.Resurrection) {
 
             uiManager.EndQinAction("qinPower");
 

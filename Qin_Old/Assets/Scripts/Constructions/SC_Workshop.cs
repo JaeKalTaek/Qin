@@ -13,7 +13,7 @@ public class SC_Workshop : SC_Construction {
 
 	};
 
-	protected override void OnMouseDown() {
+	public void OnMouseDown() {
 
 		if (tileManager.TryToMoveCharacter (gameObject))
 			DestroyConstruction ();

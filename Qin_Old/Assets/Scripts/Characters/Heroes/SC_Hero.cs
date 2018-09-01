@@ -61,20 +61,18 @@ public class SC_Hero : SC_Character {
 
 	}
 
-	protected override void OnMouseDown () {
+	/*protected override void OnMouseDown () {
 
 		if(!gameManager.player.IsQin())
 			base.OnMouseDown ();
 
-	}
+	}*/
 
 	protected override void PrintMovements () {
 
 		if (canMove || (berserk && !berserkTurn)) {
 
             SC_Player.localPlayer.CmdCheckMovements((int)transform.position.x, (int)transform.position.y);
-
-            //gameManager.CheckMovements (this);
 
             uiManager.ShowHeroPower (powerUsed, name);
 
