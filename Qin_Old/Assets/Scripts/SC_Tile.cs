@@ -40,15 +40,14 @@ public class SC_Tile : NetworkBehaviour {
 
 	void Start() {
 
-        if(gameManager == null) {
+        if(!gameManager)
+            gameManager = SC_GameManager.Instance;
 
-            gameManager = FindObjectOfType<SC_GameManager>();
+        if(!tileManager)
+            tileManager = SC_Tile_Manager.Instance;
 
-            tileManager = FindObjectOfType<SC_Tile_Manager>();
-
-            uiManager = FindObjectOfType<SC_UI_Manager>();
-
-        }
+        if(!uiManager)
+            uiManager = SC_UI_Manager.Instance;
 
 	}
 

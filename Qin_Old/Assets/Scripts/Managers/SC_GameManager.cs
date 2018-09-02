@@ -15,7 +15,7 @@ public class SC_GameManager : NetworkBehaviour {
 	public GameObject tileManagerPrefab;
     
 	//Instance
-    static SC_GameManager instance;
+    public static SC_GameManager Instance { get; set; }
 
     //Variables used to determine the movements possible
     List<SC_Tile> openList = new List<SC_Tile>();
@@ -68,10 +68,10 @@ public class SC_GameManager : NetworkBehaviour {
 
 		Bastion = true;
 
-		if (instance == null)
-			instance = this;
+		if (Instance == null)
+			Instance = this;
 
-		uiManager = FindObjectOfType<SC_UI_Manager> ();
+        uiManager = SC_UI_Manager.Instance;
 		uiManager.SetupUI (FindObjectOfType<SC_Network_Manager>().IsQinHost() == isServer);
 
     }
@@ -98,9 +98,7 @@ public class SC_GameManager : NetworkBehaviour {
 		SC_Tile_Manager stm = tm.GetComponent<SC_Tile_Manager> ();
 
 		stm.xSize = baseMapPrefab.GetComponent<SC_MapPrefab>().xSize;
-		stm.ySize = baseMapPrefab.GetComponent<SC_MapPrefab>().ySize;
-
-		FindObjectOfType<SC_Camera> ().Setup (stm.xSize, stm.ySize);
+		stm.ySize = baseMapPrefab.GetComponent<SC_MapPrefab>().ySize;		
 
 		NetworkServer.Spawn (tm);
 
@@ -108,7 +106,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 	public void FinishSetup() {
 
-		tileManager = FindObjectOfType<SC_Tile_Manager> ();
+        tileManager = SC_Tile_Manager.Instance;
 
 		if (isServer) {
 
@@ -245,13 +243,7 @@ public class SC_GameManager : NetworkBehaviour {
         }
         
     }
-    #endregion
-
-    public static SC_GameManager GetInstance() {
-		
-        return instance;
-
-    }		
+    #endregion	
 		
 	public void NextTurn() {
 
@@ -865,7 +857,7 @@ public class SC_GameManager : NetworkBehaviour {
 		characterToMove.lastPos.movementCost = 5000;
 		characterToMove.lastPos.canSetOn = false;
 		if (tileManager.GetAt<SC_Construction> (characterToMove.lastPos) == null)
-			characterToMove.lastPos.attackable = (characterToMove.coalition != GetInstance ().CoalitionTurn ());
+			characterToMove.lastPos.attackable = (characterToMove.coalition != CoalitionTurn ());
 		characterToMove.lastPos.constructable = !characterToMove.IsHero();
 
 		characterToMove.SetCanMove (true);

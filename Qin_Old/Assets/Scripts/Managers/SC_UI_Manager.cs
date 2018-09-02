@@ -39,10 +39,19 @@ public class SC_UI_Manager : MonoBehaviour {
 
 	static SC_GameManager gameManager;
 
-	public void SetupUI(bool qin) {
+    public static SC_UI_Manager Instance { get; set; }
 
-		if (gameManager == null)
-			gameManager = FindObjectOfType<SC_GameManager> ();
+    private void Awake() {
+
+        if(!Instance)
+            Instance = this;
+
+    }
+
+    public void SetupUI(bool qin) {       
+
+        if(!gameManager)
+            gameManager = SC_GameManager.Instance;
 
 		if (!qin) {
 

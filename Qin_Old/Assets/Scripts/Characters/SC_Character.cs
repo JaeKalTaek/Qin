@@ -59,15 +59,14 @@ public class SC_Character : NetworkBehaviour {
 
 	protected virtual void Start() {
 
-        if(gameManager == null) {
+        if(!gameManager)
+            gameManager = SC_GameManager.Instance;
 
-            gameManager = FindObjectOfType<SC_GameManager>();
+        if(!tileManager)
+            tileManager = SC_Tile_Manager.Instance;
 
-            tileManager = FindObjectOfType<SC_Tile_Manager>();
-
-            uiManager = FindObjectOfType<SC_UI_Manager>();
-
-        }
+        if(!uiManager)
+            uiManager = SC_UI_Manager.Instance;
 
 		lifebar = Instantiate(Resources.Load<GameObject>("Prefabs/P_Lifebar"), transform).GetComponent<SC_Lifebar>();
 		lifebar.transform.position += new Vector3 (0, -.44f, 0);

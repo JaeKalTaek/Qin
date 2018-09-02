@@ -13,7 +13,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 	public SC_Tile[,] tiles;
 
-	SC_GameManager gameManager;
+	static SC_GameManager gameManager;
 
     public static SC_Tile_Manager Instance { get; set; }
 
@@ -25,9 +25,12 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     void Start () {
 
-		gameManager = FindObjectOfType<SC_GameManager> ();
+        if(!gameManager)
+            gameManager = SC_GameManager.Instance;
 
-		tiles = new SC_Tile[xSize, ySize];
+        FindObjectOfType<SC_Camera>().Setup(xSize, ySize);
+
+        tiles = new SC_Tile[xSize, ySize];
 
 		foreach (SC_Tile t in FindObjectsOfType<SC_Tile>())
 			tiles [(int)t.transform.position.x, (int)t.transform.position.y] = t;
