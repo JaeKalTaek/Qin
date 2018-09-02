@@ -504,46 +504,49 @@ public class SC_GameManager : NetworkBehaviour {
 
         attacker.Tire();
 
-        SC_Tile target = attacker.attackTarget;
-		SC_Construction targetConstruction = tileManager.GetAt<SC_Construction> (target);
+        if(!attacker.attackTarget.IsEmpty()) {
 
-		if (tileManager.GetAt<SC_Character>(target) != null) {
+            SC_Character attacked = tileManager.GetAt<SC_Character>(attacker.attackTarget);
+            SC_Construction targetConstruction = tileManager.GetAt<SC_Construction>(attacker.attackTarget);
 
-			SC_Character attacked = tileManager.GetAt<SC_Character> (target);
-            bool counterAttack = (rangedAttack && attacked.GetActiveWeapon().ranged) || (!rangedAttack && !attacked.GetActiveWeapon().IsBow());
+            if(attacked != null) {
 
-            bool killed = attacked.Hit (CalcDamages (attacker, attacked, false), false);
-			SetCritDodge (attacker, attacked);
+                bool counterAttack = (rangedAttack && attacked.GetActiveWeapon().ranged) || (!rangedAttack && !attacked.GetActiveWeapon().IsBow());
 
-			if (attacker.IsHero () && killed)
-				IncreaseRelationships ((SC_Hero)attacker);
+                bool killed = attacked.Hit(CalcDamages(attacker, attacked, false), false);
+                SetCritDodge(attacker, attacked);
 
-			if(counterAttack) {
+                if(attacker.IsHero() && killed)
+                    IncreaseRelationships((SC_Hero)attacker);
 
-                killed = attacker.Hit(CalcDamages(attacked, attacker, true), false);
-                SetCritDodge(attacked, attacker);
+                if(counterAttack) {
 
-                if (attacked.IsHero() && killed)
-					IncreaseRelationships ((SC_Hero)attacked);
+                    killed = attacker.Hit(CalcDamages(attacked, attacker, true), false);
+                    SetCritDodge(attacked, attacker);
 
-			}
+                    if(attacked.IsHero() && killed)
+                        IncreaseRelationships((SC_Hero)attacked);
 
-		} else if (targetConstruction != null) {
+                }
 
-			targetConstruction.health -= attacker.GetActiveWeapon ().weaponOrQi ? attacker.strength : attacker.qi;
+            } else if(targetConstruction != null) {
 
-			targetConstruction.lifebar.UpdateGraph (targetConstruction.health, targetConstruction.maxHealth);
+                targetConstruction.health -= attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi;
 
-			uiManager.UpdateBuildingHealth(targetConstruction.gameObject);
+                targetConstruction.lifebar.UpdateGraph(targetConstruction.health, targetConstruction.maxHealth);
 
-			if (targetConstruction.health <= 0)
-				targetConstruction.DestroyConstruction ();
+                uiManager.UpdateBuildingHealth(targetConstruction.gameObject);
 
-		} else if (target.Qin ()) {
+                if(targetConstruction.health <= 0)
+                    targetConstruction.DestroyConstruction();
 
-			SC_Qin.ChangeEnergy (-(attacker.GetActiveWeapon ().weaponOrQi ? attacker.strength : attacker.qi));
+            } else if(attacker.attackTarget.Qin()) {
 
-		}     
+                SC_Qin.ChangeEnergy(-(attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi));
+
+            }
+
+        }
         
         if (attacker.IsHero())
             ((SC_Hero)attacker).berserkTurn = ((SC_Hero)attacker).berserk;
@@ -753,13 +756,11 @@ public class SC_GameManager : NetworkBehaviour {
 
 	public void PreviewFight(bool activeWeapon) {
 
-		SC_Character attacker = SC_Character.attackingCharacter;
+		if (SC_Character.attackingCharacter.IsHero ())	((SC_Hero)SC_Character.attackingCharacter).SetWeapon (activeWeapon);
 
-		if (attacker.IsHero ())	((SC_Hero)attacker).SetWeapon (activeWeapon);
+		uiManager.PreviewFight (SC_Character.attackingCharacter, rangedAttack);
 
-		uiManager.PreviewFight (attacker, rangedAttack);
-
-		if (attacker.IsHero ())	((SC_Hero)attacker).SetWeapon (activeWeapon);
+		if (SC_Character.attackingCharacter.IsHero ())	((SC_Hero)SC_Character.attackingCharacter).SetWeapon (activeWeapon);
 
 	}
 
@@ -769,8 +770,8 @@ public class SC_GameManager : NetworkBehaviour {
 
 		foreach (SC_Hero hero in heroesInRange) {
 
-			killer.relationships[hero.characterName] += Mathf.CeilToInt ((float)(100 / heroesInRange.Count));
-			hero.relationships[killer.characterName] += Mathf.CeilToInt ((float)(100 / heroesInRange.Count));
+			killer.relationships[hero.characterName] += Mathf.CeilToInt (100 / heroesInRange.Count);
+			hero.relationships[killer.characterName] += Mathf.CeilToInt (100 / heroesInRange.Count);
 
 		}
 

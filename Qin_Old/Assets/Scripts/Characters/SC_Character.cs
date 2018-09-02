@@ -211,12 +211,14 @@ public class SC_Character : NetworkBehaviour {
 
     void FinishMovement(bool moved) {
 
-        print(transform.position + "\n" + tileManager.GetTileAt(gameObject));
+        //print(transform.position + "\n" + tileManager.GetTileAt(gameObject).transform.position);
 
         SC_Tile leavingTile = moved ? path[0] : null;
         SC_Tile target = moved ? path[path.Count - 1] : null;
 
         if(moved) {
+
+            transform.SetPos(target.transform);
 
             if(tileManager.GetAt<SC_Construction>(leavingTile) == null)
                 leavingTile.attackable = true;
