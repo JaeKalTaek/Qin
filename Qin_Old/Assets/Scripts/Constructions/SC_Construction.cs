@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
-using static SC_Enums;
 
 public class SC_Construction : NetworkBehaviour {
 
@@ -64,7 +63,8 @@ public class SC_Construction : NetworkBehaviour {
 
 	public virtual void DestroyConstruction() {
 
-		uiManager.HideInfos (gameObject);
+        if(uiManager.currentGameObject == gameObject)
+		    uiManager.HideInfos (gameObject);
 
 		SC_Tile under = tileManager.GetTileAt (gameObject);
 

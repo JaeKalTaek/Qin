@@ -107,8 +107,6 @@ public class SC_Hero : SC_Character {
 		uiManager.cancelMovementButton.SetActive (false);
 		uiManager.cancelAttackButton.SetActive (true);
 
-        tileManager.RemoveAllFilters();
-
 		if ((gameManager.rangedAttack && weapon1.ranged) || (!gameManager.rangedAttack && !weapon1.IsBow ()))
 			uiManager.ShowWeapon (GetWeapon (true), true);
 
@@ -117,7 +115,15 @@ public class SC_Hero : SC_Character {
 
 	}
 
-	public void ActionVillage(bool destroy) {
+    public static void Attack(bool usedActiveWeapon) {
+
+        ((SC_Hero)attackingCharacter).SetWeapon(usedActiveWeapon);
+
+        gameManager.Attack();
+
+    }
+
+    public void ActionVillage(bool destroy) {
 
 		if (destroy) {
 
@@ -195,12 +201,8 @@ public class SC_Hero : SC_Character {
 
 		}
 
-		if (!dead) {
-
+		if (!dead)
 			lifebar.UpdateGraph (health, maxHealth);
-			uiManager.UpdateCharacterHealth (gameObject);
-
-		}
 
 		return dead;
 

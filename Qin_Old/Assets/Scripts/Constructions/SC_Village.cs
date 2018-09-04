@@ -23,11 +23,11 @@ public class SC_Village : SC_Construction {
 
 	}
 
-	public void OnMouseDown() {
+	/*public void OnMouseDown() {
 
 		tileManager.TryToMoveCharacter(gameObject);
 
-	}
+	}*/
 
 	public override void DestroyConstruction() {
 

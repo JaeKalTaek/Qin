@@ -84,16 +84,10 @@ public class SC_Soldier : SC_Character {
 
 		base.Hit(damages, saving);
         
-		if (health <= 0) {
-
+		if (health <= 0)
 			DestroyCharacter (); 
-
-		} else {
-
+		else
 			lifebar.UpdateGraph (health, maxHealth);
-			uiManager.UpdateCharacterHealth (gameObject);
-
-		}
 
         return (health <= 0);
 

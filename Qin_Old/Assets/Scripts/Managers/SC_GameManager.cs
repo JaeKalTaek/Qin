@@ -288,8 +288,7 @@ public class SC_GameManager : NetworkBehaviour {
             
 			character.SetCanMove (turn);
 
-			if (tileManager.GetAt<SC_Construction> (under))
-				under.attackable = !turn;
+			under.attackable = !turn;
 
         }
 
@@ -302,8 +301,8 @@ public class SC_GameManager : NetworkBehaviour {
 
 		}
 
-		foreach (SC_Convoy convoy in FindObjectsOfType<SC_Convoy>())
-			convoy.MoveConvoy ();
+		/*foreach (SC_Convoy convoy in FindObjectsOfType<SC_Convoy>())
+			convoy.MoveConvoy ();*/
 
 		if (!CoalitionTurn ()) {
 			
@@ -521,22 +520,28 @@ public class SC_GameManager : NetworkBehaviour {
 
                 }
 
+                uiManager.TryRefreshInfos(attacked.gameObject, attacked.GetType());
+
             } else if(targetConstruction != null) {
 
                 targetConstruction.health -= attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi;
 
                 targetConstruction.lifebar.UpdateGraph(targetConstruction.health, targetConstruction.maxHealth);
 
-                uiManager.UpdateBuildingHealth(targetConstruction.gameObject);
-
                 if(targetConstruction.health <= 0)
                     targetConstruction.DestroyConstruction();
+                else
+                    uiManager.TryRefreshInfos(targetConstruction.gameObject, typeof(SC_Construction));
 
             } else if(attacker.attackTarget.Qin()) {
 
                 SC_Qin.ChangeEnergy(-(attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi));
 
+                uiManager.TryRefreshInfos(SC_Qin.Qin.gameObject, SC_Qin.Qin.GetType());
+
             }
+
+            uiManager.TryRefreshInfos(attacker.gameObject, attacker.GetType());            
 
         }
         
@@ -771,8 +776,7 @@ public class SC_GameManager : NetworkBehaviour {
 
     public void SetAttackWeapon(bool usedActiveWeapon) {
 
-        ((SC_Hero)SC_Character.attackingCharacter).SetWeapon(usedActiveWeapon);
-		Attack ();
+        player.CmdHeroAttack(usedActiveWeapon);
 
     }
     #endregion

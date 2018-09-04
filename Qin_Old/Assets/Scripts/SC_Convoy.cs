@@ -1,27 +1,21 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 
-public class SC_Convoy : NetworkBehaviour {
+/*public class SC_Convoy : NetworkBehaviour {
 
 	SC_GameManager gameManager;
 	SC_Tile_Manager tileManager;
 
 	void Start () {
 
-		gameManager = GameObject.FindObjectOfType<SC_GameManager> ();
+		gameManager = FindObjectOfType<SC_GameManager> ();
 
-		tileManager = GameObject.FindObjectOfType<SC_Tile_Manager> ();
+		tileManager = FindObjectOfType<SC_Tile_Manager> ();
 
 		SC_Tile under = tileManager.GetTileAt (gameObject);
 
 		under.constructable = false;
 		under.attackable = false;
-
-	}
-
-	public void OnMouseDown() {
-
-		tileManager.TryToMoveCharacter(gameObject);
 
 	}
 
@@ -65,4 +59,4 @@ public class SC_Convoy : NetworkBehaviour {
 
 	}
 
-}
+}*/

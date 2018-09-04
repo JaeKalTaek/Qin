@@ -63,28 +63,18 @@ public class SC_Tile : NetworkBehaviour {
 
         } else if (CurrentDisplay == TDisplay.Attack) {
 
-            SC_Tile attackingCharacterTile = tileManager.GetTileAt(SC_Character.attackingCharacter.gameObject);
-            gameManager.rangedAttack = !tileManager.IsNeighbor(attackingCharacterTile, this);
+            SC_Player.localPlayer.CmdPrepareForAttack(!tileManager.IsNeighbor(tileManager.GetTileAt(SC_Character.attackingCharacter.gameObject), this), gameObject);
 
-            SC_Character.attackingCharacter.attackTarget = this;
-
-            if (SC_Character.attackingCharacter.IsHero()) {
-
+            if(SC_Character.attackingCharacter.IsHero())
                 ((SC_Hero)SC_Character.attackingCharacter).ChooseWeapon();
-
-            } else {
-
-                tileManager.RemoveAllFilters();
-
-                gameManager.Attack();
-
-            }
+            else
+                SC_Player.localPlayer.CmdAttack();
 
         } else if (CurrentDisplay == TDisplay.Sacrifice) {
 
             SC_Character chara = tileManager.GetAt<SC_Character>(this);
 
-            SC_Player.localPlayer.CmdChangeQinEnergy(25);
+            SC_Player.localPlayer.CmdChangeQinEnergy(SC_Qin.Qin.sacrificeValue);
 
             RemoveFilter();
 

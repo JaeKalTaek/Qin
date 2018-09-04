@@ -35,7 +35,7 @@ public class SC_UI_Manager : MonoBehaviour {
 	public Transform sacrifice;
 	public GameObject workshopPanel;
 
-	GameObject currentGameObject;
+	public GameObject currentGameObject { get; set; }
 
 	static SC_GameManager gameManager;
 
@@ -115,7 +115,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
     public void ShowHideInfos(GameObject g, Type t) {
 
-		if(!HideInfos (g)) {
+		if(HideInfos (g)) {
 
 			if (t == typeof(SC_Hero))
 				ShowHeroInfos (g.GetComponent<SC_Hero> ());
@@ -139,21 +139,23 @@ public class SC_UI_Manager : MonoBehaviour {
 		buildingInfosPanel.SetActive (false);
 		qinPanel.SetActive (false);
 
-		if (currentGameObject == g) {
+        currentGameObject = (currentGameObject == g) ? null : g;
 
-			currentGameObject = null;
-
-			return true;
-
-		} else {
-
-			currentGameObject = g;
-
-			return false;
-
-		}
+        return (currentGameObject == null) ? false : true;
 
 	}
+
+    public void TryRefreshInfos(GameObject g, Type t) {
+
+        if(currentGameObject == g) {
+
+            currentGameObject = null;
+
+            ShowHideInfos(g, t);
+
+        }
+
+    }
 
 	void ShowCharacterInfos(SC_Character character) {
 
@@ -201,13 +203,6 @@ public class SC_UI_Manager : MonoBehaviour {
 
 	}
 
-	public void UpdateCharacterHealth(GameObject g) {
-
-		if(currentGameObject == g)
-			SetText("Health","Health : " + health + " / " + g.GetComponent<SC_Character>().maxHealth);
-
-	}
-
 	public void ShowWeapon(SC_Weapon weapon, bool first) {
 
 		if (first)
@@ -228,30 +223,11 @@ public class SC_UI_Manager : MonoBehaviour {
 
 	}
 
-	public void UpdateBuildingHealth(GameObject g) {
-
-		if (currentGameObject == g) {
-
-			SC_Construction construction = g.GetComponent<SC_Construction> ();
-
-			SetText ("BuildingHealth", (construction.GetType ().Equals (typeof(SC_Village))) ? "" : "Health : " + construction.health + " / " + construction.maxHealth);
-
-		}
-
-	}
-
 	void ShowQinInfos(SC_Qin qin) {
 
 		qinPanel.SetActive (true);
 
 		SetText("QinEnergy", SC_Qin.Energy + "");
-
-	}
-
-	void UpdateQinEnergy(GameObject g) {
-
-		if(currentGameObject == g)
-			SetText("QinEnergy", SC_Qin.Energy + "");
 
 	}
 

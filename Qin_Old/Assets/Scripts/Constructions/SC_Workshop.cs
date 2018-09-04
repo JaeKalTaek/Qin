@@ -15,8 +15,8 @@ public class SC_Workshop : SC_Construction {
 
 	public void OnMouseDown() {
 
-		if (tileManager.TryToMoveCharacter (gameObject))
-			DestroyConstruction ();
+		/*if (tileManager.TryToMoveCharacter (gameObject))
+			DestroyConstruction ();*/
 
 		gameManager.currentWorkshop = this;
 

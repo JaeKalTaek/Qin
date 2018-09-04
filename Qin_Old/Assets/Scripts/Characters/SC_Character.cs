@@ -268,12 +268,12 @@ public class SC_Character : NetworkBehaviour {
 
         } else {
 
-            if(moved && tileManager.GetAt<SC_Convoy>(target)) {
+            /*if(moved && tileManager.GetAt<SC_Convoy>(target)) {
 
                 tileManager.GetAt<SC_Convoy>(target).DestroyConvoy();
                 gameManager.cantCancelMovement = true;
 
-            } else if(SC_Player.localPlayer.Turn()) {
+            } else*/ if(SC_Player.localPlayer.Turn()) {
 
                 uiManager.cancelMovementButton.SetActive(true);
 
@@ -371,11 +371,12 @@ public class SC_Character : NetworkBehaviour {
 
         }
 
-    }
+    }   
 
 	public virtual void DestroyCharacter() {
 
-		uiManager.HideInfos (gameObject);
+        if(uiManager.currentGameObject == gameObject)
+            uiManager.HideInfos (gameObject);
 
 		SC_Tile under = tileManager.GetTileAt (gameObject);
 

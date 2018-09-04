@@ -98,37 +98,52 @@ public class SC_Player : NetworkBehaviour {
     }
     #endregion
 
-    #region Display Attack
+    #region Attack
     [Command]
-	public void CmdDisplayAttack(GameObject tile) {
+	public void CmdPrepareForAttack(bool rangedAttack, GameObject targetTileObject) {
 
-		RpcDisplayAttack (tile);
+        RpcPrepareForAttack(rangedAttack, targetTileObject);
 
-	}
+    }
 
 	[ClientRpc]
-	void RpcDisplayAttack(GameObject tile) {
+	void RpcPrepareForAttack(bool rangedAttack, GameObject targetTileObject) {
 
-        tile.GetComponent<SC_Tile>().ChangeDisplay(TDisplay.Attack);
+        localPlayer.tileManager.RemoveAllFilters();
+
+        localPlayer.gameManager.rangedAttack = rangedAttack;
+
+        SC_Character.attackingCharacter.attackTarget = targetTileObject.GetComponent<SC_Tile>();
 
 	}
-    #endregion
 
-    #region Display Sacrifice
     [Command]
-    public void CmdDisplaySacrifice(int[] xArray, int[] yArray) {
+    public void CmdAttack() {
 
-        RpcDisplaySacrifice(xArray, yArray);
+        RpcAttack();
 
     }
 
     [ClientRpc]
-    void RpcDisplaySacrifice(int[] xArray, int[] yArray) {
+    void RpcAttack() {
 
-        if(localPlayer.IsQin())
-            localPlayer.tileManager.DisplaySacrifice(xArray, yArray);
+        localPlayer.gameManager.Attack();
 
-    }    
+    }
+
+    [Command]
+    public void CmdHeroAttack(bool usedActiveWeapon) {
+
+        RpcHeroAttack(usedActiveWeapon);
+
+    }
+
+    [ClientRpc]
+    void RpcHeroAttack(bool usedActiveWeapon) {
+
+        SC_Hero.Attack(usedActiveWeapon);
+
+    }
     #endregion
 
     #region Remove filters
