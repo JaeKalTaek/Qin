@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
@@ -348,7 +348,7 @@ public class SC_GameManager : NetworkBehaviour {
         }        
 
         foreach(SC_Tile tile in constructableTiles)
-            if(tile.constructable && (Bastion || (tileManager.GetAt<SC_Wall>(tile) == null)))
+            if(tile.constructable && (Bastion || !tile.wall))
                 tile.GetComponent<SC_Tile>().ChangeDisplay(TDisplay.Construct);
 
 	}
@@ -363,15 +363,14 @@ public class SC_GameManager : NetworkBehaviour {
 
         SC_Tile tile = tileManager.GetTileAt (x, y);
 
-		if (tileManager.GetAt<SC_Character> (tile) != null) {
+		if (tile.character) {
 
             SC_Qin.ChangeEnergy(SC_Qin.Qin.sacrificeValue);
-			tileManager.GetAt<SC_Character> (tile).DestroyCharacter();
+            tile.character.DestroyCharacter();
 
         }
 
-		if (tileManager.GetAt<SC_Construction> (tile) != null)
-			tileManager.GetAt<SC_Construction> (tile).DestroyConstruction();
+        tile.construction?.DestroyConstruction();
 
         if(isServer) {
 
@@ -409,12 +408,9 @@ public class SC_GameManager : NetworkBehaviour {
 
 	public void UpdateNeighborWallGraph(SC_Tile center) {
 
-		foreach (SC_Tile tile in tileManager.GetNeighbors(center)) {
-
-			if((tileManager.GetAt<SC_Bastion> (tile) != null) || (tileManager.GetAt<SC_Wall> (tile) != null))
-				UpdateWallGraph (tileManager.GetAt<SC_Construction>(tile).gameObject);
-
-		}
+		foreach (SC_Tile tile in tileManager.GetNeighbors(center))
+            if(tile.bastion)
+                UpdateWallGraph(tile.bastion.gameObject);
 
 	}
 
@@ -431,7 +427,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 		foreach (SC_Tile tile in tileManager.GetNeighbors(under)) {
 
-			if((tileManager.GetAt<SC_Bastion> (tile) != null) || (tileManager.GetAt<SC_Wall> (tile) != null)) {
+			if(tile.bastion) {
 
 				if (tile.transform.position.x < under.transform.position.x)
 					left = true;
@@ -477,7 +473,7 @@ public class SC_GameManager : NetworkBehaviour {
             uiManager.StartQinAction("qinPower");
             
 			foreach (SC_Tile tile in tileManager.tiles)
-                if(tile.IsEmpty())
+                if(tile.empty)
                     tile.ChangeDisplay(TDisplay.Resurrection);                  
 
 		}
@@ -495,12 +491,12 @@ public class SC_GameManager : NetworkBehaviour {
 
         attacker.Tire();
 
-        if(!attacker.attackTarget.IsEmpty()) {
+        if(!attacker.attackTarget.empty) {
 
-            SC_Character attacked = tileManager.GetAt<SC_Character>(attacker.attackTarget);
-            SC_Construction targetConstruction = tileManager.GetAt<SC_Construction>(attacker.attackTarget);
+            SC_Character attacked = attacker.attackTarget.character;
+            SC_Construction targetConstruction = attacker.attackTarget.construction;
 
-            if(attacked != null) {
+            if(attacked) {
 
                 bool counterAttack = (rangedAttack && attacked.GetActiveWeapon().ranged) || (!rangedAttack && !attacked.GetActiveWeapon().IsBow());
 
@@ -522,7 +518,7 @@ public class SC_GameManager : NetworkBehaviour {
 
                 uiManager.TryRefreshInfos(attacked.gameObject, attacked.GetType());
 
-            } else if(targetConstruction != null) {
+            } else if(targetConstruction) {
 
                 targetConstruction.health -= attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi;
 
@@ -533,7 +529,7 @@ public class SC_GameManager : NetworkBehaviour {
                 else
                     uiManager.TryRefreshInfos(targetConstruction.gameObject, typeof(SC_Construction));
 
-            } else if(attacker.attackTarget.Qin()) {
+            } else if(attacker.attackTarget.qin) {
 
                 SC_Qin.ChangeEnergy(-(attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi));
 
@@ -664,9 +660,9 @@ public class SC_GameManager : NetworkBehaviour {
 
                 leavingTile.movementCost = leavingTile.baseCost;
                 leavingTile.canSetOn = true;
-				if (tileManager.GetAt<SC_Construction>(leavingTile) == null)
-                    leavingTile.attackable = true;
-                leavingTile.constructable = !leavingTile.IsPalace();
+				leavingTile.attackable = (!leavingTile.construction || leavingTile.bastion && saver.coalition);
+                leavingTile.constructable = !leavingTile.palace;
+                leavingTile.character = null;
 
 				saver.transform.SetPos(NearestTile (toSave).transform);
 
@@ -676,6 +672,7 @@ public class SC_GameManager : NetworkBehaviour {
                 newTile.canSetOn = false;
 				newTile.attackable = (saver.coalition != CoalitionTurn());
 				newTile.constructable = false;
+                newTile.character = saver;
 
             } else {
 
@@ -694,7 +691,7 @@ public class SC_GameManager : NetworkBehaviour {
 		SC_Tile t = null;
 
 		foreach(SC_Tile tile in tileManager.GetNeighbors(tileManager.GetTileAt(target.gameObject)))
-			if(tile.IsEmpty()) t = tile;
+			if(tile.empty) t = tile;
 
 		return t;
 
@@ -732,14 +729,12 @@ public class SC_GameManager : NetworkBehaviour {
 
 		foreach(SC_Tile tile in range) {
 
-			SC_Character character = tileManager.GetAt<SC_Character> (tile);
-
-            if (character != null) {
+            if (tile.character) {
 				
-				if (character.IsHero () && character.coalition) {
+				if (tile.character.IsHero () && tile.character.coalition) {
 					
-					if (!character.characterName.Equals (target.characterName) && !heroesInRange.Contains(((SC_Hero)character)))
-						heroesInRange.Add ((SC_Hero)character);
+					if (!tile.character.characterName.Equals (target.characterName) && !heroesInRange.Contains(((SC_Hero)tile.character)))
+						heroesInRange.Add ((SC_Hero)tile.character);
 
 				}
 
@@ -789,7 +784,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 	}
 
-	public void SpawnConvoy(Vector3 pos) {
+	/*public void SpawnConvoy(Vector3 pos) {
 
 		if (pos.x >= 0) {
 
@@ -806,7 +801,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 		}
 
-	}
+	}*/
 
     public void CreateSoldier() {
 
@@ -826,7 +821,7 @@ public class SC_GameManager : NetworkBehaviour {
 
     public void DisplayWorkshopPanel() {
 
-		if((!CoalitionTurn()) && !Bastion && (tileManager.GetAt<SC_Character>(currentWorkshop.gameObject) == null))
+		if(!CoalitionTurn() && !Bastion && !tileManager.GetTileAt(currentWorkshop.gameObject).character)
             uiManager.StartQinAction("workshop");
 
     }
@@ -853,18 +848,20 @@ public class SC_GameManager : NetworkBehaviour {
 
         leavingTile.movementCost = leavingTile.baseCost;
         leavingTile.canSetOn = true;
-        leavingTile.attackable = tileManager.GetAt<SC_Construction>(leavingTile) == null;
-		leavingTile.constructable = !leavingTile.IsPalace ();
+        leavingTile.attackable = (!leavingTile.construction || leavingTile.bastion && CoalitionTurn());
+		leavingTile.constructable = !leavingTile.palace;
+        leavingTile.character = null;
 
 		characterToMove.transform.SetPos (characterToMove.lastPos.transform);
 
 		characterToMove.lastPos.movementCost = 5000;
 		characterToMove.lastPos.canSetOn = false;
-		if (tileManager.GetAt<SC_Construction> (characterToMove.lastPos) == null)
-			characterToMove.lastPos.attackable = (characterToMove.coalition != CoalitionTurn ());
+		characterToMove.lastPos.attackable = (characterToMove.coalition != CoalitionTurn ());
 		characterToMove.lastPos.constructable = !characterToMove.IsHero();
+        characterToMove.lastPos.character = characterToMove;
 
-		characterToMove.SetCanMove (true);
+
+        characterToMove.SetCanMove (true);
 
         CheckMovements(characterToMove);
 

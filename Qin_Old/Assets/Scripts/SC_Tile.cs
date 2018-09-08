@@ -17,6 +17,22 @@ public class SC_Tile : NetworkBehaviour {
 
     public bool constructable { get; set; }
 
+    public SC_Construction construction { get; set; }
+
+    public SC_Village village { get { return construction as SC_Village; } }
+
+    public SC_Bastion bastion { get { return construction as SC_Bastion; } }
+
+    public SC_Wall wall { get { return bastion as SC_Wall; } }
+
+    public SC_Character character { get; set; }
+
+    public bool qin { get; set; }
+
+    public bool empty { get { return !construction && !character && !qin; } }
+
+    public bool palace { get { return name.Contains("Palace"); } }
+
     // Used for PathFinder
     public SC_Tile parent { get; set; }
 
@@ -72,15 +88,13 @@ public class SC_Tile : NetworkBehaviour {
 
         } else if (CurrentDisplay == TDisplay.Sacrifice) {
 
-            SC_Character chara = tileManager.GetAt<SC_Character>(this);
-
             SC_Player.localPlayer.CmdChangeQinEnergy(SC_Qin.Qin.sacrificeValue);
 
             RemoveFilter();
 
-            chara.SetCanMove(false);
+            character.SetCanMove(false);
 
-            SC_Player.localPlayer.CmdDestroyCharacter(chara.gameObject);
+            SC_Player.localPlayer.CmdDestroyCharacter(character.gameObject);
 
         } else if (CurrentDisplay == TDisplay.Resurrection) {
 
@@ -115,23 +129,5 @@ public class SC_Tile : NetworkBehaviour {
         SetFilter("T_Display" + d);
 
     }
-
-	public bool Qin() {
-
-        return tileManager.GetAt<SC_Qin>(this) != null;
-
-	}
-
-	public bool IsEmpty() {
-
-		return tileManager.GetAt<MonoBehaviour> (this) == null;
-
-	}
-
-	public bool IsPalace() {
-
-		return name.Contains("Palace");
-
-	}
 
 }

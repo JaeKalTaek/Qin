@@ -58,7 +58,9 @@ public class SC_Tile_Manager : NetworkBehaviour {
 		t.movementCost = character.coalition ? 1 : 5000;
 		t.canSetOn = false;
 
-		t.attackable = (character.coalition != gameManager.CoalitionTurn());			
+		t.attackable = (character.coalition != gameManager.CoalitionTurn());
+
+        t.character = character;
 
 		return t;
 
@@ -73,6 +75,8 @@ public class SC_Tile_Manager : NetworkBehaviour {
 		t.canSetOn = false;
 		t.attackable = gameManager.CoalitionTurn();
 
+        t.qin = true;
+
 	}
 
 	public void SetConstruction(SC_Construction construction) {
@@ -81,12 +85,10 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 		t.movementCost = 10000;
 		t.attackable = (construction.GetType ().Equals (typeof(SC_Village)) || construction.GetType ().Equals (typeof(SC_Village))) ? false : gameManager.CoalitionTurn();
+	    t.constructable = construction.GetType().Equals(typeof(SC_Wall));
+		t.canSetOn = construction.GetType().Equals(typeof(SC_Village));
 
-		if (!construction.GetType ().Equals (typeof(SC_Wall)))
-			t.constructable = false;
-
-		if (!construction.GetType ().Equals (typeof(SC_Village)))
-			t.canSetOn = false;
+        t.construction = construction;
 
 	}
 	#endregion
@@ -190,33 +192,6 @@ public class SC_Tile_Manager : NetworkBehaviour {
 	public SC_Tile GetTileAt(Vector3 pos) {
 
 		return tiles [(int)pos.x, (int)pos.y];
-
-	}
-
-	public T GetAt<T>(int x, int y) where T : MonoBehaviour {
-
-		return GetAt<T> (tiles [x, y]);
-
-	}
-
-	public T GetAt<T>(GameObject g) where T : MonoBehaviour {
-
-		return GetAt<T> (GetTileAt (g));
-
-	}
-
-	public T GetAt<T>(SC_Tile tile) where T : MonoBehaviour {
-
-		T objectToReturn = null;
-
-		foreach (T t in FindObjectsOfType<T>()) {
-
-			if ((t.GetType() != typeof(SC_Tile)) && (t.transform.position.x == (int)tile.transform.position.x) && (t.transform.position.y == (int)tile.transform.position.y))
-				objectToReturn = t;
-
-		}
-
-		return objectToReturn;
 
 	}
 

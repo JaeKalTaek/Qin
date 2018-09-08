@@ -17,8 +17,7 @@ public class SC_Character : NetworkBehaviour {
 
 	protected bool finishMovement;
 
-	[HideInInspector]
-	public SC_Tile lastPos;
+	public SC_Tile lastPos { get; set; }
 
 	//Stats
 	public string characterName;
@@ -155,9 +154,7 @@ public class SC_Character : NetworkBehaviour {
 
         tileManager.RemoveAllFilters();
 
-        lastPos = tileManager.GetTileAt (gameObject);
-		lastPos.movementCost = lastPos.baseCost;
-		lastPos.canSetOn = true;
+        lastPos = tileManager.GetTileAt(gameObject);
 
         path = PathFinder(lastPos, target, gameManager.GetClosedList ());
 
@@ -210,21 +207,21 @@ public class SC_Character : NetworkBehaviour {
 
     void FinishMovement(bool moved) {
 
-        //print(transform.position + "\n" + tileManager.GetTileAt(gameObject).transform.position);
-
-        SC_Tile leavingTile = moved ? path[0] : null;
         SC_Tile target = moved ? path[path.Count - 1] : null;
 
         if(moved) {
 
             transform.SetPos(target.transform);
 
-            if(tileManager.GetAt<SC_Construction>(leavingTile) == null)
-                leavingTile.attackable = true;
+            lastPos.movementCost = lastPos.baseCost;
+            lastPos.canSetOn = true;
+            lastPos.attackable = (!lastPos.construction || lastPos.bastion && coalition);
+            lastPos.character = null;
 
             target.movementCost = 5000;
             target.canSetOn = false;
             target.attackable = (coalition != gameManager.CoalitionTurn());
+            target.character = this;
 
         }
 
@@ -236,9 +233,9 @@ public class SC_Character : NetworkBehaviour {
 
             canMove = (((SC_Hero)this).berserk && !((SC_Hero)this).berserkTurn);
 
-            if(moved && tileManager.GetAt<SC_Construction>(target)) {
+            if(moved && target.construction) {
 
-                if(tileManager.GetAt<SC_Village>(target) && SC_Player.localPlayer.Turn()) {
+                if(target.village && SC_Player.localPlayer.Turn()) {
 
                     uiManager.villagePanel.SetActive(true);
 
@@ -261,7 +258,7 @@ public class SC_Character : NetworkBehaviour {
 
             if(moved) {
 
-                leavingTile.constructable = !leavingTile.IsPalace();
+                lastPos.constructable = !lastPos.palace;
                 target.constructable = false;
 
             }
@@ -384,7 +381,7 @@ public class SC_Character : NetworkBehaviour {
 
 		under.canSetOn = true;
 
-		under.attackable = tileManager.GetAt<SC_Construction>(under) == null;
+		under.attackable = (!under.construction || under.bastion && coalition);
 
 	}
 

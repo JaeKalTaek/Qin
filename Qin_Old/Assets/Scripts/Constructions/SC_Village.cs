@@ -35,7 +35,7 @@ public class SC_Village : SC_Construction {
 
 		number--;
 
-		gameManager.SpawnConvoy (transform.position + new Vector3 (-1, 0, 0));
+		//gameManager.SpawnConvoy (transform.position + new Vector3 (-1, 0, 0));
 
 	}
 
