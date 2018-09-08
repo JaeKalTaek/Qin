@@ -42,7 +42,7 @@ public class SC_Hero : SC_Character {
 
 		base.Start();
 
-		tileManager.SetHero (this);
+		tileManager.SetCharacter (this);
 
 		relationships = new Dictionary<string, int> ();
 
@@ -231,7 +231,7 @@ public class SC_Hero : SC_Character {
 
 		gameManager.lastHeroDead = this;
 
-		tileManager.GetTileAt (gameObject).Constructable = !tileManager.GetTileAt (gameObject).Palace;
+        tileManager.GetTileAt(gameObject).Character = null;
 
 		foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
 

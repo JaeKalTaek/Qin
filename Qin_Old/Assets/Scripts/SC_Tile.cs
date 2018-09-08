@@ -13,9 +13,23 @@ public class SC_Tile : NetworkBehaviour {
 
 	public bool CanSetOn { get; set; }
 
-	public bool Attackable { get; set; }
+	public bool Attackable {
 
-    public bool Constructable { get; set; }
+        get {
+
+            if (Character)
+                return SC_Character.attackingCharacter.coalition != Character.coalition;
+            else if (Construction)
+                return SC_Character.attackingCharacter.coalition && Bastion;
+            else if (Qin)
+                return SC_Character.attackingCharacter.coalition;
+            else
+                return true;
+
+        }
+    }
+
+    public bool Constructable { get { return !name.Contains("Palace") && (!Character || Soldier) && (!Construction || gameManager.Bastion && Wall); } }
 
     public SC_Construction Construction { get; set; }
 
@@ -26,6 +40,8 @@ public class SC_Tile : NetworkBehaviour {
     public SC_Wall Wall { get { return Construction as SC_Wall; } }
 
     public SC_Character Character { get; set; }
+
+    public SC_Soldier Soldier { get { return Character as SC_Soldier; } }
 
     public bool Qin { get; set; }
 
@@ -44,13 +60,9 @@ public class SC_Tile : NetworkBehaviour {
 
 	void Awake() {
 
-		Constructable = !name.Contains("Palace");
-
 		MovementCost = baseCost;
 
 		CanSetOn = true;
-
-		Attackable = true;
 
 	}
 

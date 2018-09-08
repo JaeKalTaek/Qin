@@ -215,12 +215,10 @@ public class SC_Character : NetworkBehaviour {
 
             LastPos.MovementCost = LastPos.baseCost;
             LastPos.CanSetOn = true;
-            LastPos.Attackable = (!LastPos.Construction || LastPos.Bastion && coalition);
             LastPos.Character = null;
 
             target.MovementCost = 5000;
             target.CanSetOn = false;
-            target.Attackable = (coalition != gameManager.CoalitionTurn());
             target.Character = this;
 
         }
@@ -253,13 +251,6 @@ public class SC_Character : NetworkBehaviour {
                     uiManager.cancelMovementButton.SetActive(true);
 
                 CheckAttack();
-
-            }
-
-            if(moved) {
-
-                LastPos.Constructable = !LastPos.Palace;
-                target.Constructable = false;
 
             }
 
@@ -380,8 +371,6 @@ public class SC_Character : NetworkBehaviour {
 		under.MovementCost = under.baseCost;
 
 		under.CanSetOn = true;
-
-		under.Attackable = (!under.Construction || under.Bastion && coalition);
 
 	}
 

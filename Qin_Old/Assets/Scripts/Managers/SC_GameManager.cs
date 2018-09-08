@@ -288,18 +288,9 @@ public class SC_GameManager : NetworkBehaviour {
             
 			character.SetCanMove (turn);
 
-			under.Attackable = !turn;
-
         }
 
         SC_Character.attackingCharacter = null;
-
-        foreach(SC_Construction construction in FindObjectsOfType<SC_Construction>()) {
-			
-			if (construction.GetType ().Equals (typeof(SC_Wall)) || construction.GetType ().Equals (typeof(SC_Bastion)))
-				tileManager.GetTileAt (construction.gameObject).Attackable = CoalitionTurn ();
-
-		}
 
 		/*foreach (SC_Convoy convoy in FindObjectsOfType<SC_Convoy>())
 			convoy.MoveConvoy ();*/
@@ -660,8 +651,6 @@ public class SC_GameManager : NetworkBehaviour {
 
                 leavingTile.MovementCost = leavingTile.baseCost;
                 leavingTile.CanSetOn = true;
-				leavingTile.Attackable = (!leavingTile.Construction || leavingTile.Bastion && saver.coalition);
-                leavingTile.Constructable = !leavingTile.Palace;
                 leavingTile.Character = null;
 
 				saver.transform.SetPos(NearestTile (toSave).transform);
@@ -670,8 +659,6 @@ public class SC_GameManager : NetworkBehaviour {
 
                 newTile.MovementCost = 5000;
                 newTile.CanSetOn = false;
-				newTile.Attackable = (saver.coalition != CoalitionTurn());
-				newTile.Constructable = false;
                 newTile.Character = saver;
 
             } else {
@@ -848,16 +835,12 @@ public class SC_GameManager : NetworkBehaviour {
 
         leavingTile.MovementCost = leavingTile.baseCost;
         leavingTile.CanSetOn = true;
-        leavingTile.Attackable = (!leavingTile.Construction || leavingTile.Bastion && CoalitionTurn());
-		leavingTile.Constructable = !leavingTile.Palace;
         leavingTile.Character = null;
 
 		characterToMove.transform.SetPos (characterToMove.LastPos.transform);
 
 		characterToMove.LastPos.MovementCost = 5000;
 		characterToMove.LastPos.CanSetOn = false;
-		characterToMove.LastPos.Attackable = (characterToMove.coalition != CoalitionTurn ());
-		characterToMove.LastPos.Constructable = !characterToMove.IsHero();
         characterToMove.LastPos.Character = characterToMove;
 
 

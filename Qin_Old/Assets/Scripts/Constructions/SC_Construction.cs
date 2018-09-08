@@ -69,8 +69,6 @@ public class SC_Construction : NetworkBehaviour {
 		SC_Tile under = tileManager.GetTileAt (gameObject);
 
 		under.MovementCost = under.baseCost;
-        under.Constructable = !under.Palace;
-		under.Attackable = true;
 
         under.Construction = null;
 
