@@ -7,11 +7,39 @@ public class SC_Tile : NetworkBehaviour {
 
     public TDisplay CurrentDisplay { get; set; }
 
-    public int baseCost;
+    public int cost;
 
-	public int MovementCost { get; set; }
+    public bool CanGoThrough {
 
-	public bool CanSetOn { get; set; }
+        get {
+
+            if (Character)
+                return gameManager.characterToMove.coalition == Character.coalition;
+            else if (Construction)
+                return !gameManager.characterToMove.coalition || !Bastion;
+            else if (Qin)
+                return !gameManager.characterToMove.coalition;
+            else
+                return true;
+
+        }
+
+    }
+
+    public bool CanSetOn {
+
+        get {
+
+            if (Character || Qin)
+                return false;
+            else if (Construction)
+                return gameManager.characterToMove.coalition ? Village : Village || Bastion;
+            else
+                return true;
+
+        }
+
+    }
 
 	public bool Attackable {
 
@@ -57,14 +85,6 @@ public class SC_Tile : NetworkBehaviour {
 	static SC_Tile_Manager tileManager;
 
     static SC_UI_Manager uiManager;
-
-	void Awake() {
-
-		MovementCost = baseCost;
-
-		CanSetOn = true;
-
-	}
 
 	void Start() {
 

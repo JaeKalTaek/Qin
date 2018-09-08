@@ -45,34 +45,19 @@ public class SC_Tile_Manager : NetworkBehaviour {
 	#region Set Methods
 	public void SetCharacter(SC_Character character) {
 
-		SC_Tile t = GetTileAt (character.gameObject);
-
-		t.MovementCost = character.coalition ? 1 : 5000;
-		t.CanSetOn = false;
-
-        t.Character = character;
+		GetTileAt (character.gameObject).Character = character;
 
 	}
 
 	public void SetQin(SC_Qin qin) {
 
-		SC_Tile t = GetTileAt (qin.gameObject);
-
-		t.MovementCost = 10000;
-		t.CanSetOn = false;
-
-        t.Qin = true;
+		GetTileAt (qin.gameObject).Qin = true;
 
 	}
 
 	public void SetConstruction(SC_Construction construction) {
 
-		SC_Tile t = GetTileAt (construction.gameObject);
-
-		t.MovementCost = 10000;
-		t.CanSetOn = construction.GetType().Equals(typeof(SC_Village));
-
-        t.Construction = construction;
+		GetTileAt (construction.gameObject).Construction = construction;
 
 	}
 	#endregion

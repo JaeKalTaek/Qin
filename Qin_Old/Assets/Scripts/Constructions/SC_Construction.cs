@@ -66,11 +66,7 @@ public class SC_Construction : NetworkBehaviour {
         if(uiManager.currentGameObject == gameObject)
 		    uiManager.HideInfos (gameObject);
 
-		SC_Tile under = tileManager.GetTileAt (gameObject);
-
-		under.MovementCost = under.baseCost;
-
-        under.Construction = null;
+		tileManager.GetTileAt (gameObject).Construction = null;
 
         SC_Player.localPlayer.CmdDestroyGameObject(gameObject);
 

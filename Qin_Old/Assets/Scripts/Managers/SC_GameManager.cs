@@ -228,9 +228,9 @@ public class SC_GameManager : NetworkBehaviour {
         
         foreach (SC_Tile tile in tileManager.GetNeighbors(aTile)) {
             
-            if (closedList.Contains(tile) || openList.Contains(tile)) continue;
+            if (closedList.Contains(tile) || openList.Contains(tile) || !tile.CanGoThrough) continue;
 
-			int points = parentPoints - ((berserk && (tile.MovementCost != 10000)) ? 1 : tile.MovementCost);
+			int points = parentPoints - (berserk ? 1 : tile.cost);
 
             if (points >= 0) {
 
@@ -259,8 +259,6 @@ public class SC_GameManager : NetworkBehaviour {
 
         foreach (SC_Character character in FindObjectsOfType<SC_Character>()) {
 
-			SC_Tile under = tileManager.GetTileAt (character.gameObject);
-
 			if (character.IsHero ()) {
 				
 				SC_Hero hero = ((SC_Hero)character);
@@ -283,8 +281,6 @@ public class SC_GameManager : NetworkBehaviour {
 			character.UnTired ();
             
 			bool turn = character.coalition == CoalitionTurn ();
-
-			under.MovementCost = turn ? under.baseCost : 5000;
             
 			character.SetCanMove (turn);
 
@@ -647,19 +643,11 @@ public class SC_GameManager : NetworkBehaviour {
 
             if ((saver != null) && (nearestTile != null)) {
 
-				SC_Tile leavingTile = tileManager.GetTileAt (saver.gameObject);
-
-                leavingTile.MovementCost = leavingTile.baseCost;
-                leavingTile.CanSetOn = true;
-                leavingTile.Character = null;
+				tileManager.GetTileAt (saver.gameObject).Character = null;
 
 				saver.transform.SetPos(NearestTile (toSave).transform);
 
-				SC_Tile newTile = tileManager.GetTileAt (saver.gameObject);
-
-                newTile.MovementCost = 5000;
-                newTile.CanSetOn = false;
-                newTile.Character = saver;
+				tileManager.GetTileAt (saver.gameObject).Character = saver;
 
             } else {
 
@@ -831,18 +819,11 @@ public class SC_GameManager : NetworkBehaviour {
 
         tileManager.RemoveAllFilters();
 
-        SC_Tile leavingTile = tileManager.GetTileAt (characterToMove.gameObject);
-
-        leavingTile.MovementCost = leavingTile.baseCost;
-        leavingTile.CanSetOn = true;
-        leavingTile.Character = null;
+        tileManager.GetTileAt (characterToMove.gameObject).Character = null;
 
 		characterToMove.transform.SetPos (characterToMove.LastPos.transform);
 
-		characterToMove.LastPos.MovementCost = 5000;
-		characterToMove.LastPos.CanSetOn = false;
         characterToMove.LastPos.Character = characterToMove;
-
 
         characterToMove.SetCanMove (true);
 

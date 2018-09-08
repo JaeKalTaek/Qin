@@ -229,9 +229,7 @@ public class SC_Hero : SC_Character {
 
 		SC_Qin.ChangeEnergy (SC_Qin.Qin.energyWhenHeroDies);
 
-		gameManager.lastHeroDead = this;
-
-        tileManager.GetTileAt(gameObject).Character = null;
+		gameManager.lastHeroDead = this;        
 
 		foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
 

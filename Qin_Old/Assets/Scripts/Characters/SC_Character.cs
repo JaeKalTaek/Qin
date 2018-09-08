@@ -213,12 +213,8 @@ public class SC_Character : NetworkBehaviour {
 
             transform.SetPos(target.transform);
 
-            LastPos.MovementCost = LastPos.baseCost;
-            LastPos.CanSetOn = true;
             LastPos.Character = null;
 
-            target.MovementCost = 5000;
-            target.CanSetOn = false;
             target.Character = this;
 
         }
@@ -366,11 +362,7 @@ public class SC_Character : NetworkBehaviour {
         if(uiManager.currentGameObject == gameObject)
             uiManager.HideInfos (gameObject);
 
-		SC_Tile under = tileManager.GetTileAt (gameObject);
-
-		under.MovementCost = under.baseCost;
-
-		under.CanSetOn = true;
+        tileManager.GetTileAt(gameObject).Character = null;
 
 	}
 
