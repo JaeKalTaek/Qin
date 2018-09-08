@@ -68,11 +68,11 @@ public class SC_Construction : NetworkBehaviour {
 
 		SC_Tile under = tileManager.GetTileAt (gameObject);
 
-		under.movementCost = under.baseCost;
-        under.constructable = !under.palace;
-		under.attackable = true;
+		under.MovementCost = under.baseCost;
+        under.Constructable = !under.Palace;
+		under.Attackable = true;
 
-        under.construction = null;
+        under.Construction = null;
 
         SC_Player.localPlayer.CmdDestroyGameObject(gameObject);
 

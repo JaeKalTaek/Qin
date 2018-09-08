@@ -128,7 +128,7 @@ public class SC_Hero : SC_Character {
 		if (destroy) {
 
 			gameManager.cantCancelMovement = true;
-            tileManager.GetTileAt(gameObject).construction.DestroyConstruction();
+            tileManager.GetTileAt(gameObject).Construction.DestroyConstruction();
 
 		} else {
 
@@ -144,7 +144,7 @@ public class SC_Hero : SC_Character {
 
 	public void Regen() {
 
-		if (tileManager.GetTileAt(gameObject).village != null) {
+		if (tileManager.GetTileAt(gameObject).Village != null) {
 
 			health = Mathf.Max (health + 10, maxHealth);
 			lifebar.UpdateGraph(health, maxHealth);
@@ -231,7 +231,7 @@ public class SC_Hero : SC_Character {
 
 		gameManager.lastHeroDead = this;
 
-		tileManager.GetTileAt (gameObject).constructable = !tileManager.GetTileAt (gameObject).palace;
+		tileManager.GetTileAt (gameObject).Constructable = !tileManager.GetTileAt (gameObject).Palace;
 
 		foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
 

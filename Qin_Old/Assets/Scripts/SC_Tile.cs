@@ -9,32 +9,32 @@ public class SC_Tile : NetworkBehaviour {
 
     public int baseCost;
 
-	public int movementCost { get; set; }
+	public int MovementCost { get; set; }
 
-	public bool canSetOn { get; set; }
+	public bool CanSetOn { get; set; }
 
-	public bool attackable { get; set; }
+	public bool Attackable { get; set; }
 
-    public bool constructable { get; set; }
+    public bool Constructable { get; set; }
 
-    public SC_Construction construction { get; set; }
+    public SC_Construction Construction { get; set; }
 
-    public SC_Village village { get { return construction as SC_Village; } }
+    public SC_Village Village { get { return Construction as SC_Village; } }
 
-    public SC_Bastion bastion { get { return construction as SC_Bastion; } }
+    public SC_Bastion Bastion { get { return Construction as SC_Bastion; } }
 
-    public SC_Wall wall { get { return bastion as SC_Wall; } }
+    public SC_Wall Wall { get { return Construction as SC_Wall; } }
 
-    public SC_Character character { get; set; }
+    public SC_Character Character { get; set; }
 
-    public bool qin { get; set; }
+    public bool Qin { get; set; }
 
-    public bool empty { get { return !construction && !character && !qin; } }
+    public bool Empty { get { return !Construction && !Character && !Qin; } }
 
-    public bool palace { get { return name.Contains("Palace"); } }
+    public bool Palace { get { return name.Contains("Palace"); } }
 
     // Used for PathFinder
-    public SC_Tile parent { get; set; }
+    public SC_Tile Parent { get; set; }
 
 	static SC_GameManager gameManager;
 
@@ -44,13 +44,13 @@ public class SC_Tile : NetworkBehaviour {
 
 	void Awake() {
 
-		constructable = !name.Contains("Palace");
+		Constructable = !name.Contains("Palace");
 
-		movementCost = baseCost;
+		MovementCost = baseCost;
 
-		canSetOn = true;
+		CanSetOn = true;
 
-		attackable = true;
+		Attackable = true;
 
 	}
 
@@ -92,9 +92,9 @@ public class SC_Tile : NetworkBehaviour {
 
             RemoveFilter();
 
-            character.SetCanMove(false);
+            Character.SetCanMove(false);
 
-            SC_Player.localPlayer.CmdDestroyCharacter(character.gameObject);
+            SC_Player.localPlayer.CmdDestroyCharacter(Character.gameObject);
 
         } else if (CurrentDisplay == TDisplay.Resurrection) {
 

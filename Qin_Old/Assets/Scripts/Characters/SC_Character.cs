@@ -17,7 +17,7 @@ public class SC_Character : NetworkBehaviour {
 
 	protected bool finishMovement;
 
-	public SC_Tile lastPos { get; set; }
+	public SC_Tile LastPos { get; set; }
 
 	//Stats
 	public string characterName;
@@ -74,7 +74,7 @@ public class SC_Character : NetworkBehaviour {
 		criticalHit = technique;
 		dodgeHit = speed;
 
-		lastPos = tileManager.GetTileAt(gameObject);
+		LastPos = tileManager.GetTileAt(gameObject);
 
 		canMove = coalition;
 
@@ -154,9 +154,9 @@ public class SC_Character : NetworkBehaviour {
 
         tileManager.RemoveAllFilters();
 
-        lastPos = tileManager.GetTileAt(gameObject);
+        LastPos = tileManager.GetTileAt(gameObject);
 
-        path = PathFinder(lastPos, target, gameManager.GetClosedList ());
+        path = PathFinder(LastPos, target, gameManager.GetClosedList ());
 
         if(path == null)
             FinishMovement(false);
@@ -213,15 +213,15 @@ public class SC_Character : NetworkBehaviour {
 
             transform.SetPos(target.transform);
 
-            lastPos.movementCost = lastPos.baseCost;
-            lastPos.canSetOn = true;
-            lastPos.attackable = (!lastPos.construction || lastPos.bastion && coalition);
-            lastPos.character = null;
+            LastPos.MovementCost = LastPos.baseCost;
+            LastPos.CanSetOn = true;
+            LastPos.Attackable = (!LastPos.Construction || LastPos.Bastion && coalition);
+            LastPos.Character = null;
 
-            target.movementCost = 5000;
-            target.canSetOn = false;
-            target.attackable = (coalition != gameManager.CoalitionTurn());
-            target.character = this;
+            target.MovementCost = 5000;
+            target.CanSetOn = false;
+            target.Attackable = (coalition != gameManager.CoalitionTurn());
+            target.Character = this;
 
         }
 
@@ -233,9 +233,9 @@ public class SC_Character : NetworkBehaviour {
 
             canMove = (((SC_Hero)this).berserk && !((SC_Hero)this).berserkTurn);
 
-            if(moved && target.construction) {
+            if(moved && target.Construction) {
 
-                if(target.village && SC_Player.localPlayer.Turn()) {
+                if(target.Village && SC_Player.localPlayer.Turn()) {
 
                     uiManager.villagePanel.SetActive(true);
 
@@ -258,8 +258,8 @@ public class SC_Character : NetworkBehaviour {
 
             if(moved) {
 
-                lastPos.constructable = !lastPos.palace;
-                target.constructable = false;
+                LastPos.Constructable = !LastPos.Palace;
+                target.Constructable = false;
 
             }
 
@@ -288,7 +288,7 @@ public class SC_Character : NetworkBehaviour {
         List<SC_Tile> tempList = new List<SC_Tile>();
         List<SC_Tile> closedList = new List<SC_Tile>();
 
-        start.parent = null;
+        start.Parent = null;
         openList.Add(start);
 
         while(!openList.Contains(end)) {
@@ -300,7 +300,7 @@ public class SC_Character : NetworkBehaviour {
                     if(!closedList.Contains(neighbor) && range.Contains(neighbor) && !tempList.Contains(neighbor)) {
 
                         tempList.Add(neighbor);
-                        neighbor.parent = tile;
+                        neighbor.Parent = tile;
 
                     }
 
@@ -321,12 +321,12 @@ public class SC_Character : NetworkBehaviour {
         while(!path.Contains(start)) {
 
             path.Add(currentParent);
-            currentParent = currentParent.parent;
+            currentParent = currentParent.Parent;
 
         }
 
         foreach(SC_Tile tile in tileManager.tiles)
-            tile.parent = null;
+            tile.Parent = null;
 
         path.Reverse();
 
@@ -350,7 +350,7 @@ public class SC_Character : NetworkBehaviour {
         }
 
         foreach(SC_Tile tile in attackableTiles)
-            if(tile.attackable)
+            if(tile.Attackable)
                 tile.ChangeDisplay(TDisplay.Attack);
 
     }
@@ -377,11 +377,11 @@ public class SC_Character : NetworkBehaviour {
 
 		SC_Tile under = tileManager.GetTileAt (gameObject);
 
-		under.movementCost = under.baseCost;
+		under.MovementCost = under.baseCost;
 
-		under.canSetOn = true;
+		under.CanSetOn = true;
 
-		under.attackable = (!under.construction || under.bastion && coalition);
+		under.Attackable = (!under.Construction || under.Bastion && coalition);
 
 	}
 

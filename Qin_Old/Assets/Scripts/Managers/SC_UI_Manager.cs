@@ -261,9 +261,9 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		string attackedDodge = "";
 
-		if (attacker.attackTarget.character) {
+		if (attacker.attackTarget.Character) {
 
-			SC_Character attacked = attacker.attackTarget.character;
+			SC_Character attacked = attacker.attackTarget.Character;
 
 			attackedName = attacked.characterName;
 
@@ -286,9 +286,9 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		} else {
 
-            SC_Construction attackedConstruction = attacker.attackTarget.construction;
+            SC_Construction attackedConstruction = attacker.attackTarget.Construction;
 
-            int attackedType = (attackedConstruction != null) ? 0 : attacker.attackTarget.qin ? 1 : 2;
+            int attackedType = (attackedConstruction != null) ? 0 : attacker.attackTarget.Qin ? 1 : 2;
 
 			attackedName = (attackedType == 0) ? attackedConstruction.buildingName : (attackedType == 1) ? "Qin" : "";			
 

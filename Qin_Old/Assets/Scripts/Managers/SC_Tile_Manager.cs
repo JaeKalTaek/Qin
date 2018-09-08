@@ -47,7 +47,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 		SC_Tile t =	SetCharacter (hero);
 
-		t.constructable = false;
+		t.Constructable = false;
 
 	}
 
@@ -55,12 +55,12 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 		SC_Tile t = GetTileAt (character.gameObject);
 
-		t.movementCost = character.coalition ? 1 : 5000;
-		t.canSetOn = false;
+		t.MovementCost = character.coalition ? 1 : 5000;
+		t.CanSetOn = false;
 
-		t.attackable = (character.coalition != gameManager.CoalitionTurn());
+		t.Attackable = (character.coalition != gameManager.CoalitionTurn());
 
-        t.character = character;
+        t.Character = character;
 
 		return t;
 
@@ -70,12 +70,12 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 		SC_Tile t = GetTileAt (qin.gameObject);
 
-		t.constructable = false;
-		t.movementCost = 10000;
-		t.canSetOn = false;
-		t.attackable = gameManager.CoalitionTurn();
+		t.Constructable = false;
+		t.MovementCost = 10000;
+		t.CanSetOn = false;
+		t.Attackable = gameManager.CoalitionTurn();
 
-        t.qin = true;
+        t.Qin = true;
 
 	}
 
@@ -83,12 +83,12 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 		SC_Tile t = GetTileAt (construction.gameObject);
 
-		t.movementCost = 10000;
-		t.attackable = (construction.GetType ().Equals (typeof(SC_Village)) || construction.GetType ().Equals (typeof(SC_Village))) ? false : gameManager.CoalitionTurn();
-	    t.constructable = construction.GetType().Equals(typeof(SC_Wall));
-		t.canSetOn = construction.GetType().Equals(typeof(SC_Village));
+		t.MovementCost = 10000;
+		t.Attackable = (construction.GetType ().Equals (typeof(SC_Village)) || construction.GetType ().Equals (typeof(SC_Village))) ? false : gameManager.CoalitionTurn();
+	    t.Constructable = construction.GetType().Equals(typeof(SC_Wall));
+		t.CanSetOn = construction.GetType().Equals(typeof(SC_Village));
 
-        t.construction = construction;
+        t.Construction = construction;
 
 	}
 	#endregion
