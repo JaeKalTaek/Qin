@@ -504,7 +504,7 @@ public class SC_GameManager : NetworkBehaviour {
 
                 }
 
-                uiManager.TryRefreshInfos(attacked.gameObject, attacked.GetType());
+                //uiManager.TryRefreshInfos(attacked.gameObject, attacked.GetType());
 
             } else if(targetConstruction) {
 
@@ -519,13 +519,11 @@ public class SC_GameManager : NetworkBehaviour {
 
             } else if(attacker.attackTarget.Qin) {
 
-                SC_Qin.ChangeEnergy(-(attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi));
-
-                uiManager.TryRefreshInfos(SC_Qin.Qin.gameObject, SC_Qin.Qin.GetType());
+                SC_Qin.ChangeEnergy(-(attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi));                
 
             }
 
-            uiManager.TryRefreshInfos(attacker.gameObject, attacker.GetType());            
+            //uiManager.TryRefreshInfos(attacker.gameObject, attacker.GetType());            
 
         }
         
@@ -770,7 +768,7 @@ public class SC_GameManager : NetworkBehaviour {
         if (destroy) {
 
             cantCancelMovement = true;
-            tileManager.GetTileAt(gameObject).Construction.DestroyConstruction();
+            tileManager.GetTileAt(SC_Character.attackingCharacter.gameObject).Construction.DestroyConstruction();
 
         } else {
 

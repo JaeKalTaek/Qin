@@ -177,20 +177,16 @@ public class SC_Character : NetworkBehaviour {
 
             canMove = (((SC_Hero)this).berserk && !((SC_Hero)this).berserkTurn);
 
-            if(moved && target.Construction) {
+            if (target?.Village || LastPos.Village) {
 
-                if(target.Village) {
+                if (SC_Player.localPlayer.Turn())
+                    uiManager.villagePanel.SetActive(true);
 
-                    if(SC_Player.localPlayer.Turn())
-                        uiManager.villagePanel.SetActive(true);
+            } else if (moved && target.Construction && !target.Village) {
+                
+                gameManager.cantCancelMovement = true;
 
-                } else {
-
-                    gameManager.cantCancelMovement = true;
-
-                    CheckAttack();
-
-                }
+                CheckAttack();
 
             } else {
 
@@ -339,6 +335,13 @@ public class SC_Character : NetworkBehaviour {
 		return false;
 
 	}
+
+    protected void UpdateHealth() {
+
+        lifebar.UpdateGraph(health, maxHealth);
+        uiManager.TryRefreshInfos(gameObject, GetType());
+
+    }
 
 	public bool IsHero() {
 

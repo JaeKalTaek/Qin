@@ -83,11 +83,11 @@ public class SC_Soldier : SC_Character {
 	public override bool Hit(int damages, bool saving) {
 
 		base.Hit(damages, saving);
-        
-		if (health <= 0)
-			DestroyCharacter (); 
-		else
-			lifebar.UpdateGraph (health, maxHealth);
+
+        if (health <= 0)
+            DestroyCharacter();
+        else
+            UpdateHealth();
 
         return (health <= 0);
 

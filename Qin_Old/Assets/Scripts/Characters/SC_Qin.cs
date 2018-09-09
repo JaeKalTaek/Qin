@@ -129,12 +129,13 @@ public class SC_Qin : NetworkBehaviour {
 
 		Energy += amount;
 
-		if (Energy >= Qin.energyToWin)
-			uiManager.ShowVictory (true);
-		else if (Energy > 0)
-			uiManager.energyText.text = "Qin's Energy : " + Energy;
-		else
-			uiManager.ShowVictory (false);
+        if (Energy >= Qin.energyToWin)
+            uiManager.ShowVictory(true);
+        else if (Energy > 0) {
+            uiManager.energyText.text = "Qin's Energy : " + Energy;
+            uiManager.TryRefreshInfos(Qin.gameObject, Qin.GetType());
+        }  else
+            uiManager.ShowVictory(false);
 
 	}
 

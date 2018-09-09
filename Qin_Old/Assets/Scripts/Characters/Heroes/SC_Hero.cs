@@ -127,10 +127,10 @@ public class SC_Hero : SC_Character {
 
 		if (tileManager.GetTileAt(gameObject).Village) {
 
-			health = Mathf.Max (health + gameManager.commonHeroesVariables.villageRegen, maxHealth);
-			lifebar.UpdateGraph(health, maxHealth);
+			health = Mathf.Min (health + gameManager.commonHeroesVariables.villageRegen, maxHealth);
+            UpdateHealth();
 
-		}
+        }
 
 	}
 
@@ -182,10 +182,10 @@ public class SC_Hero : SC_Character {
 
 		}
 
-		if (!dead)
-			lifebar.UpdateGraph (health, maxHealth);
+        if (!dead)
+            UpdateHealth();
 
-		return dead;
+        return dead;
 
 	}
 

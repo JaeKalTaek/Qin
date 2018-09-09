@@ -141,7 +141,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         currentGameObject = (currentGameObject == g) ? null : g;
 
-        return !currentGameObject;
+        return currentGameObject;
 
 	}
 
