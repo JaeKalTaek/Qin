@@ -42,8 +42,6 @@ public class SC_Hero : SC_Character {
 
 		base.Start();
 
-		tileManager.SetCharacter (this);
-
 		relationships = new Dictionary<string, int> ();
 
 		foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
@@ -70,7 +68,7 @@ public class SC_Hero : SC_Character {
 
 	protected override void PrintMovements () {
 
-		if (canMove || (berserk && !berserkTurn)) {
+		if (CanMove || (berserk && !berserkTurn)) {
 
             SC_Player.localPlayer.CmdCheckMovements((int)transform.position.x, (int)transform.position.y);
 
@@ -86,11 +84,11 @@ public class SC_Hero : SC_Character {
 
 		if ((under.CurrentDisplay == TDisplay.Attack) && !attackingCharacter.IsHero()) {
 
-            attackingCharacter.attackTarget = under;
+            attackingCharacter.AttackTarget = under;
 
 			gameManager.PreviewFight(false);
 
-            attackingCharacter.attackTarget = null;
+            attackingCharacter.AttackTarget = null;
 
 		}
 
@@ -127,7 +125,7 @@ public class SC_Hero : SC_Character {
 
 		if (tileManager.GetTileAt(gameObject).Village) {
 
-			health = Mathf.Min (health + gameManager.commonHeroesVariables.villageRegen, maxHealth);
+			Health = Mathf.Min (Health + gameManager.commonHeroesVariables.villageRegen, maxHealth);
             UpdateHealth();
 
         }
@@ -140,11 +138,11 @@ public class SC_Hero : SC_Character {
 
 		base.Hit(damages, saving);
 
-		if (health <= 0) {
+		if (Health <= 0) {
 
 			if (saving) {
 
-                health = gameManager.commonHeroesVariables.savedHealthAmount;
+                Health = gameManager.commonHeroesVariables.savedHealthAmount;
 				berserk = true;
 				berserkTurn = true;
 
@@ -158,7 +156,7 @@ public class SC_Hero : SC_Character {
 
 					saver.Hit (damages, true);
 					saved = true;
-					health += damages;
+					Health += damages;
 
 				} else {
 
@@ -169,9 +167,9 @@ public class SC_Hero : SC_Character {
 
 			}
 
-		} else if (health <= gameManager.commonHeroesVariables.berserkTriggerHealth) {
+		} else if (Health <= gameManager.commonHeroesVariables.berserkTriggerHealth) {
 
-			canMove = (gameManager.CoalitionTurn());
+			CanMove = gameManager.CoalitionTurn;
 
 			berserkTurn = true;
 
@@ -221,7 +219,7 @@ public class SC_Hero : SC_Character {
 
 				hero.berserk = true;
 				hero.berserkTurn = true;
-				hero.canMove = (gameManager.CoalitionTurn());
+				hero.CanMove = gameManager.CoalitionTurn;
 
 				hero.GetComponent<Renderer> ().material.color = Color.cyan;
 

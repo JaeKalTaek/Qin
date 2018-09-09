@@ -7,7 +7,7 @@ public class SC_Player : NetworkBehaviour {
 	[SyncVar]
 	bool qin;
 
-	SC_GameManager gameManager;
+	SC_Game_Manager gameManager;
 
 	SC_Tile_Manager tileManager;
 
@@ -19,10 +19,10 @@ public class SC_Player : NetworkBehaviour {
 
         tag = "Player";
 
-		gameManager = FindObjectOfType<SC_GameManager> ();
+		gameManager = FindObjectOfType<SC_Game_Manager> ();
 
 		if(gameManager)
-			gameManager.player = this;
+			gameManager.Player = this;
 
 		if(FindObjectOfType<SC_Tile_Manager> ())
 			tileManager = FindObjectOfType<SC_Tile_Manager> ();
@@ -92,7 +92,7 @@ public class SC_Player : NetworkBehaviour {
 
         localPlayer.gameManager.RangedAttack = rangedAttack;
 
-        SC_Character.attackingCharacter.attackTarget = targetTileObject.GetComponent<SC_Tile>();
+        SC_Character.attackingCharacter.AttackTarget = targetTileObject.GetComponent<SC_Tile>();
 
 	}
 
@@ -250,7 +250,7 @@ public class SC_Player : NetworkBehaviour {
 	}
 	#endregion
 
-	public void SetGameManager(SC_GameManager gm) {
+	public void SetGameManager(SC_Game_Manager gm) {
 
 		gameManager = gm; 
 
@@ -264,7 +264,7 @@ public class SC_Player : NetworkBehaviour {
 
 	public bool Turn() {
 
-		return (qin == (!gameManager.CoalitionTurn()));
+		return qin == !gameManager.CoalitionTurn;
 
 	}
 

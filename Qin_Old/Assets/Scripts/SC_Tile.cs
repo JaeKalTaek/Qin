@@ -80,7 +80,7 @@ public class SC_Tile : NetworkBehaviour {
     // Used for PathFinder
     public SC_Tile Parent { get; set; }
 
-	static SC_GameManager gameManager;
+	static SC_Game_Manager gameManager;
 
 	static SC_Tile_Manager tileManager;
 
@@ -89,7 +89,7 @@ public class SC_Tile : NetworkBehaviour {
 	void Start() {
 
         if(!gameManager)
-            gameManager = SC_GameManager.Instance;
+            gameManager = SC_Game_Manager.Instance;
 
         if(!tileManager)
             tileManager = SC_Tile_Manager.Instance;
@@ -124,7 +124,7 @@ public class SC_Tile : NetworkBehaviour {
 
             RemoveFilter();
 
-            Character.SetCanMove(false);
+            Character.CanMove = false;
 
             SC_Player.localPlayer.CmdDestroyCharacter(Character.gameObject);
 

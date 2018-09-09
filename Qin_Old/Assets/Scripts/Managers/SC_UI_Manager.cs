@@ -37,7 +37,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
 	public GameObject currentGameObject { get; set; }
 
-	static SC_GameManager gameManager;
+	static SC_Game_Manager gameManager;
 
     public static SC_UI_Manager Instance { get; set; }
 
@@ -51,7 +51,7 @@ public class SC_UI_Manager : MonoBehaviour {
     public void SetupUI(bool qin) {       
 
         if(!gameManager)
-            gameManager = SC_GameManager.Instance;
+            gameManager = SC_Game_Manager.Instance;
 
 		if (!qin) {
 
@@ -67,7 +67,7 @@ public class SC_UI_Manager : MonoBehaviour {
 		HideWeapons();
 
 		villagePanel.SetActive (false);
-		usePower.SetActive (coalition && !gameManager.player.IsQin());
+		usePower.SetActive (coalition && !gameManager.Player.IsQin());
 		cancelMovementButton.SetActive (false);
 		cancelAttackButton.SetActive (false);
 
@@ -162,13 +162,13 @@ public class SC_UI_Manager : MonoBehaviour {
 		statsPanel.SetActive (true);
 
 		SetText("Name", character.characterName);
-		SetText("Health", "Health : " + character.health + " / " + character.maxHealth);
+		SetText("Health", "Health : " + character.Health + " / " + character.maxHealth);
 		SetText("Strength", " Strength : " + character.strength);
 		SetText("Armor", " Armor : " + character.armor);
 		SetText("Qi", " Qi : " + character.qi);
 		SetText("Resistance", " Resistance : " + character.resistance);
-		SetText("Technique", " Technique : " + character.technique + " (" + character.criticalHit + ")");
-		SetText("Speed", " Speed : " + character.speed + " (" + character.dodgeHit + ")");
+		SetText("Technique", " Technique : " + character.technique + " (" + character.CriticalHit + ")");
+		SetText("Speed", " Speed : " + character.speed + " (" + character.DodgeHit + ")");
 		SetText("Movement", " Movement : " + character.movement);
 		SetText("WeaponsTitle", " Weapons :");
 
@@ -239,9 +239,9 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		SetText ("AttackerWeapon", attacker.GetActiveWeapon ().weaponName);
 
-		SetText ("AttackerCrit", attacker.criticalHit.ToString ());
+		SetText ("AttackerCrit", attacker.CriticalHit.ToString ());
 
-		SetText ("AttackerDodge", attacker.dodgeHit.ToString ());
+		SetText ("AttackerDodge", attacker.DodgeHit.ToString ());
 
 		int attackedDamages = 0;
 
@@ -261,9 +261,9 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		string attackedDodge = "";
 
-		if (attacker.attackTarget.Character) {
+		if (attacker.AttackTarget.Character) {
 
-			SC_Character attacked = attacker.attackTarget.Character;
+			SC_Character attacked = attacker.AttackTarget.Character;
 
 			attackedName = attacked.characterName;
 
@@ -274,21 +274,21 @@ public class SC_UI_Manager : MonoBehaviour {
 			if (!((rangedAttack && attacked.GetActiveWeapon ().ranged) || (!rangedAttack && !attacked.GetActiveWeapon ().IsBow ())))
 				attackedDamages = 0;
 
-			attackedHP = (attacked.health - attackerDamages).ToString ();
+			attackedHP = (attacked.Health - attackerDamages).ToString ();
 
 			attackerDamagesString = attackerDamages.ToString ();
 
 			attackedDamagesString = attackedDamages.ToString ();
 
-			attackedCrit = attacked.criticalHit.ToString ();
+			attackedCrit = attacked.CriticalHit.ToString ();
 
-			attackedDodge = attacked.dodgeHit.ToString ();
+			attackedDodge = attacked.DodgeHit.ToString ();
 
 		} else {
 
-            SC_Construction attackedConstruction = attacker.attackTarget.Construction;
+            SC_Construction attackedConstruction = attacker.AttackTarget.Construction;
 
-            int attackedType = attackedConstruction ? 0 : attacker.attackTarget.Qin ? 1 : 2;
+            int attackedType = attackedConstruction ? 0 : attacker.AttackTarget.Qin ? 1 : 2;
 
 			attackedName = (attackedType == 0) ? attackedConstruction.buildingName : (attackedType == 1) ? "Qin" : "";			
 
@@ -298,7 +298,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		}
 
-		SetText("AttackerHP", (attacker.health - attackedDamages).ToString());
+		SetText("AttackerHP", (attacker.Health - attackedDamages).ToString());
 
 		SetText("AttackedName", attackedName);
 

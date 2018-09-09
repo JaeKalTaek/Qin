@@ -11,37 +11,30 @@ public class SC_Character : NetworkBehaviour {
 
 	//Actions
 	public int movement = 5;
-	protected bool canMove;
+	public bool CanMove { get; set; }
 
-	public SC_Tile attackTarget;
-
-	protected bool finishMovement;
+	public SC_Tile AttackTarget { get; set; }
 
 	public SC_Tile LastPos { get; set; }
 
 	//Stats
 	public string characterName;
 	public int maxHealth;
-	[HideInInspector]
-	public int health;
-	public int strength, armor;
+	public int Health { get; set; }
+    public int strength, armor;
 	public int qi, resistance;
 	public int technique, speed;
-	[HideInInspector]
-	public int criticalHit, dodgeHit;
+	public int CriticalHit { get; set; }
+    public int DodgeHit { get; set; }
     public float moveSpeed = .25f;
 
 	protected Color baseColor, tiredColor;
 
-	[HideInInspector]
-	public SC_Lifebar lifebar;
-
-	[HideInInspector]
-	public bool selfPanel;
+	public SC_Lifebar Lifebar { get; set; }
 
 	protected static SC_Tile_Manager tileManager;
 
-	protected static SC_GameManager gameManager;
+	protected static SC_Game_Manager gameManager;
 
 	protected static SC_UI_Manager uiManager;
 
@@ -59,7 +52,7 @@ public class SC_Character : NetworkBehaviour {
 	protected virtual void Start() {
 
         if(!gameManager)
-            gameManager = SC_GameManager.Instance;
+            gameManager = SC_Game_Manager.Instance;
 
         if(!tileManager)
             tileManager = SC_Tile_Manager.Instance;
@@ -67,16 +60,18 @@ public class SC_Character : NetworkBehaviour {
         if(!uiManager)
             uiManager = SC_UI_Manager.Instance;
 
-		lifebar = Instantiate(Resources.Load<GameObject>("Prefabs/P_Lifebar"), transform).GetComponent<SC_Lifebar>();
-		lifebar.transform.position += new Vector3 (0, -.44f, 0);
+		Lifebar = Instantiate(Resources.Load<GameObject>("Prefabs/P_Lifebar"), transform).GetComponent<SC_Lifebar>();
+		Lifebar.transform.position += new Vector3 (0, -.44f, 0);
 
-		health = maxHealth;
-		criticalHit = technique;
-		dodgeHit = speed;
+		Health = maxHealth;
+		CriticalHit = technique;
+		DodgeHit = speed;
 
 		LastPos = tileManager.GetTileAt(gameObject);
 
-		canMove = coalition;
+        LastPos.Character = this;
+
+		CanMove = coalition;
 
 	}
 
@@ -84,7 +79,7 @@ public class SC_Character : NetworkBehaviour {
 
 		if ((coalition != SC_Player.localPlayer.IsQin()) && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject ()) {
 
-			if (gameManager.player.Turn() && (tileManager.GetTileAt(gameObject).CurrentDisplay == TDisplay.None))
+			if (gameManager.Player.Turn() && (tileManager.GetTileAt(gameObject).CurrentDisplay == TDisplay.None))
                 PrintMovements();          
 
 		}
@@ -106,7 +101,7 @@ public class SC_Character : NetworkBehaviour {
 
         LastPos = tileManager.GetTileAt(gameObject);
 
-        path = PathFinder(LastPos, target, gameManager.GetClosedList ());
+        path = PathFinder(LastPos, target, gameManager.ClosedList);
 
         if(path == null)
             FinishMovement(false);
@@ -169,13 +164,13 @@ public class SC_Character : NetworkBehaviour {
 
         }
 
-        canMove = false;
+        CanMove = false;
 
         attackingCharacter = this;
 
         if(IsHero()) {
 
-            canMove = (((SC_Hero)this).berserk && !((SC_Hero)this).berserkTurn);
+            CanMove = (((SC_Hero)this).berserk && !((SC_Hero)this).berserkTurn);
 
             if (target?.Village || LastPos.Village) {
 
@@ -272,8 +267,6 @@ public class SC_Character : NetworkBehaviour {
 
         tileManager.RemoveAllFilters();
 
-        //uiManager.HideWeapons();
-
         List<SC_Tile> attackableTiles = new List<SC_Tile>(tileManager.GetNeighbors(tileManager.GetTileAt(gameObject)));
 
         if(HasRange()) {
@@ -330,7 +323,7 @@ public class SC_Character : NetworkBehaviour {
 
 	public virtual bool Hit(int damages, bool saving) {
 
-		health -= damages;
+		Health -= damages;
 
 		return false;
 
@@ -338,7 +331,7 @@ public class SC_Character : NetworkBehaviour {
 
     protected void UpdateHealth() {
 
-        lifebar.UpdateGraph(health, maxHealth);
+        Lifebar.UpdateGraph(Health, maxHealth);
         uiManager.TryRefreshInfos(gameObject, GetType());
 
     }
@@ -358,18 +351,6 @@ public class SC_Character : NetworkBehaviour {
 	public virtual void UnTired() {
 
 		GetComponent<SpriteRenderer> ().color = baseColor;
-
-	}
-
-	public bool GetCanMove() {
-
-		return canMove;
-
-	}
-
-	public void SetCanMove(bool c) {
-
-		canMove = c;
 
 	}
 

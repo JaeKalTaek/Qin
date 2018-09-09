@@ -30,9 +30,7 @@ public class SC_Qin : NetworkBehaviour {
     [Tooltip("Energy won for each village at the beginning of each of Qin's turn")]
     public int regenPerVillage;
 
-    public static bool SelfPanel { get; set; }
-
-	static SC_GameManager gameManager;
+	static SC_Game_Manager gameManager;
 
 	static SC_Tile_Manager tileManager;
 
@@ -44,7 +42,7 @@ public class SC_Qin : NetworkBehaviour {
 
 		Qin = this;
 
-		gameManager = FindObjectOfType<SC_GameManager> ();
+		gameManager = FindObjectOfType<SC_Game_Manager> ();
 
 		tileManager = FindObjectOfType<SC_Tile_Manager> ();
 
@@ -54,9 +52,9 @@ public class SC_Qin : NetworkBehaviour {
 
 		uiManager.energyText.text = "Qin's Energy : " + Energy;
 
-		tileManager.SetQin (this);
+        tileManager.GetTileAt(gameObject).Qin = true;
 
-	}
+    }
 
 	void OnMouseOver() {
 
@@ -74,9 +72,9 @@ public class SC_Qin : NetworkBehaviour {
 		hero.powerUsed = false;
 		hero.powerBacklash = 0;
 		hero.SetBaseColor (new Color (255, 0, 205));
-		hero.health = hero.maxHealth;
-		hero.lifebar.UpdateGraph(hero.health, hero.maxHealth);
-		hero.SetCanMove (true);
+		hero.Health = hero.maxHealth;
+		hero.Lifebar.UpdateGraph(hero.Health, hero.maxHealth);
+        hero.CanMove = true;
 		hero.berserk = false;
 		hero.berserkTurn = false;
 		hero.UnTired ();
@@ -85,10 +83,10 @@ public class SC_Qin : NetworkBehaviour {
 		rotation.eulerAngles = new Vector3(0, 0, 180);
 
 		Quaternion lifebarRotation = Quaternion.identity;
-		lifebarRotation.eulerAngles = hero.lifebar.transform.parent.rotation.eulerAngles;
+		lifebarRotation.eulerAngles = hero.Lifebar.transform.parent.rotation.eulerAngles;
 
 		hero.transform.rotation = rotation;
-		hero.lifebar.transform.parent.rotation = lifebarRotation;
+		hero.Lifebar.transform.parent.rotation = lifebarRotation;
 
 		hero.gameObject.SetActive (true);
 

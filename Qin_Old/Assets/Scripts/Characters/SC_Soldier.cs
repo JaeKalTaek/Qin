@@ -44,14 +44,6 @@ public class SC_Soldier : SC_Character {
 
     }
 
-	protected override void Start () {
-		
-		base.Start ();
-
-		tileManager.SetCharacter (this);
-
-	}
-
     public static Vector2[] GetSpawnPositions() {
 
         return spawnPositions;
@@ -67,7 +59,7 @@ public class SC_Soldier : SC_Character {
 
 	protected override void PrintMovements () {
 
-		if (canMove) {
+		if (CanMove) {
 
 			uiManager.SetButtonActivated ("construct", true);
             uiManager.SetButtonActivated("sacrifice", true);
@@ -84,12 +76,12 @@ public class SC_Soldier : SC_Character {
 
 		base.Hit(damages, saving);
 
-        if (health <= 0)
+        if (Health <= 0)
             DestroyCharacter();
         else
             UpdateHealth();
 
-        return (health <= 0);
+        return (Health <= 0);
 
 	}
 

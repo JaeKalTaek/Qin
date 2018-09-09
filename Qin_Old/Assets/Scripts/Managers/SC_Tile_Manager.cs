@@ -13,7 +13,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 	public SC_Tile[,] tiles;
 
-	static SC_GameManager gameManager;
+	static SC_Game_Manager gameManager;
 
     public static SC_Tile_Manager Instance { get; set; }
 
@@ -26,7 +26,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
     void Start () {
 
         if(!gameManager)
-            gameManager = SC_GameManager.Instance;
+            gameManager = SC_Game_Manager.Instance;
 
         FindObjectOfType<SC_Camera>().Setup(xSize, ySize);
 
@@ -37,30 +37,10 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 		gameManager.FinishSetup ();
 
-		if (gameManager.player)
-			gameManager.player.SetTileManager (this);
+		if (gameManager.Player)
+			gameManager.Player.SetTileManager (this);
 
 	}
-
-	#region Set Methods
-	public void SetCharacter(SC_Character character) {
-
-		GetTileAt (character.gameObject).Character = character;
-
-	}
-
-	public void SetQin(SC_Qin qin) {
-
-		GetTileAt (qin.gameObject).Qin = true;
-
-	}
-
-	public void SetConstruction(SC_Construction construction) {
-
-		GetTileAt (construction.gameObject).Construction = construction;
-
-	}
-	#endregion
 
 	public List<SC_Tile> GetRange(GameObject center) {
 
@@ -128,24 +108,6 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }
 
-    public bool TryToMoveCharacter(GameObject target) {
-
-		SC_Tile tile = GetTileAt (target);
-
-		if (tile.CurrentDisplay == TDisplay.Movement) {
-
-            SC_Player.localPlayer.CmdMoveCharacterTo((int)tile.transform.position.x, (int)tile.transform.position.y);
-
-			return true;
-
-		} else {
-
-			return false;
-
-		} 
-
-	}
-
 	public SC_Tile GetTileAt(GameObject g) {
 
 		return tiles [(int)g.transform.position.x, (int)g.transform.position.y];
@@ -164,61 +126,10 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 	}
 
-    public int[][] GetArraysFromArray<T>(T[,] arrayP) where T : MonoBehaviour {
-
-        int[][] array = new int[2][];
-
-        array[0] = new int[0];
-        array[1] = new int[0];
-
-        int i = 0;
-
-        foreach(MonoBehaviour m in arrayP) {
-
-            array[0][i] = (int)m.gameObject.transform.position.x;
-            array[1][i] = (int)m.gameObject.transform.position.y;
-
-            i++;
-
-        }
-
-        return array;
-
-    }
-
-    public int[][] GetArraysFromList<T>(List<T> list) where T : MonoBehaviour {
-
-        int[][] array = new int[2][];
-
-        array[0] = new int[list.Count];
-        array[1] = new int[list.Count];
-
-        int i = 0;
-
-        foreach (MonoBehaviour m in list) {
-
-            array[0][i] = (int)m.gameObject.transform.position.x;
-            array[1][i] = (int)m.gameObject.transform.position.y;
-
-            i++;
-
-        }
-
-        return array;
-
-    }
-
     public void RemoveAllFilters() {
 
         foreach(SC_Tile tile in tiles)
             tile.RemoveFilter();
-
-    }
-
-    public void DisplaySacrifice(int[] xArray, int[] yArray) {
-
-        for(int i = 0; i < xArray.Length; i++)
-            GetTileAt(xArray[i], yArray[i]).ChangeDisplay(TDisplay.Sacrifice);
 
     }
 

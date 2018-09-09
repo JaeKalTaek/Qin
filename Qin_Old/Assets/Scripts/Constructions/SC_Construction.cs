@@ -14,7 +14,7 @@ public class SC_Construction : NetworkBehaviour {
 	[HideInInspector]
 	public SC_Lifebar lifebar;
 
-	protected static SC_GameManager gameManager;
+	protected static SC_Game_Manager gameManager;
 
 	protected static SC_Tile_Manager tileManager;
 
@@ -23,7 +23,7 @@ public class SC_Construction : NetworkBehaviour {
 	protected virtual void Start () {
 
 		if (!gameManager)
-			gameManager = FindObjectOfType<SC_GameManager> ();
+			gameManager = FindObjectOfType<SC_Game_Manager> ();
 
 		if (!tileManager)
 			tileManager = FindObjectOfType<SC_Tile_Manager> ();
@@ -33,9 +33,9 @@ public class SC_Construction : NetworkBehaviour {
 
 		health = maxHealth;
 
-		tileManager.SetConstruction (this);
+        tileManager.GetTileAt(gameObject).Construction = this;
 
-	}
+    }
 
 	/*protected virtual void OnMouseDown() {
 
