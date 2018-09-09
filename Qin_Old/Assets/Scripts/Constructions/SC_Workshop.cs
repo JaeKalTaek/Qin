@@ -18,7 +18,7 @@ public class SC_Workshop : SC_Construction {
 		/*if (tileManager.TryToMoveCharacter (gameObject))
 			DestroyConstruction ();*/
 
-		gameManager.currentWorkshop = this;
+		gameManager.CurrentWorkshop = this;
 
 		gameManager.DisplayWorkshopPanel();
 

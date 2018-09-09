@@ -14,11 +14,11 @@ public class SC_Tile : NetworkBehaviour {
         get {
 
             if (Character)
-                return gameManager.characterToMove.coalition == Character.coalition;
+                return SC_Character.characterToMove.coalition == Character.coalition;
             else if (Construction)
-                return !gameManager.characterToMove.coalition || !Bastion;
+                return !SC_Character.characterToMove.coalition || !Bastion;
             else if (Qin)
-                return !gameManager.characterToMove.coalition;
+                return !SC_Character.characterToMove.coalition;
             else
                 return true;
 
@@ -33,7 +33,7 @@ public class SC_Tile : NetworkBehaviour {
             if (Character || Qin)
                 return false;
             else if (Construction)
-                return gameManager.characterToMove.coalition ? Village : Village || Bastion;
+                return SC_Character.characterToMove.coalition ? Village : Village || Bastion;
             else
                 return true;
 

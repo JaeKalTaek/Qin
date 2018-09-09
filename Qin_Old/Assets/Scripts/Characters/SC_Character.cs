@@ -47,7 +47,7 @@ public class SC_Character : NetworkBehaviour {
 
     List<SC_Tile> path;
 
-    public static SC_Character attackingCharacter;
+    public static SC_Character attackingCharacter, characterToMove;
 
     protected virtual void Awake() {
 
@@ -184,7 +184,7 @@ public class SC_Character : NetworkBehaviour {
 
             } else if (moved && target.Construction && !target.Village) {
                 
-                gameManager.cantCancelMovement = true;
+                gameManager.CantCancelMovement = true;
 
                 CheckAttack();
 

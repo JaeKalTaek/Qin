@@ -58,33 +58,6 @@ public class SC_Qin : NetworkBehaviour {
 
 	}
 
-	/*void OnMouseDown() {
-
-		SC_Tile under = tileManager.GetTileAt (gameObject);
-
-		if (under.CurrentDisplay == TDisplay.Attack) {
-			
-			SC_Tile attackingCharacterTile = tileManager.GetTileAt (SC_Character.attackingCharacter.gameObject);
-			gameManager.rangedAttack = !tileManager.IsNeighbor(attackingCharacterTile, under);
-
-            SC_Character.attackingCharacter.attackTarget = under;
-
-			if (SC_Character.attackingCharacter.IsHero ()) {
-
-				((SC_Hero)SC_Character.attackingCharacter).ChooseWeapon ();
-
-			} else {
-
-                tileManager.RemoveAllFilters();
-
-				gameManager.Attack ();
-
-			}
-
-		}
-
-	}*/
-
 	void OnMouseOver() {
 
 		if(Input.GetMouseButtonDown(1))
@@ -94,7 +67,7 @@ public class SC_Qin : NetworkBehaviour {
 
 	public static void UsePower(Vector3 pos) {
 
-		SC_Hero hero = gameManager.lastHeroDead;
+		SC_Hero hero = gameManager.LastHeroDead;
 
 		hero.transform.SetPos(pos);
 		hero.coalition = false;
@@ -121,7 +94,7 @@ public class SC_Qin : NetworkBehaviour {
 
 		ChangeEnergy(-Qin.powerCost);
 
-		gameManager.lastHeroDead = null;
+		gameManager.LastHeroDead = null;
 
 	}
 

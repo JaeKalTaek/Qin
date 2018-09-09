@@ -28,22 +28,20 @@ public class SC_GameManager : NetworkBehaviour {
 	//Other
 	public bool Bastion { get; set; }
 
-	public SC_Hero lastHeroDead { get; set; }
+	public SC_Hero LastHeroDead { get; set; }
 
-    public bool rangedAttack { get; set; }
+    public bool RangedAttack { get; set; }
 
-	public SC_Workshop currentWorkshop { get; set; }
+	public SC_Workshop CurrentWorkshop { get; set; }
 
-	public bool cantCancelMovement { get; set; }
+	public bool CantCancelMovement { get; set; }
 
     [SerializeField]
 	public SC_Player player { get; set; }
 
 	SC_UI_Manager uiManager;
 
-	SC_Tile_Manager tileManager;
-
-	public SC_Character characterToMove { get; set; }
+	SC_Tile_Manager tileManager;	
 
 	#region Setup
     void Start() {
@@ -171,11 +169,11 @@ public class SC_GameManager : NetworkBehaviour {
 	#region Display Movements
     public void CheckMovements(SC_Character target) {
 
-        cantCancelMovement = false;
+        CantCancelMovement = false;
 
         SC_Character.CancelAttack();
 
-        characterToMove = target;
+        SC_Character.characterToMove = target;
 
         tileManager.RemoveAllFilters();
         
@@ -456,7 +454,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 	public void DisplayResurrectionTiles() {
 
-		if (lastHeroDead && (SC_Qin.Energy > SC_Qin.Qin.powerCost)) {
+		if (LastHeroDead && (SC_Qin.Energy > SC_Qin.Qin.powerCost)) {
 
             uiManager.StartQinAction("qinPower");
             
@@ -486,7 +484,7 @@ public class SC_GameManager : NetworkBehaviour {
 
             if(attacked) {
 
-                bool counterAttack = (rangedAttack && attacked.GetActiveWeapon().ranged) || (!rangedAttack && !attacked.GetActiveWeapon().IsBow());
+                bool counterAttack = (RangedAttack && attacked.GetActiveWeapon().ranged) || (!RangedAttack && !attacked.GetActiveWeapon().IsBow());
 
                 bool killed = attacked.Hit(CalcDamages(attacker, attacked, false), false);
                 SetCritDodge(attacker, attacked);
@@ -730,7 +728,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 		if (SC_Character.attackingCharacter.IsHero ())	((SC_Hero)SC_Character.attackingCharacter).SetWeapon (activeWeapon);
 
-		uiManager.PreviewFight (SC_Character.attackingCharacter, rangedAttack);
+		uiManager.PreviewFight (SC_Character.attackingCharacter, RangedAttack);
 
 		if (SC_Character.attackingCharacter.IsHero ())	((SC_Hero)SC_Character.attackingCharacter).SetWeapon (activeWeapon);
 
@@ -767,7 +765,7 @@ public class SC_GameManager : NetworkBehaviour {
 
         if (destroy) {
 
-            cantCancelMovement = true;
+            CantCancelMovement = true;
             tileManager.GetTileAt(SC_Character.attackingCharacter.gameObject).Construction.DestroyConstruction();
 
         } else {
@@ -806,7 +804,7 @@ public class SC_GameManager : NetworkBehaviour {
         if(SC_Qin.Energy > SC_Qin.Qin.soldierCost) {
 
 			GameObject go = Instantiate(soldierPrefab, GameObject.Find("Soldiers").transform);
-			go.transform.SetPos(currentWorkshop.transform);
+			go.transform.SetPos(CurrentWorkshop.transform);
             go.GetComponent<SC_Soldier>().Tire();
 
             SC_Qin.ChangeEnergy(-SC_Qin.Qin.soldierCost);
@@ -819,7 +817,7 @@ public class SC_GameManager : NetworkBehaviour {
 
     public void DisplayWorkshopPanel() {
 
-		if(!CoalitionTurn() && !Bastion && !tileManager.GetTileAt(currentWorkshop.gameObject).Character)
+		if(!CoalitionTurn() && !Bastion && !tileManager.GetTileAt(CurrentWorkshop.gameObject).Character)
             uiManager.StartQinAction("workshop");
 
     }
@@ -842,17 +840,17 @@ public class SC_GameManager : NetworkBehaviour {
 
         tileManager.RemoveAllFilters();
 
-        tileManager.GetTileAt (characterToMove.gameObject).Character = null;
+        tileManager.GetTileAt (SC_Character.characterToMove.gameObject).Character = null;
 
-		characterToMove.transform.SetPos (characterToMove.LastPos.transform);
+        SC_Character.characterToMove.transform.SetPos (SC_Character.characterToMove.LastPos.transform);
 
-        characterToMove.LastPos.Character = characterToMove;
+        SC_Character.characterToMove.LastPos.Character = SC_Character.characterToMove;
 
-        characterToMove.SetCanMove (true);
+        SC_Character.characterToMove.SetCanMove (true);
 
-        CheckMovements(characterToMove);
+        CheckMovements(SC_Character.characterToMove);
 
-        characterToMove.UnTired ();
+        SC_Character.characterToMove.UnTired ();
 
 		uiManager.cancelMovementButton.SetActive (false);
 
@@ -864,7 +862,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 		SC_Character.attackingCharacter.CheckAttack();
 
-		uiManager.cancelMovementButton.SetActive (!cantCancelMovement);
+		uiManager.cancelMovementButton.SetActive (!CantCancelMovement);
 
 		uiManager.cancelAttackButton.SetActive (false);
 

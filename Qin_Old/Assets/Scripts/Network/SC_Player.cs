@@ -58,7 +58,7 @@ public class SC_Player : NetworkBehaviour {
     [ClientRpc]
     void RpcMoveCharacterTo(int x, int y) {
 
-        localPlayer.gameManager.characterToMove.MoveTo(localPlayer.tileManager.GetTileAt(x, y));
+        SC_Character.characterToMove.MoveTo(localPlayer.tileManager.GetTileAt(x, y));
 
     }
 
@@ -90,7 +90,7 @@ public class SC_Player : NetworkBehaviour {
 
         localPlayer.tileManager.RemoveAllFilters();
 
-        localPlayer.gameManager.rangedAttack = rangedAttack;
+        localPlayer.gameManager.RangedAttack = rangedAttack;
 
         SC_Character.attackingCharacter.attackTarget = targetTileObject.GetComponent<SC_Tile>();
 

@@ -107,10 +107,10 @@ public class SC_Hero : SC_Character {
 		uiManager.cancelMovementButton.SetActive (false);
 		uiManager.cancelAttackButton.SetActive (true);
 
-		if ((gameManager.rangedAttack && weapon1.ranged) || (!gameManager.rangedAttack && !weapon1.IsBow ()))
+		if ((gameManager.RangedAttack && weapon1.ranged) || (!gameManager.RangedAttack && !weapon1.IsBow ()))
 			uiManager.ShowWeapon (GetWeapon (true), true);
 
-		if ((gameManager.rangedAttack && weapon2.ranged) || (!gameManager.rangedAttack && !weapon2.IsBow ()))
+		if ((gameManager.RangedAttack && weapon2.ranged) || (!gameManager.RangedAttack && !weapon2.IsBow ()))
 			uiManager.ShowWeapon (GetWeapon (false), false);
 
 	}
@@ -210,7 +210,7 @@ public class SC_Hero : SC_Character {
 
 		SC_Qin.ChangeEnergy (SC_Qin.Qin.energyWhenHeroDies);
 
-		gameManager.lastHeroDead = this;        
+		gameManager.LastHeroDead = this;        
 
 		foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
 
