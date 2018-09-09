@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
-using static SC_Enums;
 
 public class SC_Game_Manager : NetworkBehaviour {
 
@@ -26,8 +25,6 @@ public class SC_Game_Manager : NetworkBehaviour {
     public bool Bastion { get; set; }
 
 	public SC_Hero LastHeroDead { get; set; }
-
-    public bool RangedAttack { get; set; }
 
 	public SC_Workshop CurrentWorkshop { get; set; }
 
@@ -160,9 +157,10 @@ public class SC_Game_Manager : NetworkBehaviour {
 		}		
 
     }
-    #endregion		
-		
-	public void NextTurn() {
+    #endregion
+
+    #region Next Turn
+    public void NextTurn() {
 
 		Player.CmdNextTurn ();
 
@@ -215,49 +213,34 @@ public class SC_Game_Manager : NetworkBehaviour {
 			Bastion = true;
 
             if(Player.IsQin())
-                DisplayConstructableTiles ();
+                tileManager.DisplayConstructableTiles ();
 
 		}
 
 		uiManager.NextTurn (CoalitionTurn, turn);
         
-    }    
+    }
+    #endregion
 
-	public void DisplayConstructableTiles() {		
+    public void SetAttackWeapon (bool usedActiveWeapon) {
 
-        List<SC_Tile> constructableTiles = new List<SC_Tile>();
+        Player.CmdHeroAttack(usedActiveWeapon);
 
-        if (!Bastion) {
+    }
 
-            uiManager.StartQinAction("construct");
+    public void DisplayConstructableTiles () {
 
-            foreach (SC_Construction construction in FindObjectsOfType<SC_Construction>()) {
+        tileManager.DisplayConstructableTiles();
 
-				if (construction.name.Contains ("Bastion") || construction.name.Contains ("Wall"))
-					constructableTiles.AddRange (tileManager.GetNeighbors(tileManager.GetTileAt (construction.gameObject)));
+    }
 
-			}
+    public void ConstructAt (SC_Tile tile) {
 
-        } else {
+        Player.CmdConstructAt((int)tile.transform.position.x, (int)tile.transform.position.y);
 
-            foreach (SC_Tile tile in tileManager.tiles)
-                constructableTiles.Add(tile);
-            
-        }        
+    }
 
-        foreach(SC_Tile tile in constructableTiles)
-            if(tile.Constructable && (Bastion || !tile.Wall))
-                tile.GetComponent<SC_Tile>().ChangeDisplay(TDisplay.Construct);
-
-	}
-
-	public void ConstructAt(SC_Tile tile) {
-
-		Player.CmdConstructAt ((int)tile.transform.position.x, (int)tile.transform.position.y);
-
-	}
-
-	public void ConstructAt(int x, int y) {
+    public void ConstructAt(int x, int y) {
 
         SC_Tile tile = tileManager.GetTileAt (x, y);
 
@@ -302,369 +285,19 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         Bastion = false;
 
-    }
-
-	public void UpdateNeighborWallGraph(SC_Tile center) {
-
-		foreach (SC_Tile tile in tileManager.GetNeighbors(center))
-            if(tile.Bastion)
-                UpdateWallGraph(tile.Bastion.gameObject);
-
-	}
-
-	public void UpdateWallGraph(GameObject go) {
-
-        SC_Construction construction = go.GetComponent<SC_Construction>();
-
-        SC_Tile under = tileManager.GetTileAt(go);
-
-        bool left = false;
-		bool right = false;
-		bool top = false;
-		int count = 0;
-
-		foreach (SC_Tile tile in tileManager.GetNeighbors(under)) {
-
-			if(tile.Bastion) {
-
-				if (tile.transform.position.x < under.transform.position.x)
-					left = true;
-				else if (tile.transform.position.x > under.transform.position.x)
-					right = true;
-				else if (tile.transform.position.y > under.transform.position.y)
-					top = true;						
-
-				count++;
-
-			}
-
-		}
-
-		string rotation = "";
-
-        if (count == 1)
-			rotation = right ? "Right" : left ? "Left" : top ? "Top" : "Bottom";
-		else if (count == 2)
-			rotation = right ? (left ? "RightLeft" : top ? "RightTop" : "RightBottom") : left ? (top ? "LeftTop" : "LeftBottom") : "TopBottom";
-		else if (count == 3)
-			rotation = !right ? "Left" : (!left ? "Right" : (!top ? "Bottom" : "Top"));
-
-		if (!rotation.Equals ("")) rotation = "_" + rotation;
-
-		construction.GetComponentInChildren<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/" + (construction.GetType().Equals(typeof(SC_Bastion)) ? "Bastion/" : "Wall/") + count.ToString () + rotation);
-
-	}
+    }	
 
 	public void DisplaySacrifices() {
 
-        uiManager.StartQinAction("sacrifice");
-
-        foreach(SC_Soldier soldier in FindObjectsOfType<SC_Soldier>())
-            tileManager.GetTileAt(soldier.gameObject).ChangeDisplay(TDisplay.Sacrifice);
+        tileManager.DisplaySacrifices();
 
 	}
 
 	public void DisplayResurrectionTiles() {
 
-		if (LastHeroDead && (SC_Qin.Energy > SC_Qin.Qin.powerCost)) {
-
-            uiManager.StartQinAction("qinPower");
-            
-			foreach (SC_Tile tile in tileManager.tiles)
-                if(tile.Empty)
-                    tile.ChangeDisplay(TDisplay.Resurrection);                  
-
-		}
+        tileManager.DisplayResurrectionTiles();
 
 	}
-
-    #region Combat
-	public void Attack() {
-
-		uiManager.HideWeapons();
-		uiManager.cancelMovementButton.SetActive (false);
-		uiManager.cancelAttackButton.SetActive (false);
-
-		SC_Character attacker = SC_Character.attackingCharacter;
-
-        attacker.Tire();
-
-        if(!attacker.AttackTarget.Empty) {
-
-            SC_Character attacked = attacker.AttackTarget.Character;
-            SC_Construction targetConstruction = attacker.AttackTarget.Construction;
-
-            if(attacked) {
-
-                bool counterAttack = (RangedAttack && attacked.GetActiveWeapon().ranged) || (!RangedAttack && !attacked.GetActiveWeapon().IsBow());
-
-                bool killed = attacked.Hit(CalcDamages(attacker, attacked, false), false);
-                SetCritDodge(attacker, attacked);
-
-                if(attacker.IsHero() && killed)
-                    IncreaseRelationships((SC_Hero)attacker);
-
-                if(counterAttack) {
-
-                    killed = attacker.Hit(CalcDamages(attacked, attacker, true), false);
-                    SetCritDodge(attacked, attacker);
-
-                    if(attacked.IsHero() && killed)
-                        IncreaseRelationships((SC_Hero)attacked);
-
-                }
-
-                //uiManager.TryRefreshInfos(attacked.gameObject, attacked.GetType());
-
-            } else if(targetConstruction) {
-
-                targetConstruction.health -= attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi;
-
-                targetConstruction.lifebar.UpdateGraph(targetConstruction.health, targetConstruction.maxHealth);
-
-                if(targetConstruction.health <= 0)
-                    targetConstruction.DestroyConstruction();
-                else
-                    uiManager.TryRefreshInfos(targetConstruction.gameObject, typeof(SC_Construction));
-
-            } else if(attacker.AttackTarget.Qin) {
-
-                SC_Qin.ChangeEnergy(-(attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi));                
-
-            }
-
-            //uiManager.TryRefreshInfos(attacker.gameObject, attacker.GetType());            
-
-        }
-        
-        if (attacker.IsHero())
-            ((SC_Hero)attacker).berserkTurn = ((SC_Hero)attacker).berserk;
-
-        SC_Character.attackingCharacter = null;
-
-    }
-
-	void SetCritDodge(SC_Character attacker, SC_Character attacked) {
-
-		attacker.CriticalHit = (attacker.CriticalHit == 0) ? attacker.technique : (attacker.CriticalHit - 1);
-		attacked.DodgeHit = (attacked.DodgeHit == 0) ? attacked.speed : (attacked.DodgeHit - 1);
-
-	}
-		
-	public int CalcDamages(SC_Character attacker, SC_Character attacked, bool counter) {  
-
-        bool heroAttacker = attacker.IsHero();
-        bool heroAttacked = attacked.IsHero();
-
-        int damages = attacker.GetActiveWeapon ().weaponOrQi ? attacker.strength : attacker.qi;
-
-		damages = Mathf.CeilToInt (damages * attacker.GetActiveWeapon ().ShiFuMi (attacked.GetActiveWeapon()));
-
-		if (heroAttacker)
-			damages += Mathf.CeilToInt (damages * RelationBoost ((SC_Hero)attacker));
-
-        if (heroAttacker && heroAttacked && !attacked.coalition)
-            damages = Mathf.CeilToInt(damages * RelationMalus((SC_Hero)attacker, (SC_Hero)attacked));
-
-		if (attacker.CriticalHit == 0) damages *= 3;
-
-		if (heroAttacker && ((SC_Hero)attacker).berserk)
-            damages = Mathf.CeilToInt(damages * commonHeroesVariables.berserkDamageMultiplier);
-
-		if (attacked.DodgeHit == 0) damages = 0;
-
-		int boostedArmor = attacked.armor;
-		int boostedResistance = attacked.resistance;
-
-		if (heroAttacked) {
-
-            float relationBoost = RelationBoost((SC_Hero)attacked);
-            boostedArmor += Mathf.CeilToInt (boostedArmor * relationBoost);
-			boostedResistance += Mathf.CeilToInt (boostedResistance * relationBoost);
-
-		}			
-
-		damages -= (attacker.GetActiveWeapon().weaponOrQi) ? boostedArmor : boostedResistance;
-
-		if (counter) damages = Mathf.CeilToInt (damages / 2);
-
-        return Mathf.Max(0, damages);
-
-	}
-
-    float RelationMalus(SC_Hero target, SC_Hero opponent) {
-
-        int value;
-        target.relationships.TryGetValue(opponent.characterName, out value);
-
-        return 1 - RelationValue(value);
-
-    }
-
-	float RelationBoost(SC_Hero target) {
-
-		float boost = 0;
-
-		foreach (SC_Hero hero in HeroesInRange(target)) {
-
-			int value;
-			target.relationships.TryGetValue (hero.characterName, out value);
-
-            boost += RelationValue(value);
-
-        }
-
-		return boost;
-
-	}
-
-    float RelationValue(int value) {
-
-        float v = 0;
-
-        for (int i = 0; i < commonHeroesVariables.relationBoostValues.relations.Length; i++)
-            if (value >= commonHeroesVariables.relationBoostValues.relations[i])
-                v = commonHeroesVariables.relationBoostValues.values[i];
-
-        return v;
-
-    }
-
-	public SC_Hero CheckHeroSaved(SC_Hero toSave, bool alreadySaved) {
-
-		SC_Hero saver = null;
-
-		if (!alreadySaved) {
-
-			foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
-
-				if (hero.coalition) {
-
-					int value = 0;
-					toSave.relationships.TryGetValue (hero.characterName, out value);
-
-					int currentValue = -1;
-					if (saver)
-						toSave.relationships.TryGetValue (saver.characterName, out currentValue);
-
-					if ((value >= commonHeroesVariables.saveTriggerRelation) && (value > currentValue))
-						saver = hero;
-
-				}
-
-			}
-
-            SC_Tile nearestTile = NearestTile(toSave);
-
-            if (saver && nearestTile) {
-
-				tileManager.GetTileAt (saver.gameObject).Character = null;
-
-				saver.transform.SetPos(NearestTile (toSave).transform);
-
-				tileManager.GetTileAt (saver.gameObject).Character = saver;
-
-            } else {
-
- 				saver = null;
-
-            }
-
-		}
-
-		return saver;
-
-	}    
-
-    public SC_Tile NearestTile(SC_Character target) {
-
-		SC_Tile t = null;
-
-		foreach(SC_Tile tile in tileManager.GetNeighbors(tileManager.GetTileAt(target.gameObject)))
-			if(tile.Empty) t = tile;
-
-		return t;
-
-	}
-
-	List<SC_Hero> HeroesInRange(SC_Hero target) {
-                        
-        List<SC_Tile> range = new List<SC_Tile>();
-
-        int x = (int)target.transform.position.x;
-        int y = (int)target.transform.position.y;
-
-        for (int i = (x - 2); i <= (x + 2); i++) {
-
-			for (int j = (y - 2); j <= (y + 2); j++) {
-
-				if ((i >= 0) && (i < tileManager.xSize) && (j >= 0) && (j < tileManager.ySize)) {
-					
-					bool validTile = true;
-
-					if ( ( (i == (x - 2)) || (i == (x + 2)) ) && (j != y))	validTile = false;
-					if ( ( (j == (y - 2)) || (j == (y + 2)) ) && (i != x))	validTile = false;
-					if ( ( (i == (x - 1)) || (i == (x + 1)) ) && ( (j < (y - 1)) || (j > (y + 1)) ) ) validTile = false;
-					if ( ( (j == (y - 1)) || (j == (y + 1)) ) && ( (i < (x - 1)) || (i > (x + 1)) ) ) validTile = false;
-
-					if (validTile) range.Add (tileManager.tiles [i, j]);
-
-				}
-
-			}
-
-		}
-
-		List<SC_Hero> heroesInRange = new List<SC_Hero>();
-
-		foreach(SC_Tile tile in range) {
-
-            if (tile.Character) {
-				
-				if (tile.Character.IsHero () && tile.Character.coalition) {
-					
-					if (!tile.Character.characterName.Equals (target.characterName) && !heroesInRange.Contains(((SC_Hero)tile.Character)))
-						heroesInRange.Add ((SC_Hero)tile.Character);
-
-				}
-
-			}
-					
-		}
-
-        return heroesInRange;
-
-	}
-
-	public void PreviewFight(bool activeWeapon) {
-
-		if (SC_Character.attackingCharacter.IsHero ())	((SC_Hero)SC_Character.attackingCharacter).SetWeapon (activeWeapon);
-
-		uiManager.PreviewFight (SC_Character.attackingCharacter, RangedAttack);
-
-		if (SC_Character.attackingCharacter.IsHero ())	((SC_Hero)SC_Character.attackingCharacter).SetWeapon (activeWeapon);
-
-	}
-
-	void IncreaseRelationships(SC_Hero killer) {
-
-		List<SC_Hero> heroesInRange = HeroesInRange (killer);
-
-		foreach (SC_Hero hero in heroesInRange) {
-
-			killer.relationships[hero.characterName] += Mathf.CeilToInt (commonHeroesVariables.killRelationValue / heroesInRange.Count);
-			hero.relationships[killer.characterName] += Mathf.CeilToInt (commonHeroesVariables.killRelationValue / heroesInRange.Count);
-
-		}
-
-	}
-
-    public void SetAttackWeapon(bool usedActiveWeapon) {
-
-        Player.CmdHeroAttack(usedActiveWeapon);
-
-    }
-    #endregion
 
     #region Actions
     public void ActionVillage(bool destroy) {
@@ -725,61 +358,8 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         }
 
-    }
-
-    public void DisplayWorkshopPanel() {
-
-		if(!CoalitionTurn && !Bastion && !tileManager.GetTileAt(CurrentWorkshop.gameObject).Character)
-            uiManager.StartQinAction("workshop");
-
-    }
-
-    public void HideWorkshopPanel() {
-
-		uiManager.workshopPanel.SetActive (false);
-
-    }
-    #endregion
-
-    #region Cancel
-    public void ResetMovement() {
-
-        Player.CmdResetMovement();
-
-    }
-
-    public void ResetMovementFunction() {
-
-        tileManager.RemoveAllFilters();
-
-        tileManager.GetTileAt (SC_Character.characterToMove.gameObject).Character = null;
-
-        SC_Character.characterToMove.transform.SetPos (SC_Character.characterToMove.LastPos.transform);
-
-        SC_Character.characterToMove.LastPos.Character = SC_Character.characterToMove;
-
-        SC_Character.characterToMove.CanMove = true;
-
-        tileManager.CheckMovements(SC_Character.characterToMove);
-
-        SC_Character.characterToMove.UnTired ();
-
-		uiManager.cancelMovementButton.SetActive (false);
-
-    }
-
-	public void ResetAttackChoice() {
-
-		uiManager.HideWeapons();
-
-		SC_Character.attackingCharacter.CheckAttack();
-
-		uiManager.cancelMovementButton.SetActive (!CantCancelMovement);
-
-		uiManager.cancelAttackButton.SetActive (false);
-
-	}
-    #endregion
+    }    
+    #endregion    
 
     public void UseHeroPower() {
 
@@ -791,5 +371,11 @@ public class SC_Game_Manager : NetworkBehaviour {
         print("Implement Power");
 
 	}	
+
+    public void ResetMovement() {
+
+        SC_Player.localPlayer.CmdResetMovement();
+
+    }
 
 }

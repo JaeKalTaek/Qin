@@ -9,9 +9,9 @@ public class SC_Bastion : SC_Construction {
         lifebar = Instantiate(Resources.Load<GameObject>("Prefabs/P_Lifebar"), transform).GetComponent<SC_Lifebar>();
         lifebar.transform.position += new Vector3(0, -.44f, 0);
 
-        gameManager.UpdateWallGraph(gameObject);
+        tileManager.UpdateWallGraph(gameObject);
 
-        gameManager.UpdateNeighborWallGraph(tileManager.GetTileAt(gameObject));
+        tileManager.UpdateNeighborWallGraph(tileManager.GetTileAt(gameObject));
 
     }
 
@@ -21,7 +21,7 @@ public class SC_Bastion : SC_Construction {
 
 		base.DestroyConstruction ();
 
-		gameManager.UpdateNeighborWallGraph (tileManager.GetTileAt (gameObject));
+        tileManager.UpdateNeighborWallGraph (tileManager.GetTileAt (gameObject));
 
 	}
 

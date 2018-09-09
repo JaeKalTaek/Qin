@@ -63,7 +63,7 @@ public class SC_Construction : NetworkBehaviour {
 
 	public virtual void DestroyConstruction() {
 
-        if(uiManager.currentGameObject == gameObject)
+        if(uiManager.CurrentGameObject == gameObject)
 		    uiManager.HideInfos (gameObject);
 
 		tileManager.GetTileAt (gameObject).Construction = null;

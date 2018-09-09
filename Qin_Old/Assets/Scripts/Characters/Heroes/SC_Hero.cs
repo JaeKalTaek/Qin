@@ -86,7 +86,7 @@ public class SC_Hero : SC_Character {
 
             attackingCharacter.AttackTarget = under;
 
-			gameManager.PreviewFight(false);
+			uiManager.PreviewFight(false);
 
             attackingCharacter.AttackTarget = null;
 
@@ -105,10 +105,10 @@ public class SC_Hero : SC_Character {
 		uiManager.cancelMovementButton.SetActive (false);
 		uiManager.cancelAttackButton.SetActive (true);
 
-		if ((gameManager.RangedAttack && weapon1.ranged) || (!gameManager.RangedAttack && !weapon1.IsBow ()))
+		if ((fightManager.RangedAttack && weapon1.ranged) || (!fightManager.RangedAttack && !weapon1.IsBow ()))
 			uiManager.ShowWeapon (GetWeapon (true), true);
 
-		if ((gameManager.RangedAttack && weapon2.ranged) || (!gameManager.RangedAttack && !weapon2.IsBow ()))
+		if ((fightManager.RangedAttack && weapon2.ranged) || (!fightManager.RangedAttack && !weapon2.IsBow ()))
 			uiManager.ShowWeapon (GetWeapon (false), false);
 
 	}
@@ -117,7 +117,7 @@ public class SC_Hero : SC_Character {
 
         ((SC_Hero)attackingCharacter).SetWeapon(usedActiveWeapon);
 
-        gameManager.Attack();
+        fightManager.Attack();
 
     }    
 
@@ -150,7 +150,7 @@ public class SC_Hero : SC_Character {
 
 			} else {
 
-				SC_Hero saver = gameManager.CheckHeroSaved (this, saved);
+				SC_Hero saver = fightManager.CheckHeroSaved (this, saved);
 
 				if (saver) {
 

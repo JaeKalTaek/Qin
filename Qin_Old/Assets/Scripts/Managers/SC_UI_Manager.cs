@@ -35,25 +35,32 @@ public class SC_UI_Manager : MonoBehaviour {
 	public Transform sacrifice;
 	public GameObject workshopPanel;
 
-	public GameObject currentGameObject { get; set; }
+	public GameObject CurrentGameObject { get; set; }
 
 	static SC_Game_Manager gameManager;
+
+    public SC_Tile_Manager TileManager { get; set; }
+
+    static SC_Fight_Manager fightManager;
 
     public static SC_UI_Manager Instance { get; set; }
 
     private void Awake() {
 
-        if(!Instance)
-            Instance = this;
+        Instance = this;
 
     }
 
     public void SetupUI(bool qin) {       
 
-        if(!gameManager)
-            gameManager = SC_Game_Manager.Instance;
+        gameManager = SC_Game_Manager.Instance;
 
-		if (!qin) {
+        TileManager = SC_Tile_Manager.Instance;
+
+        fightManager = SC_Fight_Manager.Instance;
+
+
+        if (!qin) {
 
 			usePower.SetActive (true);
 			endTurn.SetActive (true);
@@ -139,17 +146,17 @@ public class SC_UI_Manager : MonoBehaviour {
 		buildingInfosPanel.SetActive (false);
 		qinPanel.SetActive (false);
 
-        currentGameObject = (currentGameObject == g) ? null : g;
+        CurrentGameObject = (CurrentGameObject == g) ? null : g;
 
-        return currentGameObject;
+        return CurrentGameObject;
 
 	}
 
     public void TryRefreshInfos(GameObject g, Type t) {
 
-        if(currentGameObject == g) {
+        if(CurrentGameObject == g) {
 
-            currentGameObject = null;
+            CurrentGameObject = null;
 
             ShowHideInfos(g, t);
 
@@ -269,8 +276,8 @@ public class SC_UI_Manager : MonoBehaviour {
 
 			attackedWeapon = attacked.GetActiveWeapon ().weaponName;
 
-			attackerDamages = gameManager.CalcDamages (attacker, attacked, false);
-			attackedDamages = gameManager.CalcDamages (attacked, attacker, true);
+			attackerDamages = fightManager.CalcDamages (attacker, attacked, false);
+			attackedDamages = fightManager.CalcDamages (attacked, attacker, true);
 			if (!((rangedAttack && attacked.GetActiveWeapon ().ranged) || (!rangedAttack && !attacked.GetActiveWeapon ().IsBow ())))
 				attackedDamages = 0;
 
@@ -375,6 +382,51 @@ public class SC_UI_Manager : MonoBehaviour {
 
         foreach(SC_Lifebar lifebar in FindObjectsOfType<SC_Lifebar>())
             lifebar.Toggle();
+
+    }
+
+    public void ResetAttackChoice () {
+
+        HideWeapons();
+
+        SC_Character.attackingCharacter.CheckAttack();
+
+        cancelMovementButton.SetActive(!gameManager.CantCancelMovement);
+
+        cancelAttackButton.SetActive(false);
+
+    }
+
+    #region Preview Fight
+    public void PreviewFight (bool activeWeapon) {
+
+        if (SC_Character.attackingCharacter.IsHero())
+            ((SC_Hero)SC_Character.attackingCharacter).SetWeapon(activeWeapon);
+
+        PreviewFight(SC_Character.attackingCharacter, fightManager.RangedAttack);
+
+        if (SC_Character.attackingCharacter.IsHero())
+            ((SC_Hero)SC_Character.attackingCharacter).SetWeapon(activeWeapon);
+
+    }
+
+    public void HidePreviewFight() {
+
+        previewFightPanel.SetActive(false);
+
+    }
+    #endregion
+
+    public void DisplayWorkshopPanel () {
+
+        if (!gameManager.CoalitionTurn && !gameManager.Bastion && !TileManager.GetTileAt(gameManager.CurrentWorkshop.gameObject).Character)
+            StartQinAction("workshop");
+
+    }
+
+    public void HideWorkshopPanel () {
+
+        workshopPanel.SetActive(false);
 
     }
 

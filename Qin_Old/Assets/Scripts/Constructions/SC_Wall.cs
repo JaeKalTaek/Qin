@@ -5,7 +5,7 @@
         base.Start();
 
         if(SC_Player.localPlayer.IsQin())
-            gameManager.DisplayConstructableTiles();
+            tileManager.DisplayConstructableTiles();
 
     }
 

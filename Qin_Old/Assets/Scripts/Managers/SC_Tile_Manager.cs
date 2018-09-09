@@ -24,7 +24,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
     public List<SC_Tile> ClosedList { get; set; }
     Dictionary<SC_Tile, int> movementPoints = new Dictionary<SC_Tile, int>();
 
-    private void Awake() {
+    void Awake() {
 
         Instance = this;
 
@@ -35,6 +35,9 @@ public class SC_Tile_Manager : NetworkBehaviour {
         gameManager = SC_Game_Manager.Instance;
 
         uiManager = SC_UI_Manager.Instance;
+        uiManager.TileManager = this;
+
+        SC_Fight_Manager.Instance.TileManager = this;
 
         FindObjectOfType<SC_Camera>().Setup(xSize, ySize);
 
@@ -119,6 +122,72 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }
 
+    public List<SC_Hero> HeroesInRange (SC_Hero target) {
+
+        List<SC_Tile> range = new List<SC_Tile>();
+
+        int x = (int)target.transform.position.x;
+        int y = (int)target.transform.position.y;
+
+        for (int i = (x - 2); i <= (x + 2); i++) {
+
+            for (int j = (y - 2); j <= (y + 2); j++) {
+
+                if ((i >= 0) && (i < xSize) && (j >= 0) && (j < ySize)) {
+
+                    bool validTile = true;
+
+                    if (((i == (x - 2)) || (i == (x + 2))) && (j != y))
+                        validTile = false;
+                    if (((j == (y - 2)) || (j == (y + 2))) && (i != x))
+                        validTile = false;
+                    if (((i == (x - 1)) || (i == (x + 1))) && ((j < (y - 1)) || (j > (y + 1))))
+                        validTile = false;
+                    if (((j == (y - 1)) || (j == (y + 1))) && ((i < (x - 1)) || (i > (x + 1))))
+                        validTile = false;
+
+                    if (validTile)
+                        range.Add(tiles[i, j]);
+
+                }
+
+            }
+
+        }
+
+        List<SC_Hero> heroesInRange = new List<SC_Hero>();
+
+        foreach (SC_Tile tile in range) {
+
+            if (tile.Character) {
+
+                if (tile.Character.IsHero() && tile.Character.coalition) {
+
+                    if (!tile.Character.characterName.Equals(target.characterName) && !heroesInRange.Contains(((SC_Hero)tile.Character)))
+                        heroesInRange.Add((SC_Hero)tile.Character);
+
+                }
+
+            }
+
+        }
+
+        return heroesInRange;
+
+    }
+
+    public SC_Tile NearestTile (SC_Character target) {
+
+        SC_Tile t = null;
+
+        foreach (SC_Tile tile in GetNeighbors(GetTileAt(target.gameObject)))
+            if (tile.Empty)
+                t = tile;
+
+        return t;
+
+    }
+
     #region Display Movements
     public void CheckMovements (SC_Character target) {
 
@@ -197,6 +266,129 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }
     #endregion
+
+    public void ResetMovementFunction () {
+
+        RemoveAllFilters();
+
+        GetTileAt(SC_Character.characterToMove.gameObject).Character = null;
+
+        SC_Character.characterToMove.transform.SetPos(SC_Character.characterToMove.LastPos.transform);
+
+        SC_Character.characterToMove.LastPos.Character = SC_Character.characterToMove;
+
+        SC_Character.characterToMove.CanMove = true;
+
+        CheckMovements(SC_Character.characterToMove);
+
+        SC_Character.characterToMove.UnTired();
+
+        uiManager.cancelMovementButton.SetActive(false);
+
+    }
+
+    public void DisplayConstructableTiles () {
+
+        List<SC_Tile> constructableTiles = new List<SC_Tile>();
+
+        if (!gameManager.Bastion) {
+
+            uiManager.StartQinAction("construct");
+
+            foreach (SC_Construction construction in FindObjectsOfType<SC_Construction>()) {
+
+                if (construction.name.Contains("Bastion") || construction.name.Contains("Wall"))
+                    constructableTiles.AddRange(GetNeighbors(GetTileAt(construction.gameObject)));
+
+            }
+
+        } else {
+
+            foreach (SC_Tile tile in tiles)
+                constructableTiles.Add(tile);
+
+        }
+
+        foreach (SC_Tile tile in constructableTiles)
+            if (tile.Constructable && (gameManager.Bastion || !tile.Wall))
+                tile.GetComponent<SC_Tile>().ChangeDisplay(TDisplay.Construct);
+
+    }
+
+    public void DisplaySacrifices () {
+
+        uiManager.StartQinAction("sacrifice");
+
+        foreach (SC_Soldier soldier in FindObjectsOfType<SC_Soldier>())
+            GetTileAt(soldier.gameObject).ChangeDisplay(TDisplay.Sacrifice);
+
+    }
+
+    public void DisplayResurrectionTiles () {
+
+        if (gameManager.LastHeroDead && (SC_Qin.Energy > SC_Qin.Qin.powerCost)) {
+
+            uiManager.StartQinAction("qinPower");
+
+            foreach (SC_Tile tile in tiles)
+                if (tile.Empty)
+                    tile.ChangeDisplay(TDisplay.Resurrection);
+
+        }
+
+    }
+
+    public void UpdateNeighborWallGraph (SC_Tile center) {
+
+        foreach (SC_Tile tile in GetNeighbors(center))
+            if (tile.Bastion)
+                UpdateWallGraph(tile.Bastion.gameObject);
+
+    }
+
+    public void UpdateWallGraph (GameObject go) {
+
+        SC_Construction construction = go.GetComponent<SC_Construction>();
+
+        SC_Tile under = GetTileAt(go);
+
+        bool left = false;
+        bool right = false;
+        bool top = false;
+        int count = 0;
+
+        foreach (SC_Tile tile in GetNeighbors(under)) {
+
+            if (tile.Bastion) {
+
+                if (tile.transform.position.x < under.transform.position.x)
+                    left = true;
+                else if (tile.transform.position.x > under.transform.position.x)
+                    right = true;
+                else if (tile.transform.position.y > under.transform.position.y)
+                    top = true;
+
+                count++;
+
+            }
+
+        }
+
+        string rotation = "";
+
+        if (count == 1)
+            rotation = right ? "Right" : left ? "Left" : top ? "Top" : "Bottom";
+        else if (count == 2)
+            rotation = right ? (left ? "RightLeft" : top ? "RightTop" : "RightBottom") : left ? (top ? "LeftTop" : "LeftBottom") : "TopBottom";
+        else if (count == 3)
+            rotation = !right ? "Left" : (!left ? "Right" : (!top ? "Bottom" : "Top"));
+
+        if (!rotation.Equals(""))
+            rotation = "_" + rotation;
+
+        construction.GetComponentInChildren<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/" + (construction.GetType().Equals(typeof(SC_Bastion)) ? "Bastion/" : "Wall/") + count.ToString() + rotation);
+
+    }
 
     public SC_Tile GetTileAt(GameObject g) {
 

@@ -11,6 +11,8 @@ public class SC_Player : NetworkBehaviour {
 
 	SC_Tile_Manager tileManager;
 
+    SC_Fight_Manager fightManager;
+
 	public static SC_Player localPlayer;
 
 	public override void OnStartLocalPlayer () {
@@ -27,7 +29,9 @@ public class SC_Player : NetworkBehaviour {
 		if(FindObjectOfType<SC_Tile_Manager> ())
 			tileManager = FindObjectOfType<SC_Tile_Manager> ();
 
-		localPlayer = this;
+        fightManager = SC_Fight_Manager.Instance;
+
+        localPlayer = this;
 		
 	}
 
@@ -72,7 +76,7 @@ public class SC_Player : NetworkBehaviour {
     [ClientRpc]
     void RpcResetMovement() {
 
-        localPlayer.gameManager.ResetMovementFunction();
+        localPlayer.tileManager.ResetMovementFunction();
 
     }
     #endregion
@@ -90,7 +94,7 @@ public class SC_Player : NetworkBehaviour {
 
         localPlayer.tileManager.RemoveAllFilters();
 
-        localPlayer.gameManager.RangedAttack = rangedAttack;
+        localPlayer.fightManager.RangedAttack = rangedAttack;
 
         SC_Character.attackingCharacter.AttackTarget = targetTileObject.GetComponent<SC_Tile>();
 
@@ -106,7 +110,7 @@ public class SC_Player : NetworkBehaviour {
     [ClientRpc]
     void RpcAttack() {
 
-        localPlayer.gameManager.Attack();
+        localPlayer.fightManager.Attack();
 
     }
 

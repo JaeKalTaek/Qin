@@ -38,6 +38,8 @@ public class SC_Character : NetworkBehaviour {
 
 	protected static SC_UI_Manager uiManager;
 
+    protected static SC_Fight_Manager fightManager;
+
     List<SC_Tile> path;
 
     public static SC_Character attackingCharacter, characterToMove;
@@ -59,6 +61,9 @@ public class SC_Character : NetworkBehaviour {
 
         if(!uiManager)
             uiManager = SC_UI_Manager.Instance;
+
+        if (!fightManager)
+            fightManager = SC_Fight_Manager.Instance;
 
 		Lifebar = Instantiate(Resources.Load<GameObject>("Prefabs/P_Lifebar"), transform).GetComponent<SC_Lifebar>();
 		Lifebar.transform.position += new Vector3 (0, -.44f, 0);
@@ -299,7 +304,7 @@ public class SC_Character : NetworkBehaviour {
 
 	public virtual void DestroyCharacter() {
 
-        if(uiManager.currentGameObject == gameObject)
+        if(uiManager.CurrentGameObject == gameObject)
             uiManager.HideInfos (gameObject);
 
         tileManager.GetTileAt(gameObject).Character = null;
