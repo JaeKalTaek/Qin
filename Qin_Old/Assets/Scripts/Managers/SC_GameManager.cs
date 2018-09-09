@@ -10,6 +10,7 @@ public class SC_GameManager : NetworkBehaviour {
 	public GameObject baseMapPrefab;
     public GameObject plainPrefab, forestPrefab, mountainPrefab, palacePrefab;
     public GameObject qinPrefab, soldierPrefab, convoyPrefab;
+    public SC_Common_Heroes_Variables commonHeroesVariables;
 	public List<GameObject> heroPrefabs;
 	public GameObject bastionPrefab, wallPrefab, workshopPrefab, villagePrefab;
 	public GameObject tileManagerPrefab;
@@ -68,7 +69,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 		Bastion = true;
 
-		if (Instance == null)
+		if (!Instance)
 			Instance = this;
 
         uiManager = SC_UI_Manager.Instance;
@@ -150,7 +151,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 			SC_EditorTile eTile = child.GetComponent<SC_EditorTile> ();
 
-			if (eTile.spawnSoldier || eTile.qin || (eTile.heroPrefab != null)) {
+			if (eTile.spawnSoldier || eTile.qin || eTile.heroPrefab) {
 
 				GameObject go2 = Instantiate ((eTile.spawnSoldier) ? soldierPrefab : (eTile.qin) ? qinPrefab : eTile.heroPrefab);
 
@@ -292,8 +293,8 @@ public class SC_GameManager : NetworkBehaviour {
 			convoy.MoveConvoy ();*/
 
 		if (!CoalitionTurn ()) {
-			
-			SC_Qin.ChangeEnergy (50 * SC_Village.number);
+
+            SC_Qin.ChangeEnergy(SC_Qin.Qin.regenPerVillage * SC_Village.number);
 
 			Bastion = true;
 
@@ -455,7 +456,7 @@ public class SC_GameManager : NetworkBehaviour {
 
 	public void DisplayResurrectionTiles() {
 
-		if ((lastHeroDead != null) && (SC_Qin.Energy > SC_Qin.Qin.powerCost)) {
+		if (lastHeroDead && (SC_Qin.Energy > SC_Qin.Qin.powerCost)) {
 
             uiManager.StartQinAction("qinPower");
             
@@ -559,10 +560,10 @@ public class SC_GameManager : NetworkBehaviour {
 
 		if (attacker.criticalHit == 0) damages *= 3;
 
-		if (heroAttacker)
-			damages = ((SC_Hero)attacker).berserk ? damages * 2 : damages;
+		if (heroAttacker && ((SC_Hero)attacker).berserk)
+            damages = Mathf.CeilToInt(damages * commonHeroesVariables.berserkDamageMultiplier);
 
-		if (attacked.dodgeHit == 0) damages *= 0;
+		if (attacked.dodgeHit == 0) damages = 0;
 
 		int boostedArmor = attacked.armor;
 		int boostedResistance = attacked.resistance;
@@ -577,9 +578,9 @@ public class SC_GameManager : NetworkBehaviour {
 
 		damages -= (attacker.GetActiveWeapon().weaponOrQi) ? boostedArmor : boostedResistance;
 
-		if (counter) damages = Mathf.FloorToInt ((float)(damages / 2));
+		if (counter) damages = Mathf.CeilToInt (damages / 2);
 
-        return (damages >= 0) ? damages : 0;
+        return Mathf.Max(0, damages);
 
 	}
 
@@ -611,7 +612,13 @@ public class SC_GameManager : NetworkBehaviour {
 
     float RelationValue(int value) {
 
-        return (value >= 1000) ? 0.25f : (value >= 750) ? 0.15f : (value >= 500) ? 0.1f : (value >= 350) ? 0.05f : 0;
+        float v = 0;
+
+        for (int i = 0; i < commonHeroesVariables.relationBoostValues.relations.Length; i++)
+            if (value >= commonHeroesVariables.relationBoostValues.relations[i])
+                v = commonHeroesVariables.relationBoostValues.values[i];
+
+        return v;
 
     }
 
@@ -629,10 +636,10 @@ public class SC_GameManager : NetworkBehaviour {
 					toSave.relationships.TryGetValue (hero.characterName, out value);
 
 					int currentValue = -1;
-					if (saver != null)
+					if (saver)
 						toSave.relationships.TryGetValue (saver.characterName, out currentValue);
 
-					if ((value >= 200) && (value > currentValue))
+					if ((value >= commonHeroesVariables.saveTriggerRelation) && (value > currentValue))
 						saver = hero;
 
 				}
@@ -641,7 +648,7 @@ public class SC_GameManager : NetworkBehaviour {
 
             SC_Tile nearestTile = NearestTile(toSave);
 
-            if ((saver != null) && (nearestTile != null)) {
+            if (saver && nearestTile) {
 
 				tileManager.GetTileAt (saver.gameObject).Character = null;
 
@@ -737,8 +744,8 @@ public class SC_GameManager : NetworkBehaviour {
 
 		foreach (SC_Hero hero in heroesInRange) {
 
-			killer.relationships[hero.characterName] += Mathf.CeilToInt (100 / heroesInRange.Count);
-			hero.relationships[killer.characterName] += Mathf.CeilToInt (100 / heroesInRange.Count);
+			killer.relationships[hero.characterName] += Mathf.CeilToInt (commonHeroesVariables.killRelationValue / heroesInRange.Count);
+			hero.relationships[killer.characterName] += Mathf.CeilToInt (commonHeroesVariables.killRelationValue / heroesInRange.Count);
 
 		}
 
@@ -754,12 +761,30 @@ public class SC_GameManager : NetworkBehaviour {
     #region Actions
     public void ActionVillage(bool destroy) {
 
-		if (characterToMove.IsHero())
-			((SC_Hero)characterToMove).ActionVillage (destroy);
+		player.CmdActionVillage (destroy);
 
 	}
 
-	/*public void SpawnConvoy(Vector3 pos) {
+    public void ActionVillageFunction (bool destroy) {
+
+        if (destroy) {
+
+            cantCancelMovement = true;
+            tileManager.GetTileAt(gameObject).Construction.DestroyConstruction();
+
+        } else {
+
+            uiManager.cancelMovementButton.SetActive(true);
+
+        }
+
+        uiManager.villagePanel.SetActive(false);
+
+        SC_Character.attackingCharacter.CheckAttack();
+
+    }
+
+    /*public void SpawnConvoy(Vector3 pos) {
 
 		if (pos.x >= 0) {
 
@@ -786,7 +811,7 @@ public class SC_GameManager : NetworkBehaviour {
 			go.transform.SetPos(currentWorkshop.transform);
             go.GetComponent<SC_Soldier>().Tire();
 
-            SC_Qin.ChangeEnergy(-50);
+            SC_Qin.ChangeEnergy(-SC_Qin.Qin.soldierCost);
 
 			uiManager.workshopPanel.SetActive (false);
 

@@ -27,6 +27,9 @@ public class SC_Qin : NetworkBehaviour {
     [Tooltip("Cost in energy for Qin to create a soldier from a workshop")]
     public int soldierCost;
 
+    [Tooltip("Energy won for each village at the beginning of each of Qin's turn")]
+    public int regenPerVillage;
+
     public static bool SelfPanel { get; set; }
 
 	static SC_GameManager gameManager;

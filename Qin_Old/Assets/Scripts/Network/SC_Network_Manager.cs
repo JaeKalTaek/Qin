@@ -89,7 +89,7 @@ public class SC_Network_Manager : NetworkLobbyManager {
 
 	public override void OnStartHost () {
 		
-		SC_Menu menu = GameObject.FindObjectOfType<SC_Menu> ();
+		SC_Menu menu = FindObjectOfType<SC_Menu> ();
 
 		menu.ShowPanel (menu.searchGamePanel);
 

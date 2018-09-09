@@ -141,7 +141,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         currentGameObject = (currentGameObject == g) ? null : g;
 
-        return (currentGameObject == null) ? false : true;
+        return !currentGameObject;
 
 	}
 
@@ -288,7 +288,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
             SC_Construction attackedConstruction = attacker.attackTarget.Construction;
 
-            int attackedType = (attackedConstruction != null) ? 0 : attacker.attackTarget.Qin ? 1 : 2;
+            int attackedType = attackedConstruction ? 0 : attacker.attackTarget.Qin ? 1 : 2;
 
 			attackedName = (attackedType == 0) ? attackedConstruction.buildingName : (attackedType == 1) ? "Qin" : "";			
 

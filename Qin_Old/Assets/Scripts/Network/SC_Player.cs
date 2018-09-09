@@ -24,7 +24,7 @@ public class SC_Player : NetworkBehaviour {
 		if(gameManager)
 			gameManager.player = this;
 
-		if(FindObjectOfType<SC_Tile_Manager> () != null)
+		if(FindObjectOfType<SC_Tile_Manager> ())
 			tileManager = FindObjectOfType<SC_Tile_Manager> ();
 
 		localPlayer = this;
@@ -47,27 +47,6 @@ public class SC_Player : NetworkBehaviour {
         localPlayer.gameManager.CheckMovements(localPlayer.tileManager.GetTileAt(x, y).Character);
 
     }
-
-	[Command]
-	public void CmdDisplayMovement(int[] xArray, int[] yArray) {
-
-		RpcDisplayMovement (xArray, yArray);
-
-	}
-
-	[ClientRpc]
-	void RpcDisplayMovement(int[] xArray, int[] yArray) {
-
-		localPlayer.DisplayMovement (xArray, yArray);
-
-	}
-
-	void DisplayMovement(int[] xArray, int[] yArray) {
-
-        for(int i = 0; i < xArray.Length; i++)
-            tileManager.GetTileAt(xArray[i], yArray[i]).ChangeDisplay(TDisplay.Movement);
-
-	}
 
     [Command]
     public void CmdMoveCharacterTo(int x, int y) {
@@ -147,7 +126,7 @@ public class SC_Player : NetworkBehaviour {
     #endregion
 
     #region Remove filters
-    [Command]
+    /*[Command]
 	public void CmdRemoveAllFilters() {
 
 		RpcRemoveAllFilters ();
@@ -159,7 +138,7 @@ public class SC_Player : NetworkBehaviour {
 
         localPlayer.tileManager.RemoveAllFilters();
 
-    }
+    }*/
 
     [Command]
     public void CmdRemoveAllFiltersOnClient(bool qin) {
@@ -237,6 +216,22 @@ public class SC_Player : NetworkBehaviour {
     void RpcDestroyCharacter(GameObject c) {
 
         c.GetComponent<SC_Character>().DestroyCharacter();
+
+    }
+    #endregion
+
+    #region Village
+    [Command]
+    public void CmdActionVillage(bool destroy) {
+
+        RpcActionVillage(destroy);
+
+    }
+
+    [ClientRpc]
+    void RpcActionVillage(bool destroy) {
+
+        localPlayer.gameManager.ActionVillageFunction(destroy);
 
     }
     #endregion

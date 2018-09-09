@@ -121,32 +121,13 @@ public class SC_Hero : SC_Character {
 
         gameManager.Attack();
 
-    }
-
-    public void ActionVillage(bool destroy) {
-
-		if (destroy) {
-
-			gameManager.cantCancelMovement = true;
-            tileManager.GetTileAt(gameObject).Construction.DestroyConstruction();
-
-		} else {
-
-			uiManager.cancelMovementButton.SetActive (true);
-
-		}
-
-		uiManager.villagePanel.SetActive (false);
-
-		CheckAttack();
-
-	}
+    }    
 
 	public void Regen() {
 
-		if (tileManager.GetTileAt(gameObject).Village != null) {
+		if (tileManager.GetTileAt(gameObject).Village) {
 
-			health = Mathf.Max (health + 10, maxHealth);
+			health = Mathf.Max (health + gameManager.commonHeroesVariables.villageRegen, maxHealth);
 			lifebar.UpdateGraph(health, maxHealth);
 
 		}
@@ -163,7 +144,7 @@ public class SC_Hero : SC_Character {
 
 			if (saving) {
 
-				health = 1;
+                health = gameManager.commonHeroesVariables.savedHealthAmount;
 				berserk = true;
 				berserkTurn = true;
 
@@ -173,7 +154,7 @@ public class SC_Hero : SC_Character {
 
 				SC_Hero saver = gameManager.CheckHeroSaved (this, saved);
 
-				if (saver != null) {
+				if (saver) {
 
 					saver.Hit (damages, true);
 					saved = true;
@@ -188,7 +169,7 @@ public class SC_Hero : SC_Character {
 
 			}
 
-		} else if (health <= Mathf.CeilToInt ((float)(maxHealth * 0.2))) {
+		} else if (health <= gameManager.commonHeroesVariables.berserkTriggerHealth) {
 
 			canMove = (gameManager.CoalitionTurn());
 
@@ -236,7 +217,7 @@ public class SC_Hero : SC_Character {
 			int value = 0;
 			relationships.TryGetValue (hero.characterName, out value);
 
-			if (value >= 200) {
+			if (value >= gameManager.commonHeroesVariables.berserkTriggerRelation) {
 
 				hero.berserk = true;
 				hero.berserkTurn = true;

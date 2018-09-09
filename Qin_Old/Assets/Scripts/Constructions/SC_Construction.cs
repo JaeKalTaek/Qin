@@ -22,13 +22,13 @@ public class SC_Construction : NetworkBehaviour {
 
 	protected virtual void Start () {
 
-		if (gameManager == null)
+		if (!gameManager)
 			gameManager = FindObjectOfType<SC_GameManager> ();
 
-		if (tileManager == null)
+		if (!tileManager)
 			tileManager = FindObjectOfType<SC_Tile_Manager> ();
 
-		if (uiManager == null)
+		if (!uiManager)
 			uiManager = FindObjectOfType<SC_UI_Manager> ();
 
 		health = maxHealth;
@@ -68,7 +68,9 @@ public class SC_Construction : NetworkBehaviour {
 
 		tileManager.GetTileAt (gameObject).Construction = null;
 
-        SC_Player.localPlayer.CmdDestroyGameObject(gameObject);
+        Destroy(gameObject);
+
+        //SC_Player.localPlayer.CmdDestroyGameObject(gameObject);
 
 		/*if(isServer)
 			Network.Destroy (gameObject);*/

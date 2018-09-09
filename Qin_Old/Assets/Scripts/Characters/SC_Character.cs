@@ -85,57 +85,7 @@ public class SC_Character : NetworkBehaviour {
 		if ((coalition != SC_Player.localPlayer.IsQin()) && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject ()) {
 
 			if (gameManager.player.Turn() && (tileManager.GetTileAt(gameObject).CurrentDisplay == TDisplay.None))
-                PrintMovements();               
-
-				/*SC_Tile under = tileManager.GetTileAt (gameObject);
-
-                if (under.CurrentDisplay == TDisplay.Movement) {
-
-                    SC_Player.localPlayer.CmdMoveCharacterTo((int)under.transform.position.x, (int)under.transform.position.y);
-
-				} else if (under.CurrentDisplay == TDisplay.Attack) {
-
-					SC_Tile attackingCharacterTile = tileManager.GetTileAt (attackingCharacter.gameObject);
-					gameManager.rangedAttack = !tileManager.IsNeighbor (attackingCharacterTile, under);
-
-					attackingCharacter.attackTarget = under;
-
-					if (attackingCharacter.IsHero ()) {
-
-						((SC_Hero)attackingCharacter).ChooseWeapon ();
-
-					} else {
-
-                        tileManager.RemoveAllFilters();
-
-						gameManager.Attack ();
-
-					}
-
-				} /*else if ((under.CurrentDisplay == TDisplay.Construct) && ((SC_Qin.Energy > SC_Qin.Qin.wallCost) || gameManager.Bastion) && !IsHero ()) {
-
-					gameManager.ConstructAt (under);
-
-					canMove = false;
-
-				} else if (under.CurrentDisplay == TDisplay.Sacrifice) {
-
-					SC_Player.localPlayer.CmdChangeQinEnergy (SC_Qin.Qin.sacrificeValue);
-
-					canMove = false;
-
-					under.RemoveFilter ();
-
-                    SC_Player.localPlayer.CmdDestroyCharacter(gameObject);
-
-                } else if (under.CurrentDisplay == TDisplay.None) {                    
-
-                    PrintMovements ();
-
-				}
-
-
-            }*/
+                PrintMovements();          
 
 		}
 
@@ -229,9 +179,10 @@ public class SC_Character : NetworkBehaviour {
 
             if(moved && target.Construction) {
 
-                if(target.Village && SC_Player.localPlayer.Turn()) {
+                if(target.Village) {
 
-                    uiManager.villagePanel.SetActive(true);
+                    if(SC_Player.localPlayer.Turn())
+                        uiManager.villagePanel.SetActive(true);
 
                 } else {
 
