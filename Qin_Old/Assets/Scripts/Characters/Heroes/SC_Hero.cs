@@ -82,7 +82,7 @@ public class SC_Hero : SC_Character {
 
 		SC_Tile under = tileManager.GetTileAt (gameObject);
 
-		if ((under.CurrentDisplay == TDisplay.Attack) && !attackingCharacter.IsHero()) {
+		if ((under.CurrentDisplay == TDisplay.Attack) && !attackingCharacter.IsHero) {
 
             attackingCharacter.AttackTarget = under;
 

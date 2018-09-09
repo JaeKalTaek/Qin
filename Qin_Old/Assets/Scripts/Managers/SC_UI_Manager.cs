@@ -400,13 +400,13 @@ public class SC_UI_Manager : MonoBehaviour {
     #region Preview Fight
     public void PreviewFight (bool activeWeapon) {
 
-        if (SC_Character.attackingCharacter.IsHero())
-            ((SC_Hero)SC_Character.attackingCharacter).SetWeapon(activeWeapon);
+        if (SC_Character.attackingCharacter.IsHero)
+            SC_Character.attackingCharacter.Hero.SetWeapon(activeWeapon);
 
         PreviewFight(SC_Character.attackingCharacter, fightManager.RangedAttack);
 
-        if (SC_Character.attackingCharacter.IsHero())
-            ((SC_Hero)SC_Character.attackingCharacter).SetWeapon(activeWeapon);
+        if (SC_Character.attackingCharacter.IsHero)
+            SC_Character.attackingCharacter.Hero.SetWeapon(activeWeapon);
 
     }
 

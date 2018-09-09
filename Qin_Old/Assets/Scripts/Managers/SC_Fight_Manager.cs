@@ -47,21 +47,19 @@ public class SC_Fight_Manager : MonoBehaviour {
 
             if (attacked) {
 
-                bool counterAttack = (RangedAttack && attacked.GetActiveWeapon().ranged) || (!RangedAttack && !attacked.GetActiveWeapon().IsBow());
-
                 bool killed = attacked.Hit(CalcDamages(attacker, attacked, false), false);
                 SetCritDodge(attacker, attacked);
 
-                if (attacker.IsHero() && killed)
-                    IncreaseRelationships((SC_Hero)attacker);
+                if (attacker.IsHero && killed)
+                    IncreaseRelationships(attacker.Hero);
 
-                if (counterAttack) {
+                if ((RangedAttack && attacked.GetActiveWeapon().ranged) || (!RangedAttack && !attacked.GetActiveWeapon().IsBow())) {
 
                     killed = attacker.Hit(CalcDamages(attacked, attacker, true), false);
                     SetCritDodge(attacked, attacker);
 
-                    if (attacked.IsHero() && killed)
-                        IncreaseRelationships((SC_Hero)attacked);
+                    if (attacked.IsHero && killed)
+                        IncreaseRelationships(attacked.Hero);
 
                 }
 
@@ -88,8 +86,8 @@ public class SC_Fight_Manager : MonoBehaviour {
 
         }
 
-        if (attacker.IsHero())
-            ((SC_Hero)attacker).berserkTurn = ((SC_Hero)attacker).berserk;
+        if (attacker.IsHero)
+            attacker.Hero.berserkTurn = attacker.Hero.berserk;
 
         SC_Character.attackingCharacter = null;
 
@@ -104,23 +102,20 @@ public class SC_Fight_Manager : MonoBehaviour {
 
     public int CalcDamages (SC_Character attacker, SC_Character attacked, bool counter) {
 
-        bool heroAttacker = attacker.IsHero();
-        bool heroAttacked = attacked.IsHero();
-
         int damages = attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi;
 
         damages = Mathf.CeilToInt(damages * attacker.GetActiveWeapon().ShiFuMi(attacked.GetActiveWeapon()));
 
-        if (heroAttacker)
-            damages += Mathf.CeilToInt(damages * RelationBoost((SC_Hero)attacker));
+        if (attacker.IsHero)
+            damages += Mathf.CeilToInt(damages * RelationBoost(attacker.Hero));
 
-        if (heroAttacker && heroAttacked && !attacked.coalition)
-            damages = Mathf.CeilToInt(damages * RelationMalus((SC_Hero)attacker, (SC_Hero)attacked));
+        if (attacker.IsHero && attacked.IsHero && !attacked.coalition)
+            damages = Mathf.CeilToInt(damages * RelationMalus(attacker.Hero, attacked.Hero));
 
         if (attacker.CriticalHit == 0)
             damages *= 3;
 
-        if (heroAttacker && ((SC_Hero)attacker).berserk)
+        if (attacker.IsHero && attacker.Hero.berserk)
             damages = Mathf.CeilToInt(damages * CommonHeroesVariables.berserkDamageMultiplier);
 
         if (attacked.DodgeHit == 0)
@@ -129,9 +124,9 @@ public class SC_Fight_Manager : MonoBehaviour {
         int boostedArmor = attacked.armor;
         int boostedResistance = attacked.resistance;
 
-        if (heroAttacked) {
+        if (attacked.IsHero) {
 
-            float relationBoost = RelationBoost((SC_Hero)attacked);
+            float relationBoost = RelationBoost(attacked.Hero);
             boostedArmor += Mathf.CeilToInt(boostedArmor * relationBoost);
             boostedResistance += Mathf.CeilToInt(boostedResistance * relationBoost);
 

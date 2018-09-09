@@ -113,8 +113,8 @@ public class SC_Tile : NetworkBehaviour {
 
             SC_Player.localPlayer.CmdPrepareForAttack(!tileManager.IsNeighbor(tileManager.GetTileAt(SC_Character.attackingCharacter.gameObject), this), gameObject);
 
-            if(SC_Character.attackingCharacter.IsHero())
-                ((SC_Hero)SC_Character.attackingCharacter).ChooseWeapon();
+            if(SC_Character.attackingCharacter.IsHero)
+                SC_Character.attackingCharacter.Hero.ChooseWeapon();
             else
                 SC_Player.localPlayer.CmdAttack();
 

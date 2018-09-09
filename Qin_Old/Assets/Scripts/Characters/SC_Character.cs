@@ -9,8 +9,14 @@ public class SC_Character : NetworkBehaviour {
 	//Alignment
 	public bool coalition;
 
-	//Actions
-	public int movement = 5;
+    public bool IsHero { get { return (GetType().Equals(typeof(SC_Hero)) || GetType().IsSubclassOf(typeof(SC_Hero))); } }
+
+    public SC_Hero Hero { get { return this as SC_Hero; } }
+
+    public SC_Soldier Soldier { get { return this as SC_Soldier; } }
+
+    //Actions
+    public int movement = 5;
 	public bool CanMove { get; set; }
 
 	public SC_Tile AttackTarget { get; set; }
@@ -173,9 +179,9 @@ public class SC_Character : NetworkBehaviour {
 
         attackingCharacter = this;
 
-        if(IsHero()) {
+        if(IsHero) {
 
-            CanMove = (((SC_Hero)this).berserk && !((SC_Hero)this).berserkTurn);
+            CanMove = (Hero.berserk && !Hero.berserkTurn);
 
             if (target?.Village || LastPos.Village) {
 
@@ -293,8 +299,8 @@ public class SC_Character : NetworkBehaviour {
 
             attackingCharacter.Tire();
 
-            if(attackingCharacter.IsHero())
-                ((SC_Hero)attackingCharacter).berserkTurn = ((SC_Hero)attackingCharacter).berserk;
+            if(attackingCharacter.IsHero)
+                attackingCharacter.Hero.berserkTurn = attackingCharacter.Hero.berserk;
 
             attackingCharacter = null;
 
@@ -313,16 +319,16 @@ public class SC_Character : NetworkBehaviour {
 
 	public SC_Weapon GetActiveWeapon() {
 
-		return IsHero() ? ((SC_Hero)this).GetWeapon(true) : ((SC_Soldier)this).weapon;
+		return IsHero ? Hero.GetWeapon(true) : Soldier.weapon;
 
 	}
 
 	public bool HasRange() {
 
-		if (IsHero())
-			return (((SC_Hero)this).weapon1.ranged || ((SC_Hero)this).weapon2.ranged);
+		if (IsHero)
+			return Hero.weapon1.ranged || Hero.weapon2.ranged;
 		else
-			return ((SC_Soldier)this).weapon.ranged;
+			return Soldier.weapon.ranged;
 
 	}
 
@@ -339,13 +345,7 @@ public class SC_Character : NetworkBehaviour {
         Lifebar.UpdateGraph(Health, maxHealth);
         uiManager.TryRefreshInfos(gameObject, GetType());
 
-    }
-
-	public bool IsHero() {
-
-		return (GetType().Equals(typeof(SC_Hero)) || GetType().IsSubclassOf(typeof(SC_Hero)));
-
-	}
+    }	
 
 	public virtual void Tire() {
 

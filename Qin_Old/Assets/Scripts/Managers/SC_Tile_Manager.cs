@@ -161,10 +161,10 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
             if (tile.Character) {
 
-                if (tile.Character.IsHero() && tile.Character.coalition) {
+                if (tile.Character.IsHero && tile.Character.coalition) {
 
-                    if (!tile.Character.characterName.Equals(target.characterName) && !heroesInRange.Contains(((SC_Hero)tile.Character)))
-                        heroesInRange.Add((SC_Hero)tile.Character);
+                    if (!tile.Character.characterName.Equals(target.characterName) && !heroesInRange.Contains(tile.Character.Hero))
+                        heroesInRange.Add(tile.Character.Hero);
 
                 }
 
@@ -222,8 +222,8 @@ public class SC_Tile_Manager : NetworkBehaviour {
         movementPoints[aStartingTile] = target.movement;
 
         bool berserk = false;
-        if (target.IsHero())
-            berserk = (((SC_Hero)target).berserk);
+        if (target.IsHero)
+            berserk = target.Hero.berserk;
 
         ExpandTile(aStartingTile, berserk);
 

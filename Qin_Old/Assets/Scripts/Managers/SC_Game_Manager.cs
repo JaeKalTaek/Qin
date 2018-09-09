@@ -174,20 +174,21 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         foreach (SC_Character character in FindObjectsOfType<SC_Character>()) {
 
-			if (character.IsHero ()) {
-				
-				SC_Hero hero = ((SC_Hero)character);
+			if (character.IsHero) {
 
-				hero.Regen ();
+                character.Hero.Regen ();
 
 				if (!CoalitionTurn) {
 
-					if (hero.powerUsed)	hero.powerBacklash++;
-					if (hero.powerBacklash >= 2) hero.DestroyCharacter ();  
+					if (character.Hero.powerUsed)
+                        character.Hero.powerBacklash++;
+
+					if (character.Hero.powerBacklash >= 2)
+                        character.Hero.DestroyCharacter ();  
 
 				} else {
 
-					hero.berserkTurn = false;
+                    character.Hero.berserkTurn = false;
 
 				}
 
