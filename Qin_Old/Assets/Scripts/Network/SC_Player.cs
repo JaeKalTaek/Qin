@@ -11,6 +11,8 @@ public class SC_Player : NetworkBehaviour {
 
 	SC_Tile_Manager tileManager;
 
+    SC_UI_Manager uiManager;
+
     SC_Fight_Manager fightManager;
 
 	public static SC_Player localPlayer;
@@ -29,6 +31,8 @@ public class SC_Player : NetworkBehaviour {
 		if(FindObjectOfType<SC_Tile_Manager> ())
 			tileManager = FindObjectOfType<SC_Tile_Manager> ();
 
+        uiManager = SC_UI_Manager.Instance;
+
         fightManager = SC_Fight_Manager.Instance;
 
         localPlayer = this;
@@ -36,6 +40,22 @@ public class SC_Player : NetworkBehaviour {
 	}
 
     #region Commands
+
+    #region Loading
+    [Command]
+    public void CmdFinishLoading() {
+
+        RpcFinishLoading();
+
+    }
+
+    [ClientRpc]
+    void RpcFinishLoading() {
+
+        localPlayer.uiManager.loadingPanel.SetActive(false);
+
+    }
+    #endregion
 
     #region Characters movements
     [Command]

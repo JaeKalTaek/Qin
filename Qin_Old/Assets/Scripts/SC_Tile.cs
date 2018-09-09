@@ -102,6 +102,9 @@ public class SC_Tile : NetworkBehaviour {
         if (!fightManager)
             fightManager = SC_Fight_Manager.Instance;
 
+        if ((int)transform.position.x == (gameManager.baseMapPrefab.GetComponent<SC_MapPrefab>().xSize - 1) && (int)transform.position.y == (gameManager.baseMapPrefab.GetComponent<SC_MapPrefab>().ySize - 1) && !isServer)
+            SC_Player.localPlayer.CmdFinishLoading();
+
     }
 
     void OnMouseDown() {
