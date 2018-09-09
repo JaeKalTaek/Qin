@@ -59,13 +59,6 @@ public class SC_Hero : SC_Character {
 
 	}
 
-	/*protected override void OnMouseDown () {
-
-		if(!gameManager.player.IsQin())
-			base.OnMouseDown ();
-
-	}*/
-
 	protected override void PrintMovements () {
 
 		if (CanMove || (berserk && !berserkTurn)) {

@@ -34,9 +34,15 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 	SC_UI_Manager uiManager;
 
-	SC_Tile_Manager tileManager;	
+	SC_Tile_Manager tileManager;
 
-	#region Setup
+    #region Setup
+    private void Awake () {
+
+        SC_Village.number = 0;
+
+    }
+
     void Start() {        
 
         turn = 1;

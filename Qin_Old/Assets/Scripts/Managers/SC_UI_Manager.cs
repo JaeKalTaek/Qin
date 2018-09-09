@@ -251,11 +251,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		int attackedDamages = 0;
 
-		string attackerDamagesString = "";
-
 		int attackerDamages = attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi;
-
-		string attackedDamagesString = "";
 
 		string attackedName = "";
 
@@ -280,11 +276,7 @@ public class SC_UI_Manager : MonoBehaviour {
 			if (!TileManager.GetTileAt(attacker.gameObject).Bastion && (rangedAttack && attacked.GetActiveWeapon ().ranged || !rangedAttack && !attacked.GetActiveWeapon ().IsBow ()))
                 attackedDamages = fightManager.CalcDamages(attacked, attacker, true);
 
-            attackedHP = (attacked.Health - attackerDamages).ToString ();
-
-			attackerDamagesString = attackerDamages.ToString ();
-
-			attackedDamagesString = attackedDamages.ToString ();
+            attackedHP = (attacked.Health - attackerDamages).ToString ();			
 
 			attackedCrit = attacked.CriticalHit.ToString ();
 
@@ -308,8 +300,8 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		SetText("AttackedHP", attackedHP);
 
-		SetText("AttackerDamages", attackerDamagesString);
-		SetText("AttackedDamages", attackedDamagesString);
+        SetText("AttackerDamages", attackerDamages.ToString());
+		SetText("AttackedDamages", attackedDamages.ToString());
 
 		SetText("AttackedWeapon", attackedWeapon);
 

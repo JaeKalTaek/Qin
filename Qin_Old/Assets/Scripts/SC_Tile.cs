@@ -106,40 +106,44 @@ public class SC_Tile : NetworkBehaviour {
 
     void OnMouseDown() {
 
-        if ((CurrentDisplay == TDisplay.Construct) && ((SC_Qin.Energy > SC_Qin.Qin.wallCost) || gameManager.Bastion)) {
+        if (SC_Player.localPlayer.Turn() && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) {
 
-            gameManager.ConstructAt(this);
+            if ((CurrentDisplay == TDisplay.Construct) && ((SC_Qin.Energy > SC_Qin.Qin.wallCost) || gameManager.Bastion)) {
 
-        } else if (CurrentDisplay == TDisplay.Movement) {
+                gameManager.ConstructAt(this);
 
-            SC_Player.localPlayer.CmdMoveCharacterTo((int)transform.position.x, (int)transform.position.y);
+            } else if (CurrentDisplay == TDisplay.Movement) {
 
-        } else if (CurrentDisplay == TDisplay.Attack) {
+                SC_Player.localPlayer.CmdMoveCharacterTo((int)transform.position.x, (int)transform.position.y);
 
-            fightManager.RangedAttack = !tileManager.IsNeighbor(tileManager.GetTileAt(SC_Character.attackingCharacter.gameObject), this);
+            } else if (CurrentDisplay == TDisplay.Attack) {
 
-            SC_Player.localPlayer.CmdPrepareForAttack(fightManager.RangedAttack, gameObject, !SC_Player.localPlayer.IsQin());
+                fightManager.RangedAttack = !tileManager.IsNeighbor(tileManager.GetTileAt(SC_Character.attackingCharacter.gameObject), this);
 
-            if(SC_Character.attackingCharacter.IsHero)
-                SC_Character.attackingCharacter.Hero.ChooseWeapon();
-            else
-                SC_Player.localPlayer.CmdAttack();
+                SC_Player.localPlayer.CmdPrepareForAttack(fightManager.RangedAttack, gameObject, !SC_Player.localPlayer.IsQin());
 
-        } else if (CurrentDisplay == TDisplay.Sacrifice) {
+                if (SC_Character.attackingCharacter.IsHero)
+                    SC_Character.attackingCharacter.Hero.ChooseWeapon();
+                else
+                    SC_Player.localPlayer.CmdAttack();
 
-            SC_Player.localPlayer.CmdChangeQinEnergy(SC_Qin.Qin.sacrificeValue);
+            } else if (CurrentDisplay == TDisplay.Sacrifice) {
 
-            RemoveFilter();
+                SC_Player.localPlayer.CmdChangeQinEnergy(SC_Qin.Qin.sacrificeValue);
 
-            Character.CanMove = false;
+                RemoveFilter();
 
-            SC_Player.localPlayer.CmdDestroyCharacter(Character.gameObject);
+                Character.CanMove = false;
 
-        } else if (CurrentDisplay == TDisplay.Resurrection) {
+                SC_Player.localPlayer.CmdDestroyCharacter(Character.gameObject);
 
-            uiManager.EndQinAction("qinPower");
+            } else if (CurrentDisplay == TDisplay.Resurrection) {
 
-            SC_Qin.UsePower(transform.position);
+                uiManager.EndQinAction("qinPower");
+
+                SC_Qin.UsePower(transform.position);
+
+            }
 
         }
 
