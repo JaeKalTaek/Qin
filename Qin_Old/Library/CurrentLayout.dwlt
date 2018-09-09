@@ -13,14 +13,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PixelRect:
     serializedVersion: 2
+<<<<<<< HEAD
     x: 0
     y: 42
     width: 1920
     height: 998
+=======
+    x: -1680
+    y: 72
+    width: 1680
+    height: 967
+>>>>>>> Florent
   m_ShowMode: 4
   m_Title: 
   m_RootView: {fileID: 8}
-  m_MinSize: {x: 950, y: 521}
+  m_MinSize: {x: 950, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &2
 MonoBehaviour:
@@ -37,9 +44,15 @@ MonoBehaviour:
   m_Position:
     serializedVersion: 2
     x: 0
+<<<<<<< HEAD
     y: 652
     width: 985
     height: 296
+=======
+    y: 631
+    width: 871
+    height: 286
+>>>>>>> Florent
   m_MinSize: {x: 100, y: 100}
   m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 22}
@@ -64,6 +77,7 @@ MonoBehaviour:
   - {fileID: 2}
   m_Position:
     serializedVersion: 2
+<<<<<<< HEAD
     x: 460
     y: 0
     width: 985
@@ -72,6 +86,16 @@ MonoBehaviour:
   m_MaxSize: {x: 4004, y: 8021}
   vertical: 1
   controlID: 87
+=======
+    x: 232
+    y: 0
+    width: 871
+    height: 917
+  m_MinSize: {x: 204, y: 342}
+  m_MaxSize: {x: 4004, y: 8042}
+  vertical: 1
+  controlID: 76
+>>>>>>> Florent
 --- !u!114 &4
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -87,9 +111,15 @@ MonoBehaviour:
   m_Position:
     serializedVersion: 2
     x: 0
+<<<<<<< HEAD
     y: 528
     width: 460
     height: 420
+=======
+    y: 511
+    width: 232
+    height: 406
+>>>>>>> Florent
   m_MinSize: {x: 232, y: 271}
   m_MaxSize: {x: 10002, y: 10021}
   m_ActualView: {fileID: 20}
@@ -115,12 +145,21 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
+<<<<<<< HEAD
     width: 460
     height: 948
   m_MinSize: {x: 232, y: 471}
   m_MaxSize: {x: 10002, y: 14021}
   vertical: 1
   controlID: 14
+=======
+    width: 232
+    height: 917
+  m_MinSize: {x: 232, y: 492}
+  m_MaxSize: {x: 10002, y: 14042}
+  vertical: 1
+  controlID: 95
+>>>>>>> Florent
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -135,12 +174,21 @@ MonoBehaviour:
   m_Children: []
   m_Position:
     serializedVersion: 2
+<<<<<<< HEAD
     x: 1445
     y: 0
     width: 475
     height: 948
   m_MinSize: {x: 275, y: 50}
   m_MaxSize: {x: 4000, y: 4000}
+=======
+    x: 1103
+    y: 0
+    width: 577
+    height: 917
+  m_MinSize: {x: 277, y: 71}
+  m_MaxSize: {x: 4002, y: 4021}
+>>>>>>> Florent
   m_ActualView: {fileID: 21}
   m_Panes:
   - {fileID: 21}
@@ -163,8 +211,13 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
+<<<<<<< HEAD
     width: 460
     height: 528
+=======
+    width: 232
+    height: 511
+>>>>>>> Florent
   m_MinSize: {x: 200, y: 200}
   m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 19}
@@ -191,8 +244,13 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
+<<<<<<< HEAD
     width: 1920
     height: 998
+=======
+    width: 1680
+    height: 967
+>>>>>>> Florent
   m_MinSize: {x: 950, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &9
@@ -211,7 +269,11 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
+<<<<<<< HEAD
     width: 1920
+=======
+    width: 1680
+>>>>>>> Florent
     height: 30
   m_MinSize: {x: 0, y: 0}
   m_MaxSize: {x: 0, y: 0}
@@ -231,8 +293,13 @@ MonoBehaviour:
   m_Position:
     serializedVersion: 2
     x: 0
+<<<<<<< HEAD
     y: 978
     width: 1920
+=======
+    y: 947
+    width: 1680
+>>>>>>> Florent
     height: 20
   m_MinSize: {x: 0, y: 0}
   m_MaxSize: {x: 0, y: 0}
@@ -255,12 +322,21 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 30
+<<<<<<< HEAD
     width: 1920
     height: 948
   m_MinSize: {x: 711, y: 471}
   m_MaxSize: {x: 18006, y: 14021}
   vertical: 0
   controlID: 86
+=======
+    width: 1680
+    height: 917
+  m_MinSize: {x: 713, y: 492}
+  m_MaxSize: {x: 18008, y: 14042}
+  vertical: 0
+  controlID: 75
+>>>>>>> Florent
 --- !u!114 &12
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -277,8 +353,13 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
+<<<<<<< HEAD
     width: 985
     height: 652
+=======
+    width: 871
+    height: 631
+>>>>>>> Florent
   m_MinSize: {x: 204, y: 221}
   m_MaxSize: {x: 4004, y: 4021}
   m_ActualView: {fileID: 17}
@@ -733,10 +814,17 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
+<<<<<<< HEAD
     x: 311
     y: 100
     width: 647
     height: 619
+=======
+    x: -1446
+    y: 121
+    width: 867
+    height: 610
+>>>>>>> Florent
   m_PersistentViewDataDictionary: {fileID: 0}
   m_MaximizeOnPlay: 0
   m_Gizmos: 0
@@ -748,10 +836,17 @@ MonoBehaviour:
     m_VRangeLocked: 0
     hZoomLockedByDefault: 0
     vZoomLockedByDefault: 0
+<<<<<<< HEAD
     m_HBaseRangeMin: -323.5
     m_HBaseRangeMax: 323.5
     m_VBaseRangeMin: -301
     m_VBaseRangeMax: 301
+=======
+    m_HBaseRangeMin: -433.5
+    m_HBaseRangeMax: 433.5
+    m_VBaseRangeMin: -296.5
+    m_VBaseRangeMax: 296.5
+>>>>>>> Florent
     m_HAllowExceedBaseRangeMin: 1
     m_HAllowExceedBaseRangeMax: 1
     m_VAllowExceedBaseRangeMin: 1
@@ -769,25 +864,43 @@ MonoBehaviour:
       serializedVersion: 2
       x: 0
       y: 17
+<<<<<<< HEAD
       width: 647
       height: 602
     m_Scale: {x: 1, y: 1}
     m_Translation: {x: 323.5, y: 301}
+=======
+      width: 867
+      height: 593
+    m_Scale: {x: 1, y: 1}
+    m_Translation: {x: 433.5, y: 296.5}
+>>>>>>> Florent
     m_MarginLeft: 0
     m_MarginRight: 0
     m_MarginTop: 0
     m_MarginBottom: 0
     m_LastShownAreaInsideMargins:
       serializedVersion: 2
+<<<<<<< HEAD
       x: -323.5
       y: -301
       width: 647
       height: 602
+=======
+      x: -433.5
+      y: -296.5
+      width: 867
+      height: 593
+>>>>>>> Florent
     m_MinimalGUI: 1
   m_defaultScale: 1
   m_TargetTexture: {fileID: 0}
   m_CurrentColorSpace: 0
+<<<<<<< HEAD
   m_LastWindowPixelSize: {x: 647, y: 619}
+=======
+  m_LastWindowPixelSize: {x: 867, y: 610}
+>>>>>>> Florent
   m_ClearInEditMode: 1
   m_NoCameraWarning: 1
   m_LowResolutionForAspectRatios: 01000000000100000100
@@ -812,10 +925,17 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
+<<<<<<< HEAD
     x: 462
     y: 91
     width: 981
     height: 631
+=======
+    x: -1446
+    y: 121
+    width: 867
+    height: 610
+>>>>>>> Florent
   m_PersistentViewDataDictionary: {fileID: 0}
   m_SceneLighting: 1
   lastFramingTime: 779.4931170912436
@@ -916,6 +1036,7 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
+<<<<<<< HEAD
     x: 0
     y: 91
     width: 458
@@ -926,6 +1047,18 @@ MonoBehaviour:
     m_SelectedIDs: 
     m_LastClickedID: 0
     m_ExpandedIDs: a824dbff4225dbffbc26dbffc026dbffa88bdfff049ddfff9e9ddfff189fdfff1c9fdfffe240e1ff7c41e1fff642e1fffa42e1ff6ecde2fffecde2ff78cfe2ff7ccfe2ff6600e9fff600e9ff7002e9ff7402e9ffbec0ebff4ec1ebffc8c2ebffccc2ebffb005f1ff4006f1ffaa07f1ffae07f1ff2629f1ffa836f1ff885bf2ff185cf2ff945df2ff9c5df2ffb25ef2ff70a1f5ff6ea2f5ffe6fbffff000000004eeb0000
+=======
+    x: -1680
+    y: 121
+    width: 230
+    height: 490
+  m_PersistentViewDataDictionary: {fileID: 0}
+  m_TreeViewState:
+    scrollPos: {x: 0, y: 0}
+    m_SelectedIDs: fe2d0000d42d0000102e00004c2e0000822e00005e2e0000c22d0000702e0000b22e00007c2e0000582e0000342e00009a2e0000a02e0000642e00002e2e0000402e0000
+    m_LastClickedID: 0
+    m_ExpandedIDs: 9a7afeff00000000
+>>>>>>> Florent
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -969,10 +1102,17 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
+<<<<<<< HEAD
     x: 0
     y: 619
     width: 458
     height: 399
+=======
+    x: -1680
+    y: 632
+    width: 230
+    height: 385
+>>>>>>> Florent
   m_PersistentViewDataDictionary: {fileID: 0}
   m_SearchFilter:
     m_NameFilter: 
@@ -986,20 +1126,35 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 1
     m_Folders:
+<<<<<<< HEAD
     - Assets/Prefabs/Attacks
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
   - Assets/Prefabs/Attacks
+=======
+    - Assets/Resources/Sprites/Wall
+  m_ViewMode: 1
+  m_StartGridSize: 16
+  m_LastFolders:
+  - Assets/Resources/Sprites/Wall
+>>>>>>> Florent
   m_LastFoldersGridSize: 16
-  m_LastProjectPath: C:\Users\Ben\Documents\Qin\Qin_Old
+  m_LastProjectPath: C:\Users\Florent\Documents\Qin\Qin_Old
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
+<<<<<<< HEAD
     scrollPos: {x: 0, y: 102}
     m_SelectedIDs: 1c390000
     m_LastClickedID: 14620
     m_ExpandedIDs: 00000000d22b0000d22c0000f62c0000822d0000b63700005c380000603800006c390000743900008a3c00008c3c00008e3c0000903c0000923c0000943c0000963c000000ca9a3b
+=======
+    scrollPos: {x: 0, y: 31}
+    m_SelectedIDs: 388f0000
+    m_LastClickedID: 36664
+    m_ExpandedIDs: 000000001c8f0000668f0000d08f0000f08f00004690000092900000069100000a91000038910000c4910000cc9100001a9300001c9300001e93000020930000229300002493000026930000
+>>>>>>> Florent
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1027,7 +1182,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000d22b0000d22c0000f62c0000822d0000b63700005c380000603800006c390000743900008a3c00008c3c00008e3c0000903c0000923c0000943c0000963c0000
+    m_ExpandedIDs: 000000001c8f0000d08f0000f08f00004690000092900000069100000a910000c4910000cc9100001a9300001c9300001e93000020930000229300002493000026930000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1081,7 +1236,11 @@ MonoBehaviour:
     m_NewAssetIndexInList: -1
     m_ScrollPosition: {x: 0, y: 0}
     m_GridSize: 16
+<<<<<<< HEAD
   m_DirectoriesAreaWidth: 160
+=======
+  m_DirectoriesAreaWidth: 110
+>>>>>>> Florent
 --- !u!114 &21
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -1102,10 +1261,17 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
+<<<<<<< HEAD
     x: 1447
     y: 91
     width: 473
     height: 927
+=======
+    x: -575
+    y: 121
+    width: 575
+    height: 896
+>>>>>>> Florent
   m_PersistentViewDataDictionary: {fileID: 0}
   m_ObjectsLockedBeforeSerialization: []
   m_InstanceIDsLockedBeforeSerialization: 
@@ -1136,8 +1302,15 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
+<<<<<<< HEAD
     x: 462
     y: 743
     width: 981
     height: 275
+=======
+    x: -1446
+    y: 752
+    width: 867
+    height: 265
+>>>>>>> Florent
   m_PersistentViewDataDictionary: {fileID: 0}
