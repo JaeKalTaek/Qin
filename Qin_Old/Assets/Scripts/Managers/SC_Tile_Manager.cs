@@ -15,7 +15,14 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 	static SC_Game_Manager gameManager;
 
+    static SC_UI_Manager uiManager;
+
     public static SC_Tile_Manager Instance { get; set; }
+
+    //Variables used to determine the movements possible
+    public List<SC_Tile> OpenList { get; set; }
+    public List<SC_Tile> ClosedList { get; set; }
+    Dictionary<SC_Tile, int> movementPoints = new Dictionary<SC_Tile, int>();
 
     private void Awake() {
 
@@ -25,8 +32,9 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     void Start () {
 
-        if(!gameManager)
-            gameManager = SC_Game_Manager.Instance;
+        gameManager = SC_Game_Manager.Instance;
+
+        uiManager = SC_UI_Manager.Instance;
 
         FindObjectOfType<SC_Camera>().Setup(xSize, ySize);
 
@@ -40,7 +48,10 @@ public class SC_Tile_Manager : NetworkBehaviour {
 		if (gameManager.Player)
 			gameManager.Player.SetTileManager (this);
 
-	}
+        OpenList = new List<SC_Tile>();
+        ClosedList = new List<SC_Tile>();
+
+    }
 
 	public List<SC_Tile> GetRange(GameObject center) {
 
@@ -108,7 +119,86 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }
 
-	public SC_Tile GetTileAt(GameObject g) {
+    #region Display Movements
+    public void CheckMovements (SC_Character target) {
+
+        gameManager.CantCancelMovement = false;
+
+        SC_Character.CancelAttack();
+
+        SC_Character.characterToMove = target;
+
+        RemoveAllFilters();
+
+        uiManager.HideWeapons();
+        uiManager.villagePanel.SetActive(false);
+        uiManager.cancelMovementButton.SetActive(false);
+        uiManager.cancelAttackButton.SetActive(false);
+
+        SC_Tile tileTarget = GetTileAt(target.gameObject);
+
+        CalcRange(tileTarget, target);
+
+        foreach (SC_Tile tile in new List<SC_Tile>(ClosedList) { tileTarget })
+            if (tile.CanSetOn || (tile == tileTarget))
+                tile.ChangeDisplay(TDisplay.Movement);
+
+    }
+
+    void CalcRange (SC_Tile aStartingTile, SC_Character target) {
+
+        OpenList.Clear();
+        ClosedList.Clear();
+
+        movementPoints[aStartingTile] = target.movement;
+
+        bool berserk = false;
+        if (target.IsHero())
+            berserk = (((SC_Hero)target).berserk);
+
+        ExpandTile(aStartingTile, berserk);
+
+        while (OpenList.Count > 0) {
+
+            OpenList.Sort((a, b) => movementPoints[a].CompareTo(movementPoints[b]));
+
+            SC_Tile tile = OpenList[OpenList.Count - 1];
+
+            OpenList.RemoveAt(OpenList.Count - 1);
+
+            ExpandTile(tile, berserk);
+
+        }
+
+    }
+
+    void ExpandTile (SC_Tile aTile, bool berserk) {
+
+        int parentPoints = movementPoints[aTile];
+
+        ClosedList.Add(aTile);
+
+        foreach (SC_Tile tile in GetNeighbors(aTile)) {
+
+            if (ClosedList.Contains(tile) || OpenList.Contains(tile) || !tile.CanGoThrough)
+                continue;
+
+            int points = parentPoints - (berserk ? 1 : tile.cost);
+
+            if (points >= 0) {
+
+                OpenList.Add(tile);
+
+                movementPoints[tile] = points;
+
+            }
+
+        }
+
+    }
+    #endregion
+
+    public SC_Tile GetTileAt(GameObject g) {
 
 		return tiles [(int)g.transform.position.x, (int)g.transform.position.y];
 

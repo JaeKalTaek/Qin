@@ -101,7 +101,7 @@ public class SC_Character : NetworkBehaviour {
 
         LastPos = tileManager.GetTileAt(gameObject);
 
-        path = PathFinder(LastPos, target, gameManager.ClosedList);
+        path = PathFinder(LastPos, target, tileManager.ClosedList);
 
         if(path == null)
             FinishMovement(false);

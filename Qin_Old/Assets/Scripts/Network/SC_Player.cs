@@ -44,7 +44,7 @@ public class SC_Player : NetworkBehaviour {
     [ClientRpc]
     void RpcCheckMovements(int x, int y) {
 
-        localPlayer.gameManager.CheckMovements(localPlayer.tileManager.GetTileAt(x, y).Character);
+        localPlayer.tileManager.CheckMovements(localPlayer.tileManager.GetTileAt(x, y).Character);
 
     }
 
