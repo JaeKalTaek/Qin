@@ -273,3 +273,5 @@ C:\Users\Ben\Documents\Qin\Qin_Old\obj\Debug\Assembly-CSharp.csproj.CoreCompileI
 C:\Users\Ben\Documents\Qin\Qin_Old\obj\Debug\Assembly-CSharp.csproj.CopyComplete
 C:\Users\Ben\Documents\Qin\Qin_Old\obj\Debug\Assembly-CSharp.dll
 C:\Users\Ben\Documents\Qin\Qin_Old\obj\Debug\Assembly-CSharp.pdb
+C:\Users\Ben\Documents\Qin\Qin_Old\Temp\bin\Debug\UnityEditor.UI.dll
+C:\Users\Ben\Documents\Qin\Qin_Old\Temp\bin\Debug\UnityEditor.UI.xml

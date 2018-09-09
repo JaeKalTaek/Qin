@@ -117,7 +117,7 @@ public class SC_Character : NetworkBehaviour {
         if(path == null)
             FinishMovement(false);
         else
-            StartCoroutine("Move");
+            StartCoroutine(Move());
 
     }    
 

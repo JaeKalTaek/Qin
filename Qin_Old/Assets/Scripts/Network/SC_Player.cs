@@ -83,18 +83,19 @@ public class SC_Player : NetworkBehaviour {
 
     #region Attack
     [Command]
-	public void CmdPrepareForAttack(bool rangedAttack, GameObject targetTileObject) {
+	public void CmdPrepareForAttack(bool rangedAttack, GameObject targetTileObject, bool qin) {
 
-        RpcPrepareForAttack(rangedAttack, targetTileObject);
+        RpcPrepareForAttack(rangedAttack, targetTileObject, qin);
 
     }
 
 	[ClientRpc]
-	void RpcPrepareForAttack(bool rangedAttack, GameObject targetTileObject) {
+	void RpcPrepareForAttack(bool rangedAttack, GameObject targetTileObject, bool qin) {
 
         localPlayer.tileManager.RemoveAllFilters();
 
-        localPlayer.fightManager.RangedAttack = rangedAttack;
+        if (localPlayer.qin == qin)
+            localPlayer.fightManager.RangedAttack = rangedAttack;
 
         SC_Character.attackingCharacter.AttackTarget = targetTileObject.GetComponent<SC_Tile>();
 

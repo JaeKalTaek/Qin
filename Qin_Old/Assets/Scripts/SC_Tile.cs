@@ -86,6 +86,8 @@ public class SC_Tile : NetworkBehaviour {
 
     static SC_UI_Manager uiManager;
 
+    static SC_Fight_Manager fightManager;
+
 	void Start() {
 
         if(!gameManager)
@@ -97,7 +99,10 @@ public class SC_Tile : NetworkBehaviour {
         if(!uiManager)
             uiManager = SC_UI_Manager.Instance;
 
-	}
+        if (!fightManager)
+            fightManager = SC_Fight_Manager.Instance;
+
+    }
 
     void OnMouseDown() {
 
@@ -111,7 +116,9 @@ public class SC_Tile : NetworkBehaviour {
 
         } else if (CurrentDisplay == TDisplay.Attack) {
 
-            SC_Player.localPlayer.CmdPrepareForAttack(!tileManager.IsNeighbor(tileManager.GetTileAt(SC_Character.attackingCharacter.gameObject), this), gameObject);
+            fightManager.RangedAttack = !tileManager.IsNeighbor(tileManager.GetTileAt(SC_Character.attackingCharacter.gameObject), this);
+
+            SC_Player.localPlayer.CmdPrepareForAttack(fightManager.RangedAttack, gameObject, !SC_Player.localPlayer.IsQin());
 
             if(SC_Character.attackingCharacter.IsHero)
                 SC_Character.attackingCharacter.Hero.ChooseWeapon();

@@ -12,7 +12,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
     public SC_Tile_Manager TileManager { get; set; }
 
-    SC_Common_Heroes_Variables CommonHeroesVariables { get { return gameManager.commonHeroesVariables; } }
+    SC_Common_Characters_Variables CommonHeroesVariables { get { return gameManager.commonCharactersVariables; } }
 
     public static SC_Fight_Manager Instance;
 
@@ -44,45 +44,24 @@ public class SC_Fight_Manager : MonoBehaviour {
 
             SC_Character attacked = attacker.AttackTarget.Character;
             SC_Construction targetConstruction = attacker.AttackTarget.Construction;
+            SC_Construction currentConstruction = TileManager.GetTileAt(attacker.gameObject).Construction;
 
             if (attacked) {
 
-                bool killed = attacked.Hit(CalcDamages(attacker, attacked, false), false);
-                SetCritDodge(attacker, attacked);
+                CharacterAttack(attacker, attacked, targetConstruction, false);
 
-                if (attacker.IsHero && killed)
-                    IncreaseRelationships(attacker.Hero);
-
-                if ((RangedAttack && attacked.GetActiveWeapon().ranged) || (!RangedAttack && !attacked.GetActiveWeapon().IsBow())) {
-
-                    killed = attacker.Hit(CalcDamages(attacked, attacker, true), false);
-                    SetCritDodge(attacked, attacker);
-
-                    if (attacked.IsHero && killed)
-                        IncreaseRelationships(attacked.Hero);
-
-                }
-
-                //uiManager.TryRefreshInfos(attacked.gameObject, attacked.GetType());
+                if ((RangedAttack && attacked.GetActiveWeapon().ranged) || (!RangedAttack && !attacked.GetActiveWeapon().IsBow()))
+                    CharacterAttack(attacked, attacker, currentConstruction, true);
 
             } else if (targetConstruction) {
 
-                targetConstruction.health -= attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi;
-
-                targetConstruction.lifebar.UpdateGraph(targetConstruction.health, targetConstruction.maxHealth);
-
-                if (targetConstruction.health <= 0)
-                    targetConstruction.DestroyConstruction();
-                else
-                    uiManager.TryRefreshInfos(targetConstruction.gameObject, typeof(SC_Construction));
+                HitConstruction(attacker, targetConstruction, false);
 
             } else if (attacker.AttackTarget.Qin) {
 
                 SC_Qin.ChangeEnergy(-(attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi));
 
-            }
-
-            //uiManager.TryRefreshInfos(attacker.gameObject, attacker.GetType());            
+            }        
 
         }
 
@@ -93,10 +72,33 @@ public class SC_Fight_Manager : MonoBehaviour {
 
     }
 
-    void SetCritDodge (SC_Character attacker, SC_Character attacked) {
+    void CharacterAttack(SC_Character attacker, SC_Character attacked, SC_Construction attackedConstru, bool counter) {
+
+        bool killed = false;
+
+        if (attackedConstru && attackedConstru as SC_Bastion)
+            HitConstruction(attacker, attackedConstru, counter);
+        else
+            killed = attacked.Hit(CalcDamages(attacker, attacked, counter), false);
 
         attacker.CriticalHit = (attacker.CriticalHit == 0) ? attacker.technique : (attacker.CriticalHit - 1);
         attacked.DodgeHit = (attacked.DodgeHit == 0) ? attacked.speed : (attacked.DodgeHit - 1);
+
+        if (attacker.IsHero && killed)
+            IncreaseRelationships(attacker.Hero);
+
+    }
+
+    void HitConstruction(SC_Character attacker, SC_Construction construction, bool counter) {
+
+        construction.health -= Mathf.CeilToInt((attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi) / (counter ? CommonHeroesVariables.counterFactor : 1));
+
+        construction.lifebar.UpdateGraph(construction.health, construction.maxHealth);
+
+        if (construction.health <= 0)
+            construction.DestroyConstruction();
+        else
+            uiManager.TryRefreshInfos(construction.gameObject, typeof(SC_Construction));
 
     }
 
@@ -113,13 +115,13 @@ public class SC_Fight_Manager : MonoBehaviour {
             damages = Mathf.CeilToInt(damages * RelationMalus(attacker.Hero, attacked.Hero));
 
         if (attacker.CriticalHit == 0)
-            damages *= 3;
+            damages = Mathf.CeilToInt(damages * CommonHeroesVariables.critMultiplier);
 
         if (attacker.IsHero && attacker.Hero.berserk)
             damages = Mathf.CeilToInt(damages * CommonHeroesVariables.berserkDamageMultiplier);
 
         if (attacked.DodgeHit == 0)
-            damages = 0;
+            damages = Mathf.FloorToInt(damages * ((100 - CommonHeroesVariables.dodgeReductionPercentage) / 100));
 
         int boostedArmor = attacked.armor;
         int boostedResistance = attacked.resistance;
@@ -135,7 +137,7 @@ public class SC_Fight_Manager : MonoBehaviour {
         damages -= (attacker.GetActiveWeapon().weaponOrQi) ? boostedArmor : boostedResistance;
 
         if (counter)
-            damages = Mathf.CeilToInt(damages / 2);
+            damages = Mathf.CeilToInt(damages / CommonHeroesVariables.counterFactor);
 
         return Mathf.Max(0, damages);
 

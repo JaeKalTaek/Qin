@@ -5,7 +5,6 @@ public class SC_Lifebar : NetworkBehaviour {
 
 	Transform health, health2;
 	GameObject lifebar;
-    float maxSize;
 
     void Start() {
 
@@ -17,7 +16,7 @@ public class SC_Lifebar : NetworkBehaviour {
 
     public void UpdateGraph(int h, int maxH) {
 
-        float percentage = (float)h / (float)maxH;
+        float percentage = h / maxH;
 
         health.localScale = new Vector3(percentage, 1, 1);
         health2.localScale = new Vector3(percentage, 1, 1);

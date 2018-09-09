@@ -9,7 +9,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 	public GameObject baseMapPrefab;
     public GameObject plainPrefab, forestPrefab, mountainPrefab, palacePrefab;
     public GameObject qinPrefab, soldierPrefab, convoyPrefab;
-    public SC_Common_Heroes_Variables commonHeroesVariables;
+    public SC_Common_Characters_Variables commonCharactersVariables;
 	public List<GameObject> heroPrefabs;
 	public GameObject bastionPrefab, wallPrefab, workshopPrefab, villagePrefab;
 	public GameObject tileManagerPrefab;

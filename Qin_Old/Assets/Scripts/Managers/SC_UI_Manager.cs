@@ -59,7 +59,6 @@ public class SC_UI_Manager : MonoBehaviour {
 
         fightManager = SC_Fight_Manager.Instance;
 
-
         if (!qin) {
 
 			usePower.SetActive (true);
@@ -131,7 +130,7 @@ public class SC_UI_Manager : MonoBehaviour {
 			else if (t == typeof(SC_Construction))
 				ShowConstructionsInfos (g.GetComponent<SC_Construction> ());
 			else if (t == typeof(SC_Qin))
-				ShowQinInfos (g.GetComponent<SC_Qin> ());
+				ShowQinInfos ();
 			else
 				print ("ERRROR");
 
@@ -230,7 +229,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
 	}
 
-	void ShowQinInfos(SC_Qin qin) {
+	void ShowQinInfos() {
 
 		qinPanel.SetActive (true);
 
@@ -268,7 +267,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		string attackedDodge = "";
 
-		if (attacker.AttackTarget.Character) {
+		if (attacker.AttackTarget.Character && (!attacker.AttackTarget.Construction || !attacker.AttackTarget.Bastion)) {
 
 			SC_Character attacked = attacker.AttackTarget.Character;
 
@@ -277,11 +276,11 @@ public class SC_UI_Manager : MonoBehaviour {
 			attackedWeapon = attacked.GetActiveWeapon ().weaponName;
 
 			attackerDamages = fightManager.CalcDamages (attacker, attacked, false);
-			attackedDamages = fightManager.CalcDamages (attacked, attacker, true);
-			if (!((rangedAttack && attacked.GetActiveWeapon ().ranged) || (!rangedAttack && !attacked.GetActiveWeapon ().IsBow ())))
-				attackedDamages = 0;
+			
+			if (!TileManager.GetTileAt(attacker.gameObject).Bastion && (rangedAttack && attacked.GetActiveWeapon ().ranged || !rangedAttack && !attacked.GetActiveWeapon ().IsBow ()))
+                attackedDamages = fightManager.CalcDamages(attacked, attacker, true);
 
-			attackedHP = (attacked.Health - attackerDamages).ToString ();
+            attackedHP = (attacked.Health - attackerDamages).ToString ();
 
 			attackerDamagesString = attackerDamages.ToString ();
 
@@ -293,13 +292,11 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		} else {
 
-            SC_Construction attackedConstruction = attacker.AttackTarget.Construction;
+            int attackedType = attacker.AttackTarget.Construction ? 0 : attacker.AttackTarget.Qin ? 1 : 2;
 
-            int attackedType = attackedConstruction ? 0 : attacker.AttackTarget.Qin ? 1 : 2;
+			attackedName = (attackedType == 0) ? attacker.AttackTarget.Construction.buildingName : (attackedType == 1) ? "Qin" : "";			
 
-			attackedName = (attackedType == 0) ? attackedConstruction.buildingName : (attackedType == 1) ? "Qin" : "";			
-
-			int attackedHealth = (attackedType == 0) ? attackedConstruction.health : (attackedType == 1) ? SC_Qin.Energy : 0;
+			int attackedHealth = (attackedType == 0) ? attacker.AttackTarget.Construction.health : (attackedType == 1) ? SC_Qin.Energy : 0;
 
 			if (attackedType != 2) attackedHP = (attackedHealth - attackerDamages).ToString ();
 
