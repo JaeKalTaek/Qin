@@ -6,4 +6,6 @@ public class SC_Enums {
 
     public enum TDisplay { None, Movement, Attack, Construct, Sacrifice, Resurrection }
 
+    public enum ShiFuMi { Rock, Paper, Scissors, Special }
+
 }

@@ -189,11 +189,11 @@ public class SC_UI_Manager : MonoBehaviour {
 		SetText("Weapon 1", "  - " + hero.GetWeapon(true).weaponName + " (E)");
 		SetText("Weapon 2", "  - " + hero.GetWeapon(false).weaponName);
 
-		for (int i = 0; i < hero.relationshipKeys.Count; i++) {
+		for (int i = 0; i < hero.RelationshipKeys.Count; i++) {
 
 			int value;
-			hero.relationships.TryGetValue(hero.relationshipKeys [i], out value);
-			GameObject.Find ("Relation_" + (i + 1)).GetComponent<Text> ().text = "  " + hero.relationshipKeys [i] + " : " + value;
+			hero.Relationships.TryGetValue(hero.RelationshipKeys [i], out value);
+			GameObject.Find ("Relation_" + (i + 1)).GetComponent<Text> ().text = "  " + hero.RelationshipKeys [i] + " : " + value;
 
 		}
 
@@ -225,7 +225,7 @@ public class SC_UI_Manager : MonoBehaviour {
 		buildingInfosPanel.SetActive (true);
 
 		SetText("BuildingName", construction.buildingName);
-		SetText("BuildingHealth", (construction.GetType ().Equals (typeof(SC_Village))) ? "" : "Health : " + construction.health + " / " + construction.maxHealth);
+		SetText("BuildingHealth", (construction.GetType ().Equals (typeof(SC_Village))) ? "" : "Health : " + construction.Health + " / " + construction.maxHealth);
 
 	}
 
@@ -273,7 +273,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
 			attackerDamages = fightManager.CalcDamages (attacker, attacked, false);
 			
-			if (!TileManager.GetTileAt(attacker.gameObject).Bastion && (rangedAttack && attacked.GetActiveWeapon ().ranged || !rangedAttack && !attacked.GetActiveWeapon ().IsBow ()))
+			if (!TileManager.GetTileAt(attacker.gameObject).Bastion && (rangedAttack && attacked.GetActiveWeapon ().ranged || !rangedAttack && !attacked.GetActiveWeapon ().IsBow))
                 attackedDamages = fightManager.CalcDamages(attacked, attacker, true);
 
             attackedHP = (attacked.Health - attackerDamages).ToString ();			
@@ -288,7 +288,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
 			attackedName = (attackedType == 0) ? attacker.AttackTarget.Construction.buildingName : (attackedType == 1) ? "Qin" : "";			
 
-			int attackedHealth = (attackedType == 0) ? attacker.AttackTarget.Construction.health : (attackedType == 1) ? SC_Qin.Energy : 0;
+			int attackedHealth = (attackedType == 0) ? attacker.AttackTarget.Construction.Health : (attackedType == 1) ? SC_Qin.Energy : 0;
 
 			if (attackedType != 2) attackedHP = (attackedHealth - attackerDamages).ToString ();
 

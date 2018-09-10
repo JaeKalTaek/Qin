@@ -186,15 +186,15 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 				if (!CoalitionTurn) {
 
-					if (character.Hero.powerUsed)
-                        character.Hero.powerBacklash++;
+					if (character.Hero.PowerUsed)
+                        character.Hero.PowerBacklash++;
 
-					if (character.Hero.powerBacklash >= 2)
+					if (character.Hero.PowerBacklash >= 2)
                         character.Hero.DestroyCharacter ();  
 
 				} else {
 
-                    character.Hero.berserkTurn = false;
+                    character.Hero.BerserkTurn = false;
 
 				}
 
@@ -371,7 +371,7 @@ public class SC_Game_Manager : NetworkBehaviour {
     public void UseHeroPower() {
 
 		SC_Hero hero = GameObject.Find (GameObject.Find ("PowerHero").GetComponentInChildren<Text> ().name).GetComponent<SC_Hero>();
-		hero.powerUsed = true;
+		hero.PowerUsed = true;
 
 		GameObject.Find ("PowerHero").SetActive (false);
 

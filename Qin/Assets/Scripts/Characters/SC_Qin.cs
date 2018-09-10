@@ -69,14 +69,14 @@ public class SC_Qin : NetworkBehaviour {
 
 		hero.transform.SetPos(pos);
 		hero.coalition = false;
-		hero.powerUsed = false;
-		hero.powerBacklash = 0;
+		hero.PowerUsed = false;
+		hero.PowerBacklash = 0;
 		hero.SetBaseColor (new Color (255, 0, 205));
 		hero.Health = hero.maxHealth;
 		hero.Lifebar.UpdateGraph(hero.Health, hero.maxHealth);
         hero.CanMove = true;
-		hero.berserk = false;
-		hero.berserkTurn = false;
+		hero.Berserk = false;
+		hero.BerserkTurn = false;
 		hero.UnTired ();
 
 		Quaternion rotation = Quaternion.identity;

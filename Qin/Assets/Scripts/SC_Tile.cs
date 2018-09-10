@@ -67,6 +67,8 @@ public class SC_Tile : NetworkBehaviour {
 
     public SC_Wall Wall { get { return Construction as SC_Wall; } }
 
+    public SC_Workshop Workshop { get { return Construction as SC_Workshop; } }
+
     public SC_Character Character { get; set; }
 
     public SC_Soldier Soldier { get { return Character as SC_Soldier; } }

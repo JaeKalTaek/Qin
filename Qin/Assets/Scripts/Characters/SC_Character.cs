@@ -175,20 +175,27 @@ public class SC_Character : NetworkBehaviour {
 
         if(IsHero) {
 
-            CanMove = (Hero.berserk && !Hero.berserkTurn);
+            CanMove = (Hero.Berserk && !Hero.BerserkTurn);
 
-            if (target?.Village || LastPos.Village) {
+            if (moved && target.Village && SC_Player.localPlayer.Turn()) {
 
-                if (SC_Player.localPlayer.Turn())
-                    uiManager.villagePanel.SetActive(true);
-
-            } else if (moved && target.Construction && !target.Village) {
-                
-                gameManager.CantCancelMovement = true;
-
-                CheckAttack();
+                uiManager.villagePanel.SetActive(true);
 
             } else {
+
+                if (moved) {
+
+                    if (target.Workshop) {
+
+                        target.Workshop.DestroyConstruction();
+
+                        gameManager.CantCancelMovement = true;
+
+                    }
+
+                    Hero.ReadyToRegen = false;
+
+                }              
 
                 if(SC_Player.localPlayer.Turn())
                     uiManager.cancelMovementButton.SetActive(true);
@@ -294,7 +301,7 @@ public class SC_Character : NetworkBehaviour {
             attackingCharacter.Tire();
 
             if(attackingCharacter.IsHero)
-                attackingCharacter.Hero.berserkTurn = attackingCharacter.Hero.berserk;
+                attackingCharacter.Hero.BerserkTurn = attackingCharacter.Hero.Berserk;
 
             attackingCharacter = null;
 

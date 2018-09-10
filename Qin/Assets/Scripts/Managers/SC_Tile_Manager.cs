@@ -223,7 +223,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         bool berserk = false;
         if (target.IsHero)
-            berserk = target.Hero.berserk;
+            berserk = target.Hero.Berserk;
 
         ExpandTile(aStartingTile, berserk);
 

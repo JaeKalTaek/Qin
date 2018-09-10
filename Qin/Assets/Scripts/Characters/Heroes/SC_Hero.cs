@@ -4,29 +4,28 @@ using static SC_Enums;
 
 public class SC_Hero : SC_Character {
 
-	//Relationships
-	[HideInInspector]
-	public Dictionary<string, int> relationships;
-	[HideInInspector]
-	public List<string> relationshipKeys;
+	//Relationships	
+	public Dictionary<string, int> Relationships { get; set; }
+	public List<string> RelationshipKeys { get; set; }
+
 	bool saved;
 
-	//Berserk
-	[HideInInspector]
-	public bool berserk, berserkTurn;
+	//Berserk	
+	public bool Berserk { get; set; }
+    public bool BerserkTurn { get; set; }
 
 	//Weapons
 	public SC_Weapon weapon1, weapon2;
 
-	//power
-	[HideInInspector]
-	public bool powerUsed;
-	[HideInInspector]
-	public int powerBacklash;
+	//power	
+	public bool PowerUsed { get; set; }
+	public int PowerBacklash { get; set; }
 
 	Color berserkColor;
 
 	static int heroesAlive;
+
+    public bool ReadyToRegen { get; set; }
 
 	protected override void Awake() {
 
@@ -42,14 +41,15 @@ public class SC_Hero : SC_Character {
 
 		base.Start();
 
-		relationships = new Dictionary<string, int> ();
+		Relationships = new Dictionary<string, int> ();
+        RelationshipKeys = new List<string>();
 
-		foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
+        foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
 
 			if (!ReferenceEquals (hero, this)) {
 
-				relationships.Add (hero.characterName, 0);
-				relationshipKeys.Add (hero.characterName);
+				Relationships.Add (hero.characterName, 0);
+				RelationshipKeys.Add (hero.characterName);
 
 			}
 
@@ -61,11 +61,11 @@ public class SC_Hero : SC_Character {
 
 	protected override void PrintMovements () {
 
-		if (CanMove || (berserk && !berserkTurn)) {
+		if (CanMove || (Berserk && !BerserkTurn)) {
 
             SC_Player.localPlayer.CmdCheckMovements((int)transform.position.x, (int)transform.position.y);
 
-            uiManager.ShowHeroPower (powerUsed, name);
+            uiManager.ShowHeroPower (PowerUsed, name);
 
 		}
 
@@ -98,10 +98,10 @@ public class SC_Hero : SC_Character {
 		uiManager.cancelMovementButton.SetActive (false);
 		uiManager.cancelAttackButton.SetActive (true);
 
-		if ((fightManager.RangedAttack && weapon1.ranged) || (!fightManager.RangedAttack && !weapon1.IsBow ()))
+		if ((fightManager.RangedAttack && weapon1.ranged) || (!fightManager.RangedAttack && !weapon1.IsBow))
 			uiManager.ShowWeapon (GetWeapon (true), true);
 
-		if ((fightManager.RangedAttack && weapon2.ranged) || (!fightManager.RangedAttack && !weapon2.IsBow ()))
+		if ((fightManager.RangedAttack && weapon2.ranged) || (!fightManager.RangedAttack && !weapon2.IsBow))
 			uiManager.ShowWeapon (GetWeapon (false), false);
 
 	}
@@ -118,8 +118,16 @@ public class SC_Hero : SC_Character {
 
 		if (tileManager.GetTileAt(gameObject).Village) {
 
-			Health = Mathf.Min (Health + gameManager.commonCharactersVariables.villageRegen, maxHealth);
-            UpdateHealth();
+            if (ReadyToRegen) {
+
+                Health = Mathf.Min(Health + gameManager.commonCharactersVariables.villageRegen, maxHealth);
+                UpdateHealth();
+
+            } else {
+
+                ReadyToRegen = true;
+
+            }
 
         }
 
@@ -136,8 +144,8 @@ public class SC_Hero : SC_Character {
 			if (saving) {
 
                 Health = gameManager.commonCharactersVariables.savedHealthAmount;
-				berserk = true;
-				berserkTurn = true;
+				Berserk = true;
+				BerserkTurn = true;
 
 				GetComponent<Renderer> ().material.color = Color.cyan;
 
@@ -164,12 +172,12 @@ public class SC_Hero : SC_Character {
 
 			CanMove = gameManager.CoalitionTurn;
 
-			berserkTurn = true;
+			BerserkTurn = true;
 
-			if(!berserk)
+			if(!Berserk)
 				GetComponent<Renderer> ().material.color = Color.cyan;
 
-			berserk = true;
+			Berserk = true;
 
 		}
 
@@ -182,13 +190,13 @@ public class SC_Hero : SC_Character {
 
 	public override void Tire() {
 
-		if (!berserk || berserkTurn) base.Tire ();
+		if (!Berserk || BerserkTurn) base.Tire ();
 
 	}
 
 	public override void UnTired() {
 
-		if (berserk)
+		if (Berserk)
 			GetComponent<SpriteRenderer> ().color = berserkColor;
 		else
 			base.UnTired ();
@@ -206,12 +214,12 @@ public class SC_Hero : SC_Character {
 		foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
 
 			int value = 0;
-			relationships.TryGetValue (hero.characterName, out value);
+			Relationships.TryGetValue (hero.characterName, out value);
 
 			if (value >= gameManager.commonCharactersVariables.berserkTriggerRelation) {
 
-				hero.berserk = true;
-				hero.berserkTurn = true;
+				hero.Berserk = true;
+				hero.BerserkTurn = true;
 				hero.CanMove = gameManager.CoalitionTurn;
 
 				hero.GetComponent<Renderer> ().material.color = Color.cyan;

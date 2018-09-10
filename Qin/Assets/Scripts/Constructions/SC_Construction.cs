@@ -8,11 +8,9 @@ public class SC_Construction : NetworkBehaviour {
 	public string buildingName;
 
 	public int maxHealth;
-	[HideInInspector]
-	public int health;
+	public int Health { get; set; }
 
-	[HideInInspector]
-	public SC_Lifebar lifebar;
+	public SC_Lifebar Lifebar { get; set; }
 
 	protected static SC_Game_Manager gameManager;
 
@@ -31,7 +29,7 @@ public class SC_Construction : NetworkBehaviour {
 		if (!uiManager)
 			uiManager = FindObjectOfType<SC_UI_Manager> ();
 
-		health = maxHealth;
+		Health = maxHealth;
 
         tileManager.GetTileAt(gameObject).Construction = this;
 

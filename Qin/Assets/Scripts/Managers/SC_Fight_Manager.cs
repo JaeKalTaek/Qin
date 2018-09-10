@@ -50,7 +50,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
                 CharacterAttack(attacker, attacked, targetConstruction, false);
 
-                if ((RangedAttack && attacked.GetActiveWeapon().ranged) || (!RangedAttack && !attacked.GetActiveWeapon().IsBow()))
+                if ((RangedAttack && attacked.GetActiveWeapon().ranged) || (!RangedAttack && !attacked.GetActiveWeapon().IsBow))
                     CharacterAttack(attacked, attacker, currentConstruction, true);
 
             } else if (targetConstruction) {
@@ -66,7 +66,7 @@ public class SC_Fight_Manager : MonoBehaviour {
         }
 
         if (attacker.IsHero)
-            attacker.Hero.berserkTurn = attacker.Hero.berserk;
+            attacker.Hero.BerserkTurn = attacker.Hero.Berserk;
 
         SC_Character.attackingCharacter = null;
 
@@ -91,11 +91,11 @@ public class SC_Fight_Manager : MonoBehaviour {
 
     void HitConstruction(SC_Character attacker, SC_Construction construction, bool counter) {
 
-        construction.health -= Mathf.CeilToInt((attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi) / (counter ? CommonHeroesVariables.counterFactor : 1));
+        construction.Health -= Mathf.CeilToInt((attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi) / (counter ? CommonHeroesVariables.counterFactor : 1));
 
-        construction.lifebar.UpdateGraph(construction.health, construction.maxHealth);
+        construction.Lifebar.UpdateGraph(construction.Health, construction.maxHealth);
 
-        if (construction.health <= 0)
+        if (construction.Health <= 0)
             construction.DestroyConstruction();
         else
             uiManager.TryRefreshInfos(construction.gameObject, typeof(SC_Construction));
@@ -106,7 +106,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
         int damages = attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi;
 
-        damages = Mathf.CeilToInt(damages * attacker.GetActiveWeapon().ShiFuMi(attacked.GetActiveWeapon()));
+        damages = Mathf.CeilToInt(damages * attacker.GetActiveWeapon().ShiFuMiModifier(attacked.GetActiveWeapon()));
 
         if (attacker.IsHero)
             damages += Mathf.CeilToInt(damages * RelationBoost(attacker.Hero));
@@ -117,7 +117,7 @@ public class SC_Fight_Manager : MonoBehaviour {
         if (attacker.CriticalHit == attacker.technique)
             damages = Mathf.CeilToInt(damages * CommonHeroesVariables.critMultiplier);
 
-        if (attacker.IsHero && attacker.Hero.berserk)
+        if (attacker.IsHero && attacker.Hero.Berserk)
             damages = Mathf.CeilToInt(damages * CommonHeroesVariables.berserkDamageMultiplier);
 
         if (attacked.DodgeHit == attacked.speed)
@@ -146,7 +146,7 @@ public class SC_Fight_Manager : MonoBehaviour {
     float RelationMalus (SC_Hero target, SC_Hero opponent) {
 
         int value;
-        target.relationships.TryGetValue(opponent.characterName, out value);
+        target.Relationships.TryGetValue(opponent.characterName, out value);
 
         return 1 - RelationValue(value);
 
@@ -159,7 +159,7 @@ public class SC_Fight_Manager : MonoBehaviour {
         foreach (SC_Hero hero in TileManager.HeroesInRange(target)) {
 
             int value;
-            target.relationships.TryGetValue(hero.characterName, out value);
+            target.Relationships.TryGetValue(hero.characterName, out value);
 
             boost += RelationValue(value);
 
@@ -192,11 +192,11 @@ public class SC_Fight_Manager : MonoBehaviour {
                 if (hero.coalition) {
 
                     int value = 0;
-                    toSave.relationships.TryGetValue(hero.characterName, out value);
+                    toSave.Relationships.TryGetValue(hero.characterName, out value);
 
                     int currentValue = -1;
                     if (saver)
-                        toSave.relationships.TryGetValue(saver.characterName, out currentValue);
+                        toSave.Relationships.TryGetValue(saver.characterName, out currentValue);
 
                     if ((value >= CommonHeroesVariables.saveTriggerRelation) && (value > currentValue))
                         saver = hero;
@@ -233,8 +233,8 @@ public class SC_Fight_Manager : MonoBehaviour {
 
         foreach (SC_Hero hero in heroesInRange) {
 
-            killer.relationships[hero.characterName] += Mathf.CeilToInt(CommonHeroesVariables.killRelationValue / heroesInRange.Count);
-            hero.relationships[killer.characterName] += Mathf.CeilToInt(CommonHeroesVariables.killRelationValue / heroesInRange.Count);
+            killer.Relationships[hero.characterName] += Mathf.CeilToInt(CommonHeroesVariables.killRelationValue / heroesInRange.Count);
+            hero.Relationships[killer.characterName] += Mathf.CeilToInt(CommonHeroesVariables.killRelationValue / heroesInRange.Count);
 
         }
 
