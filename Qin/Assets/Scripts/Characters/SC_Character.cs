@@ -86,7 +86,7 @@ public class SC_Character : NetworkBehaviour {
 
 	protected virtual void OnMouseDown() {
 
-		if (SC_Player.localPlayer.Turn() && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() && (tileManager.GetTileAt(gameObject).CurrentDisplay == TDisplay.None))
+		if (SC_Player.localPlayer.Turn && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() && (tileManager.GetTileAt(gameObject).CurrentDisplay == TDisplay.None))
             PrintMovements();          
 
 	}
@@ -177,7 +177,7 @@ public class SC_Character : NetworkBehaviour {
 
             CanMove = (Hero.Berserk && !Hero.BerserkTurn);
 
-            if (moved && target.Village && SC_Player.localPlayer.Turn()) {
+            if (moved && target.Village && SC_Player.localPlayer.Turn) {
 
                 uiManager.villagePanel.SetActive(true);
 
@@ -197,7 +197,7 @@ public class SC_Character : NetworkBehaviour {
 
                 }              
 
-                if(SC_Player.localPlayer.Turn())
+                if(SC_Player.localPlayer.Turn)
                     uiManager.cancelMovementButton.SetActive(true);
 
                 CheckAttack();
@@ -211,7 +211,7 @@ public class SC_Character : NetworkBehaviour {
                 tileManager.GetAt<SC_Convoy>(target).DestroyConvoy();
                 gameManager.cantCancelMovement = true;
 
-            } else*/ if(SC_Player.localPlayer.Turn()) {
+            } else*/ if(SC_Player.localPlayer.Turn) {
 
                 uiManager.cancelMovementButton.SetActive(true);
 
@@ -274,6 +274,26 @@ public class SC_Character : NetworkBehaviour {
         return (path.Count > 1) ? path : null;
 
 	}
+
+    public void ResetMovementFunction () {
+
+        tileManager.RemoveAllFilters();
+
+        tileManager.GetTileAt(gameObject).Character = null;
+
+        transform.SetPos(LastPos.transform);
+
+        LastPos.Character = this;
+
+        CanMove = true;
+
+        tileManager.CheckMovements(this);
+
+        UnTired();
+
+        uiManager.cancelMovementButton.SetActive(false);
+
+    }
 
     public void CheckAttack() {
 

@@ -267,26 +267,6 @@ public class SC_Tile_Manager : NetworkBehaviour {
     }
     #endregion
 
-    public void ResetMovementFunction () {
-
-        RemoveAllFilters();
-
-        GetTileAt(SC_Character.characterToMove.gameObject).Character = null;
-
-        SC_Character.characterToMove.transform.SetPos(SC_Character.characterToMove.LastPos.transform);
-
-        SC_Character.characterToMove.LastPos.Character = SC_Character.characterToMove;
-
-        SC_Character.characterToMove.CanMove = true;
-
-        CheckMovements(SC_Character.characterToMove);
-
-        SC_Character.characterToMove.UnTired();
-
-        uiManager.cancelMovementButton.SetActive(false);
-
-    }
-
     public void DisplayConstructableTiles () {
 
         List<SC_Tile> constructableTiles = new List<SC_Tile>();

@@ -111,7 +111,7 @@ public class SC_Tile : NetworkBehaviour {
 
     void OnMouseDown() {
 
-        if (SC_Player.localPlayer.Turn() && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) {
+        if (SC_Player.localPlayer.Turn && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) {
 
             if ((CurrentDisplay == TDisplay.Construct) && ((SC_Qin.Energy > SC_Qin.Qin.wallCost) || gameManager.Bastion)) {
 

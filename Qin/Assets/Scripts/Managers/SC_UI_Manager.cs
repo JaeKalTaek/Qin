@@ -4,7 +4,8 @@ using System;
 
 public class SC_UI_Manager : MonoBehaviour {
 
-	[Header("Game")]
+    #region UI Elements
+    [Header("Game")]
 	public GameObject loadingPanel;
 	public Text turns;
 	public GameObject health;
@@ -31,11 +32,14 @@ public class SC_UI_Manager : MonoBehaviour {
 	public Text energyText;
 	public GameObject qinPanel;
 	public Transform construct;
+    public GameObject buildingPanel;
 	public Transform qinPower;
 	public Transform sacrifice;
 	public GameObject workshopPanel;
+    #endregion
 
-	public GameObject CurrentGameObject { get; set; }
+    #region Variables
+    public GameObject CurrentGameObject { get; set; }
 
 	static SC_Game_Manager gameManager;
 
@@ -44,7 +48,9 @@ public class SC_UI_Manager : MonoBehaviour {
     static SC_Fight_Manager fightManager;
 
     public static SC_UI_Manager Instance { get; set; }
+    #endregion
 
+    #region Setup
     private void Awake() {
 
         Instance = this;
@@ -67,8 +73,9 @@ public class SC_UI_Manager : MonoBehaviour {
 		}
 
 	}
+    #endregion
 
-	public void NextTurn(bool coalition, int turn) {
+    public void NextTurn(bool coalition, int turn) {
 
 		HideWeapons();
 
@@ -99,7 +106,8 @@ public class SC_UI_Manager : MonoBehaviour {
 
 	}
 
-	/*public void ToggleButton(string id) {
+    #region Buttons
+    /*public void ToggleButton(string id) {
 
         foreach(Transform t in (Transform)typeof(SC_UI_Manager).GetField(id).GetValue(this))
             t.gameObject.SetActive(t.gameObject.activeSelf);
@@ -118,7 +126,9 @@ public class SC_UI_Manager : MonoBehaviour {
         SetButtonActivated(b, b != id);
 
     }
+    #endregion
 
+    #region Infos
     public void ShowHideInfos(GameObject g, Type t) {
 
 		if(HideInfos (g)) {
@@ -207,18 +217,7 @@ public class SC_UI_Manager : MonoBehaviour {
 		SetText("Weapon 1", "  - " + soldier.weapon.weaponName);
 		SetText("Weapon 2", "");
 
-	}
-
-	public void ShowWeapon(SC_Weapon weapon, bool first) {
-
-		if (first)
-			weaponChoice1.SetActive (true);
-		else
-			weaponChoice2.SetActive (true);
-
-		SetText("Weapon Choice " + (first ? "1" : "2") + " Text", weapon.weaponName);
-
-	}
+	}     
 
 	void ShowConstructionsInfos(SC_Construction construction) {
 
@@ -236,8 +235,10 @@ public class SC_UI_Manager : MonoBehaviour {
 		SetText("QinEnergy", SC_Qin.Energy + "");
 
 	}
+    #endregion
 
-	public void PreviewFight(SC_Character attacker, bool rangedAttack) {
+    #region Fight related
+    public void PreviewFight(SC_Character attacker, bool rangedAttack) {
 
 		previewFightPanel.SetActive (true);
 
@@ -310,15 +311,27 @@ public class SC_UI_Manager : MonoBehaviour {
 
 	}
 
-	public void HideWeapons() {
+    public void PreviewFight (bool activeWeapon) {
 
-		weaponChoice1.SetActive (false);
-		weaponChoice2.SetActive (false);
-		previewFightPanel.SetActive (false);
+        if (SC_Character.attackingCharacter.IsHero)
+            SC_Character.attackingCharacter.Hero.SetWeapon(activeWeapon);
 
-	}
+        PreviewFight(SC_Character.attackingCharacter, fightManager.RangedAttack);
 
-	public void ShowHeroPower(bool show, string heroName) {
+        if (SC_Character.attackingCharacter.IsHero)
+            SC_Character.attackingCharacter.Hero.SetWeapon(activeWeapon);
+
+    }
+
+    public void HidePreviewFight () {
+
+        previewFightPanel.SetActive(false);
+
+    }  
+    #endregion
+
+    #region Heroes
+    public void ShowHeroPower(bool show, string heroName) {
 
 		usePower.SetActive (!show);
 
@@ -327,20 +340,41 @@ public class SC_UI_Manager : MonoBehaviour {
 
 	}
 
-	void SetText(string id, string text) {
+    #region Weapons
+    public void ShowWeapon (SC_Weapon weapon, bool first) {
 
-		GameObject.Find (id).GetComponent<Text> ().text = text;
+        if (first)
+            weaponChoice1.SetActive(true);
+        else
+            weaponChoice2.SetActive(true);
 
-	}
+        SetText("Weapon Choice " + (first ? "1" : "2") + " Text", weapon.weaponName);
 
-	public void ShowVictory(bool qinWon) {
+    }
 
-        victoryPanel.GetComponentInChildren<Text>().text = (qinWon ? "Qin" : "The Heroes") + " won the war !";
+    public void ResetAttackChoice () {
 
-        victoryPanel.SetActive(true);
+        HideWeapons();
 
-	}
+        SC_Character.attackingCharacter.CheckAttack();
 
+        cancelMovementButton.SetActive(!gameManager.CantCancelMovement);
+
+        cancelAttackButton.SetActive(false);
+
+    }
+
+    public void HideWeapons () {
+
+        weaponChoice1.SetActive(false);
+        weaponChoice2.SetActive(false);
+        previewFightPanel.SetActive(false);
+
+    }
+    #endregion
+    #endregion    
+
+    #region Qin
     public void StartQinAction(string action) {
 
         SetButtonActivated("construct", action);
@@ -367,44 +401,12 @@ public class SC_UI_Manager : MonoBehaviour {
 
     }
 
-    public void ToggleHealth() {
+    #region Building
+    public void DisplayBuildingPanel() {
 
-        foreach(SC_Lifebar lifebar in FindObjectsOfType<SC_Lifebar>())
-            lifebar.Toggle();
-
-    }
-
-    public void ResetAttackChoice () {
-
-        HideWeapons();
-
-        SC_Character.attackingCharacter.CheckAttack();
-
-        cancelMovementButton.SetActive(!gameManager.CantCancelMovement);
-
-        cancelAttackButton.SetActive(false);
+        buildingPanel.SetActive(true);
 
     }
-
-    #region Preview Fight
-    public void PreviewFight (bool activeWeapon) {
-
-        if (SC_Character.attackingCharacter.IsHero)
-            SC_Character.attackingCharacter.Hero.SetWeapon(activeWeapon);
-
-        PreviewFight(SC_Character.attackingCharacter, fightManager.RangedAttack);
-
-        if (SC_Character.attackingCharacter.IsHero)
-            SC_Character.attackingCharacter.Hero.SetWeapon(activeWeapon);
-
-    }
-
-    public void HidePreviewFight() {
-
-        previewFightPanel.SetActive(false);
-
-    }
-    #endregion
 
     public void DisplayWorkshopPanel () {
 
@@ -418,5 +420,32 @@ public class SC_UI_Manager : MonoBehaviour {
         workshopPanel.SetActive(false);
 
     }
+    #endregion
+    #endregion
+
+    #region Both Players
+    public void ToggleHealth() {
+
+        foreach(SC_Lifebar lifebar in FindObjectsOfType<SC_Lifebar>())
+            lifebar.Toggle();
+
+    }
+
+    public void ShowVictory (bool qinWon) {
+
+        victoryPanel.GetComponentInChildren<Text>().text = (qinWon ? "Qin" : "The Heroes") + " won the war !";
+
+        victoryPanel.SetActive(true);
+
+    }
+    #endregion
+
+    #region Utility functions
+    void SetText (string id, string text) {
+
+        GameObject.Find(id).GetComponent<Text>().text = text;
+
+    }
+    #endregion
 
 }

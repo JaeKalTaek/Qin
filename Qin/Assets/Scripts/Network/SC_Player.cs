@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
-using static SC_Enums;
 
 public class SC_Player : NetworkBehaviour {
 
 	[SyncVar]
 	bool qin;
+
+    public bool Turn { get { return qin == !localPlayer.gameManager.CoalitionTurn; } }
 
 	SC_Game_Manager gameManager;
 
@@ -96,7 +97,7 @@ public class SC_Player : NetworkBehaviour {
     [ClientRpc]
     void RpcResetMovement() {
 
-        localPlayer.tileManager.ResetMovementFunction();
+        SC_Character.characterToMove.ResetMovementFunction();
 
     }
     #endregion
@@ -284,12 +285,6 @@ public class SC_Player : NetworkBehaviour {
 	public void SetTileManager(SC_Tile_Manager tm) {
 
 		tileManager = tm;
-
-	}
-
-	public bool Turn() {
-
-		return qin == !gameManager.CoalitionTurn;
 
 	}
 
