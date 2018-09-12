@@ -223,7 +223,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		buildingInfosPanel.SetActive (true);
 
-		SetText("BuildingName", construction.buildingName);
+		SetText("BuildingName", construction.Name);
 		SetText("BuildingHealth", (construction.GetType ().Equals (typeof(SC_Village))) ? "" : "Health : " + construction.Health + " / " + construction.maxHealth);
 
 	}
