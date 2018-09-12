@@ -3,9 +3,7 @@ using UnityEngine.Networking;
 
 public class SC_Construction : NetworkBehaviour {
 
-	public bool test;
-
-	public string buildingName;
+	public string Name;
 
 	public int maxHealth;
 	public int Health { get; set; }
@@ -55,7 +53,7 @@ public class SC_Construction : NetworkBehaviour {
 	protected void OnMouseOver() {
 
 		if(Input.GetMouseButtonDown(1))
-			uiManager.ShowHideInfos (gameObject, typeof(SC_Construction));
+			uiManager?.ShowHideInfos (gameObject, typeof(SC_Construction));
 
 	}
 

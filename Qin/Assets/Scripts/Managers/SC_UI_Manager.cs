@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using System;
 
@@ -287,7 +287,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
             int attackedType = attacker.AttackTarget.Construction ? 0 : attacker.AttackTarget.Qin ? 1 : 2;
 
-			attackedName = (attackedType == 0) ? attacker.AttackTarget.Construction.buildingName : (attackedType == 1) ? "Qin" : "";			
+			attackedName = (attackedType == 0) ? attacker.AttackTarget.Construction.Name : (attackedType == 1) ? "Qin" : "";			
 
 			int attackedHealth = (attackedType == 0) ? attacker.AttackTarget.Construction.Health : (attackedType == 1) ? SC_Qin.Energy : 0;
 
