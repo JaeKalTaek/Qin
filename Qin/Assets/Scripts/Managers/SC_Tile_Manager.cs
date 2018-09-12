@@ -273,8 +273,6 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         if (!gameManager.Bastion) {
 
-            uiManager.StartQinAction("construct");
-
             foreach (SC_Construction construction in FindObjectsOfType<SC_Construction>()) {
 
                 if (construction.name.Contains("Bastion") || construction.name.Contains("Wall"))
@@ -295,26 +293,18 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }
 
-    public void DisplaySacrifices () {
-
-        uiManager.StartQinAction("sacrifice");
+    public void DisplaySacrifices () {        
 
         foreach (SC_Soldier soldier in FindObjectsOfType<SC_Soldier>())
             GetTileAt(soldier.gameObject).ChangeDisplay(TDisplay.Sacrifice);
 
     }
 
-    public void DisplayResurrectionTiles () {
+    public void DisplayResurrection () {
 
-        if (gameManager.LastHeroDead && (SC_Qin.Energy > SC_Qin.Qin.powerCost)) {
-
-            uiManager.StartQinAction("qinPower");
-
-            foreach (SC_Tile tile in tiles)
-                if (tile.Empty)
-                    tile.ChangeDisplay(TDisplay.Resurrection);
-
-        }
+        foreach (SC_Tile tile in tiles)
+            if (tile.Empty)
+                tile.ChangeDisplay(TDisplay.Resurrection);
 
     }
 

@@ -8,7 +8,6 @@ public class SC_UI_Manager : MonoBehaviour {
     [Header("Game")]
 	public GameObject loadingPanel;
 	public Text turns;
-	public GameObject health;
 	public GameObject previewFightPanel;
 	public GameObject endTurn;
 	public GameObject victoryPanel;
@@ -32,7 +31,7 @@ public class SC_UI_Manager : MonoBehaviour {
 	public Text energyText;
 	public GameObject qinPanel;
 	public Transform construct;
-    public GameObject buildingPanel;
+    public GameObject constructPanel;
 	public Transform qinPower;
 	public Transform sacrifice;
 	public GameObject workshopPanel;
@@ -75,6 +74,7 @@ public class SC_UI_Manager : MonoBehaviour {
 	}
     #endregion
 
+    #region Next Turn function
     public void NextTurn(bool coalition, int turn) {
 
 		HideWeapons();
@@ -105,6 +105,7 @@ public class SC_UI_Manager : MonoBehaviour {
         endTurn.SetActive(pNotQin == coalition && pNotQin);
 
 	}
+    #endregion
 
     #region Buttons
     /*public void ToggleButton(string id) {
@@ -183,9 +184,9 @@ public class SC_UI_Manager : MonoBehaviour {
 		SetText("Armor", " Armor : " + character.armor);
 		SetText("Qi", " Qi : " + character.qi);
 		SetText("Resistance", " Resistance : " + character.resistance);
-		SetText("Technique", " Technique : " + character.CriticalHit + " (" + character.technique + ")");
-		SetText("Speed", " Speed : " + character.DodgeHit + " (" + character.speed + ")");
-		SetText("Movement", " Movement : " + character.movement);
+		SetText("Technique", " Technique : " + character.technique + ", Crit Jauge : " + character.CriticalAmount + "/" + gameManager.commonCharactersVariables.critTrigger);
+		SetText("Reflexes", " Reflexes : " + character.reflexes + ", Dodge Jauge : " + character.DodgeAmount + "/" + gameManager.commonCharactersVariables.dodgeTrigger);
+        SetText("Movement", " Movement : " + character.movement);
 		SetText("WeaponsTitle", " Weapons :");
 
 	}
@@ -246,9 +247,9 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		SetText ("AttackerWeapon", attacker.GetActiveWeapon ().weaponName);
 
-		SetText ("AttackerCrit", attacker.CriticalHit.ToString ());
+		/*SetText ("AttackerCrit", attacker.CriticalAmount.ToString ());
 
-		SetText ("AttackerDodge", attacker.DodgeHit.ToString ());
+		SetText ("AttackerDodge", attacker.DodgeAmount.ToString ());*/
 
 		int attackedDamages = 0;
 
@@ -372,14 +373,17 @@ public class SC_UI_Manager : MonoBehaviour {
 
     }
     #endregion
-    #endregion    
+    #endregion
 
     #region Qin
+    #region Actions
     public void StartQinAction(string action) {
 
         SetButtonActivated("construct", action);
         SetButtonActivated("sacrifice", action);
         SetButtonActivated("qinPower", action);
+
+        constructPanel.SetActive(action == "construct");
 
         workshopPanel.SetActive(action == "workshop");
 
@@ -400,18 +404,18 @@ public class SC_UI_Manager : MonoBehaviour {
         SetButtonActivated(action, true);
 
     }
+    #endregion
 
     #region Building
-    public void DisplayBuildingPanel() {
+    public void DisplayConstructPanel() {
 
-        buildingPanel.SetActive(true);
+        StartQinAction("construct");
 
     }
 
-    public void DisplayWorkshopPanel () {
+    void UpdateConstructPanel() {
 
-        if (!gameManager.CoalitionTurn && !gameManager.Bastion && !TileManager.GetTileAt(gameManager.CurrentWorkshop.gameObject).Character)
-            StartQinAction("workshop");
+
 
     }
 

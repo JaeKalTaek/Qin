@@ -18,7 +18,7 @@ public class SC_Qin : NetworkBehaviour {
 	[Tooltip("Energy won when a hero dis")]
 	public int energyWhenHeroDies;
 
-    [Tooltip("Cost in energy for Qin to build a wall")]
+    [Tooltip("Cost in energy for Qin to construct a wall")]
     public int wallCost;
 
     [Tooltip("Energy won when Qin sacrifices a soldier")]

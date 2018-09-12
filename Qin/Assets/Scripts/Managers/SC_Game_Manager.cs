@@ -296,13 +296,21 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 	public void DisplaySacrifices() {
 
+        uiManager.StartQinAction("sacrifice");
+
         tileManager.DisplaySacrifices();
 
 	}
 
-	public void DisplayResurrectionTiles() {
+	public void DisplayResurrection() {
 
-        tileManager.DisplayResurrectionTiles();
+        if (LastHeroDead && (SC_Qin.Energy > SC_Qin.Qin.powerCost)) {
+
+            uiManager.StartQinAction("qinPower");
+
+            tileManager.DisplayResurrection();
+
+        }
 
 	}
 
@@ -350,6 +358,13 @@ public class SC_Game_Manager : NetworkBehaviour {
 		}
 
 	}*/
+
+    public void DisplayWorkshopPanel () {
+
+        if (!CoalitionTurn && !Bastion && !tileManager.GetTileAt(CurrentWorkshop.gameObject).Character)
+            uiManager.StartQinAction("workshop");
+
+    }
 
     public void CreateSoldier() {
 

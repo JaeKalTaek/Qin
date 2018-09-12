@@ -12,7 +12,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
     public SC_Tile_Manager TileManager { get; set; }
 
-    SC_Common_Characters_Variables CommonHeroesVariables { get { return gameManager.commonCharactersVariables; } }
+    SC_Common_Characters_Variables CharactersVariables { get { return gameManager.commonCharactersVariables; } }
 
     public static SC_Fight_Manager Instance;
 
@@ -81,8 +81,9 @@ public class SC_Fight_Manager : MonoBehaviour {
         else
             killed = attacked.Hit(CalcDamages(attacker, attacked, counter), false);
 
-        attacker.CriticalHit = (attacker.CriticalHit >= attacker.technique) ? 0 : (attacker.CriticalHit + 1);
-        attacked.DodgeHit = (attacked.DodgeHit >= attacked.speed) ? 0 : (attacked.DodgeHit + 1);
+        attacker.CriticalAmount = (attacker.CriticalAmount >= CharactersVariables.critTrigger) ? 0 : Mathf.Min((attacker.CriticalAmount + attacker.technique), CharactersVariables.critTrigger);
+
+        attacked.DodgeAmount = (attacked.DodgeAmount >= CharactersVariables.dodgeTrigger) ? 0 : Mathf.Min((attacker.DodgeAmount + attacker.reflexes), CharactersVariables.dodgeTrigger);
 
         if (attacker.IsHero && killed)
             IncreaseRelationships(attacker.Hero);
@@ -91,7 +92,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
     void HitConstruction(SC_Character attacker, SC_Construction construction, bool counter) {
 
-        construction.Health -= Mathf.CeilToInt((attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi) / (counter ? CommonHeroesVariables.counterFactor : 1));
+        construction.Health -= Mathf.CeilToInt((attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi) / (counter ? CharactersVariables.counterFactor : 1));
 
         construction.Lifebar.UpdateGraph(construction.Health, construction.maxHealth);
 
@@ -114,14 +115,14 @@ public class SC_Fight_Manager : MonoBehaviour {
         if (attacker.IsHero && attacked.IsHero && !attacked.coalition)
             damages = Mathf.CeilToInt(damages * RelationMalus(attacker.Hero, attacked.Hero));
 
-        if (attacker.CriticalHit == attacker.technique)
-            damages = Mathf.CeilToInt(damages * CommonHeroesVariables.critMultiplier);
+        if (attacker.CriticalAmount == CharactersVariables.critTrigger)
+            damages = Mathf.CeilToInt(damages * CharactersVariables.critMultiplier);
 
         if (attacker.IsHero && attacker.Hero.Berserk)
-            damages = Mathf.CeilToInt(damages * CommonHeroesVariables.berserkDamageMultiplier);
+            damages = Mathf.CeilToInt(damages * CharactersVariables.berserkDamageMultiplier);
 
-        if (attacked.DodgeHit == attacked.speed)
-            damages = Mathf.FloorToInt(damages * ((100 - CommonHeroesVariables.dodgeReductionPercentage) / 100));
+        if (attacked.DodgeAmount == CharactersVariables.dodgeTrigger)
+            damages = Mathf.FloorToInt(damages * ((100 - CharactersVariables.dodgeReductionPercentage) / 100));
 
         int boostedArmor = attacked.armor;
         int boostedResistance = attacked.resistance;
@@ -137,7 +138,7 @@ public class SC_Fight_Manager : MonoBehaviour {
         damages -= (attacker.GetActiveWeapon().weaponOrQi) ? boostedArmor : boostedResistance;
 
         if (counter)
-            damages = Mathf.CeilToInt(damages / CommonHeroesVariables.counterFactor);
+            damages = Mathf.CeilToInt(damages / CharactersVariables.counterFactor);
 
         return Mathf.Max(0, damages);
 
@@ -173,9 +174,9 @@ public class SC_Fight_Manager : MonoBehaviour {
 
         float v = 0;
 
-        for (int i = 0; i < CommonHeroesVariables.relationBoostValues.relations.Length; i++)
-            if (value >= CommonHeroesVariables.relationBoostValues.relations[i])
-                v = CommonHeroesVariables.relationBoostValues.values[i];
+        for (int i = 0; i < CharactersVariables.relationBoostValues.relations.Length; i++)
+            if (value >= CharactersVariables.relationBoostValues.relations[i])
+                v = CharactersVariables.relationBoostValues.values[i];
 
         return v;
 
@@ -198,7 +199,7 @@ public class SC_Fight_Manager : MonoBehaviour {
                     if (saver)
                         toSave.Relationships.TryGetValue(saver.characterName, out currentValue);
 
-                    if ((value >= CommonHeroesVariables.saveTriggerRelation) && (value > currentValue))
+                    if ((value >= CharactersVariables.saveTriggerRelation) && (value > currentValue))
                         saver = hero;
 
                 }
@@ -233,8 +234,8 @@ public class SC_Fight_Manager : MonoBehaviour {
 
         foreach (SC_Hero hero in heroesInRange) {
 
-            killer.Relationships[hero.characterName] += Mathf.CeilToInt(CommonHeroesVariables.killRelationValue / heroesInRange.Count);
-            hero.Relationships[killer.characterName] += Mathf.CeilToInt(CommonHeroesVariables.killRelationValue / heroesInRange.Count);
+            killer.Relationships[hero.characterName] += Mathf.CeilToInt(CharactersVariables.killRelationValue / heroesInRange.Count);
+            hero.Relationships[killer.characterName] += Mathf.CeilToInt(CharactersVariables.killRelationValue / heroesInRange.Count);
 
         }
 

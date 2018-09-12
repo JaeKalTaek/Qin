@@ -29,9 +29,9 @@ public class SC_Character : NetworkBehaviour {
 	public int Health { get; set; }
     public int strength, armor;
 	public int qi, resistance;
-	public int technique, speed;
-	public int CriticalHit { get; set; }
-    public int DodgeHit { get; set; }
+	public int technique, reflexes;
+	public int CriticalAmount { get; set; }
+    public int DodgeAmount { get; set; }
     public float moveSpeed = .25f;
 
 	protected Color baseColor, tiredColor;
