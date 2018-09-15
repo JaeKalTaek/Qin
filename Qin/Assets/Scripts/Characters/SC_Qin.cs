@@ -16,10 +16,7 @@ public class SC_Qin : NetworkBehaviour {
 	public int powerCost;
 
 	[Tooltip("Energy won when a hero dis")]
-	public int energyWhenHeroDies;
-
-    [Tooltip("Cost in energy for Qin to construct a wall")]
-    public int wallCost;
+	public int energyWhenHeroDies;    
 
     [Tooltip("Energy won when Qin sacrifices a soldier")]
     public int sacrificeValue;
@@ -30,13 +27,31 @@ public class SC_Qin : NetworkBehaviour {
     [Tooltip("Energy won for each village at the beginning of each of Qin's turn")]
     public int regenPerVillage;
 
-	static SC_Game_Manager gameManager;
+    [Header("Buildings cost")]
+    [Tooltip("Cost in energy for Qin to construct a wall")]
+    public int wallCost;
+
+    [Tooltip("Cost in energy for Qin to construct a bastion")]
+    public int bastionCost;
+
+    [Tooltip("Cost in energy for Qin to construct a village")]
+    public int villageCost;
+
+    [Tooltip("Cost in energy for Qin to construct a workshop")]
+    public int workshopCost;
+
+    [Tooltip("Cost in energy for Qin to construct a pump")]
+    public int pumpCost;
+
+    static SC_Game_Manager gameManager;
 
 	static SC_Tile_Manager tileManager;
 
 	static SC_UI_Manager uiManager;
 
 	public static SC_Qin Qin;
+
+    public bool Busy { get; set; }
 
 	void Start() {
 
@@ -108,6 +123,18 @@ public class SC_Qin : NetworkBehaviour {
         }  else
             uiManager.ShowVictory(false);
 
-	}
+	}    
+
+    public static int GetConstruCost(Constru c) {
+
+        return GetConstruCost(c.ToString());
+
+    }
+
+    public static int GetConstruCost (string s) {
+
+        return (int)typeof(SC_Qin).GetField(s.ToLower() + "Cost").GetValue(Qin);
+
+    }
 
 }

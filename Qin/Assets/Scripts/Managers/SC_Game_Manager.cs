@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using static SC_Enums;
 
 public class SC_Game_Manager : NetworkBehaviour {
 
@@ -11,7 +12,6 @@ public class SC_Game_Manager : NetworkBehaviour {
     public GameObject qinPrefab, soldierPrefab, convoyPrefab;
     public SC_Common_Characters_Variables commonCharactersVariables;
 	public List<GameObject> heroPrefabs;
-	public GameObject bastionPrefab, wallPrefab, workshopPrefab, villagePrefab;
 	public GameObject tileManagerPrefab;
     
 	//Instance
@@ -25,6 +25,8 @@ public class SC_Game_Manager : NetworkBehaviour {
     public bool Bastion { get; set; }
 
 	public SC_Hero LastHeroDead { get; set; }
+
+    public Constru currentConstru;
 
 	public SC_Workshop CurrentWorkshop { get; set; }
 
@@ -215,12 +217,17 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 		if (!CoalitionTurn) {
 
+            SC_Qin.Qin.Busy = true;
+
             SC_Qin.ChangeEnergy(SC_Qin.Qin.regenPerVillage * SC_Village.number);
 
 			Bastion = true;
 
-            if(Player.IsQin())
-                tileManager.DisplayConstructableTiles ();
+            currentConstru = Constru.Bastion;
+
+            if (Player.IsQin())
+                tileManager.DisplayConstructableTiles(false);
+
 
 		}
 
@@ -235,12 +242,6 @@ public class SC_Game_Manager : NetworkBehaviour {
 
     }
 
-    public void DisplayConstructableTiles () {
-
-        tileManager.DisplayConstructableTiles();
-
-    }
-
     public void ConstructAt (SC_Tile tile) {
 
         Player.CmdConstructAt((int)tile.transform.position.x, (int)tile.transform.position.y);
@@ -251,34 +252,24 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         SC_Tile tile = tileManager.GetTileAt (x, y);
 
-		if (tile.Character) {
-
-            SC_Qin.ChangeEnergy(SC_Qin.Qin.sacrificeValue);
-            tile.Character.DestroyCharacter();
-
-        }
-
         tile.Construction?.DestroyConstruction();
 
         if(isServer) {
 
-            GameObject go = Instantiate(Bastion ? bastionPrefab : wallPrefab, GameObject.Find(Bastion ? "Bastions" : "Walls").transform);
+            GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/Constructions/P_" + currentConstru));
             go.transform.SetPos(tile.transform);
 
             NetworkServer.Spawn(go);
 
         }
 
-        if(!Bastion)
-            SC_Qin.ChangeEnergy(-SC_Qin.Qin.wallCost);
-
         if(Player.IsQin()) {
 
             tileManager.RemoveAllFilters();
 
-            if(Bastion) {
+            if (Bastion) {                
 
-                foreach(SC_Character character in FindObjectsOfType<SC_Character>())
+                foreach (SC_Character character in FindObjectsOfType<SC_Character>())
                     character.CanMove = !character.coalition;
 
                 uiManager.construct.gameObject.SetActive(true);
@@ -286,11 +277,30 @@ public class SC_Game_Manager : NetworkBehaviour {
                 uiManager.sacrifice.gameObject.SetActive(true);
                 uiManager.endTurn.SetActive(true);
 
+            } else {
+
+                SC_Qin.ChangeEnergy(-SC_Qin.GetConstruCost(currentConstru));
+
+                Player.CmdChangeQinEnergyOnClient(-SC_Qin.GetConstruCost(currentConstru), false);
+
+                tile.Locked = true;
+
+                uiManager.UpdateConstructPanel();
+                
+                if ((SC_Qin.GetConstruCost(currentConstru) < SC_Qin.Energy) && (tileManager.GetConstructableTiles(currentConstru == Constru.Wall).Count > 0))  
+                    tileManager.DisplayConstructableTiles(currentConstru == Constru.Wall);
+
             }
 
         }
 
-        Bastion = false;
+        if (Bastion) {
+
+            SC_Qin.Qin.Busy = false;
+
+            Bastion = false;
+
+        }
 
     }	
 

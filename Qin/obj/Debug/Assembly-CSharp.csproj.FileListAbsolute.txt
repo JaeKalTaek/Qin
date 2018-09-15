@@ -275,3 +275,7 @@ C:\Users\Ben\Documents\Qin\Qin_Old\obj\Debug\Assembly-CSharp.dll
 C:\Users\Ben\Documents\Qin\Qin_Old\obj\Debug\Assembly-CSharp.pdb
 C:\Users\Ben\Documents\Qin\Qin_Old\Temp\bin\Debug\UnityEditor.UI.dll
 C:\Users\Ben\Documents\Qin\Qin_Old\Temp\bin\Debug\UnityEditor.UI.xml
+C:\Users\Ben\Documents\Qin\Qin\obj\Debug\Assembly-CSharp.csprojResolveAssemblyReference.cache
+C:\Users\Ben\Documents\Qin\Qin\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache
+C:\Users\Ben\Documents\Qin\Qin\obj\Debug\Assembly-CSharp.dll
+C:\Users\Ben\Documents\Qin\Qin\obj\Debug\Assembly-CSharp.pdb

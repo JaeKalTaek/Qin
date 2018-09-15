@@ -228,6 +228,21 @@ public class SC_Player : NetworkBehaviour {
 		SC_Qin.ChangeEnergy (amount);
 
 	}
+
+    [Command]
+    public void CmdChangeQinEnergyOnClient (int amount, bool qin) {
+
+        RpcChangeQinEnergyOnClient(amount, qin);
+
+    }
+
+    [ClientRpc]
+    void RpcChangeQinEnergyOnClient (int amount, bool qin) {
+
+        if (localPlayer.qin == qin)
+            SC_Qin.ChangeEnergy(amount);
+
+    }
     #endregion
 
     #region Destroy Character

@@ -86,8 +86,12 @@ public class SC_Character : NetworkBehaviour {
 
 	protected virtual void OnMouseDown() {
 
-		if (SC_Player.localPlayer.Turn && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() && (tileManager.GetTileAt(gameObject).CurrentDisplay == TDisplay.None))
-            PrintMovements();          
+        if (SC_Player.localPlayer.Turn && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) {
+
+            if ((gameManager.CoalitionTurn || !SC_Qin.Qin.Busy) && (tileManager.GetTileAt(gameObject).CurrentDisplay == TDisplay.None))
+                PrintMovements();
+
+        }
 
 	}
 

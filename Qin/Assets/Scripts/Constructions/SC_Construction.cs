@@ -10,6 +10,8 @@ public class SC_Construction : NetworkBehaviour {
 
 	public SC_Lifebar Lifebar { get; set; }
 
+    public bool GreatWall { get { return (this as SC_Bastion != null) || (this as SC_Wall != null); } }
+
 	protected static SC_Game_Manager gameManager;
 
 	protected static SC_Tile_Manager tileManager;
@@ -29,7 +31,11 @@ public class SC_Construction : NetworkBehaviour {
 
 		Health = maxHealth;
 
-        tileManager.GetTileAt(gameObject).Construction = this;
+        SC_Tile under = tileManager.GetTileAt(gameObject);
+
+        under.Construction = this;
+
+        under.Locked = false;
 
     }
 

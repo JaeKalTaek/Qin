@@ -57,7 +57,9 @@ public class SC_Tile : NetworkBehaviour {
         }
     }
 
-    public bool Constructable { get { return !name.Contains("Palace") && (!Character || Soldier) && (!Construction || gameManager.Bastion && Wall); } }
+    public bool Constructable { get { return !name.Contains("Palace") && !Character && (!Construction || (gameManager.Bastion && Wall)) && !Locked; } }
+
+    public bool Locked { get; set; }
 
     public SC_Construction Construction { get; set; }
 

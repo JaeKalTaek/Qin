@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using static SC_Enums;
 
 public class SC_UI_Manager : MonoBehaviour {
 
@@ -31,7 +32,7 @@ public class SC_UI_Manager : MonoBehaviour {
 	public Text energyText;
 	public GameObject qinPanel;
 	public Transform construct;
-    public GameObject constructPanel;
+    public Transform constructPanel;
 	public Transform qinPower;
 	public Transform sacrifice;
 	public GameObject workshopPanel;
@@ -93,6 +94,7 @@ public class SC_UI_Manager : MonoBehaviour {
         } else {
 
             construct.gameObject.SetActive(false);
+            constructPanel.gameObject.SetActive(false);
             qinPower.gameObject.SetActive(false);
             sacrifice.gameObject.SetActive(false);
 
@@ -379,17 +381,19 @@ public class SC_UI_Manager : MonoBehaviour {
     #region Actions
     public void StartQinAction(string action) {
 
+        SC_Qin.Qin.Busy = true;
+
         SetButtonActivated("construct", action);
         SetButtonActivated("sacrifice", action);
         SetButtonActivated("qinPower", action);
 
-        constructPanel.SetActive(action == "construct");
+        constructPanel.gameObject.SetActive(action == "construct");
 
         workshopPanel.SetActive(action == "workshop");
 
         cancelMovementButton.SetActive(false);
 
-        SC_Tile_Manager.Instance.RemoveAllFilters();
+        TileManager.RemoveAllFilters();
 
         SC_Player.localPlayer.CmdRemoveAllFiltersOnClient(false);
 
@@ -403,19 +407,41 @@ public class SC_UI_Manager : MonoBehaviour {
 
         SetButtonActivated(action, true);
 
+        constructPanel.gameObject.SetActive(false);
+
+        SC_Qin.Qin.Busy = false;
+
     }
     #endregion
 
     #region Building
+    public void UpdateConstructPanel () {
+
+        foreach (Transform t in constructPanel) {
+
+            t.GetComponentInChildren<Button>().interactable = (SC_Qin.GetConstruCost(t.name) < SC_Qin.Energy) && (TileManager.GetConstructableTiles(t.name == "Wall").Count > 0);
+
+            t.GetChild(1).GetComponent<Text>().text = SC_Qin.GetConstruCost(t.name).ToString();
+
+        }
+
+    }
+
     public void DisplayConstructPanel() {
 
         StartQinAction("construct");
 
+        UpdateConstructPanel();             
+
     }
 
-    void UpdateConstructPanel() {
+    public void DisplayConstructableTiles(int c) {        
 
+        gameManager.currentConstru = (Constru)c;
 
+        TileManager.RemoveAllFilters();
+
+        TileManager.DisplayConstructableTiles((Constru)c == Constru.Wall);
 
     }
 

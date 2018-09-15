@@ -267,29 +267,40 @@ public class SC_Tile_Manager : NetworkBehaviour {
     }
     #endregion
 
-    public void DisplayConstructableTiles () {
+    public List<SC_Tile> GetConstructableTiles(bool wall) {
 
         List<SC_Tile> constructableTiles = new List<SC_Tile>();
 
-        if (!gameManager.Bastion) {
+        if (wall) {
 
             foreach (SC_Construction construction in FindObjectsOfType<SC_Construction>()) {
 
-                if (construction.name.Contains("Bastion") || construction.name.Contains("Wall"))
-                    constructableTiles.AddRange(GetNeighbors(GetTileAt(construction.gameObject)));
+                if (construction.GreatWall) {
+
+                    foreach (SC_Tile neighbor in GetNeighbors(GetTileAt(construction.gameObject)))
+                        if (neighbor.Constructable && !constructableTiles.Contains(neighbor))
+                            constructableTiles.Add(neighbor);
+
+                }
 
             }
 
         } else {
 
             foreach (SC_Tile tile in tiles)
-                constructableTiles.Add(tile);
+                if(tile.Constructable)
+                    constructableTiles.Add(tile);
 
         }
 
-        foreach (SC_Tile tile in constructableTiles)
-            if (tile.Constructable && (gameManager.Bastion || !tile.Wall))
-                tile.GetComponent<SC_Tile>().ChangeDisplay(TDisplay.Construct);
+        return constructableTiles;
+
+    }
+
+    public void DisplayConstructableTiles (bool wall) {
+         
+        foreach (SC_Tile tile in GetConstructableTiles(wall))
+            tile.GetComponent<SC_Tile>().ChangeDisplay(TDisplay.Construct);
 
     }
 

@@ -15,9 +15,9 @@ public class SC_Workshop : SC_Construction {
 
 	public void OnMouseDown() {
 
-		gameManager.CurrentWorkshop = this;
+		/*gameManager.CurrentWorkshop = this;
 
-		gameManager.DisplayWorkshopPanel();
+		gameManager.DisplayWorkshopPanel();*/
 
 	}
 
