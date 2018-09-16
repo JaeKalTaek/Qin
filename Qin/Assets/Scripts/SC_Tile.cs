@@ -115,7 +115,7 @@ public class SC_Tile : NetworkBehaviour {
             else if (SC_Player.localPlayer)
                 SC_Player.localPlayer.CmdFinishLoading();
             else
-                print("WTF");
+                FindObjectOfType<SC_Player>().CmdFinishLoading();
 
         }
 
