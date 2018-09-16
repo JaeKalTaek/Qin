@@ -59,7 +59,7 @@ public class SC_Tile : NetworkBehaviour {
         }
     }
 
-    public bool Constructable { get { return !name.Contains("Palace") && !Character && (!Construction || (gameManager.Bastion && Wall)) && !Locked; } }
+    public bool Constructable { get { return !name.Contains("Palace") && (!Character || (gameManager.Bastion && Soldier)) && !Construction && !Locked; } }
 
     public bool Locked { get; set; }
 
@@ -117,11 +117,15 @@ public class SC_Tile : NetworkBehaviour {
 
         if (SC_UI_Manager.CanInteract) {
 
-            if ((CurrentDisplay == TDisplay.Construct) && ((SC_Qin.Energy > SC_Qin.Qin.wallCost) || gameManager.Bastion)) {
+            if (CurrentDisplay == TDisplay.Construct) {                
 
                 gameManager.ConstructAt(this);
 
             } else if (CurrentDisplay == TDisplay.Movement) {
+
+                uiManager.cancelMovementButton.SetActive(false);
+
+                SC_Player.localPlayer.Busy = true;
 
                 SC_Player.localPlayer.CmdMoveCharacterTo((int)transform.position.x, (int)transform.position.y);
 

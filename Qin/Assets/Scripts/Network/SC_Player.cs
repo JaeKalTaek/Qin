@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
+using static SC_Enums;
 
 public class SC_Player : NetworkBehaviour {
 
@@ -202,6 +203,20 @@ public class SC_Player : NetworkBehaviour {
 
     #region Construction
     [Command]
+    public void CmdSetConstru (int c) {
+
+        RpcSetConstru(c);
+
+    }
+
+    [ClientRpc]
+    public void RpcSetConstru (int c) {
+
+        localPlayer.gameManager.CurrentConstru = (Constru)c;
+
+    }
+
+    [Command]
 	public void CmdConstructAt(int x, int y) {
 
         RpcConstructAt(x, y);
@@ -212,6 +227,20 @@ public class SC_Player : NetworkBehaviour {
     public void RpcConstructAt(int x, int y) {
 
         localPlayer.gameManager.ConstructAt(x, y);
+
+    }
+
+    [Command]
+    public void CmdSetLastConstru (GameObject g) {
+
+        RpcSetLastConstru(g);
+
+    }
+
+    [ClientRpc]
+    public void RpcSetLastConstru (GameObject g) {
+
+        SC_Construction.lastConstru = g.GetComponent<SC_Construction>();
 
     }
     #endregion

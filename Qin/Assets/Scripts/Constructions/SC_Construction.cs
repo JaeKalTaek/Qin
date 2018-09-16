@@ -18,6 +18,10 @@ public class SC_Construction : NetworkBehaviour {
 
 	protected static SC_UI_Manager uiManager;
 
+    public static SC_Construction lastConstru;
+
+    public static SC_Soldier lastConstruSoldier;
+
 	protected virtual void Start () {
 
 		if (!gameManager)
@@ -84,5 +88,37 @@ public class SC_Construction : NetworkBehaviour {
 		return (!GetType ().Equals (typeof(SC_Village)) && !GetType ().Equals (typeof(SC_Workshop)));
 
 	}
+
+    public static void CancelLastConstruction () {
+
+        if (!gameManager.Bastion) {
+
+            SC_Player.localPlayer.CmdChangeQinEnergy(SC_Qin.GetConstruCost(lastConstru.Name));
+
+        } else {
+
+            SC_Player.localPlayer.Busy = true;
+
+            tileManager.DisplayConstructableTiles(false);
+
+        }
+
+        lastConstru.DestroyConstruction();
+
+        if (lastConstruSoldier) {
+
+            SC_Player.localPlayer.CmdChangeQinEnergy(-SC_Qin.Qin.sacrificeValue);
+
+            lastConstruSoldier.gameObject.SetActive(true);
+
+        }
+
+        lastConstru = null;
+
+        lastConstruSoldier = null;
+
+        uiManager.cancelLastConstructButton.SetActive(false);
+
+    }
 
 }

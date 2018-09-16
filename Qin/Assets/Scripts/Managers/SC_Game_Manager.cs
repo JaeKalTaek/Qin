@@ -27,7 +27,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 	public SC_Hero LastHeroDead { get; set; }
 
-    public Constru currentConstru;
+    public Constru CurrentConstru { get; set; }
 
 	public SC_Workshop CurrentWorkshop { get; set; }
 
@@ -207,18 +207,18 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         SC_Character.attackingCharacter = null;
 
-		/*foreach (SC_Convoy convoy in FindObjectsOfType<SC_Convoy>())
+        /*foreach (SC_Convoy convoy in FindObjectsOfType<SC_Convoy>())
 			convoy.MoveConvoy ();*/
 
-		if (!CoalitionTurn) {
+        CurrentConstru = Constru.Bastion;
+
+        if (!CoalitionTurn) {
 
             Player.Busy = true;
 
             SC_Qin.ChangeEnergy(SC_Qin.Qin.regenPerVillage * SC_Village.number);
 
-			Bastion = true;
-
-            currentConstru = Constru.Bastion;
+			Bastion = true;           
 
             if (Player.IsQin())
                 tileManager.DisplayConstructableTiles(false);
@@ -247,14 +247,24 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         SC_Tile tile = tileManager.GetTileAt (x, y);
 
-        tile.Construction?.DestroyConstruction();
+        if(tile.Soldier) {
+
+            tile.Soldier.gameObject.SetActive(false);
+
+            SC_Qin.ChangeEnergy(SC_Qin.Qin.sacrificeValue);
+
+        }
+
+        SC_Construction.lastConstruSoldier = tile.Soldier;
 
         if(isServer) {
 
-            GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/Constructions/P_" + currentConstru));
+            GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/Constructions/P_" + CurrentConstru));
             go.transform.SetPos(tile.transform);
 
             NetworkServer.Spawn(go);
+
+            Player.CmdSetLastConstru(go);
 
         }
 
@@ -262,7 +272,9 @@ public class SC_Game_Manager : NetworkBehaviour {
 
             tileManager.RemoveAllFilters();
 
-            if (Bastion) {                
+            if (Bastion) {
+
+                Player.Busy = false;
 
                 foreach (SC_Character character in FindObjectsOfType<SC_Character>())
                     character.CanMove = !character.coalition;
@@ -274,30 +286,30 @@ public class SC_Game_Manager : NetworkBehaviour {
 
             } else {
 
-                SC_Qin.ChangeEnergy(-SC_Qin.GetConstruCost(currentConstru));
+                SC_Qin.ChangeEnergy(-SC_Qin.GetConstruCost(CurrentConstru));
 
-                Player.CmdChangeQinEnergyOnClient(-SC_Qin.GetConstruCost(currentConstru), false);
+                Player.CmdChangeQinEnergyOnClient(-SC_Qin.GetConstruCost(CurrentConstru), false);
 
                 tile.Locked = true;
 
                 uiManager.UpdateConstructPanel();
                 
-                if ((SC_Qin.GetConstruCost(currentConstru) < SC_Qin.Energy) && (tileManager.GetConstructableTiles(currentConstru == Constru.Wall).Count > 0))  
-                    tileManager.DisplayConstructableTiles(currentConstru == Constru.Wall);
+                if ((SC_Qin.GetConstruCost(CurrentConstru) < SC_Qin.Energy) && (tileManager.GetConstructableTiles(CurrentConstru == Constru.Wall).Count > 0))  
+                    tileManager.DisplayConstructableTiles(CurrentConstru == Constru.Wall);
 
             }
 
-        }
-
-        if (Bastion) {
-
-            Player.Busy = false;
-
-            Bastion = false;
+            uiManager.cancelLastConstructButton.SetActive(true);
 
         }
 
     }	
+
+    public void CancelLastConstruction() {
+
+        SC_Construction.CancelLastConstruction();
+
+    }
 
 	public void DisplaySacrifices() {
 
@@ -406,8 +418,6 @@ public class SC_Game_Manager : NetworkBehaviour {
         Player.CmdRemoveAllFilters();
 
         uiManager.cancelMovementButton.SetActive(false);
-
-        Player.Busy = false;
 
     }
 

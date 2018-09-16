@@ -91,13 +91,13 @@ public class SC_Character : NetworkBehaviour {
 
 	}
 
-	protected virtual void PrintMovements() {
-
-        SC_Player.localPlayer.Busy = true;
+	protected virtual void PrintMovements() {        
 
         SC_Player.localPlayer.CmdCheckMovements((int)transform.position.x, (int)transform.position.y);
 
         uiManager.cancelMovementButton.SetActive(true);
+
+        uiManager.cancelLastConstructButton.SetActive(false);
 
     }
 
@@ -165,6 +165,8 @@ public class SC_Character : NetworkBehaviour {
 
     void FinishMovement(bool moved) {
 
+        SC_Player.localPlayer.Busy = false;
+
         SC_Tile target = moved ? path[path.Count - 1] : null;
 
         if(moved) {
@@ -187,6 +189,8 @@ public class SC_Character : NetworkBehaviour {
 
             if ((!moved && LastPos.Village) || (moved && target.Village)) {
 
+                SC_Player.localPlayer.Busy = true;
+
                 uiManager.villagePanel.SetActive(true);
 
             } else {
@@ -205,8 +209,7 @@ public class SC_Character : NetworkBehaviour {
 
                 }              
 
-                if(SC_Player.localPlayer.Turn)
-                    uiManager.resetMovementButton.SetActive(true);
+                uiManager.resetMovementButton.SetActive(SC_Player.localPlayer.Turn && !gameManager.CantCancelMovement);
 
                 CheckAttack();
 
@@ -300,6 +303,8 @@ public class SC_Character : NetworkBehaviour {
         UnTired();
 
         uiManager.resetMovementButton.SetActive(false);
+
+        uiManager.cancelMovementButton.SetActive(true);
 
     }
 

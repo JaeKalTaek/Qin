@@ -34,6 +34,7 @@ public class SC_UI_Manager : MonoBehaviour {
 	public GameObject qinPanel;
 	public Transform construct;
     public Transform constructPanel;
+    public GameObject cancelLastConstructButton;
 	public Transform qinPower;
 	public Transform sacrifice;
 	public GameObject workshopPanel;
@@ -442,6 +443,9 @@ public class SC_UI_Manager : MonoBehaviour {
 
         }
 
+        if (action == "construct")
+            cancelLastConstructButton.SetActive(false);
+
         constructPanel.gameObject.SetActive(false);
 
         workshopPanel.SetActive(false);
@@ -472,9 +476,9 @@ public class SC_UI_Manager : MonoBehaviour {
 
     }
 
-    public void DisplayConstructableTiles(int c) {        
+    public void DisplayConstructableTiles(int c) {
 
-        gameManager.currentConstru = (Constru)c;
+        SC_Player.localPlayer.CmdSetConstru(c);
 
         TileManager.RemoveAllFilters();
 
