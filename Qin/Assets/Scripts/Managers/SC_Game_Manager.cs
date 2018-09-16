@@ -220,7 +220,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 			Bastion = true;           
 
-            if (Player.IsQin())
+            if (Player.qin)
                 tileManager.DisplayConstructableTiles(false);
 
 
@@ -268,7 +268,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         }
 
-        if(Player.IsQin()) {
+        if(Player.qin) {
 
             tileManager.RemoveAllFilters();
 
@@ -307,7 +307,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
     public void CancelLastConstruction() {
 
-        SC_Construction.CancelLastConstruction();
+        Player.CmdCancelLastConstru();
 
     }
 

@@ -89,35 +89,35 @@ public class SC_Construction : NetworkBehaviour {
 
 	}
 
-    public static void CancelLastConstruction () {
-
-        if (!gameManager.Bastion) {
-
-            SC_Player.localPlayer.CmdChangeQinEnergy(SC_Qin.GetConstruCost(lastConstru.Name));
-
-        } else {
-
-            SC_Player.localPlayer.Busy = true;
-
-            tileManager.DisplayConstructableTiles(false);
-
-        }
+    public static void CancelLastConstruction () {        
 
         lastConstru.DestroyConstruction();
 
         if (lastConstruSoldier) {
 
-            SC_Player.localPlayer.CmdChangeQinEnergy(-SC_Qin.Qin.sacrificeValue);
+            SC_Qin.ChangeEnergy(-SC_Qin.Qin.sacrificeValue);
 
             lastConstruSoldier.gameObject.SetActive(true);
 
         }
 
+        if (!gameManager.Bastion) {
+
+            SC_Qin.ChangeEnergy(SC_Qin.GetConstruCost(lastConstru.Name));
+
+        } else if (SC_Player.localPlayer.qin) {
+
+            SC_Player.localPlayer.Busy = true;
+
+            tileManager.DisplayConstructableTiles(false);
+
+            uiManager.StopCancelConstruct();
+
+        }
+
         lastConstru = null;
 
-        lastConstruSoldier = null;
-
-        uiManager.cancelLastConstructButton.SetActive(false);
+        lastConstruSoldier = null;        
 
     }
 

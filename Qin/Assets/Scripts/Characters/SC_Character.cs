@@ -97,7 +97,7 @@ public class SC_Character : NetworkBehaviour {
 
         uiManager.cancelMovementButton.SetActive(true);
 
-        uiManager.cancelLastConstructButton.SetActive(false);
+        uiManager.StopCancelConstruct();
 
     }
 

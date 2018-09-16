@@ -5,7 +5,7 @@ using static SC_Enums;
 public class SC_Player : NetworkBehaviour {
 
 	[SyncVar]
-	bool qin;
+	public bool qin;
 
     public bool Turn { get { return qin == !localPlayer.gameManager.CoalitionTurn; } }
 
@@ -243,6 +243,20 @@ public class SC_Player : NetworkBehaviour {
         SC_Construction.lastConstru = g.GetComponent<SC_Construction>();
 
     }
+
+    [Command]
+    public void CmdCancelLastConstru () {
+
+        RpcCancelLastConstru();
+
+    }
+
+    [ClientRpc]
+    public void RpcCancelLastConstru () {
+
+        SC_Construction.CancelLastConstruction();
+
+    }
     #endregion
 
     #region Change Qin Energy
@@ -354,12 +368,6 @@ public class SC_Player : NetworkBehaviour {
 	public void SetTileManager(SC_Tile_Manager tm) {
 
 		tileManager = tm;
-
-	}
-
-	public bool IsQin() {
-
-		return qin;
 
 	}
 

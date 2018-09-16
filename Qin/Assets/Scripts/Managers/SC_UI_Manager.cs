@@ -109,7 +109,8 @@ public class SC_UI_Manager : MonoBehaviour {
 		HideWeapons();
 
 		villagePanel.SetActive (false);
-		usePower.SetActive (coalition && !gameManager.Player.IsQin());
+		usePower.SetActive (coalition && !SC_Player.localPlayer.qin);
+        cancelMovementButton.SetActive(false);
 		resetMovementButton.SetActive (false);
 		resetAttackChoiceButton.SetActive (false);
 
@@ -123,6 +124,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
             construct.gameObject.SetActive(false);
             constructPanel.gameObject.SetActive(false);
+            StopCancelConstruct();
             qinPower.gameObject.SetActive(false);
             sacrifice.gameObject.SetActive(false);
 
@@ -130,9 +132,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		turns.text = (((turn - 1) % 3) == 0) ? "1st Turn - Coalition" : (((turn - 2) % 3) == 0) ? "2nd Turn - Coalition" : "Turn Qin";
 
-        bool pNotQin = !SC_Player.localPlayer.IsQin();
-
-        endTurn.SetActive(pNotQin == coalition && pNotQin);
+        endTurn.SetActive(SC_Player.localPlayer.Turn && !SC_Player.localPlayer.qin);
 
 	}
     #endregion
@@ -444,7 +444,7 @@ public class SC_UI_Manager : MonoBehaviour {
         }
 
         if (action == "construct")
-            cancelLastConstructButton.SetActive(false);
+            StopCancelConstruct();
 
         constructPanel.gameObject.SetActive(false);
 
@@ -483,6 +483,14 @@ public class SC_UI_Manager : MonoBehaviour {
         TileManager.RemoveAllFilters();
 
         TileManager.DisplayConstructableTiles((Constru)c == Constru.Wall);
+
+    }
+
+    public void StopCancelConstruct() {
+
+        gameManager.Bastion = false;
+
+        cancelLastConstructButton.SetActive(false);
 
     }
     #endregion

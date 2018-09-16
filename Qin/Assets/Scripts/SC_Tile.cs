@@ -133,7 +133,7 @@ public class SC_Tile : NetworkBehaviour {
 
                 fightManager.RangedAttack = !tileManager.IsNeighbor(tileManager.GetTileAt(SC_Character.attackingCharacter.gameObject), this);
 
-                SC_Player.localPlayer.CmdPrepareForAttack(fightManager.RangedAttack, gameObject, !SC_Player.localPlayer.IsQin());
+                SC_Player.localPlayer.CmdPrepareForAttack(fightManager.RangedAttack, gameObject, !SC_Player.localPlayer.qin);
 
                 if (SC_Character.attackingCharacter.IsHero)
                     SC_Character.attackingCharacter.Hero.ChooseWeapon();
