@@ -110,10 +110,12 @@ public class SC_Tile : NetworkBehaviour {
 
         if ((int)transform.position.x == (gameManager.baseMapPrefab.GetComponent<SC_MapPrefab>().xSize - 1) && (int)transform.position.y == (gameManager.baseMapPrefab.GetComponent<SC_MapPrefab>().ySize - 1) && !isServer) {
 
-            gameManager.Player.CmdFinishLoading();
-
-            /*if(SC_Player.localPlayer)
-                SC_Player.localPlayer.CmdFinishLoading();*/
+            if (gameManager.Player)
+                gameManager.Player.CmdFinishLoading();
+            else if (SC_Player.localPlayer)
+                SC_Player.localPlayer.CmdFinishLoading();
+            else
+                print("WTF");
 
         }
 
