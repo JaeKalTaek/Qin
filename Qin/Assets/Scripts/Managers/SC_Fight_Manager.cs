@@ -32,9 +32,10 @@ public class SC_Fight_Manager : MonoBehaviour {
 
     public void Attack () {
 
+        SC_Player.localPlayer.Busy = false;
+
         uiManager.HideWeapons();
-        uiManager.cancelMovementButton.SetActive(false);
-        uiManager.cancelAttackButton.SetActive(false);
+        uiManager.resetAttackChoiceButton.SetActive(false);
 
         SC_Character attacker = SC_Character.attackingCharacter;
 

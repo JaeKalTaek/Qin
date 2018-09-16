@@ -86,16 +86,20 @@ public class SC_Character : NetworkBehaviour {
 
 	protected virtual void OnMouseDown() {
 
-        if (SC_Player.localPlayer.Turn && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) {
-
-            if ((gameManager.CoalitionTurn || !SC_Qin.Qin.Busy) && (tileManager.GetTileAt(gameObject).CurrentDisplay == TDisplay.None))
-                PrintMovements();
-
-        }
+        if (SC_UI_Manager.CanInteract && !SC_Player.localPlayer.Busy && (tileManager.GetTileAt(gameObject).CurrentDisplay == TDisplay.None))
+            PrintMovements();
 
 	}
 
-	protected virtual void PrintMovements() { }
+	protected virtual void PrintMovements() {
+
+        SC_Player.localPlayer.Busy = true;
+
+        SC_Player.localPlayer.CmdCheckMovements((int)transform.position.x, (int)transform.position.y);
+
+        uiManager.cancelMovementButton.SetActive(true);
+
+    }
 
 	protected void OnMouseOver() {
 
@@ -181,7 +185,7 @@ public class SC_Character : NetworkBehaviour {
 
             CanMove = (Hero.Berserk && !Hero.BerserkTurn);
 
-            if (moved && target.Village && SC_Player.localPlayer.Turn) {
+            if ((!moved && LastPos.Village) || (moved && target.Village)) {
 
                 uiManager.villagePanel.SetActive(true);
 
@@ -202,7 +206,7 @@ public class SC_Character : NetworkBehaviour {
                 }              
 
                 if(SC_Player.localPlayer.Turn)
-                    uiManager.cancelMovementButton.SetActive(true);
+                    uiManager.resetMovementButton.SetActive(true);
 
                 CheckAttack();
 
@@ -217,13 +221,13 @@ public class SC_Character : NetworkBehaviour {
 
             } else*/ if(SC_Player.localPlayer.Turn) {
 
-                uiManager.cancelMovementButton.SetActive(true);
+                uiManager.resetMovementButton.SetActive(true);
 
             }
 
             CheckAttack();
 
-        }
+        }        
 
     }
 
@@ -295,7 +299,7 @@ public class SC_Character : NetworkBehaviour {
 
         UnTired();
 
-        uiManager.cancelMovementButton.SetActive(false);
+        uiManager.resetMovementButton.SetActive(false);
 
     }
 

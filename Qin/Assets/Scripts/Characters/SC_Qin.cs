@@ -21,9 +21,6 @@ public class SC_Qin : NetworkBehaviour {
     [Tooltip("Energy won when Qin sacrifices a soldier")]
     public int sacrificeValue;
 
-    [Tooltip("Cost in energy for Qin to create a soldier from a workshop")]
-    public int soldierCost;
-
     [Tooltip("Energy won for each village at the beginning of each of Qin's turn")]
     public int regenPerVillage;
 
@@ -50,8 +47,6 @@ public class SC_Qin : NetworkBehaviour {
 	static SC_UI_Manager uiManager;
 
 	public static SC_Qin Qin;
-
-    public bool Busy { get; set; }
 
 	void Start() {
 

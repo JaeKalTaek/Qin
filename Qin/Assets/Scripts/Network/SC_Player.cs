@@ -18,6 +18,8 @@ public class SC_Player : NetworkBehaviour {
 
 	public static SC_Player localPlayer;
 
+    public bool Busy { get; set; }
+
 	public override void OnStartLocalPlayer () {
 
         SetSide();
@@ -152,7 +154,7 @@ public class SC_Player : NetworkBehaviour {
     #endregion
 
     #region Remove filters
-    /*[Command]
+    [Command]
 	public void CmdRemoveAllFilters() {
 
 		RpcRemoveAllFilters ();
@@ -164,7 +166,7 @@ public class SC_Player : NetworkBehaviour {
 
         localPlayer.tileManager.RemoveAllFilters();
 
-    }*/
+    }
 
     [Command]
     public void CmdRemoveAllFiltersOnClient(bool qin) {
@@ -273,6 +275,29 @@ public class SC_Player : NetworkBehaviour {
     void RpcActionVillage(bool destroy) {
 
         localPlayer.gameManager.ActionVillageFunction(destroy);
+
+    }
+    #endregion
+
+    #region Create Soldier
+    [Command]
+    public void CmdCreateSoldier(Vector3 pos, int soldierID) {
+
+        localPlayer.gameManager.CreateSoldier(pos, soldierID);
+
+    }
+
+    [Command]
+    public void CmdSetupNewSoldier (GameObject g) {
+
+        RpcSetupnewSoldier(g);
+
+    }
+
+    [ClientRpc]
+    void RpcSetupnewSoldier (GameObject g) {
+
+        g.GetComponent<SC_Soldier>().SetupNew();
 
     }
     #endregion

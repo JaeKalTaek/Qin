@@ -15,9 +15,10 @@ public class SC_UI_Manager : MonoBehaviour {
 
 	[Header("Characters")]
 	public GameObject statsPanel;
-	public GameObject cancelMovementButton;
+    public GameObject cancelMovementButton;
+    public GameObject resetMovementButton;
 	public GameObject weaponChoice1;
-	public GameObject cancelAttackButton;
+	public GameObject resetAttackChoiceButton;
 
 	[Header("Heroes")]
 	public GameObject relationshipPanel;
@@ -48,6 +49,8 @@ public class SC_UI_Manager : MonoBehaviour {
     static SC_Fight_Manager fightManager;
 
     public static SC_UI_Manager Instance { get; set; }
+
+    public static bool CanInteract { get { return SC_Player.localPlayer.Turn && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject(); } }
     #endregion
 
     #region Setup
@@ -72,18 +75,42 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		}
 
+        for (int i = 0; i < workshopPanel.transform.GetChild(1).childCount; i++) {
+
+            Transform soldier = workshopPanel.transform.GetChild(1).GetChild(i);
+
+            if (i < gameManager.soldiersPrefabs.Length) {
+
+                soldier.GetChild(0).GetComponentInChildren<Text>().text = gameManager.soldiersPrefabs[i].characterName;
+                soldier.GetChild(1).GetComponentInChildren<Text>().text = gameManager.soldiersPrefabs[i].cost.ToString();
+
+            } else {
+
+                soldier.gameObject.SetActive(false);
+
+            }
+
+        }
+
 	}
     #endregion
 
-    #region Next Turn function
+    #region Next Turn
+    public void NextTurn () {
+
+        if(!SC_Player.localPlayer.Busy)
+            SC_Player.localPlayer.CmdNextTurn();
+
+    }
+
     public void NextTurn(bool coalition, int turn) {
 
 		HideWeapons();
 
 		villagePanel.SetActive (false);
 		usePower.SetActive (coalition && !gameManager.Player.IsQin());
-		cancelMovementButton.SetActive (false);
-		cancelAttackButton.SetActive (false);
+		resetMovementButton.SetActive (false);
+		resetAttackChoiceButton.SetActive (false);
 
         if(!coalition) {
 
@@ -227,7 +254,7 @@ public class SC_UI_Manager : MonoBehaviour {
 		buildingInfosPanel.SetActive (true);
 
 		SetText("BuildingName", construction.Name);
-		SetText("BuildingHealth", (construction.GetType ().Equals (typeof(SC_Village))) ? "" : "Health : " + construction.Health + " / " + construction.maxHealth);
+		SetText("BuildingHealth", construction.Health != 0 ? "Health : " + construction.Health + " / " + construction.maxHealth : "");
 
 	}
 
@@ -361,9 +388,9 @@ public class SC_UI_Manager : MonoBehaviour {
 
         SC_Character.attackingCharacter.CheckAttack();
 
-        cancelMovementButton.SetActive(!gameManager.CantCancelMovement);
+        resetMovementButton.SetActive(!gameManager.CantCancelMovement);
 
-        cancelAttackButton.SetActive(false);
+        resetAttackChoiceButton.SetActive(false);
 
     }
 
@@ -381,35 +408,45 @@ public class SC_UI_Manager : MonoBehaviour {
     #region Actions
     public void StartQinAction(string action) {
 
-        SC_Qin.Qin.Busy = true;
+        if (!SC_Player.localPlayer.Busy) {
 
-        SetButtonActivated("construct", action);
-        SetButtonActivated("sacrifice", action);
-        SetButtonActivated("qinPower", action);
+            SC_Player.localPlayer.Busy = true;
 
-        constructPanel.gameObject.SetActive(action == "construct");
+            SetButtonActivated("construct", action);
+            SetButtonActivated("sacrifice", action);
+            SetButtonActivated("qinPower", action);
 
-        workshopPanel.SetActive(action == "workshop");
+            constructPanel.gameObject.SetActive(action == "construct");
 
-        cancelMovementButton.SetActive(false);
+            workshopPanel.SetActive(action == "workshop");
 
-        TileManager.RemoveAllFilters();
+            resetMovementButton.SetActive(false);
 
-        SC_Player.localPlayer.CmdRemoveAllFiltersOnClient(false);
+            TileManager.RemoveAllFilters();
 
-        SC_Character.CancelAttack();
+            SC_Player.localPlayer.CmdRemoveAllFiltersOnClient(false);
+
+            SC_Character.CancelAttack();
+
+        }
 
     }
 
     public void EndQinAction(string action) {
 
-        SC_Tile_Manager.Instance.RemoveAllFilters();
+        if (action != "workshop") {
 
-        SetButtonActivated(action, true);
+            SC_Tile_Manager.Instance.RemoveAllFilters();
+
+            SetButtonActivated(action, true);
+
+        }
 
         constructPanel.gameObject.SetActive(false);
 
-        SC_Qin.Qin.Busy = false;
+        workshopPanel.SetActive(false);
+
+        SC_Player.localPlayer.Busy = false;
 
     }
     #endregion
@@ -427,11 +464,11 @@ public class SC_UI_Manager : MonoBehaviour {
 
     }
 
-    public void DisplayConstructPanel() {
+    public void DisplayConstructPanel() {        
 
-        StartQinAction("construct");
+        UpdateConstructPanel();
 
-        UpdateConstructPanel();             
+        StartQinAction("construct");                  
 
     }
 
@@ -444,13 +481,22 @@ public class SC_UI_Manager : MonoBehaviour {
         TileManager.DisplayConstructableTiles((Constru)c == Constru.Wall);
 
     }
+    #endregion
 
-    public void HideWorkshopPanel () {
+    #region Workshop
+    public void DisplayWorkshopPanel() {
 
-        workshopPanel.SetActive(false);
+        Transform soldiers = workshopPanel.transform.GetChild(1);
+
+        for (int i = 0; i < soldiers.childCount; i++)
+            if (soldiers.GetChild(i).gameObject.activeSelf)
+                soldiers.GetChild(i).GetComponentInChildren<Button>().interactable = gameManager.soldiersPrefabs[i].cost < SC_Qin.Energy;
+
+        StartQinAction("workshop");
 
     }
     #endregion
+
     #endregion
 
     #region Both Players

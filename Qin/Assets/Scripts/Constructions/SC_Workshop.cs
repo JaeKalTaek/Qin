@@ -15,9 +15,13 @@ public class SC_Workshop : SC_Construction {
 
 	public void OnMouseDown() {
 
-		/*gameManager.CurrentWorkshop = this;
+        if (SC_UI_Manager.CanInteract && !SC_Player.localPlayer.Busy && !tileManager.GetTileAt(gameObject).Character) {
 
-		gameManager.DisplayWorkshopPanel();*/
+            gameManager.CurrentWorkshop = this;
+
+            uiManager.StartQinAction("workshop");
+
+        }
 
 	}
 

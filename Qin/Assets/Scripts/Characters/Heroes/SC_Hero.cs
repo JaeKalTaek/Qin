@@ -63,7 +63,7 @@ public class SC_Hero : SC_Character {
 
 		if (CanMove || (Berserk && !BerserkTurn)) {
 
-            SC_Player.localPlayer.CmdCheckMovements((int)transform.position.x, (int)transform.position.y);
+            base.PrintMovements();
 
             uiManager.ShowHeroPower (PowerUsed, name);
 
@@ -95,8 +95,8 @@ public class SC_Hero : SC_Character {
 
 	public void ChooseWeapon() {
 
-		uiManager.cancelMovementButton.SetActive (false);
-		uiManager.cancelAttackButton.SetActive (true);
+		uiManager.resetMovementButton.SetActive (false);
+		uiManager.resetAttackChoiceButton.SetActive (true);
 
 		if ((fightManager.RangedAttack && weapon1.ranged) || (!fightManager.RangedAttack && !weapon1.IsBow))
 			uiManager.ShowWeapon (GetWeapon (true), true);

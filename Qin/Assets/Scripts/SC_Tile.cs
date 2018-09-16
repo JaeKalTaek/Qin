@@ -9,16 +9,18 @@ public class SC_Tile : NetworkBehaviour {
 
     public int cost;
 
+    bool MovingCharaQin { get { return !SC_Character.characterToMove.coalition; } }
+
     public bool CanGoThrough {
 
         get {
 
             if (Character)
-                return SC_Character.characterToMove.coalition == Character.coalition;
+                return MovingCharaQin != Character.coalition;
             else if (Construction)
-                return !SC_Character.characterToMove.coalition || !Bastion;
+                return MovingCharaQin || !Bastion;
             else if (Qin)
-                return !SC_Character.characterToMove.coalition;
+                return MovingCharaQin;
             else
                 return true;
 
@@ -33,7 +35,7 @@ public class SC_Tile : NetworkBehaviour {
             if (Character || Qin)
                 return false;
             else if (Construction)
-                return SC_Character.characterToMove.coalition ? Village : Village || Bastion;
+                return MovingCharaQin || !Bastion;
             else
                 return true;
 
@@ -46,11 +48,11 @@ public class SC_Tile : NetworkBehaviour {
         get {
 
             if (Character)
-                return SC_Character.attackingCharacter.coalition != Character.coalition;
+                return MovingCharaQin == Character.coalition;
             else if (Construction)
-                return SC_Character.attackingCharacter.coalition && Bastion;
+                return !MovingCharaQin && Bastion;
             else if (Qin)
-                return SC_Character.attackingCharacter.coalition;
+                return !MovingCharaQin;
             else
                 return true;
 
@@ -113,7 +115,7 @@ public class SC_Tile : NetworkBehaviour {
 
     void OnMouseDown() {
 
-        if (SC_Player.localPlayer.Turn && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) {
+        if (SC_UI_Manager.CanInteract) {
 
             if ((CurrentDisplay == TDisplay.Construct) && ((SC_Qin.Energy > SC_Qin.Qin.wallCost) || gameManager.Bastion)) {
 

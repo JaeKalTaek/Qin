@@ -9,7 +9,8 @@ public class SC_Game_Manager : NetworkBehaviour {
     //Prefabs
 	public GameObject baseMapPrefab;
     public GameObject plainPrefab, forestPrefab, mountainPrefab, palacePrefab;
-    public GameObject qinPrefab, soldierPrefab, convoyPrefab;
+    public GameObject qinPrefab, convoyPrefab;
+    public SC_Soldier[] soldiersPrefabs;
     public SC_Common_Characters_Variables commonCharactersVariables;
 	public List<GameObject> heroPrefabs;
 	public GameObject tileManagerPrefab;
@@ -152,7 +153,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 			if (eTile.spawnSoldier || eTile.qin || eTile.heroPrefab) {
 
-				GameObject go2 = Instantiate ((eTile.spawnSoldier) ? soldierPrefab : (eTile.qin) ? qinPrefab : eTile.heroPrefab);
+				GameObject go2 = Instantiate (eTile.spawnSoldier ? soldiersPrefabs[Random.Range(0, soldiersPrefabs.Length)].gameObject : eTile.qin ? qinPrefab : eTile.heroPrefab);
 
 				go2.transform.SetPos (eTile.transform);
 
@@ -168,12 +169,6 @@ public class SC_Game_Manager : NetworkBehaviour {
     #endregion
 
     #region Next Turn
-    public void NextTurn() {
-
-		Player.CmdNextTurn ();
-
-	}
-
 	public void NextTurnFunction() {    
 
 	    turn++;
@@ -217,7 +212,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 		if (!CoalitionTurn) {
 
-            SC_Qin.Qin.Busy = true;
+            Player.Busy = true;
 
             SC_Qin.ChangeEnergy(SC_Qin.Qin.regenPerVillage * SC_Village.number);
 
@@ -296,7 +291,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         if (Bastion) {
 
-            SC_Qin.Qin.Busy = false;
+            Player.Busy = false;
 
             Bastion = false;
 
@@ -306,15 +301,19 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 	public void DisplaySacrifices() {
 
-        uiManager.StartQinAction("sacrifice");
+        if (!Player.Busy) {
 
-        tileManager.DisplaySacrifices();
+            uiManager.StartQinAction("sacrifice");
+
+            tileManager.DisplaySacrifices();
+
+        }
 
 	}
 
 	public void DisplayResurrection() {
 
-        if (LastHeroDead && (SC_Qin.Energy > SC_Qin.Qin.powerCost)) {
+        if (!Player.Busy && LastHeroDead && (SC_Qin.Energy > SC_Qin.Qin.powerCost)) {
 
             uiManager.StartQinAction("qinPower");
 
@@ -340,13 +339,15 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         } else {
 
-            uiManager.cancelMovementButton.SetActive(true);
+            uiManager.resetMovementButton.SetActive(true);
 
         }
 
         uiManager.villagePanel.SetActive(false);
 
         SC_Character.attackingCharacter.CheckAttack();
+
+        Player.Busy = false;
 
     }
 
@@ -369,28 +370,24 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 	}*/
 
-    public void DisplayWorkshopPanel () {
+    public void WorkshopCreateSoldier(int soldierID) {
 
-        if (!CoalitionTurn && !Bastion && !tileManager.GetTileAt(CurrentWorkshop.gameObject).Character)
-            uiManager.StartQinAction("workshop");
+        Player.CmdCreateSoldier(CurrentWorkshop.transform.position, soldierID);
 
-    }
-
-    public void CreateSoldier() {
-
-        if(SC_Qin.Energy > SC_Qin.Qin.soldierCost) {
-
-			GameObject go = Instantiate(soldierPrefab, GameObject.Find("Soldiers").transform);
-			go.transform.SetPos(CurrentWorkshop.transform);
-            go.GetComponent<SC_Soldier>().Tire();
-
-            SC_Qin.ChangeEnergy(-SC_Qin.Qin.soldierCost);
-
-			uiManager.workshopPanel.SetActive (false);
-
-        }
+        uiManager.EndQinAction("workshop");
 
     }    
+
+    public void CreateSoldier(Vector3 pos, int soldierID) {
+
+        GameObject go = Instantiate(soldiersPrefabs[soldierID].gameObject, GameObject.Find("Soldiers").transform);
+        go.transform.SetPos(CurrentWorkshop.transform);
+
+        NetworkServer.Spawn(go);
+
+        Player.CmdSetupNewSoldier(go);
+
+    }
     #endregion    
 
     public void UseHeroPower() {
@@ -403,6 +400,16 @@ public class SC_Game_Manager : NetworkBehaviour {
         print("Implement Power");
 
 	}	
+
+    public void CancelMovement() {
+
+        Player.CmdRemoveAllFilters();
+
+        uiManager.cancelMovementButton.SetActive(false);
+
+        Player.Busy = false;
+
+    }
 
     public void ResetMovement() {
 
