@@ -357,7 +357,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         uiManager.villagePanel.SetActive(false);
 
-        SC_Character.attackingCharacter.CheckAttack();
+        tileManager.CheckAttack();
 
         Player.Busy = false;
 

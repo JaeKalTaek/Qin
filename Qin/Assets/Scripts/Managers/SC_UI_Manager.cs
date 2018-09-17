@@ -387,7 +387,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         HideWeapons();
 
-        SC_Character.attackingCharacter.CheckAttack();
+        TileManager.CheckAttack();
 
         resetMovementButton.SetActive(!gameManager.CantCancelMovement);
 

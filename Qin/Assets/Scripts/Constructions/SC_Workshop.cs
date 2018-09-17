@@ -15,7 +15,7 @@ public class SC_Workshop : SC_Construction {
 
 	public void OnMouseDown() {
 
-        if (SC_UI_Manager.CanInteract && !SC_Player.localPlayer.Busy && !tileManager.GetTileAt(gameObject).Character) {
+        if (SC_UI_Manager.CanInteract && !SC_Player.localPlayer.Busy && !tileManager.GetTileAt(gameObject).Character && SC_Player.localPlayer.qin) {
 
             gameManager.CurrentWorkshop = this;
 

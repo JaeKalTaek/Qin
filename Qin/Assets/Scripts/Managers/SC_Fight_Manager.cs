@@ -6,13 +6,11 @@ public class SC_Fight_Manager : MonoBehaviour {
 
     public bool RangedAttack { get; set; }
 
-    SC_Game_Manager gameManager;
-
     SC_UI_Manager uiManager;
 
     public SC_Tile_Manager TileManager { get; set; }
 
-    SC_Common_Characters_Variables CharactersVariables { get { return gameManager.commonCharactersVariables; } }
+    SC_Common_Characters_Variables CharactersVariables { get { return SC_Game_Manager.Instance.commonCharactersVariables; } }
 
     public static SC_Fight_Manager Instance;
 
@@ -23,8 +21,6 @@ public class SC_Fight_Manager : MonoBehaviour {
     }
 
     void Start () {
-
-        gameManager = SC_Game_Manager.Instance;
 
         uiManager = SC_UI_Manager.Instance;
 

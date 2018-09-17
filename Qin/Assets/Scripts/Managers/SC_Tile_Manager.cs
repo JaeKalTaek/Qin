@@ -56,37 +56,47 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }
 
-	public List<SC_Tile> GetRange(GameObject center) {
+    public List<SC_Tile> GetTilesAtDistance(SC_Tile center, int distance) {
 
-		List<SC_Tile> range = new List<SC_Tile> ();
+        return GetTilesAtDistance(center.transform.position, distance);
 
-		int x = (int)center.transform.position.x;
-		int y = (int)center.transform.position.y;
+    }
 
-		for (int i = (x - 2); i <= (x + 2); i++) {
+    public List<SC_Tile> GetTilesAtDistance(Vector3 center, int distance) {
 
-			for (int j = (y - 2); j <= (y + 2); j++) {
+        List<SC_Tile> returnValue = new List<SC_Tile>();
 
-				if ((i >= 0) && (i < xSize) && (j >= 0) && (j < ySize)) {
+        foreach(SC_Tile tile in tiles) {
 
-					bool validTile = true;
+            if (TileDistance(center, tile) == distance)
+                returnValue.Add(tile);
 
-					if ( ( (i == (x - 2)) || (i == (x + 2)) ) && (j != y))	validTile = false;
-					if ( ( (j == (y - 2)) || (j == (y + 2)) ) && (i != x))	validTile = false;
-					if ( ( (i == (x - 1)) || (i == (x + 1)) ) && ( (j < (y - 1)) || (j > (y + 1)) ) ) validTile = false;
-					if ( ( (j == (y - 1)) || (j == (y + 1)) ) && ( (i < (x - 1)) || (i > (x + 1)) ) ) validTile = false;
+        }
 
-					if (validTile) range.Add (tiles [i, j]);
+        return returnValue;
 
-				}
+    }
 
-			}
+    public List<SC_Tile> GetRange(Vector3 center, int distance) {
 
-		}
+        List<SC_Tile> returnValue = new List<SC_Tile>();
 
-		return range;
+        foreach (SC_Tile tile in tiles) {
 
-	}
+            if (TileDistance(center, tile) <= distance)
+                returnValue.Add(tile);
+
+        }
+
+        return returnValue;
+
+    }
+
+    public int TileDistance(Vector3 a, SC_Tile b) {
+
+        return Mathf.Abs((int)a.x - (int)b.transform.position.x) + Mathf.Abs((int)a.y - (int)b.transform.position.y);
+
+    }
 
 	public List<SC_Tile> GetNeighbors(SC_Tile tileParam) {
 
@@ -119,6 +129,33 @@ public class SC_Tile_Manager : NetworkBehaviour {
                 neighbor = true;
 
         return neighbor;
+
+    }
+
+    public void CheckAttack () {
+
+        RemoveAllFilters();
+
+        List<SC_Tile> attackableTiles = new List<SC_Tile>();
+
+        SC_Character attacker = SC_Character.attackingCharacter;
+
+        if (attacker.HasRange) {
+
+            if (attacker.Soldier && attacker.GetActiveWeapon().IsBow)
+                attackableTiles = GetTilesAtDistance(attacker.transform.position, 2);
+            else
+                attackableTiles = GetRange(attacker.transform.position, 2);
+
+        } else {
+
+            attackableTiles = GetTilesAtDistance(attacker.transform.position, 1);
+
+        }
+
+        foreach (SC_Tile tile in attackableTiles)
+            if (tile.Attackable)
+                tile.ChangeDisplay(TDisplay.Attack);
 
     }
 

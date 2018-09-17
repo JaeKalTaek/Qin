@@ -21,7 +21,9 @@ public class SC_Character : NetworkBehaviour {
 
 	public SC_Tile AttackTarget { get; set; }
 
-	public SC_Tile LastPos { get; set; }
+    public bool HasRange { get { return IsHero ? Hero.weapon1.ranged || Hero.weapon2.ranged : Soldier.weapon.ranged; } }
+
+    public SC_Tile LastPos { get; set; }
 
 	//Stats
 	public string characterName;
@@ -211,7 +213,7 @@ public class SC_Character : NetworkBehaviour {
 
                 uiManager.resetMovementButton.SetActive(SC_Player.localPlayer.Turn && !gameManager.CantCancelMovement);
 
-                CheckAttack();
+                tileManager.CheckAttack();
 
             }
 
@@ -228,7 +230,7 @@ public class SC_Character : NetworkBehaviour {
 
             }
 
-            CheckAttack();
+            tileManager.CheckAttack();
 
         }        
 
@@ -306,26 +308,7 @@ public class SC_Character : NetworkBehaviour {
 
         uiManager.cancelMovementButton.SetActive(true);
 
-    }
-
-    public void CheckAttack() {
-
-        tileManager.RemoveAllFilters();
-
-        List<SC_Tile> attackableTiles = new List<SC_Tile>(tileManager.GetNeighbors(tileManager.GetTileAt(gameObject)));
-
-        if(HasRange()) {
-
-            foreach(SC_Tile tile in tileManager.GetNeighbors(tileManager.GetTileAt(gameObject)))
-                attackableTiles.AddRange(tileManager.GetNeighbors(tile));
-
-        }
-
-        foreach(SC_Tile tile in attackableTiles)
-            if(tile.Attackable)
-                tile.ChangeDisplay(TDisplay.Attack);
-
-    }
+    }    
 
     public static void CancelAttack() {
 
@@ -355,16 +338,7 @@ public class SC_Character : NetworkBehaviour {
 
 		return IsHero ? Hero.GetWeapon(true) : Soldier.weapon;
 
-	}
-
-	public bool HasRange() {
-
-		if (IsHero)
-			return Hero.weapon1.ranged || Hero.weapon2.ranged;
-		else
-			return Soldier.weapon.ranged;
-
-	}
+	}	
 
 	public virtual bool Hit(int damages, bool saving) {
 
