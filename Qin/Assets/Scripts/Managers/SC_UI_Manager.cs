@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using static SC_Enums;
+using System.Collections;
 
 public class SC_UI_Manager : MonoBehaviour {
 
@@ -52,6 +53,10 @@ public class SC_UI_Manager : MonoBehaviour {
     public static SC_UI_Manager Instance { get; set; }
 
     public static bool CanInteract { get { return SC_Player.localPlayer.Turn && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject(); } }
+
+    public float clickSecurityDuration;
+
+    bool clickSecurity;
     #endregion
 
     #region Setup
@@ -411,6 +416,8 @@ public class SC_UI_Manager : MonoBehaviour {
 
         if (!SC_Player.localPlayer.Busy) {
 
+            gameManager.Bastion = false;
+
             SC_Player.localPlayer.Busy = true;
 
             SetButtonActivated("construct", action);
@@ -422,6 +429,8 @@ public class SC_UI_Manager : MonoBehaviour {
             workshopPanel.SetActive(action == "workshop");
 
             resetMovementButton.SetActive(false);
+
+            cancelLastConstructButton.SetActive(false);
 
             TileManager.RemoveAllFilters();
 
@@ -504,7 +513,32 @@ public class SC_UI_Manager : MonoBehaviour {
             if (soldiers.GetChild(i).gameObject.activeSelf)
                 soldiers.GetChild(i).GetComponentInChildren<Button>().interactable = gameManager.soldiersPrefabs[i].cost < SC_Qin.Energy;
 
-        StartQinAction("workshop");
+        StartCoroutine(ClickSafety());
+
+        StartQinAction("workshop");     
+
+    }
+
+    IEnumerator ClickSafety() {
+
+        clickSecurity = true;
+
+        yield return new WaitForSeconds(clickSecurityDuration);
+
+        clickSecurity = false;
+
+
+    }
+
+    public void WorkshopCreateSoldier (int soldierID) {
+
+        if (!clickSecurity) {
+
+            SC_Player.localPlayer.CmdCreateSoldier(gameManager.CurrentWorkshop.transform.position, soldierID);
+
+            EndQinAction("workshop");
+
+        }
 
     }
     #endregion

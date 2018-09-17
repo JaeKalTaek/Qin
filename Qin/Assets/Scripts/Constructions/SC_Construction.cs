@@ -43,23 +43,6 @@ public class SC_Construction : NetworkBehaviour {
 
     }
 
-	/*protected virtual void OnMouseDown() {
-
-		SC_Tile under = tileManager.GetTileAt (gameObject);
-
-		if (under.CurrentDisplay == TDisplay.Attack) {
-
-			SC_Tile attackingCharacterTile = tileManager.GetTileAt (SC_Character.attackingCharacter.gameObject);
-			gameManager.rangedAttack = !tileManager.IsNeighbor (attackingCharacterTile, under);
-
-            SC_Character.attackingCharacter.attackTarget = under;
-
-			((SC_Hero)SC_Character.attackingCharacter).ChooseWeapon ();
-
-		}
-
-	}*/
-
 	protected void OnMouseOver() {
 
 		if(Input.GetMouseButtonDown(1))

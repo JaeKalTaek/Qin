@@ -98,40 +98,6 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }
 
-	public List<SC_Tile> GetNeighbors(SC_Tile tileParam) {
-
-		List<SC_Tile> neighbors = new List<SC_Tile>();
-		int x = (int)tileParam.transform.position.x;
-		int y = (int)tileParam.transform.position.y;
-
-		if (x >= 1)
-			neighbors.Add(tiles[x - 1, y]);
-
-		if ((x + 1) < tiles.GetLength(0))
-			neighbors.Add(tiles[x + 1, y]);
-
-		if (y >= 1)
-			neighbors.Add(tiles[x, y - 1]);
-
-		if ((y + 1) < tiles.GetLength(1))
-			neighbors.Add(tiles[x, y + 1]);
-
-		return neighbors;
-
-	}
-
-    public bool IsNeighbor(SC_Tile pos, SC_Tile target) {
-
-        bool neighbor = false;
-
-        foreach(SC_Tile tile in GetNeighbors(pos))
-            if(tile.transform.position == target.transform.position)
-                neighbor = true;
-
-        return neighbor;
-
-    }
-
     public void CheckAttack () {
 
         RemoveAllFilters();
@@ -161,40 +127,9 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     public List<SC_Hero> HeroesInRange (SC_Hero target) {
 
-        List<SC_Tile> range = new List<SC_Tile>();
-
-        int x = (int)target.transform.position.x;
-        int y = (int)target.transform.position.y;
-
-        for (int i = (x - 2); i <= (x + 2); i++) {
-
-            for (int j = (y - 2); j <= (y + 2); j++) {
-
-                if ((i >= 0) && (i < xSize) && (j >= 0) && (j < ySize)) {
-
-                    bool validTile = true;
-
-                    if (((i == (x - 2)) || (i == (x + 2))) && (j != y))
-                        validTile = false;
-                    if (((j == (y - 2)) || (j == (y + 2))) && (i != x))
-                        validTile = false;
-                    if (((i == (x - 1)) || (i == (x + 1))) && ((j < (y - 1)) || (j > (y + 1))))
-                        validTile = false;
-                    if (((j == (y - 1)) || (j == (y + 1))) && ((i < (x - 1)) || (i > (x + 1))))
-                        validTile = false;
-
-                    if (validTile)
-                        range.Add(tiles[i, j]);
-
-                }
-
-            }
-
-        }
-
         List<SC_Hero> heroesInRange = new List<SC_Hero>();
 
-        foreach (SC_Tile tile in range) {
+        foreach (SC_Tile tile in GetRange(target.transform.position, 3)) {
 
             if (tile.Character) {
 
@@ -217,7 +152,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         SC_Tile t = null;
 
-        foreach (SC_Tile tile in GetNeighbors(GetTileAt(target.gameObject)))
+        foreach (SC_Tile tile in GetTilesAtDistance(target.transform.position, 1))
             if (tile.Empty)
                 t = tile;
 
@@ -284,7 +219,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         ClosedList.Add(aTile);
 
-        foreach (SC_Tile tile in GetNeighbors(aTile)) {
+        foreach (SC_Tile tile in GetTilesAtDistance(aTile, 1)) {
 
             if (ClosedList.Contains(tile) || OpenList.Contains(tile) || !tile.CanGoThrough)
                 continue;
@@ -314,7 +249,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
                 if (construction.GreatWall) {
 
-                    foreach (SC_Tile neighbor in GetNeighbors(GetTileAt(construction.gameObject)))
+                    foreach (SC_Tile neighbor in GetTilesAtDistance(construction.transform.position, 1))
                         if (neighbor.Constructable && !constructableTiles.Contains(neighbor))
                             constructableTiles.Add(neighbor);
 
@@ -358,7 +293,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     public void UpdateNeighborWallGraph (SC_Tile center) {
 
-        foreach (SC_Tile tile in GetNeighbors(center))
+        foreach (SC_Tile tile in GetTilesAtDistance(center, 1))
             if (tile.Bastion)
                 UpdateWallGraph(tile.Bastion.gameObject);
 
@@ -375,7 +310,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
         bool top = false;
         int count = 0;
 
-        foreach (SC_Tile tile in GetNeighbors(under)) {
+        foreach (SC_Tile tile in GetTilesAtDistance(under, 1)) {
 
             if (tile.Bastion) {
 

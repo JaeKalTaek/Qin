@@ -380,20 +380,12 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 		}
 
-	}*/
-
-    public void WorkshopCreateSoldier(int soldierID) {
-
-        Player.CmdCreateSoldier(CurrentWorkshop.transform.position, soldierID);
-
-        uiManager.EndQinAction("workshop");
-
-    }    
+	}*/       
 
     public void CreateSoldier(Vector3 pos, int soldierID) {
 
         GameObject go = Instantiate(soldiersPrefabs[soldierID].gameObject, GameObject.Find("Soldiers").transform);
-        go.transform.SetPos(CurrentWorkshop.transform);
+        go.transform.SetPos(pos);
 
         NetworkServer.Spawn(go);
 

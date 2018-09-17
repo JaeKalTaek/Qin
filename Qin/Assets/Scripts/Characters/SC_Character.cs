@@ -249,7 +249,7 @@ public class SC_Character : NetworkBehaviour {
 
             foreach(SC_Tile tile in openList) {
 
-                foreach(SC_Tile neighbor in tileManager.GetNeighbors(tile)) {
+                foreach(SC_Tile neighbor in tileManager.GetTilesAtDistance(tile, 1)) {
 
                     if(!closedList.Contains(neighbor) && range.Contains(neighbor) && !tempList.Contains(neighbor)) {
 

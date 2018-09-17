@@ -19,7 +19,7 @@ public class SC_Workshop : SC_Construction {
 
             gameManager.CurrentWorkshop = this;
 
-            uiManager.StartQinAction("workshop");
+            uiManager.DisplayWorkshopPanel();
 
         }
 
