@@ -170,10 +170,10 @@ public class SC_Tile : NetworkBehaviour {
 
 	}
 
-	public void SetFilter(string filterName) {
+	public void SetFilter(TDisplay filterName) {
 
 		foreach(SpriteRenderer sprite in GetComponentsInChildren<SpriteRenderer>())
-			sprite.enabled = sprite.name.Equals(filterName);
+			sprite.enabled = sprite.name.Equals("T_Display" + filterName);
 
 	}
 
@@ -190,7 +190,7 @@ public class SC_Tile : NetworkBehaviour {
 
         CurrentDisplay = d;
 
-        SetFilter("T_Display" + d);
+        SetFilter(d);
 
     }
 

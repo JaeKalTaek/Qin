@@ -98,28 +98,32 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }
 
-    public void CheckAttack () {
-
-        RemoveAllFilters();
+    List<SC_Tile> GetAttackTiles(SC_Character attacker, Vector3 center) {
 
         List<SC_Tile> attackableTiles = new List<SC_Tile>();
-
-        SC_Character attacker = SC_Character.attackingCharacter;
 
         if (attacker.HasRange) {
 
             if (attacker.Soldier && attacker.GetActiveWeapon().IsBow)
-                attackableTiles = GetTilesAtDistance(attacker.transform.position, 2);
+                attackableTiles = GetTilesAtDistance(center, 2);
             else
-                attackableTiles = GetRange(attacker.transform.position, 2);
+                attackableTiles = GetRange(center, 2);
 
         } else {
 
-            attackableTiles = GetTilesAtDistance(attacker.transform.position, 1);
+            attackableTiles = GetTilesAtDistance(center, 1);
 
         }
 
-        foreach (SC_Tile tile in attackableTiles)
+        return attackableTiles;
+
+    }
+
+    public void CheckAttack () {
+
+        RemoveAllFilters();
+
+        foreach (SC_Tile tile in GetAttackTiles(SC_Character.attackingCharacter, SC_Character.attackingCharacter.transform.position))
             if (tile.Attackable)
                 tile.ChangeDisplay(TDisplay.Attack);
 
@@ -180,9 +184,27 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         CalcRange(tileTarget, target);
 
-        foreach (SC_Tile tile in new List<SC_Tile>(ClosedList) { tileTarget })
-            if (tile.CanSetOn || (tile == tileTarget))
+        List<SC_Tile> movementTiles = new List<SC_Tile>();
+
+        foreach (SC_Tile tile in new List<SC_Tile>(ClosedList) { tileTarget }) {
+
+            if (!movementTiles.Contains(tile) && (tile.CanSetOn || tile == tileTarget)) {
+
                 tile.ChangeDisplay(TDisplay.Movement);
+
+                movementTiles.Add(tile);
+
+            }
+
+        }
+
+        foreach(SC_Tile tile in movementTiles) {
+
+            foreach (SC_Tile t in GetAttackTiles(target, tile.transform.position))
+                if (t.CurrentDisplay == TDisplay.None && t.Attackable)
+                    t.SetFilter(TDisplay.Attack);
+
+        }
 
     }
 

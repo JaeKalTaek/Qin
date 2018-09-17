@@ -129,7 +129,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
             construct.gameObject.SetActive(false);
             constructPanel.gameObject.SetActive(false);
-            StopCancelConstruct();
+            cancelLastConstructButton.SetActive(false);
             qinPower.gameObject.SetActive(false);
             sacrifice.gameObject.SetActive(false);
 
@@ -416,8 +416,6 @@ public class SC_UI_Manager : MonoBehaviour {
 
         if (!SC_Player.localPlayer.Busy) {
 
-            gameManager.Bastion = false;
-
             SC_Player.localPlayer.Busy = true;
 
             SetButtonActivated("construct", action);
@@ -430,7 +428,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
             resetMovementButton.SetActive(false);
 
-            cancelLastConstructButton.SetActive(false);
+            StopCancelConstruct();
 
             TileManager.RemoveAllFilters();
 

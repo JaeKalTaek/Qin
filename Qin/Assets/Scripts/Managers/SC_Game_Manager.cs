@@ -218,10 +218,13 @@ public class SC_Game_Manager : NetworkBehaviour {
 
             SC_Qin.ChangeEnergy(SC_Qin.Qin.regenPerVillage * SC_Village.number);
 
-			Bastion = true;           
+            if (Player.qin) {
 
-            if (Player.qin)
+                Bastion = true;
+
                 tileManager.DisplayConstructableTiles(false);
+
+            }
 
 
 		}

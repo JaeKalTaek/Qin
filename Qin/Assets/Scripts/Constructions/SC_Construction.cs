@@ -84,17 +84,16 @@ public class SC_Construction : NetworkBehaviour {
 
         }
 
-        if (!gameManager.Bastion) {
+        if (SC_Player.localPlayer.qin) {
 
-            SC_Qin.ChangeEnergy(SC_Qin.GetConstruCost(lastConstru.Name));
-
-        } else if (SC_Player.localPlayer.qin) {
+            if(!gameManager.Bastion)
+                SC_Player.localPlayer.CmdChangeQinEnergy(SC_Qin.GetConstruCost(lastConstru.Name));
 
             SC_Player.localPlayer.Busy = true;
 
-            tileManager.DisplayConstructableTiles(false);
+            tileManager.DisplayConstructableTiles(lastConstru.Name == "Wall");
 
-            uiManager.StopCancelConstruct();
+            uiManager.cancelLastConstructButton.SetActive(false);
 
         }
 
