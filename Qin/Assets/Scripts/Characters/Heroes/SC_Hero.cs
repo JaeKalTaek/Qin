@@ -27,6 +27,8 @@ public class SC_Hero : SC_Character {
 
     public bool ReadyToRegen { get; set; }
 
+    public int PumpSlow { get; set; }
+
 	protected override void Awake() {
 
 		base.Awake ();

@@ -18,7 +18,7 @@ public class SC_Tile : NetworkBehaviour {
             if (Character)
                 return MovingCharaQin != Character.coalition;
             else if (Construction)
-                return MovingCharaQin || !Bastion;
+                return (MovingCharaQin || !Bastion) && !Pump;
             else if (Qin)
                 return MovingCharaQin;
             else
@@ -35,7 +35,7 @@ public class SC_Tile : NetworkBehaviour {
             if (Character || Qin)
                 return false;
             else if (Construction)
-                return MovingCharaQin || !Bastion;
+                return (MovingCharaQin || !Bastion) && !Pump;
             else
                 return true;
 
@@ -50,7 +50,7 @@ public class SC_Tile : NetworkBehaviour {
             if (Character)
                 return MovingCharaQin == Character.coalition;
             else if (Construction)
-                return !MovingCharaQin && Bastion;
+                return !MovingCharaQin && (Bastion || Pump);
             else if (Qin)
                 return !MovingCharaQin;
             else
@@ -72,6 +72,8 @@ public class SC_Tile : NetworkBehaviour {
     public SC_Wall Wall { get { return Construction as SC_Wall; } }
 
     public SC_Workshop Workshop { get { return Construction as SC_Workshop; } }
+
+    public SC_Pump Pump { get { return Construction as SC_Pump; } }
 
     public SC_Character Character { get; set; }
 

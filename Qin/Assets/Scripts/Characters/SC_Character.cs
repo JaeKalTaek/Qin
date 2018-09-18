@@ -9,7 +9,7 @@ public class SC_Character : NetworkBehaviour {
 	//Alignment
 	public bool coalition;
 
-    public bool IsHero { get { return (GetType().Equals(typeof(SC_Hero)) || GetType().IsSubclassOf(typeof(SC_Hero))); } }
+    public bool IsHero { get { return this as SC_Hero != null; } }
 
     public SC_Hero Hero { get { return this as SC_Hero; } }
 
@@ -204,6 +204,23 @@ public class SC_Character : NetworkBehaviour {
                         target.Workshop.DestroyConstruction();
 
                         gameManager.CantCancelMovement = true;
+
+                    }
+
+                    int pumpSlow = 0;
+
+                    foreach (SC_Pump pump in FindObjectsOfType<SC_Pump>()) {
+
+                        if ((tileManager.TileDistance(transform.position, pump.transform.position) <= pump.range) && (pumpSlow < pump.slowAmount))
+                            pumpSlow = pump.slowAmount;
+
+                    }
+
+                    if(pumpSlow != Hero.PumpSlow) {
+
+                        Hero.movement -= (pumpSlow - Hero.PumpSlow);
+
+                        uiManager.TryRefreshInfos(gameObject, typeof(SC_Hero));
 
                     }
 

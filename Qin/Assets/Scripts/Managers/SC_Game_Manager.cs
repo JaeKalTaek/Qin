@@ -212,7 +212,10 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         CurrentConstru = Constru.Bastion;
 
-        if (!CoalitionTurn) {            
+        if (!CoalitionTurn) {
+
+            foreach (SC_Pump p in FindObjectsOfType<SC_Pump>())
+                p.Drain();
 
             SC_Qin.ChangeEnergy(SC_Qin.Qin.regenPerVillage * SC_Village.number);
 

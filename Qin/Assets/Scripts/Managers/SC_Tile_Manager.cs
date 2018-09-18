@@ -91,7 +91,13 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     public int TileDistance(Vector3 a, SC_Tile b) {
 
-        return Mathf.Abs((int)a.x - (int)b.transform.position.x) + Mathf.Abs((int)a.y - (int)b.transform.position.y);
+        return TileDistance(a, b.transform.position);
+
+    }
+
+    public int TileDistance (Vector3 a, Vector3 b) {
+
+        return Mathf.Abs((int)a.x - (int)b.x) + Mathf.Abs((int)a.y - (int)b.y);
 
     }
 

@@ -7,6 +7,6 @@ public class SC_Enums {
 
     public enum ShiFuMi { Rock, Paper, Scissors, Special }
 
-    public enum Constru { Bastion, Wall, Village, Workshop }
+    public enum Constru { Bastion, Wall, Village, Workshop, Pump }
 
 }
