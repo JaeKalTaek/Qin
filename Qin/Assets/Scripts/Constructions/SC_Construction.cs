@@ -8,6 +8,8 @@ public class SC_Construction : NetworkBehaviour {
 	public int maxHealth;
 	public int Health { get; set; }
 
+    public int cost;
+
 	public SC_Lifebar Lifebar { get; set; }
 
     public bool GreatWall { get { return (this as SC_Bastion != null) || (this as SC_Wall != null); } }

@@ -24,22 +24,6 @@ public class SC_Qin : NetworkBehaviour {
     [Tooltip("Energy won for each village at the beginning of each of Qin's turn")]
     public int regenPerVillage;
 
-    [Header("Buildings cost")]
-    [Tooltip("Cost in energy for Qin to construct a wall")]
-    public int wallCost;
-
-    [Tooltip("Cost in energy for Qin to construct a bastion")]
-    public int bastionCost;
-
-    [Tooltip("Cost in energy for Qin to construct a village")]
-    public int villageCost;
-
-    [Tooltip("Cost in energy for Qin to construct a workshop")]
-    public int workshopCost;
-
-    [Tooltip("Cost in energy for Qin to construct a pump")]
-    public int pumpCost;
-
     static SC_Game_Manager gameManager;
 
 	static SC_Tile_Manager tileManager;
@@ -128,7 +112,7 @@ public class SC_Qin : NetworkBehaviour {
 
     public static int GetConstruCost (string s) {
 
-        return (int)typeof(SC_Qin).GetField(s.ToLower() + "Cost").GetValue(Qin);
+        return Resources.Load<SC_Construction>("Prefabs/Constructions/P_" + s).cost;
 
     }
 
