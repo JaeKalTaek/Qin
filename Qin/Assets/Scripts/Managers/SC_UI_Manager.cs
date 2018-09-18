@@ -184,6 +184,13 @@ public class SC_UI_Manager : MonoBehaviour {
 
 	}
 
+    public void HideInfosIfActive(GameObject g) {
+
+        if (CurrentGameObject == g)
+            HideInfos(g);
+
+    }
+
 	public bool HideInfos(GameObject g) {
 
 		statsPanel.SetActive (false);

@@ -116,7 +116,7 @@ public class SC_Character : NetworkBehaviour {
 
         LastPos = tileManager.GetTileAt(gameObject);
 
-        path = PathFinder(LastPos, target, tileManager.ClosedList);
+        path = tileManager.PathFinder(LastPos, target);
 
         if(path == null)
             FinishMovement(false);
@@ -236,58 +236,6 @@ public class SC_Character : NetworkBehaviour {
 
     }
 
-    protected List<SC_Tile> PathFinder(SC_Tile start, SC_Tile end, List<SC_Tile> range) {
-
-        List<SC_Tile> openList = new List<SC_Tile>();
-        List<SC_Tile> tempList = new List<SC_Tile>();
-        List<SC_Tile> closedList = new List<SC_Tile>();
-
-        start.Parent = null;
-        openList.Add(start);
-
-        while(!openList.Contains(end)) {
-
-            foreach(SC_Tile tile in openList) {
-
-                foreach(SC_Tile neighbor in tileManager.GetTilesAtDistance(tile, 1)) {
-
-                    if(!closedList.Contains(neighbor) && range.Contains(neighbor) && !tempList.Contains(neighbor)) {
-
-                        tempList.Add(neighbor);
-                        neighbor.Parent = tile;
-
-                    }
-
-                }
-
-                closedList.Add(tile);
-
-            }
-
-            openList = new List<SC_Tile>(tempList);
-            tempList.Clear();
-
-        }
-
-        List<SC_Tile> path = new List<SC_Tile>();
-        SC_Tile currentParent = end;
-
-        while(!path.Contains(start)) {
-
-            path.Add(currentParent);
-            currentParent = currentParent.Parent;
-
-        }
-
-        foreach(SC_Tile tile in tileManager.tiles)
-            tile.Parent = null;
-
-        path.Reverse();
-
-        return (path.Count > 1) ? path : null;
-
-	}
-
     public void ResetMovementFunction () {
 
         tileManager.RemoveAllFilters();
@@ -327,8 +275,7 @@ public class SC_Character : NetworkBehaviour {
 
 	public virtual void DestroyCharacter() {
 
-        if(uiManager.CurrentGameObject == gameObject)
-            uiManager.HideInfos (gameObject);
+        uiManager.HideInfosIfActive(gameObject);
 
         tileManager.GetTileAt(gameObject).Character = null;
 

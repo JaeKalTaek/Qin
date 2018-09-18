@@ -212,13 +212,13 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         CurrentConstru = Constru.Bastion;
 
-        if (!CoalitionTurn) {
-
-            Player.Busy = true;
+        if (!CoalitionTurn) {            
 
             SC_Qin.ChangeEnergy(SC_Qin.Qin.regenPerVillage * SC_Village.number);
 
             if (Player.qin) {
+
+                Player.Busy = true;
 
                 Bastion = true;
 
@@ -251,6 +251,8 @@ public class SC_Game_Manager : NetworkBehaviour {
         SC_Tile tile = tileManager.GetTileAt (x, y);
 
         if(tile.Soldier) {
+
+            uiManager.HideInfosIfActive(tile.Soldier.gameObject);
 
             tile.Soldier.gameObject.SetActive(false);
 

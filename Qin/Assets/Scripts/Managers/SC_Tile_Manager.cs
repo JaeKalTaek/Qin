@@ -5,9 +5,6 @@ using static SC_Enums;
 
 public class SC_Tile_Manager : NetworkBehaviour {
 
-	public GameObject baseMapPrefab;
-	public GameObject plainPrefab, ForestPrefab, MountainPrefab, palacePrefab;
-
 	[SyncVar]
 	public int xSize, ySize;
 
@@ -20,8 +17,8 @@ public class SC_Tile_Manager : NetworkBehaviour {
     public static SC_Tile_Manager Instance { get; set; }
 
     //Variables used to determine the movements possible
-    public List<SC_Tile> OpenList { get; set; }
-    public List<SC_Tile> ClosedList { get; set; }
+    List<SC_Tile> OpenList { get; set; }
+    List<SC_Tile> ClosedList { get; set; }
     Dictionary<SC_Tile, int> movementPoints = new Dictionary<SC_Tile, int>();
 
     void Awake() {
@@ -184,25 +181,17 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         CalcRange(tileTarget, target);
 
-        List<SC_Tile> movementTiles = new List<SC_Tile>();
-
         foreach (SC_Tile tile in new List<SC_Tile>(ClosedList) { tileTarget }) {
 
-            if (!movementTiles.Contains(tile) && (tile.CanSetOn || tile == tileTarget)) {
+            if (tile.CanSetOn || tile == tileTarget) {
 
                 tile.ChangeDisplay(TDisplay.Movement);
 
-                movementTiles.Add(tile);
+                foreach (SC_Tile t in GetAttackTiles(target, tile.transform.position))
+                    if (t.CurrentDisplay == TDisplay.None && t.Attackable && !ClosedList.Contains(t))
+                        t.SetFilter(TDisplay.Attack);
 
             }
-
-        }
-
-        foreach(SC_Tile tile in movementTiles) {
-
-            foreach (SC_Tile t in GetAttackTiles(target, tile.transform.position))
-                if (t.CurrentDisplay == TDisplay.None && t.Attackable)
-                    t.SetFilter(TDisplay.Attack);
 
         }
 
@@ -257,6 +246,58 @@ public class SC_Tile_Manager : NetworkBehaviour {
             }
 
         }
+
+    }
+
+    public List<SC_Tile> PathFinder (SC_Tile start, SC_Tile end) {
+
+        List<SC_Tile> openList = new List<SC_Tile>();
+        List<SC_Tile> tempList = new List<SC_Tile>();
+        List<SC_Tile> closedList = new List<SC_Tile>();
+
+        start.Parent = null;
+        openList.Add(start);
+
+        while (!openList.Contains(end)) {
+
+            foreach (SC_Tile tile in openList) {
+
+                foreach (SC_Tile neighbor in GetTilesAtDistance(tile, 1)) {
+
+                    if (!closedList.Contains(neighbor) && ClosedList.Contains(neighbor) && !tempList.Contains(neighbor)) {
+
+                        tempList.Add(neighbor);
+                        neighbor.Parent = tile;
+
+                    }
+
+                }
+
+                closedList.Add(tile);
+
+            }
+
+            openList = new List<SC_Tile>(tempList);
+            tempList.Clear();
+
+        }
+
+        List<SC_Tile> path = new List<SC_Tile>();
+        SC_Tile currentParent = end;
+
+        while (!path.Contains(start)) {
+
+            path.Add(currentParent);
+            currentParent = currentParent.Parent;
+
+        }
+
+        foreach (SC_Tile tile in tiles)
+            tile.Parent = null;
+
+        path.Reverse();
+
+        return (path.Count > 1) ? path : null;
 
     }
     #endregion
