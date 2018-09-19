@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System;
 using static SC_Enums;
 using System.Collections;
+using UnityEngine.EventSystems;
 
 public class SC_UI_Manager : MonoBehaviour {
 
@@ -57,6 +58,8 @@ public class SC_UI_Manager : MonoBehaviour {
     public float clickSecurityDuration;
 
     bool clickSecurity;
+
+    SC_Soldier[] soldiers;
     #endregion
 
     #region Setup
@@ -81,14 +84,16 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		}
 
+        soldiers = Resources.LoadAll<SC_Soldier>("Prefabs/Characters/Soldiers");
+
         for (int i = 0; i < workshopPanel.transform.GetChild(1).childCount; i++) {
 
             Transform soldier = workshopPanel.transform.GetChild(1).GetChild(i);
 
-            if (i < gameManager.soldiersPrefabs.Length) {
+            if (i < soldiers.Length) {
 
-                soldier.GetChild(0).GetComponentInChildren<Text>().text = gameManager.soldiersPrefabs[i].characterName;
-                soldier.GetChild(1).GetComponentInChildren<Text>().text = gameManager.soldiersPrefabs[i].cost.ToString();
+                soldier.GetChild(0).GetComponentInChildren<Text>().text = soldiers[i].characterName;
+                soldier.GetChild(1).GetComponentInChildren<Text>().text = soldiers[i].cost.ToString();
 
             } else {
 
@@ -226,8 +231,8 @@ public class SC_UI_Manager : MonoBehaviour {
 		SetText("Armor", " Armor : " + character.armor);
 		SetText("Qi", " Qi : " + character.qi);
 		SetText("Resistance", " Resistance : " + character.resistance);
-		SetText("Technique", " Technique : " + character.technique + ", Crit Jauge : " + character.CriticalAmount + "/" + gameManager.commonCharactersVariables.critTrigger);
-		SetText("Reflexes", " Reflexes : " + character.reflexes + ", Dodge Jauge : " + character.DodgeAmount + "/" + gameManager.commonCharactersVariables.dodgeTrigger);
+		SetText("Technique", " Technique : " + character.technique + ", Crit Jauge : " + character.CriticalAmount + "/" + gameManager.CommonCharactersVariables.critTrigger);
+		SetText("Reflexes", " Reflexes : " + character.reflexes + ", Dodge Jauge : " + character.DodgeAmount + "/" + gameManager.CommonCharactersVariables.dodgeTrigger);
         SetText("Movement", " Movement : " + character.movement);
 		SetText("WeaponsTitle", " Weapons :");
 
@@ -512,11 +517,11 @@ public class SC_UI_Manager : MonoBehaviour {
     #region Workshop
     public void DisplayWorkshopPanel() {
 
-        Transform soldiers = workshopPanel.transform.GetChild(1);
+        Transform uiSoldiers = workshopPanel.transform.GetChild(1);
 
-        for (int i = 0; i < soldiers.childCount; i++)
-            if (soldiers.GetChild(i).gameObject.activeSelf)
-                soldiers.GetChild(i).GetComponentInChildren<Button>().interactable = gameManager.soldiersPrefabs[i].cost < SC_Qin.Energy;
+        for (int i = 0; i < uiSoldiers.childCount; i++)
+            if (uiSoldiers.GetChild(i).gameObject.activeSelf)
+                uiSoldiers.GetChild(i).GetComponentInChildren<Button>().interactable = soldiers[i].cost < SC_Qin.Energy;
 
         StartCoroutine(ClickSafety());
 
@@ -535,11 +540,11 @@ public class SC_UI_Manager : MonoBehaviour {
 
     }
 
-    public void WorkshopCreateSoldier (int soldierID) {
+    public void WorkshopCreateSoldier () {
 
         if (!clickSecurity) {
 
-            SC_Player.localPlayer.CmdCreateSoldier(gameManager.CurrentWorkshop.transform.position, soldierID);
+            SC_Player.localPlayer.CmdCreateSoldier(gameManager.CurrentWorkshop.transform.position, EventSystem.current.currentSelectedGameObject.GetComponentInChildren<Text>().text);
 
             EndQinAction("workshop");
 

@@ -122,7 +122,7 @@ public class SC_Hero : SC_Character {
 
             if (ReadyToRegen) {
 
-                Health = Mathf.Min(Health + gameManager.commonCharactersVariables.villageRegen, maxHealth);
+                Health = Mathf.Min(Health + gameManager.CommonCharactersVariables.villageRegen, maxHealth);
                 UpdateHealth();
 
             } else {
@@ -145,7 +145,7 @@ public class SC_Hero : SC_Character {
 
 			if (saving) {
 
-                Health = gameManager.commonCharactersVariables.savedHealthAmount;
+                Health = gameManager.CommonCharactersVariables.savedHealthAmount;
 				Berserk = true;
 				BerserkTurn = true;
 
@@ -170,7 +170,7 @@ public class SC_Hero : SC_Character {
 
 			}
 
-		} else if (Health <= gameManager.commonCharactersVariables.berserkTriggerHealth) {
+		} else if (Health <= gameManager.CommonCharactersVariables.berserkTriggerHealth) {
 
 			CanMove = gameManager.CoalitionTurn;
 
@@ -218,7 +218,7 @@ public class SC_Hero : SC_Character {
 			int value = 0;
 			Relationships.TryGetValue (hero.characterName, out value);
 
-			if (value >= gameManager.commonCharactersVariables.berserkTriggerRelation) {
+			if (value >= gameManager.CommonCharactersVariables.berserkTriggerRelation) {
 
 				hero.Berserk = true;
 				hero.BerserkTurn = true;

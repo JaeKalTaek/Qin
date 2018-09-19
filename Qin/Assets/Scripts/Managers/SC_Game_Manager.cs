@@ -6,23 +6,16 @@ using static SC_Enums;
 
 public class SC_Game_Manager : NetworkBehaviour {
 
-    //Prefabs
 	public GameObject baseMapPrefab;
-    public GameObject plainPrefab, forestPrefab, mountainPrefab, palacePrefab;
-    public GameObject qinPrefab, convoyPrefab;
-    public SC_Soldier[] soldiersPrefabs;
-    public SC_Common_Characters_Variables commonCharactersVariables;
-	public List<GameObject> heroPrefabs;
-	public GameObject tileManagerPrefab;
-    
-	//Instance
+
+    public SC_Common_Characters_Variables CommonCharactersVariables { get; set; }
+
     public static SC_Game_Manager Instance { get; set; }  
 
     int turn;
 
     public bool CoalitionTurn { get { return turn % 3 != 0; } }
 
-    //Other
     public bool Bastion { get; set; }
 
 	public SC_Hero LastHeroDead { get; set; }
@@ -46,7 +39,9 @@ public class SC_Game_Manager : NetworkBehaviour {
 
     }
 
-    void Start() {        
+    void Start() {
+
+        CommonCharactersVariables = Resources.Load<SC_Common_Characters_Variables>("Prefabs/Characters/P_Common_Characters_Variables");
 
         turn = 1;
 
@@ -83,9 +78,9 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 			SC_EditorTile eTile = child.GetComponent<SC_EditorTile> ();
 
-			GameObject tilePrefab = (eTile.tileType == tileType.Plain) ? plainPrefab : (eTile.tileType == tileType.Forest) ? forestPrefab : (eTile.tileType == tileType.Mountain) ? mountainPrefab : palacePrefab;
+			GameObject tilePrefab = Resources.Load<GameObject>("Prefabs/Tiles/P_" + eTile.tileType);
 
-			GameObject go = Instantiate (tilePrefab, new Vector3(eTile.transform.position.x, eTile.transform.position.y, 0), eTile.transform.rotation,  GameObject.Find ("Tiles").transform);
+            GameObject go = Instantiate (tilePrefab, new Vector3(eTile.transform.position.x, eTile.transform.position.y, 0), eTile.transform.rotation,  GameObject.Find ("Tiles").transform);
 
 			NetworkServer.Spawn (go);
 
@@ -95,7 +90,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 	void SetupTileManager() {
 
-		GameObject tm = Instantiate (tileManagerPrefab);
+		GameObject tm = Instantiate (Resources.Load<GameObject>("Prefabs/P_Tile_Manager"));
 		SC_Tile_Manager stm = tm.GetComponent<SC_Tile_Manager> ();
 
 		stm.xSize = baseMapPrefab.GetComponent<SC_MapPrefab>().xSize;
@@ -126,15 +121,15 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 			if (eTile.construction != constructionType.None) {
 
-				GameObject constructionPrefab = (eTile.construction == constructionType.Village) ? eTile.villagePrefab : (eTile.construction == constructionType.Workshop) ? eTile.workshopPrefab : (eTile.construction == constructionType.Bastion) ? eTile.bastionPrefab : null;
+                GameObject constructionPrefab = Resources.Load<GameObject>("Prefabs/Constructions/P_" + eTile.construction);
 
 				GameObject go2 = Instantiate (constructionPrefab);
 
 				go2.transform.SetPos (eTile.transform);
 
-				go2.transform.parent = (eTile.construction == constructionType.Village) ? GameObject.Find ("Villages").transform : (eTile.construction == constructionType.Workshop) ? GameObject.Find ("Workshops").transform : GameObject.Find("Bastions").transform;
+                go2.transform.parent = GameObject.Find(eTile.construction + "s").transform;
 
-				NetworkServer.Spawn (go2);
+                NetworkServer.Spawn (go2);
 
 			}
 
@@ -147,13 +142,15 @@ public class SC_Game_Manager : NetworkBehaviour {
 
     void GenerateCharacters() {
 
+        GameObject[] soldiers = Resources.LoadAll<GameObject>("Prefabs/Characters/Soldiers");
+
 		foreach (Transform child in baseMapPrefab.transform) {
 
 			SC_EditorTile eTile = child.GetComponent<SC_EditorTile> ();
 
 			if (eTile.spawnSoldier || eTile.qin || eTile.heroPrefab) {
 
-				GameObject go2 = Instantiate (eTile.spawnSoldier ? soldiersPrefabs[Random.Range(0, soldiersPrefabs.Length)].gameObject : eTile.qin ? qinPrefab : eTile.heroPrefab);
+                GameObject go2 = Instantiate(eTile.spawnSoldier ? soldiers[Random.Range(0, soldiers.Length)].gameObject : eTile.qin ? Resources.Load<GameObject>("Prefabs/Characters/P_Qin") : eTile.heroPrefab);
 
 				go2.transform.SetPos (eTile.transform);
 
@@ -390,9 +387,9 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 	}*/       
 
-    public void CreateSoldier(Vector3 pos, int soldierID) {
+    public void CreateSoldier(Vector3 pos, string soldierName) {
 
-        GameObject go = Instantiate(soldiersPrefabs[soldierID].gameObject, GameObject.Find("Soldiers").transform);
+        GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/Characters/Soldiers/P_" + soldierName), GameObject.Find("Soldiers").transform);
         go.transform.SetPos(pos);
 
         NetworkServer.Spawn(go);

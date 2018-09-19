@@ -10,7 +10,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
     public SC_Tile_Manager TileManager { get; set; }
 
-    SC_Common_Characters_Variables CharactersVariables { get { return SC_Game_Manager.Instance.commonCharactersVariables; } }
+    SC_Common_Characters_Variables CharactersVariables { get { return SC_Game_Manager.Instance.CommonCharactersVariables; } }
 
     public static SC_Fight_Manager Instance;
 

@@ -324,9 +324,9 @@ public class SC_Player : NetworkBehaviour {
 
     #region Create Soldier
     [Command]
-    public void CmdCreateSoldier(Vector3 pos, int soldierID) {
+    public void CmdCreateSoldier(Vector3 pos, string soldierName) {
 
-        localPlayer.gameManager.CreateSoldier(pos, soldierID);
+        localPlayer.gameManager.CreateSoldier(pos, soldierName);
 
     }
 

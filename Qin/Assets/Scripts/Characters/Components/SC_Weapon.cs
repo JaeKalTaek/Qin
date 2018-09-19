@@ -17,7 +17,7 @@ public class SC_Weapon : MonoBehaviour {
             return ((value == ShiFuMi.Rock && opponent.value == ShiFuMi.Scissors) ||
                 (value == ShiFuMi.Paper && opponent.value == ShiFuMi.Rock) ||
                 (value == ShiFuMi.Scissors && opponent.value == ShiFuMi.Paper)) ?
-                SC_Game_Manager.Instance.commonCharactersVariables.shiFuMiAvantage : SC_Game_Manager.Instance.commonCharactersVariables.shiFuMiDisavantage;
+                SC_Game_Manager.Instance.CommonCharactersVariables.shiFuMiAvantage : SC_Game_Manager.Instance.CommonCharactersVariables.shiFuMiDisavantage;
         else
             return 1;
 
