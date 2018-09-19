@@ -123,7 +123,7 @@ public class SC_Tile : NetworkBehaviour {
 
     }
 
-    void OnMouseDown() {
+    public void CursorClick() {
 
         if (SC_UI_Manager.CanInteract) {
 
