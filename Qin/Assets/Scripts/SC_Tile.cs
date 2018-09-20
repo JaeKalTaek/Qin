@@ -9,14 +9,14 @@ public class SC_Tile : NetworkBehaviour {
 
     public int cost;
 
-    bool MovingCharaQin { get { return !SC_Character.characterToMove.coalition; } }
+    bool MovingCharaQin { get { return SC_Character.characterToMove.qin; } }
 
     public bool CanGoThrough {
 
         get {
 
             if (Character)
-                return MovingCharaQin != Character.coalition;
+                return MovingCharaQin == Character.qin;
             else if (Construction)
                 return (MovingCharaQin || !Bastion) && !Pump;
             else if (Qin)
@@ -48,7 +48,7 @@ public class SC_Tile : NetworkBehaviour {
         get {
 
             if (Character)
-                return MovingCharaQin == Character.coalition;
+                return MovingCharaQin != Character.qin;
             else if (Construction)
                 return !MovingCharaQin && (Bastion || Pump);
             else if (Qin)
@@ -59,7 +59,7 @@ public class SC_Tile : NetworkBehaviour {
         }
     }
 
-    public bool Constructable { get { return !name.Contains("Palace") && (!Character || (gameManager.Bastion && Soldier)) && !Construction && !Locked; } }
+    public bool Constructable { get { return !name.Contains("Palace") && (!Character || (gameManager.QinTurnBeginning && Soldier)) && !Construction && !Locked; } }
 
     public bool Locked { get; set; }
 
@@ -120,6 +120,12 @@ public class SC_Tile : NetworkBehaviour {
                 FindObjectOfType<SC_Player>().CmdFinishLoading();
 
         }
+
+    }
+
+    void OnMouseDown () {
+
+        CursorClick();
 
     }
 

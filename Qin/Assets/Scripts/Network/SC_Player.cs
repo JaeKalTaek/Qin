@@ -7,7 +7,7 @@ public class SC_Player : NetworkBehaviour {
 	[SyncVar]
 	public bool qin;
 
-    public bool Turn { get { return qin != localPlayer.gameManager.CoalitionTurn; } }
+    public bool Turn { get { return qin == localPlayer.gameManager.Qin; } }
 
 	SC_Game_Manager gameManager;
 

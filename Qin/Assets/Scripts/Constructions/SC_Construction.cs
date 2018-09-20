@@ -87,7 +87,7 @@ public class SC_Construction : NetworkBehaviour {
 
         if (SC_Player.localPlayer.qin) {
 
-            if(!gameManager.Bastion)
+            if(!gameManager.QinTurnBeginning)
                 SC_Player.localPlayer.CmdChangeQinEnergy(SC_Qin.GetConstruCost(lastConstru.Name));
 
             SC_Player.localPlayer.Busy = true;

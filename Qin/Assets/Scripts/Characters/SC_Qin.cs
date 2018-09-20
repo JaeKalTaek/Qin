@@ -62,7 +62,7 @@ public class SC_Qin : NetworkBehaviour {
 		SC_Hero hero = gameManager.LastHeroDead;
 
 		hero.transform.SetPos(pos);
-		hero.coalition = false;
+		hero.qin = true;
 		hero.PowerUsed = false;
 		hero.PowerBacklash = 0;
 		hero.SetBaseColor (new Color (255, 0, 205));

@@ -12,7 +12,7 @@ public class SC_Soldier : SC_Character {
 
 		base.Awake ();
 		
-        coalition = false;
+        qin = true;
 
     }
 

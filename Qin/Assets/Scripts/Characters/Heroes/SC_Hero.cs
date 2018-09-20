@@ -35,7 +35,7 @@ public class SC_Hero : SC_Character {
 
 		berserkColor = new Color (0, .82f, 1);
 
-		coalition = true;
+		qin = false;
 
 	}
 
@@ -172,7 +172,7 @@ public class SC_Hero : SC_Character {
 
 		} else if (Health <= gameManager.CommonCharactersVariables.berserkTriggerHealth) {
 
-			CanMove = gameManager.CoalitionTurn;
+			CanMove = !gameManager.Qin;
 
 			BerserkTurn = true;
 
@@ -222,7 +222,7 @@ public class SC_Hero : SC_Character {
 
 				hero.Berserk = true;
 				hero.BerserkTurn = true;
-				hero.CanMove = gameManager.CoalitionTurn;
+				hero.CanMove = !gameManager.Qin;
 
 				hero.GetComponent<Renderer> ().material.color = Color.cyan;
 

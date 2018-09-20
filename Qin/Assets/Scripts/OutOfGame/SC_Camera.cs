@@ -1,10 +1,9 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SC_Camera : MonoBehaviour {
 		
 	public float moveSpeed, zoomSpeed;
-    public float dragSpeed = 2;
+
     public void Setup(int sizeX, int sizeY) {
 
 		transform.position = new Vector3 ((sizeX - 1) / 2, (sizeY - 1) / 2, -16);

@@ -106,25 +106,18 @@ public class SC_UI_Manager : MonoBehaviour {
 	}
     #endregion
 
-    #region Next Turn
-    public void NextTurn () {
-
-        if(!SC_Player.localPlayer.Busy)
-            SC_Player.localPlayer.CmdNextTurn();
-
-    }
-
-    public void NextTurn(bool coalition, int turn) {
+    #region Next Turn 
+    public void NextTurn() {
 
 		HideWeapons();
 
 		villagePanel.SetActive (false);
-		usePower.SetActive (coalition && !SC_Player.localPlayer.qin);
+		usePower.SetActive (!gameManager.Qin && !SC_Player.localPlayer.qin);
         cancelMovementButton.SetActive(false);
 		resetMovementButton.SetActive (false);
 		resetAttackChoiceButton.SetActive (false);
 
-        if(!coalition) {
+        if(gameManager.Qin) {
 
             SetButtonActivated("construct", true);
             SetButtonActivated("sacrifice", true);
@@ -140,7 +133,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         }
 
-		turns.text = (((turn - 1) % 3) == 0) ? "1st Turn - Coalition" : (((turn - 2) % 3) == 0) ? "2nd Turn - Coalition" : "Turn Qin";
+        turns.text = gameManager.Qin ? "Qin's Turn" : "Coalition's Turn n°" + ((gameManager.Turn % 3) + 1);
 
         endTurn.SetActive(SC_Player.localPlayer.Turn && !SC_Player.localPlayer.qin);
 
@@ -507,7 +500,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
     public void StopCancelConstruct() {
 
-        gameManager.Bastion = false;
+        gameManager.QinTurnBeginning = false;
 
         cancelLastConstructButton.SetActive(false);
 

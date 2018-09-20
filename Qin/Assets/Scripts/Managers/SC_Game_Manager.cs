@@ -12,11 +12,11 @@ public class SC_Game_Manager : NetworkBehaviour {
 
     public static SC_Game_Manager Instance { get; set; }  
 
-    int turn;
+    public int Turn { get; set; }
 
-    public bool CoalitionTurn { get { return turn % 3 != 0; } }
+    public bool Qin { get { return Turn % 3 == 0; } }
 
-    public bool Bastion { get; set; }
+    public bool QinTurnBeginning { get; set; }
 
 	public SC_Hero LastHeroDead { get; set; }
 
@@ -43,7 +43,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         CommonCharactersVariables = Resources.Load<SC_Common_Characters_Variables>("Prefabs/Characters/P_Common_Characters_Variables");
 
-        turn = 1;
+        Turn = 1;
 
 		if(GameObject.FindGameObjectWithTag ("Player")) {
 			
@@ -62,7 +62,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 		}
 
-		Bastion = true;
+		QinTurnBeginning = true;
 
 		if (!Instance)
 			Instance = this;
@@ -166,9 +166,16 @@ public class SC_Game_Manager : NetworkBehaviour {
     #endregion
 
     #region Next Turn
-	public void NextTurnFunction() {    
+    public void NextTurn () {
 
-	    turn++;
+        if (!Player.Busy)
+            Player.CmdNextTurn();
+
+    }
+
+    public void NextTurnFunction() {    
+
+	    Turn++;
 
         tileManager.RemoveAllFilters();
 
@@ -178,7 +185,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
                 character.Hero.Regen ();
 
-				if (!CoalitionTurn) {
+				if (Qin) {
 
 					if (character.Hero.PowerUsed)
                         character.Hero.PowerBacklash++;
@@ -196,9 +203,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 			character.UnTired ();
             
-			bool turn = character.coalition == CoalitionTurn;
-
-            character.CanMove = turn;
+            character.CanMove = character.qin == Qin;
 
         }
 
@@ -209,7 +214,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         CurrentConstru = Constru.Bastion;
 
-        if (!CoalitionTurn) {
+        if (Qin) {
 
             foreach (SC_Pump p in FindObjectsOfType<SC_Pump>())
                 p.Drain();
@@ -220,7 +225,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
                 Player.Busy = true;
 
-                Bastion = true;
+                QinTurnBeginning = true;
 
                 tileManager.DisplayConstructableTiles(false);
 
@@ -229,7 +234,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 		}
 
-		uiManager.NextTurn (CoalitionTurn, turn);
+		uiManager.NextTurn ();
         
     }
     #endregion
@@ -277,12 +282,12 @@ public class SC_Game_Manager : NetworkBehaviour {
 
             tileManager.RemoveAllFilters();
 
-            if (Bastion) {
+            if (QinTurnBeginning) {
 
                 Player.Busy = false;
 
                 foreach (SC_Character character in FindObjectsOfType<SC_Character>())
-                    character.CanMove = !character.coalition;
+                    character.CanMove = character.qin;
 
                 uiManager.construct.gameObject.SetActive(true);
                 uiManager.qinPower.gameObject.SetActive(true);

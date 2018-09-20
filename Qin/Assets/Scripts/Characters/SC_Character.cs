@@ -7,7 +7,7 @@ using static SC_Enums;
 public class SC_Character : NetworkBehaviour {
 
 	//Alignment
-	public bool coalition;
+	public bool qin;
 
     public bool IsHero { get { return this as SC_Hero != null; } }
 
@@ -82,7 +82,7 @@ public class SC_Character : NetworkBehaviour {
 
         LastPos.Character = this;
 
-		CanMove = coalition == gameManager.CoalitionTurn;
+		CanMove = qin == gameManager.Qin;
 
 	}
 

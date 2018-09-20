@@ -140,7 +140,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
             if (tile.Character) {
 
-                if (tile.Character.IsHero && tile.Character.coalition) {
+                if (tile.Character.IsHero && !tile.Character.qin) {
 
                     if (!tile.Character.characterName.Equals(target.characterName) && !heroesInRange.Contains(tile.Character.Hero))
                         heroesInRange.Add(tile.Character.Hero);

@@ -109,7 +109,7 @@ public class SC_Fight_Manager : MonoBehaviour {
         if (attacker.IsHero)
             damages += Mathf.CeilToInt(damages * RelationBoost(attacker.Hero));
 
-        if (attacker.IsHero && attacked.IsHero && !attacked.coalition)
+        if (attacker.IsHero && attacked.IsHero && attacked.qin)
             damages = Mathf.CeilToInt(damages * RelationMalus(attacker.Hero, attacked.Hero));
 
         if (attacker.CriticalAmount == CharactersVariables.critTrigger)
@@ -187,7 +187,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
             foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
 
-                if (hero.coalition) {
+                if (!hero.qin) {
 
                     int value = 0;
                     toSave.Relationships.TryGetValue(hero.characterName, out value);
