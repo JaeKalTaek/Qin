@@ -3,11 +3,16 @@ using UnityEngine.Networking;
 
 public class SC_Construction : NetworkBehaviour {
 
+    [Header("Constructions Variables")]
+    [Tooltip("Name of the construction")]
 	public string Name;
 
+    [Tooltip("Base maximum health of the construction, put 0 for a construction who doesn't have health")]
 	public int maxHealth;
+
 	public int Health { get; set; }
 
+    [Tooltip("Cost for Qin to build this construction")]
     public int cost;
 
 	public SC_Lifebar Lifebar { get; set; }
@@ -85,7 +90,7 @@ public class SC_Construction : NetworkBehaviour {
 
         }
 
-        if (SC_Player.localPlayer.qin) {
+        if (SC_Player.localPlayer.Qin) {
 
             if(!gameManager.QinTurnBeginning)
                 SC_Player.localPlayer.CmdChangeQinEnergy(SC_Qin.GetConstruCost(lastConstru.Name));

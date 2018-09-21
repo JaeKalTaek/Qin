@@ -15,29 +15,22 @@ public class SC_Hero : SC_Character {
     public bool BerserkTurn { get; set; }
 
 	//Weapons
+    [Header("Heroes Variables")]
+    [Tooltip("Weapons of this hero")]
 	public SC_Weapon weapon1, weapon2;
 
 	//power	
 	public bool PowerUsed { get; set; }
 	public int PowerBacklash { get; set; }
 
-	Color berserkColor;
+    [Tooltip("Color applied when the character is berserker")]
+    public Color berserkColor;
 
 	static int heroesAlive;
 
     public bool ReadyToRegen { get; set; }
 
     public int PumpSlow { get; set; }
-
-	protected override void Awake() {
-
-		base.Awake ();
-
-		berserkColor = new Color (0, .82f, 1);
-
-		qin = false;
-
-	}
 
 	protected override void Start() {
 
@@ -61,11 +54,11 @@ public class SC_Hero : SC_Character {
 
 	}
 
-	protected override void PrintMovements () {
+	protected override void TryCheckMovements () {
 
 		if (CanMove || (Berserk && !BerserkTurn)) {
 
-            base.PrintMovements();
+            base.TryCheckMovements();
 
             uiManager.ShowHeroPower (PowerUsed, name);
 
@@ -77,7 +70,7 @@ public class SC_Hero : SC_Character {
 
 		SC_Tile under = tileManager.GetTileAt (gameObject);
 
-		if ((under.CurrentDisplay == TDisplay.Attack) && !attackingCharacter.IsHero) {
+		if ((under.CurrentDisplay == TDisplay.Attack) && !attackingCharacter.Hero) {
 
             attackingCharacter.AttackTarget = under;
 
@@ -91,9 +84,9 @@ public class SC_Hero : SC_Character {
 
 	void OnMouseExit() {
 
-		uiManager.previewFightPanel.SetActive (false);
+        uiManager.HidePreviewFight();
 
-	}
+    }
 
 	public void ChooseWeapon() {
 
@@ -149,7 +142,7 @@ public class SC_Hero : SC_Character {
 				Berserk = true;
 				BerserkTurn = true;
 
-				GetComponent<Renderer> ().material.color = Color.cyan;
+				GetComponent<SpriteRenderer> ().color = berserkColor;
 
 			} else {
 
@@ -177,9 +170,9 @@ public class SC_Hero : SC_Character {
 			BerserkTurn = true;
 
 			if(!Berserk)
-				GetComponent<Renderer> ().material.color = Color.cyan;
+                GetComponent<SpriteRenderer>().color = berserkColor;
 
-			Berserk = true;
+            Berserk = true;
 
 		}
 

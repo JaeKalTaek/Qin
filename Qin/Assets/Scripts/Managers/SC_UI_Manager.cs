@@ -112,7 +112,7 @@ public class SC_UI_Manager : MonoBehaviour {
 		HideWeapons();
 
 		villagePanel.SetActive (false);
-		usePower.SetActive (!gameManager.Qin && !SC_Player.localPlayer.qin);
+		usePower.SetActive (!gameManager.Qin && !SC_Player.localPlayer.Qin);
         cancelMovementButton.SetActive(false);
 		resetMovementButton.SetActive (false);
 		resetAttackChoiceButton.SetActive (false);
@@ -135,7 +135,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         turns.text = gameManager.Qin ? "Qin's Turn" : "Coalition's Turn n°" + ((gameManager.Turn % 3) + 1);
 
-        endTurn.SetActive(SC_Player.localPlayer.Turn && !SC_Player.localPlayer.qin);
+        endTurn.SetActive(SC_Player.localPlayer.Turn && !SC_Player.localPlayer.Qin);
 
 	}
     #endregion
@@ -352,18 +352,18 @@ public class SC_UI_Manager : MonoBehaviour {
 
 	}
 
+    // Also called by UI
     public void PreviewFight (bool activeWeapon) {
 
-        if (SC_Character.attackingCharacter.IsHero)
-            SC_Character.attackingCharacter.Hero.SetWeapon(activeWeapon);
+        SC_Character.attackingCharacter?.Hero.SetWeapon(activeWeapon);
 
         PreviewFight(SC_Character.attackingCharacter, fightManager.RangedAttack);
 
-        if (SC_Character.attackingCharacter.IsHero)
-            SC_Character.attackingCharacter.Hero.SetWeapon(activeWeapon);
+        SC_Character.attackingCharacter?.Hero.SetWeapon(activeWeapon);
 
     }
 
+    // Also called by UI
     public void HidePreviewFight () {
 
         previewFightPanel.SetActive(false);
@@ -465,6 +465,32 @@ public class SC_UI_Manager : MonoBehaviour {
         SC_Player.localPlayer.Busy = false;
 
     }
+
+    // Called by UI
+    public void DisplaySacrifices () {
+
+        if (!SC_Player.localPlayer.Busy) {
+
+            StartQinAction("sacrifice");
+
+            TileManager.DisplaySacrifices();
+
+        }
+
+    }
+
+    // Called by UI
+    public void DisplayResurrection () {
+
+        if (!SC_Player.localPlayer.Busy && gameManager.LastHeroDead && (SC_Qin.Energy > SC_Qin.Qin.powerCost)) {
+
+            StartQinAction("qinPower");
+
+            TileManager.DisplayResurrection();
+
+        }
+
+    }
     #endregion
 
     #region Building
@@ -480,6 +506,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
     }
 
+    // Called by UI
     public void DisplayConstructPanel() {        
 
         UpdateConstructPanel();
@@ -488,6 +515,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
     }
 
+    // Called by UI
     public void DisplayConstructableTiles(int c) {
 
         SC_Player.localPlayer.CmdSetConstru(c);
@@ -549,6 +577,7 @@ public class SC_UI_Manager : MonoBehaviour {
     #endregion
 
     #region Both Players
+    // Called by UI
     public void ToggleHealth() {
 
         foreach(SC_Lifebar lifebar in FindObjectsOfType<SC_Lifebar>())

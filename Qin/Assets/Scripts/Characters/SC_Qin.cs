@@ -62,10 +62,10 @@ public class SC_Qin : NetworkBehaviour {
 		SC_Hero hero = gameManager.LastHeroDead;
 
 		hero.transform.SetPos(pos);
-		hero.qin = true;
+		hero.Qin = true;
 		hero.PowerUsed = false;
 		hero.PowerBacklash = 0;
-		hero.SetBaseColor (new Color (255, 0, 205));
+		hero.BaseColor = new Color (255, 0, 205);
 		hero.Health = hero.maxHealth;
 		hero.Lifebar.UpdateGraph(hero.Health, hero.maxHealth);
         hero.CanMove = true;

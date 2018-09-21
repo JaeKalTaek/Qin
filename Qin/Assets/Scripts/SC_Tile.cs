@@ -9,14 +9,14 @@ public class SC_Tile : NetworkBehaviour {
 
     public int cost;
 
-    bool MovingCharaQin { get { return SC_Character.characterToMove.qin; } }
+    bool MovingCharaQin { get { return SC_Character.characterToMove.Qin; } }
 
     public bool CanGoThrough {
 
         get {
 
             if (Character)
-                return MovingCharaQin == Character.qin;
+                return MovingCharaQin == Character.Qin;
             else if (Construction)
                 return (MovingCharaQin || !Bastion) && !Pump;
             else if (Qin)
@@ -48,7 +48,7 @@ public class SC_Tile : NetworkBehaviour {
         get {
 
             if (Character)
-                return MovingCharaQin != Character.qin;
+                return MovingCharaQin != Character.Qin;
             else if (Construction)
                 return !MovingCharaQin && (Bastion || Pump);
             else if (Qin)
@@ -149,9 +149,9 @@ public class SC_Tile : NetworkBehaviour {
 
                 fightManager.RangedAttack = tileManager.TileDistance(SC_Character.attackingCharacter.transform.position, this) > 1;
 
-                SC_Player.localPlayer.CmdPrepareForAttack(fightManager.RangedAttack, gameObject, !SC_Player.localPlayer.qin);
+                SC_Player.localPlayer.CmdPrepareForAttack(fightManager.RangedAttack, gameObject, !SC_Player.localPlayer.Qin);
 
-                if (SC_Character.attackingCharacter.IsHero)
+                if (SC_Character.attackingCharacter.Hero)
                     SC_Character.attackingCharacter.Hero.ChooseWeapon();
                 else
                     SC_Player.localPlayer.CmdAttack();

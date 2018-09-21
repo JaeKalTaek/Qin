@@ -166,6 +166,7 @@ public class SC_Game_Manager : NetworkBehaviour {
     #endregion
 
     #region Next Turn
+    // Called by UI
     public void NextTurn () {
 
         if (!Player.Busy)
@@ -181,7 +182,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         foreach (SC_Character character in FindObjectsOfType<SC_Character>()) {
 
-			if (character.IsHero) {
+			if (character.Hero) {
 
                 character.Hero.Regen ();
 
@@ -203,7 +204,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 			character.UnTired ();
             
-            character.CanMove = character.qin == Qin;
+            character.CanMove = character.Qin == Qin;
 
         }
 
@@ -221,7 +222,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
             SC_Qin.ChangeEnergy(SC_Qin.Qin.regenPerVillage * SC_Village.number);
 
-            if (Player.qin) {
+            if (Player.Qin) {
 
                 Player.Busy = true;
 
@@ -239,12 +240,52 @@ public class SC_Game_Manager : NetworkBehaviour {
     }
     #endregion
 
+    #region Methods called by UI
     public void SetAttackWeapon (bool usedActiveWeapon) {
 
         Player.CmdHeroAttack(usedActiveWeapon);
 
     }
 
+    public void CancelLastConstruction () {
+
+        Player.CmdCancelLastConstru();
+
+    }
+
+    public void UseHeroPower () {
+
+        SC_Hero hero = GameObject.Find(GameObject.Find("PowerHero").GetComponentInChildren<Text>().name).GetComponent<SC_Hero>();
+        hero.PowerUsed = true;
+
+        GameObject.Find("PowerHero").SetActive(false);
+
+        print("Implement Power");
+
+    }
+
+    public void ActionVillage (bool destroy) {
+
+        Player.CmdActionVillage(destroy);
+
+    }
+
+    public void CancelMovement () {
+
+        Player.CmdRemoveAllFilters();
+
+        uiManager.cancelMovementButton.SetActive(false);
+
+    }
+
+    public void ResetMovement () {
+
+        SC_Player.localPlayer.CmdResetMovement();
+
+    }
+    #endregion
+
+    #region Construction
     public void ConstructAt (SC_Tile tile) {
 
         Player.CmdConstructAt((int)tile.transform.position.x, (int)tile.transform.position.y);
@@ -278,7 +319,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         }
 
-        if(Player.qin) {
+        if(Player.Qin) {
 
             tileManager.RemoveAllFilters();
 
@@ -287,7 +328,7 @@ public class SC_Game_Manager : NetworkBehaviour {
                 Player.Busy = false;
 
                 foreach (SC_Character character in FindObjectsOfType<SC_Character>())
-                    character.CanMove = character.qin;
+                    character.CanMove = character.Qin;
 
                 uiManager.construct.gameObject.SetActive(true);
                 uiManager.qinPower.gameObject.SetActive(true);
@@ -313,45 +354,10 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         }
 
-    }	
-
-    public void CancelLastConstruction() {
-
-        Player.CmdCancelLastConstru();
-
     }
+    #endregion
 
-	public void DisplaySacrifices() {
-
-        if (!Player.Busy) {
-
-            uiManager.StartQinAction("sacrifice");
-
-            tileManager.DisplaySacrifices();
-
-        }
-
-	}
-
-	public void DisplayResurrection() {
-
-        if (!Player.Busy && LastHeroDead && (SC_Qin.Energy > SC_Qin.Qin.powerCost)) {
-
-            uiManager.StartQinAction("qinPower");
-
-            tileManager.DisplayResurrection();
-
-        }
-
-	}
-
-    #region Actions
-    public void ActionVillage(bool destroy) {
-
-		Player.CmdActionVillage (destroy);
-
-	}
-
+    #region Players Actions
     public void ActionVillageFunction (bool destroy) {
 
         if (destroy) {
@@ -402,31 +408,6 @@ public class SC_Game_Manager : NetworkBehaviour {
         Player.CmdSetupNewSoldier(go);
 
     }
-    #endregion    
-
-    public void UseHeroPower() {
-
-		SC_Hero hero = GameObject.Find (GameObject.Find ("PowerHero").GetComponentInChildren<Text> ().name).GetComponent<SC_Hero>();
-		hero.PowerUsed = true;
-
-		GameObject.Find ("PowerHero").SetActive (false);
-
-        print("Implement Power");
-
-	}	
-
-    public void CancelMovement() {
-
-        Player.CmdRemoveAllFilters();
-
-        uiManager.cancelMovementButton.SetActive(false);
-
-    }
-
-    public void ResetMovement() {
-
-        SC_Player.localPlayer.CmdResetMovement();
-
-    }
+    #endregion
 
 }

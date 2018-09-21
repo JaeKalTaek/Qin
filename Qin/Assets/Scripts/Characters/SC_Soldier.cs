@@ -1,20 +1,13 @@
 ﻿using UnityEngine;
 
-public class SC_Soldier : SC_Character {
+public class SC_Soldier : SC_Character {    
 
+    [Header("Soldiers Variables")]
+    [Tooltip("Weapon of this soldier")]
     public SC_Weapon weapon;
 
-    [Header("Variables for Soldiers")]
     [Tooltip("Cost to create this soldier in a Workshop")]
     public int cost;
-
-    protected override void Awake() {
-
-		base.Awake ();
-		
-        qin = true;
-
-    }
 
     public void SetupNew() {
 
@@ -26,16 +19,13 @@ public class SC_Soldier : SC_Character {
 
     }
 
-	protected override void PrintMovements () {
+	protected override void TryCheckMovements () {
 
 		if (CanMove) {
 
-            /*uiManager.SetButtonActivated ("construct", true);
-            uiManager.SetButtonActivated("sacrifice", true);
-            uiManager.SetButtonActivated("qinPower", true);
-            uiManager.workshopPanel.gameObject.SetActive (false);*/
+            uiManager.StopCancelConstruct();
 
-            base.PrintMovements();
+            base.TryCheckMovements();
 
 		}
 

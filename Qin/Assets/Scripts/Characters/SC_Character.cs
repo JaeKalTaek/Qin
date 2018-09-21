@@ -4,43 +4,68 @@ using UnityEngine;
 using UnityEngine.Networking;
 using static SC_Enums;
 
-public class SC_Character : NetworkBehaviour {
+public class SC_Character : NetworkBehaviour {	   
 
-	//Alignment
-	public bool qin;
+    // Public Variables
+    [Header("Character variables")]
+    [Tooltip("Name of this character")]
+    public string characterName;
 
-    public bool IsHero { get { return this as SC_Hero != null; } }
+    [Tooltip("Base movement distance of this character")]
+    public int movement;
+
+    public bool CanMove { get; set; }
+
+    [Tooltip("Time for a character to walk one tile of distance")]
+    public float moveSpeed = .25f;
+
+    [Tooltip("Base Maximum Health of this character")]
+	public int maxHealth;
+
+    public int Health { get; set; }
+
+    public SC_Lifebar Lifebar { get; set; }
+
+    [Tooltip("Strength of this character")]
+    public int strength;
+
+    [Tooltip("Armor of this character")]
+    public int armor;
+
+    [Tooltip("Qi of this character")]
+    public int qi;
+
+    [Tooltip("Resistance of this character")]
+    public int resistance;
+
+    [Tooltip("Technique of this character, amount of Crits Jauge gained after attacking")]
+    public int technique;
+
+    public int CriticalAmount { get; set; }
+
+    [Tooltip("Reflexes of this character, amount of Dodge Jauge gained after being attacked")]
+    public int reflexes;	
+	
+    public int DodgeAmount { get; set; }
+
+    [Tooltip("Color applied when the character is tired")]
+    public Color tiredColor = new Color(.15f, .15f, .15f);
+
+    public Color BaseColor { get; set; }	
+
+    public bool Qin { get; set; }
 
     public SC_Hero Hero { get { return this as SC_Hero; } }
 
     public SC_Soldier Soldier { get { return this as SC_Soldier; } }
 
-    //Actions
-    public int movement = 5;
-	public bool CanMove { get; set; }
+    public SC_Tile AttackTarget { get; set; }
 
-	public SC_Tile AttackTarget { get; set; }
-
-    public bool HasRange { get { return IsHero ? Hero.weapon1.ranged || Hero.weapon2.ranged : Soldier.weapon.ranged; } }
+    public bool HasRange { get { return Hero ? Hero.weapon1.ranged || Hero.weapon2.ranged : Soldier.weapon.ranged; } }
 
     public SC_Tile LastPos { get; set; }
 
-	//Stats
-	public string characterName;
-	public int maxHealth;
-	public int Health { get; set; }
-    public int strength, armor;
-	public int qi, resistance;
-	public int technique, reflexes;
-	public int CriticalAmount { get; set; }
-    public int DodgeAmount { get; set; }
-    public float moveSpeed = .25f;
-
-	protected Color baseColor, tiredColor;
-
-	public SC_Lifebar Lifebar { get; set; }
-
-	protected static SC_Tile_Manager tileManager;
+    protected static SC_Tile_Manager tileManager;
 
 	protected static SC_Game_Manager gameManager;
 
@@ -54,10 +79,11 @@ public class SC_Character : NetworkBehaviour {
 
     protected virtual void Awake() {
 
-		baseColor = GetComponent<SpriteRenderer> ().color;
-		tiredColor = new Color (.15f, .15f, .15f);
+        Qin = !Hero;
 
-	}
+		BaseColor = GetComponent<SpriteRenderer> ().color;
+
+    }
 
 	protected virtual void Start() {
 
@@ -82,35 +108,35 @@ public class SC_Character : NetworkBehaviour {
 
         LastPos.Character = this;
 
-		CanMove = qin == gameManager.Qin;
+		CanMove = Qin == gameManager.Qin;
 
 	}
 
 	protected virtual void OnMouseDown() {
 
         if (SC_UI_Manager.CanInteract && !SC_Player.localPlayer.Busy && (tileManager.GetTileAt(gameObject).CurrentDisplay == TDisplay.None))
-            PrintMovements();
+            TryCheckMovements();
+
+	}	
+
+	protected void OnMouseOver() {
+
+		if(Input.GetMouseButtonDown(1))
+			uiManager?.ShowHideInfos (gameObject, GetType());
 
 	}
 
-	protected virtual void PrintMovements() {        
+    #region Movement
+    protected virtual void TryCheckMovements () {
 
         SC_Player.localPlayer.CmdCheckMovements((int)transform.position.x, (int)transform.position.y);
 
         uiManager.cancelMovementButton.SetActive(true);
 
-        uiManager.StopCancelConstruct();
 
     }
 
-	protected void OnMouseOver() {
-
-		if(Input.GetMouseButtonDown(1))
-			uiManager.ShowHideInfos (gameObject, GetType());
-
-	}
-
-	public virtual void MoveTo(SC_Tile target) {
+    public virtual void MoveTo(SC_Tile target) {
 
         tileManager.RemoveAllFilters();
 
@@ -185,7 +211,7 @@ public class SC_Character : NetworkBehaviour {
 
         attackingCharacter = this;
 
-        if(IsHero) {
+        if(Hero) {
 
             CanMove = (Hero.Berserk && !Hero.BerserkTurn);
 
@@ -273,7 +299,8 @@ public class SC_Character : NetworkBehaviour {
 
         uiManager.cancelMovementButton.SetActive(true);
 
-    }    
+    }
+    #endregion
 
     public static void CancelAttack() {
 
@@ -281,7 +308,7 @@ public class SC_Character : NetworkBehaviour {
 
             attackingCharacter.Tire();
 
-            if(attackingCharacter.IsHero)
+            if(attackingCharacter.Hero)
                 attackingCharacter.Hero.BerserkTurn = attackingCharacter.Hero.Berserk;
 
             attackingCharacter = null;
@@ -300,7 +327,7 @@ public class SC_Character : NetworkBehaviour {
 
 	public SC_Weapon GetActiveWeapon() {
 
-		return IsHero ? Hero.GetWeapon(true) : Soldier.weapon;
+		return Hero?.GetWeapon(true) ?? Soldier.weapon;
 
 	}	
 
@@ -327,13 +354,7 @@ public class SC_Character : NetworkBehaviour {
 
 	public virtual void UnTired() {
 
-		GetComponent<SpriteRenderer> ().color = baseColor;
-
-	}
-
-	public void SetBaseColor(Color c) {
-
-		baseColor = c;
+		GetComponent<SpriteRenderer> ().color = BaseColor;
 
 	}
 

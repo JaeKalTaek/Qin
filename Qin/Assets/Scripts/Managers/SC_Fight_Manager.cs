@@ -62,7 +62,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
         }
 
-        if (attacker.IsHero)
+        if (attacker.Hero)
             attacker.Hero.BerserkTurn = attacker.Hero.Berserk;
 
         SC_Character.attackingCharacter = null;
@@ -82,7 +82,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
         attacked.DodgeAmount = (attacked.DodgeAmount >= CharactersVariables.dodgeTrigger) ? 0 : Mathf.Min((attacker.DodgeAmount + attacker.reflexes), CharactersVariables.dodgeTrigger);
 
-        if (attacker.IsHero && killed)
+        if (attacker.Hero && killed)
             IncreaseRelationships(attacker.Hero);
 
     }
@@ -106,16 +106,16 @@ public class SC_Fight_Manager : MonoBehaviour {
 
         damages = Mathf.CeilToInt(damages * attacker.GetActiveWeapon().ShiFuMiModifier(attacked.GetActiveWeapon()));
 
-        if (attacker.IsHero)
+        if (attacker.Hero)
             damages += Mathf.CeilToInt(damages * RelationBoost(attacker.Hero));
 
-        if (attacker.IsHero && attacked.IsHero && attacked.qin)
+        if (attacker.Hero && attacked.Hero && attacked.Qin)
             damages = Mathf.CeilToInt(damages * RelationMalus(attacker.Hero, attacked.Hero));
 
         if (attacker.CriticalAmount == CharactersVariables.critTrigger)
             damages = Mathf.CeilToInt(damages * CharactersVariables.critMultiplier);
 
-        if (attacker.IsHero && attacker.Hero.Berserk)
+        if (attacker?.Hero.Berserk ?? false)
             damages = Mathf.CeilToInt(damages * CharactersVariables.berserkDamageMultiplier);
 
         if (attacked.DodgeAmount == CharactersVariables.dodgeTrigger)
@@ -124,7 +124,7 @@ public class SC_Fight_Manager : MonoBehaviour {
         int boostedArmor = attacked.armor;
         int boostedResistance = attacked.resistance;
 
-        if (attacked.IsHero) {
+        if (attacked.Hero) {
 
             float relationBoost = RelationBoost(attacked.Hero);
             boostedArmor += Mathf.CeilToInt(boostedArmor * relationBoost);
@@ -187,7 +187,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
             foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
 
-                if (!hero.qin) {
+                if (!hero.Qin) {
 
                     int value = 0;
                     toSave.Relationships.TryGetValue(hero.characterName, out value);
@@ -203,13 +203,13 @@ public class SC_Fight_Manager : MonoBehaviour {
 
             }
 
-            SC_Tile nearestTile = TileManager.NearestTile(toSave);
+            SC_Tile nearestTile = TileManager.GetUnoccupiedNeighbor(toSave);
 
             if (saver && nearestTile) {
 
                 TileManager.GetTileAt(saver.gameObject).Character = null;
 
-                saver.transform.SetPos(TileManager.NearestTile(toSave).transform);
+                saver.transform.SetPos(TileManager.GetUnoccupiedNeighbor(toSave).transform);
 
                 TileManager.GetTileAt(saver.gameObject).Character = saver;
 

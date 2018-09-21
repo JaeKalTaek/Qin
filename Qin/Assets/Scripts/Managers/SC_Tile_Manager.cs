@@ -53,6 +53,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }
 
+    #region Utility Functions
     public List<SC_Tile> GetTilesAtDistance(SC_Tile center, int distance) {
 
         return GetTilesAtDistance(center.transform.position, distance);
@@ -101,6 +102,45 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }
 
+    public SC_Tile GetUnoccupiedNeighbor (SC_Character target) {
+
+        SC_Tile t = null;
+
+        foreach (SC_Tile tile in GetTilesAtDistance(target.transform.position, 1))
+            if (tile.Empty)
+                t = tile;
+
+        return t;
+
+    }
+
+    public SC_Tile GetTileAt (GameObject g) {
+
+        return tiles[(int)g.transform.position.x, (int)g.transform.position.y];
+
+    }
+
+    public SC_Tile GetTileAt (int x, int y) {
+
+        return tiles[x, y];
+
+    }
+
+    public SC_Tile GetTileAt (Vector3 pos) {
+
+        return tiles[(int)pos.x, (int)pos.y];
+
+    }
+
+    public void RemoveAllFilters () {
+
+        foreach (SC_Tile tile in tiles)
+            tile.RemoveFilter();
+
+    }
+    #endregion
+
+    #region Attack
     List<SC_Tile> GetAttackTiles(SC_Character attacker, Vector3 center) {
 
         List<SC_Tile> attackableTiles = new List<SC_Tile>();
@@ -140,7 +180,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
             if (tile.Character) {
 
-                if (tile.Character.IsHero && !tile.Character.qin) {
+                if (tile.Character.Hero && !tile.Character.Qin) {
 
                     if (!tile.Character.characterName.Equals(target.characterName) && !heroesInRange.Contains(tile.Character.Hero))
                         heroesInRange.Add(tile.Character.Hero);
@@ -153,19 +193,8 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         return heroesInRange;
 
-    }
-
-    public SC_Tile NearestTile (SC_Character target) {
-
-        SC_Tile t = null;
-
-        foreach (SC_Tile tile in GetTilesAtDistance(target.transform.position, 1))
-            if (tile.Empty)
-                t = tile;
-
-        return t;
-
-    }
+    }    
+    #endregion
 
     #region Display Movements
     public void CheckMovements (SC_Character target) {
@@ -210,11 +239,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         movementPoints[aStartingTile] = target.movement;
 
-        bool berserk = false;
-        if (target.IsHero)
-            berserk = target.Hero.Berserk;
-
-        ExpandTile(aStartingTile, berserk);
+        ExpandTile(aStartingTile, target?.Hero.Berserk ?? false);
 
         while (OpenList.Count > 0) {
 
@@ -224,7 +249,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
             OpenList.RemoveAt(OpenList.Count - 1);
 
-            ExpandTile(tile, berserk);
+            ExpandTile(tile, target?.Hero.Berserk ?? false);
 
         }
 
@@ -308,6 +333,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
     }
     #endregion
 
+    #region Construction
     public List<SC_Tile> GetConstructableTiles(bool wall) {
 
         List<SC_Tile> constructableTiles = new List<SC_Tile>();
@@ -342,21 +368,6 @@ public class SC_Tile_Manager : NetworkBehaviour {
          
         foreach (SC_Tile tile in GetConstructableTiles(wall))
             tile.GetComponent<SC_Tile>().ChangeDisplay(TDisplay.Construct);
-
-    }
-
-    public void DisplaySacrifices () {        
-
-        foreach (SC_Soldier soldier in FindObjectsOfType<SC_Soldier>())
-            GetTileAt(soldier.gameObject).ChangeDisplay(TDisplay.Sacrifice);
-
-    }
-
-    public void DisplayResurrection () {
-
-        foreach (SC_Tile tile in tiles)
-            if (tile.Empty)
-                tile.ChangeDisplay(TDisplay.Resurrection);
 
     }
 
@@ -411,30 +422,23 @@ public class SC_Tile_Manager : NetworkBehaviour {
         construction.GetComponentInChildren<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/" + (construction.GetType().Equals(typeof(SC_Bastion)) ? "Bastion/" : "Wall/") + count.ToString() + rotation);
 
     }
+    #endregion
 
-    public SC_Tile GetTileAt(GameObject g) {
+    #region Display Actions
+    public void DisplaySacrifices () {        
 
-		return tiles [(int)g.transform.position.x, (int)g.transform.position.y];
-
-	}
-
-	public SC_Tile GetTileAt(int x, int y) {
-
-		return tiles [x, y];
-
-	}
-
-	public SC_Tile GetTileAt(Vector3 pos) {
-
-		return tiles [(int)pos.x, (int)pos.y];
-
-	}
-
-    public void RemoveAllFilters() {
-
-        foreach(SC_Tile tile in tiles)
-            tile.RemoveFilter();
+        foreach (SC_Soldier soldier in FindObjectsOfType<SC_Soldier>())
+            GetTileAt(soldier.gameObject).ChangeDisplay(TDisplay.Sacrifice);
 
     }
+
+    public void DisplayResurrection () {
+
+        foreach (SC_Tile tile in tiles)
+            if (tile.Empty)
+                tile.ChangeDisplay(TDisplay.Resurrection);
+
+    }
+    #endregion
 
 }

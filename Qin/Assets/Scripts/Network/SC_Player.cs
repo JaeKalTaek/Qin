@@ -5,9 +5,9 @@ using static SC_Enums;
 public class SC_Player : NetworkBehaviour {
 
 	[SyncVar]
-	public bool qin;
+	public bool Qin;
 
-    public bool Turn { get { return qin == localPlayer.gameManager.Qin; } }
+    public bool Turn { get { return Qin == localPlayer.gameManager.Qin; } }
 
 	SC_Game_Manager gameManager;
 
@@ -118,7 +118,7 @@ public class SC_Player : NetworkBehaviour {
 
         localPlayer.tileManager.RemoveAllFilters();
 
-        if (localPlayer.qin == qin)
+        if (localPlayer.Qin == qin)
             localPlayer.fightManager.RangedAttack = rangedAttack;
 
         SC_Character.attackingCharacter.AttackTarget = targetTileObject.GetComponent<SC_Tile>();
@@ -179,7 +179,7 @@ public class SC_Player : NetworkBehaviour {
     [ClientRpc]
     void RpcRemoveAllFiltersForClient(bool qin) {
 
-        if(localPlayer.qin == qin)
+        if(localPlayer.Qin == qin)
             localPlayer.tileManager.RemoveAllFilters();
 
     }
@@ -284,7 +284,7 @@ public class SC_Player : NetworkBehaviour {
     [ClientRpc]
     void RpcChangeQinEnergyOnClient (int amount, bool qin) {
 
-        if (localPlayer.qin == qin)
+        if (localPlayer.Qin == qin)
             SC_Qin.ChangeEnergy(amount);
 
     }
@@ -373,7 +373,7 @@ public class SC_Player : NetworkBehaviour {
 
 	public void SetSide() {
 
-        qin = FindObjectOfType<SC_Network_Manager>().IsQinHost() == isServer;
+        Qin = FindObjectOfType<SC_Network_Manager>().IsQinHost() == isServer;
 
     }
 
