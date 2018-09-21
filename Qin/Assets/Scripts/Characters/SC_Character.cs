@@ -99,7 +99,7 @@ public class SC_Character : NetworkBehaviour {
         if (!fightManager)
             fightManager = SC_Fight_Manager.Instance;
 
-		Lifebar = Instantiate(Resources.Load<GameObject>("Prefabs/P_Lifebar"), transform).GetComponent<SC_Lifebar>();
+		Lifebar = Instantiate(Resources.Load<GameObject>("Prefabs/Characters/Components/P_Lifebar"), transform).GetComponent<SC_Lifebar>();
 		Lifebar.transform.position += new Vector3 (0, -.44f, 0);
 
 		Health = maxHealth;
@@ -119,7 +119,7 @@ public class SC_Character : NetworkBehaviour {
 
 	}	
 
-	protected void OnMouseOver() {
+	protected virtual void OnMouseOver() {
 
 		if(Input.GetMouseButtonDown(1))
 			uiManager?.ShowHideInfos (gameObject, GetType());

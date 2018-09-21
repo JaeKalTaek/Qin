@@ -7,12 +7,12 @@ public class SC_Cursor : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		
+
+
 	}
 	
 	// Update is called once per frame
-	void Update ()
-
-    {
+	void Update () {
 
         transform.SetPos(new Vector3((int)Input.mousePosition.x, (int)Input.mousePosition.y, 0));
 
@@ -21,10 +21,4 @@ public class SC_Cursor : MonoBehaviour {
 
     }
 
-    void Test()
-    {
-
-        
-
-    }
 }

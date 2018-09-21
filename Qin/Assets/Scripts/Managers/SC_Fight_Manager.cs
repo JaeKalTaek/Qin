@@ -73,17 +73,22 @@ public class SC_Fight_Manager : MonoBehaviour {
 
         bool killed = false;
 
-        if (attackedConstru && attackedConstru as SC_Bastion)
+        if (attackedConstru?.GreatWall ?? false)
             HitConstruction(attacker, attackedConstru, counter);
         else
             killed = attacked.Hit(CalcDamages(attacker, attacked, counter), false);
 
         attacker.CriticalAmount = (attacker.CriticalAmount >= CharactersVariables.critTrigger) ? 0 : Mathf.Min((attacker.CriticalAmount + attacker.technique), CharactersVariables.critTrigger);
 
-        attacked.DodgeAmount = (attacked.DodgeAmount >= CharactersVariables.dodgeTrigger) ? 0 : Mathf.Min((attacker.DodgeAmount + attacker.reflexes), CharactersVariables.dodgeTrigger);
+        attacked.DodgeAmount = (attacked.DodgeAmount >= CharactersVariables.dodgeTrigger) ? 0 : Mathf.Min((attacked.DodgeAmount + attacked.reflexes), CharactersVariables.dodgeTrigger);
 
         if (attacker.Hero && killed)
             IncreaseRelationships(attacker.Hero);
+
+        uiManager.TryRefreshInfos(attacker.gameObject, attacker.GetType());
+
+        if(!killed)
+            uiManager.TryRefreshInfos(attacked.gameObject, attacked.GetType());
 
     }
 
@@ -115,7 +120,7 @@ public class SC_Fight_Manager : MonoBehaviour {
         if (attacker.CriticalAmount == CharactersVariables.critTrigger)
             damages = Mathf.CeilToInt(damages * CharactersVariables.critMultiplier);
 
-        if (attacker?.Hero.Berserk ?? false)
+        if (attacker.Hero?.Berserk ?? false)
             damages = Mathf.CeilToInt(damages * CharactersVariables.berserkDamageMultiplier);
 
         if (attacked.DodgeAmount == CharactersVariables.dodgeTrigger)

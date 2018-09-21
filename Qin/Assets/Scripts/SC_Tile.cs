@@ -59,9 +59,7 @@ public class SC_Tile : NetworkBehaviour {
         }
     }
 
-    public bool Constructable { get { return !name.Contains("Palace") && (!Character || (gameManager.QinTurnBeginning && Soldier)) && !Construction && !Locked; } }
-
-    public bool Locked { get; set; }
+    public bool Constructable { get { return !name.Contains("Palace") && (!Character || (gameManager.QinTurnBeginning && Soldier)) && !Construction; } }
 
     public SC_Construction Construction { get; set; }
 
@@ -178,7 +176,21 @@ public class SC_Tile : NetworkBehaviour {
 
 	}
 
-	public void SetFilter(TDisplay filterName) {
+    void OnMouseEnter () {
+
+        if (CurrentDisplay == TDisplay.Sacrifice)
+            Soldier.ToggleDisplaySacrificeValue();
+
+    }
+
+    void OnMouseExit () {
+
+        if (CurrentDisplay == TDisplay.Sacrifice)
+            Soldier.ToggleDisplaySacrificeValue();
+
+    }
+
+    public void SetFilter(TDisplay filterName) {
 
 		foreach(SpriteRenderer sprite in GetComponentsInChildren<SpriteRenderer>())
 			sprite.enabled = sprite.name.Equals("T_Display" + filterName);

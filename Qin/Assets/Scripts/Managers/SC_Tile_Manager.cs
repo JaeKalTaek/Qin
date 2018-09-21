@@ -239,7 +239,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         movementPoints[aStartingTile] = target.movement;
 
-        ExpandTile(aStartingTile, target?.Hero.Berserk ?? false);
+        ExpandTile(aStartingTile, target.Hero?.Berserk ?? false);
 
         while (OpenList.Count > 0) {
 
@@ -249,7 +249,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
             OpenList.RemoveAt(OpenList.Count - 1);
 
-            ExpandTile(tile, target?.Hero.Berserk ?? false);
+            ExpandTile(tile, target.Hero?.Berserk ?? false);
 
         }
 

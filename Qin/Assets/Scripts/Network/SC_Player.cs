@@ -231,6 +231,21 @@ public class SC_Player : NetworkBehaviour {
     }
 
     [Command]
+    public void CmdFinishConstruction () {
+
+        RpcFinishConstruction();
+
+    }
+
+    [ClientRpc]
+    public void RpcFinishConstruction () {
+
+        if(localPlayer.Qin)
+            localPlayer.gameManager.FinishConstruction();
+
+    }
+
+    [Command]
     public void CmdSetLastConstru (GameObject g) {
 
         RpcSetLastConstru(g);

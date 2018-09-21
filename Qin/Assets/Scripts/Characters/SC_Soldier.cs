@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 
 public class SC_Soldier : SC_Character {    
 
@@ -12,6 +13,18 @@ public class SC_Soldier : SC_Character {
     [Tooltip("Energy gained by Qin when he sacrifices this unit")]
     public int sacrificeValue;
 
+    GameObject sacrificeValueText;
+
+    protected override void Start () {
+
+        base.Start();
+
+        sacrificeValueText = Instantiate(Resources.Load<GameObject>("Prefabs/Characters/Components/SacrificeValueText"), transform);
+
+        sacrificeValueText.GetComponent<TextMeshPro>().text = sacrificeValue.ToString();
+
+    }
+
     public void SetupNew() {
 
         CanMove = false;
@@ -22,7 +35,7 @@ public class SC_Soldier : SC_Character {
 
     }
 
-	protected override void TryCheckMovements () {
+    protected override void TryCheckMovements () {
 
 		if (CanMove) {
 
@@ -33,6 +46,12 @@ public class SC_Soldier : SC_Character {
 		}
 
 	}
+
+    public void ToggleDisplaySacrificeValue() {
+
+        sacrificeValueText.SetActive(!sacrificeValueText.activeSelf);
+
+    }
 
 	public override bool Hit(int damages, bool saving) {
 

@@ -253,7 +253,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
     }
 
-    public void UseHeroPower () {
+    /*public void UseHeroPower () {
 
         SC_Hero hero = GameObject.Find(GameObject.Find("PowerHero").GetComponentInChildren<Text>().name).GetComponent<SC_Hero>();
         hero.PowerUsed = true;
@@ -262,7 +262,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         print("Implement Power");
 
-    }
+    }*/
 
     public void ActionVillage (bool destroy) {
 
@@ -292,11 +292,11 @@ public class SC_Game_Manager : NetworkBehaviour {
 
     }
 
-    public void ConstructAt(int x, int y) {
+    public void ConstructAt (int x, int y) {
 
-        SC_Tile tile = tileManager.GetTileAt (x, y);
+        SC_Tile tile = tileManager.GetTileAt(x, y);
 
-        if(tile.Soldier) {
+        if (tile.Soldier) {
 
             uiManager.HideInfosIfActive(tile.Soldier.gameObject);
 
@@ -308,7 +308,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         SC_Construction.lastConstruSoldier = tile.Soldier;
 
-        if(isServer) {
+        if (isServer) {
 
             GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/Constructions/P_" + CurrentConstru));
             go.transform.SetPos(tile.transform);
@@ -317,42 +317,42 @@ public class SC_Game_Manager : NetworkBehaviour {
 
             Player.CmdSetLastConstru(go);
 
-        }
-
-        if(Player.Qin) {
-
-            tileManager.RemoveAllFilters();
-
-            if (QinTurnBeginning) {
-
-                Player.Busy = false;
-
-                foreach (SC_Character character in FindObjectsOfType<SC_Character>())
-                    character.CanMove = character.Qin;
-
-                uiManager.construct.gameObject.SetActive(true);
-                uiManager.qinPower.gameObject.SetActive(true);
-                uiManager.sacrifice.gameObject.SetActive(true);
-                uiManager.endTurn.SetActive(true);
-
-            } else {
-
-                SC_Qin.ChangeEnergy(-SC_Qin.GetConstruCost(CurrentConstru));
-
-                Player.CmdChangeQinEnergyOnClient(-SC_Qin.GetConstruCost(CurrentConstru), false);
-
-                tile.Locked = true;
-
-                uiManager.UpdateConstructPanel();
-                
-                if ((SC_Qin.GetConstruCost(CurrentConstru) < SC_Qin.Energy) && (tileManager.GetConstructableTiles(CurrentConstru == Constru.Wall).Count > 0))  
-                    tileManager.DisplayConstructableTiles(CurrentConstru == Constru.Wall);
-
-            }
-
-            uiManager.cancelLastConstructButton.SetActive(true);
+            Player.CmdFinishConstruction();
 
         }
+
+    }
+
+    public void FinishConstruction () {
+
+        tileManager.RemoveAllFilters();
+
+        if (QinTurnBeginning) {
+
+            Player.Busy = false;
+
+            foreach (SC_Character character in FindObjectsOfType<SC_Character>())
+                character.CanMove = character.Qin;
+
+            uiManager.construct.gameObject.SetActive(true);
+            //uiManager.qinPower.gameObject.SetActive(true);
+            uiManager.sacrifice.gameObject.SetActive(true);
+            uiManager.endTurn.SetActive(true);
+
+        } else {
+
+            SC_Qin.ChangeEnergy(-SC_Qin.GetConstruCost(CurrentConstru));
+
+            Player.CmdChangeQinEnergyOnClient(-SC_Qin.GetConstruCost(CurrentConstru), false);
+
+            uiManager.UpdateConstructPanel();
+
+            if ((SC_Qin.GetConstruCost(CurrentConstru) < SC_Qin.Energy) && (tileManager.GetConstructableTiles(CurrentConstru == Constru.Wall).Count > 0))  
+                tileManager.DisplayConstructableTiles(CurrentConstru == Constru.Wall);
+
+        }
+
+        uiManager.cancelLastConstructButton.SetActive(true);
 
     }
     #endregion

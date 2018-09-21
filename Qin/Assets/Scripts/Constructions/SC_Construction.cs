@@ -29,13 +29,20 @@ public class SC_Construction : NetworkBehaviour {
 
     public static SC_Soldier lastConstruSoldier;
 
-	protected virtual void Start () {
+    protected void Awake () {
+
+        if (!tileManager)
+            tileManager = FindObjectOfType<SC_Tile_Manager>();
+
+        if (tileManager && (tileManager.tiles != null))
+            tileManager.GetTileAt(gameObject).Construction = this;
+
+    }
+
+    protected virtual void Start () {
 
 		if (!gameManager)
-			gameManager = FindObjectOfType<SC_Game_Manager> ();
-
-		if (!tileManager)
-			tileManager = FindObjectOfType<SC_Tile_Manager> ();
+			gameManager = FindObjectOfType<SC_Game_Manager> ();		
 
 		if (!uiManager)
 			uiManager = FindObjectOfType<SC_UI_Manager> ();
@@ -44,9 +51,7 @@ public class SC_Construction : NetworkBehaviour {
 
         SC_Tile under = tileManager.GetTileAt(gameObject);
 
-        under.Construction = this;
-
-        under.Locked = false;
+        tileManager.GetTileAt(gameObject).Construction = this;
 
     }
 
@@ -92,8 +97,15 @@ public class SC_Construction : NetworkBehaviour {
 
         if (SC_Player.localPlayer.Qin) {
 
-            if(!gameManager.QinTurnBeginning)
-                SC_Player.localPlayer.CmdChangeQinEnergy(SC_Qin.GetConstruCost(lastConstru.Name));
+            if (!gameManager.QinTurnBeginning) {
+
+                SC_Qin.ChangeEnergy(SC_Qin.GetConstruCost(lastConstru.Name));
+
+                SC_Player.localPlayer.CmdChangeQinEnergyOnClient(SC_Qin.GetConstruCost(lastConstru.Name), false);
+
+            }
+
+            uiManager.UpdateConstructPanel();
 
             SC_Player.localPlayer.Busy = true;
 

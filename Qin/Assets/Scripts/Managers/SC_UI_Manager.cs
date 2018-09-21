@@ -79,7 +79,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         if (!qin) {
 
-			usePower.SetActive (true);
+			//usePower.SetActive (true);
 			endTurn.SetActive (true);
 
 		}
@@ -112,7 +112,7 @@ public class SC_UI_Manager : MonoBehaviour {
 		HideWeapons();
 
 		villagePanel.SetActive (false);
-		usePower.SetActive (!gameManager.Qin && !SC_Player.localPlayer.Qin);
+		//usePower.SetActive (!gameManager.Qin && !SC_Player.localPlayer.Qin);
         cancelMovementButton.SetActive(false);
 		resetMovementButton.SetActive (false);
 		resetAttackChoiceButton.SetActive (false);
@@ -128,7 +128,7 @@ public class SC_UI_Manager : MonoBehaviour {
             construct.gameObject.SetActive(false);
             constructPanel.gameObject.SetActive(false);
             cancelLastConstructButton.SetActive(false);
-            qinPower.gameObject.SetActive(false);
+            //qinPower.gameObject.SetActive(false);
             sacrifice.gameObject.SetActive(false);
 
         }
@@ -224,8 +224,8 @@ public class SC_UI_Manager : MonoBehaviour {
 		SetText("Armor", " Armor : " + character.armor);
 		SetText("Qi", " Qi : " + character.qi);
 		SetText("Resistance", " Resistance : " + character.resistance);
-		SetText("Technique", " Technique : " + character.technique + ", Crit Jauge : " + character.CriticalAmount + "/" + gameManager.CommonCharactersVariables.critTrigger);
-		SetText("Reflexes", " Reflexes : " + character.reflexes + ", Dodge Jauge : " + character.DodgeAmount + "/" + gameManager.CommonCharactersVariables.dodgeTrigger);
+		SetText("Technique", " Technique : " + character.technique + ", Crit : " + character.CriticalAmount + "/" + gameManager.CommonCharactersVariables.critTrigger);
+		SetText("Reflexes", " Reflexes : " + character.reflexes + ", Dodge : " + character.DodgeAmount + "/" + gameManager.CommonCharactersVariables.dodgeTrigger);
         SetText("Movement", " Movement : " + character.movement);
 		SetText("WeaponsTitle", " Weapons :");
 
@@ -297,11 +297,11 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		string attackedName = "";
 
-		string attackedHP = "";
+		int attackedHP = 0;
 
 		string attackedWeapon = "";
 
-		/*string attackedCrit = "";
+        /*string attackedCrit = "";
 
 		string attackedDodge = "";*/
 
@@ -318,7 +318,7 @@ public class SC_UI_Manager : MonoBehaviour {
 			if (!TileManager.GetTileAt(attacker.gameObject).Bastion && (rangedAttack && attacked.GetActiveWeapon ().ranged || !rangedAttack && !attacked.GetActiveWeapon ().IsBow))
                 attackedDamages = fightManager.CalcDamages(attacked, attacker, true);
 
-            attackedHP = (attacked.Health - attackerDamages).ToString ();			
+            attackedHP = attacked.Health - attackerDamages;		
 
 			/*attackedCrit = attacked.CriticalHit.ToString ();
 
@@ -332,7 +332,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
 			int attackedHealth = (attackedType == 0) ? attacker.AttackTarget.Construction.Health : (attackedType == 1) ? SC_Qin.Energy : 0;
 
-			if (attackedType != 2) attackedHP = (attackedHealth - attackerDamages).ToString ();
+			if (attackedType != 2) attackedHP = attackedHealth - attackerDamages;
 
 		}
 
@@ -340,7 +340,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		SetText("AttackedName", attackedName);
 
-		SetText("AttackedHP", attackedHP);
+		SetText("AttackedHP", Mathf.Max(attackedHP, 0).ToString());
 
         SetText("AttackerDamages", attackerDamages.ToString());
 		SetText("AttackedDamages", attackedDamages.ToString());
@@ -355,11 +355,11 @@ public class SC_UI_Manager : MonoBehaviour {
     // Also called by UI
     public void PreviewFight (bool activeWeapon) {
 
-        SC_Character.attackingCharacter?.Hero.SetWeapon(activeWeapon);
+        SC_Character.attackingCharacter.Hero?.SetWeapon(activeWeapon);
 
         PreviewFight(SC_Character.attackingCharacter, fightManager.RangedAttack);
 
-        SC_Character.attackingCharacter?.Hero.SetWeapon(activeWeapon);
+        SC_Character.attackingCharacter.Hero?.SetWeapon(activeWeapon);
 
     }
 
@@ -372,14 +372,14 @@ public class SC_UI_Manager : MonoBehaviour {
     #endregion
 
     #region Heroes
-    public void ShowHeroPower(bool show, string heroName) {
+    /*public void ShowHeroPower(bool show, string heroName) {
 
 		usePower.SetActive (!show);
 
 		if (show)
 			usePower.GetComponentInChildren<Text> ().name = heroName;
 
-	}
+	}*/
 
     #region Weapons
     public void ShowWeapon (SC_Weapon weapon, bool first) {

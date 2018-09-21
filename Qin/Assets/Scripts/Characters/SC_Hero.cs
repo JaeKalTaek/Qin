@@ -60,7 +60,7 @@ public class SC_Hero : SC_Character {
 
             base.TryCheckMovements();
 
-            uiManager.ShowHeroPower (PowerUsed, name);
+            //uiManager.ShowHeroPower (PowerUsed, name);
 
 		}
 
