@@ -9,6 +9,9 @@ public class SC_Soldier : SC_Character {
     [Tooltip("Cost to create this soldier in a Workshop")]
     public int cost;
 
+    [Tooltip("Energy gained by Qin when he sacrifices this unit")]
+    public int sacrificeValue;
+
     public void SetupNew() {
 
         CanMove = false;

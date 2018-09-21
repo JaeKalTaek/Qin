@@ -158,7 +158,7 @@ public class SC_Tile : NetworkBehaviour {
 
             } else if (CurrentDisplay == TDisplay.Sacrifice) {
 
-                SC_Player.localPlayer.CmdChangeQinEnergy(SC_Qin.Qin.sacrificeValue);
+                SC_Player.localPlayer.CmdChangeQinEnergy(Soldier.sacrificeValue);
 
                 RemoveFilter();
 

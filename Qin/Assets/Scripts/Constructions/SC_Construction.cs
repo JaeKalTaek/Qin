@@ -84,7 +84,7 @@ public class SC_Construction : NetworkBehaviour {
 
         if (lastConstruSoldier) {
 
-            SC_Qin.ChangeEnergy(-SC_Qin.Qin.sacrificeValue);
+            SC_Qin.ChangeEnergy(-lastConstruSoldier.sacrificeValue);
 
             lastConstruSoldier.gameObject.SetActive(true);
 

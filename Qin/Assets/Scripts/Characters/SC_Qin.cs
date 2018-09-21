@@ -18,9 +18,6 @@ public class SC_Qin : NetworkBehaviour {
 	[Tooltip("Energy won when a hero dis")]
 	public int energyWhenHeroDies;    
 
-    [Tooltip("Energy won when Qin sacrifices a soldier")]
-    public int sacrificeValue;
-
     [Tooltip("Energy won for each village at the beginning of each of Qin's turn")]
     public int regenPerVillage;
 

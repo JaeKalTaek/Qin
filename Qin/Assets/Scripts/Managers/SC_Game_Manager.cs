@@ -302,7 +302,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
             tile.Soldier.gameObject.SetActive(false);
 
-            SC_Qin.ChangeEnergy(SC_Qin.Qin.sacrificeValue);
+            SC_Qin.ChangeEnergy(tile.Soldier.sacrificeValue);
 
         }
 
