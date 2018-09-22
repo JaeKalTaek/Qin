@@ -31,7 +31,7 @@ public class SC_Soldier : SC_Character {
 
         Tire();
 
-        SC_Qin.ChangeEnergy(cost);
+        SC_Qin.ChangeEnergy(-cost);
 
     }
 

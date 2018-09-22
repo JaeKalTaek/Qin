@@ -516,9 +516,8 @@ public class SC_UI_Manager : MonoBehaviour {
     #region Building
     public void UpdateConstructPanel () {
 
-        foreach (Transform t in constructPanel)
-            t.GetComponentInChildren<Button>().interactable = (SC_Qin.GetConstruCost(t.name) < SC_Qin.Energy) && (TileManager.GetConstructableTiles(t.name == "Wall").Count > 0);
-
+        for (int i = 0; i < constructPanel.childCount; i++)
+            constructPanel.GetChild(i).GetComponentInChildren<Button>().interactable = (SC_Qin.GetConstruCost(constructions[i].Name) < SC_Qin.Energy) && (TileManager.GetConstructableTiles(constructions[i].Name == "Wall").Count > 0);
 
     }
 
@@ -532,19 +531,13 @@ public class SC_UI_Manager : MonoBehaviour {
     }
 
     // Called by UI
-    public void DisplayConstructableTiles() {
+    public void DisplayConstructableTiles(int id) {
 
-        print(EventSystem.current);
-
-        print(EventSystem.current.currentSelectedGameObject);
-
-        string c = EventSystem.current.currentSelectedGameObject.GetComponentInChildren<Text>().text;
-
-        SC_Player.localPlayer.CmdSetConstru(c);
+        SC_Player.localPlayer.CmdSetConstru(constructions[id].Name);
 
         TileManager.RemoveAllFilters();
 
-        TileManager.DisplayConstructableTiles(c == "Wall");
+        TileManager.DisplayConstructableTiles(constructions[id].Name == "Wall");
 
     }
 
@@ -582,15 +575,11 @@ public class SC_UI_Manager : MonoBehaviour {
 
     }
 
-    public void WorkshopCreateSoldier () {
+    public void WorkshopCreateSoldier (int id) {
 
         if (!clickSecurity) {            
 
-            print(EventSystem.current);
-
-            print(EventSystem.current.currentSelectedGameObject);
-
-            SC_Player.localPlayer.CmdCreateSoldier(gameManager.CurrentWorkshopPos, EventSystem.current.currentSelectedGameObject.GetComponentInChildren<Text>().text);
+            SC_Player.localPlayer.CmdCreateSoldier(gameManager.CurrentWorkshopPos, soldiers[id].characterName);
 
             EndQinAction("workshop");
 
