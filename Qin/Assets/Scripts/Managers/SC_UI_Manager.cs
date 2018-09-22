@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
-using static SC_Enums;
 using System.Collections;
 using UnityEngine.EventSystems;
 
@@ -60,6 +59,8 @@ public class SC_UI_Manager : MonoBehaviour {
     bool clickSecurity;
 
     SC_Soldier[] soldiers;
+
+    SC_Construction[] constructions;
     #endregion
 
     #region Setup
@@ -103,7 +104,26 @@ public class SC_UI_Manager : MonoBehaviour {
 
         }
 
-	}
+        constructions = Resources.LoadAll<SC_Construction>("Prefabs/Constructions");
+
+        for (int i = 0; i < constructPanel.childCount; i++) {
+
+            Transform construction = constructPanel.GetChild(i);
+
+            if (i < constructions.Length) {
+
+                construction.GetChild(0).GetComponentInChildren<Text>().text = constructions[i].Name;
+                construction.GetChild(1).GetComponentInChildren<Text>().text = constructions[i].cost.ToString();
+
+            } else {
+
+                construction.gameObject.SetActive(false);
+
+            }
+
+        }
+
+    }
     #endregion
 
     #region Next Turn 
@@ -496,13 +516,9 @@ public class SC_UI_Manager : MonoBehaviour {
     #region Building
     public void UpdateConstructPanel () {
 
-        foreach (Transform t in constructPanel) {
-
+        foreach (Transform t in constructPanel)
             t.GetComponentInChildren<Button>().interactable = (SC_Qin.GetConstruCost(t.name) < SC_Qin.Energy) && (TileManager.GetConstructableTiles(t.name == "Wall").Count > 0);
 
-            t.GetChild(1).GetComponent<Text>().text = SC_Qin.GetConstruCost(t.name).ToString();
-
-        }
 
     }
 
@@ -516,13 +532,19 @@ public class SC_UI_Manager : MonoBehaviour {
     }
 
     // Called by UI
-    public void DisplayConstructableTiles(int c) {
+    public void DisplayConstructableTiles() {
+
+        print(EventSystem.current);
+
+        print(EventSystem.current.currentSelectedGameObject);
+
+        string c = EventSystem.current.currentSelectedGameObject.GetComponentInChildren<Text>().text;
 
         SC_Player.localPlayer.CmdSetConstru(c);
 
         TileManager.RemoveAllFilters();
 
-        TileManager.DisplayConstructableTiles((Constru)c == Constru.Wall);
+        TileManager.DisplayConstructableTiles(c == "Wall");
 
     }
 
@@ -541,8 +563,7 @@ public class SC_UI_Manager : MonoBehaviour {
         Transform uiSoldiers = workshopPanel.transform.GetChild(1);
 
         for (int i = 0; i < uiSoldiers.childCount; i++)
-            if (uiSoldiers.GetChild(i).gameObject.activeSelf)
-                uiSoldiers.GetChild(i).GetComponentInChildren<Button>().interactable = soldiers[i].cost < SC_Qin.Energy;
+            uiSoldiers.GetChild(i).GetComponentInChildren<Button>().interactable = soldiers[i].cost < SC_Qin.Energy;
 
         StartCoroutine(ClickSafety());
 
@@ -563,7 +584,11 @@ public class SC_UI_Manager : MonoBehaviour {
 
     public void WorkshopCreateSoldier () {
 
-        if (!clickSecurity) {
+        if (!clickSecurity) {            
+
+            print(EventSystem.current);
+
+            print(EventSystem.current.currentSelectedGameObject);
 
             SC_Player.localPlayer.CmdCreateSoldier(gameManager.CurrentWorkshopPos, EventSystem.current.currentSelectedGameObject.GetComponentInChildren<Text>().text);
 

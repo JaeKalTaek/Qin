@@ -21,7 +21,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 	public SC_Hero LastHeroDead { get; set; }
 
-    public Constru CurrentConstru { get; set; }
+    public string CurrentConstru { get; set; }
 
 	public Vector3 CurrentWorkshopPos { get; set; }
 
@@ -223,7 +223,7 @@ public class SC_Game_Manager : NetworkBehaviour {
         /*foreach (SC_Convoy convoy in FindObjectsOfType<SC_Convoy>())
 			convoy.MoveConvoy ();*/
 
-        CurrentConstru = Constru.Bastion;
+        CurrentConstru = "Bastion";
 
         if (Qin) {
 
@@ -357,8 +357,8 @@ public class SC_Game_Manager : NetworkBehaviour {
 
             uiManager.UpdateConstructPanel();
 
-            if ((SC_Qin.GetConstruCost(CurrentConstru) < SC_Qin.Energy) && (tileManager.GetConstructableTiles(CurrentConstru == Constru.Wall).Count > 0))  
-                tileManager.DisplayConstructableTiles(CurrentConstru == Constru.Wall);
+            if ((SC_Qin.GetConstruCost(CurrentConstru) < SC_Qin.Energy) && (tileManager.GetConstructableTiles(CurrentConstru == "Wall").Count > 0))  
+                tileManager.DisplayConstructableTiles(CurrentConstru == "Wall");
 
         }
 

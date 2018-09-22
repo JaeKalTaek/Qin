@@ -203,16 +203,16 @@ public class SC_Player : NetworkBehaviour {
 
     #region Construction
     [Command]
-    public void CmdSetConstru (int c) {
+    public void CmdSetConstru (string c) {
 
         RpcSetConstru(c);
 
     }
 
     [ClientRpc]
-    public void RpcSetConstru (int c) {
+    public void RpcSetConstru (string c) {
 
-        localPlayer.gameManager.CurrentConstru = (Constru)c;
+        localPlayer.gameManager.CurrentConstru = c;
 
     }
 
