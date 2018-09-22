@@ -16,7 +16,7 @@ public static class SC_ExtensionMethods {
 
 	public static void SetPos(this Transform trans, Vector2 v2) {
 
-		trans.position = new Vector3 (v2.x, v2.y, trans.position.z);
+		trans.position = new Vector3 (Mathf.Round(v2.x), Mathf.Round(v2.y), trans.position.z);
 
 	}
 		

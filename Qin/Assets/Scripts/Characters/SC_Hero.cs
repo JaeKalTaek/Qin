@@ -54,7 +54,7 @@ public class SC_Hero : SC_Character {
 
 	}
 
-	protected override void TryCheckMovements () {
+	public override void TryCheckMovements () {
 
 		if (CanMove || (Berserk && !BerserkTurn)) {
 

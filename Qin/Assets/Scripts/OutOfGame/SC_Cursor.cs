@@ -14,7 +14,7 @@ public class SC_Cursor : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        transform.SetPos(new Vector3((int)Input.mousePosition.x, (int)Input.mousePosition.y, 0));
+        transform.SetPos(new Vector3(Mathf.RoundToInt(Input.mousePosition.x), Mathf.RoundToInt(Input.mousePosition.y), 0));
 
         if (Input.GetAxis("Fire1") != 0)
             SC_Tile_Manager.Instance?.GetTileAt(transform.position).CursorClick();

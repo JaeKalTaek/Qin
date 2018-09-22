@@ -41,7 +41,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
         tiles = new SC_Tile[xSize, ySize];
 
 		foreach (SC_Tile t in FindObjectsOfType<SC_Tile>())
-			tiles [(int)t.transform.position.x, (int)t.transform.position.y] = t;
+			tiles [Mathf.RoundToInt(t.transform.position.x), Mathf.RoundToInt(t.transform.position.y)] = t;
 
 		gameManager.FinishSetup ();
 
@@ -98,7 +98,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     public int TileDistance (Vector3 a, Vector3 b) {
 
-        return Mathf.Abs((int)a.x - (int)b.x) + Mathf.Abs((int)a.y - (int)b.y);
+        return Mathf.Abs(Mathf.RoundToInt(a.x) - Mathf.RoundToInt(b.x)) + Mathf.Abs(Mathf.RoundToInt(a.y) - Mathf.RoundToInt(b.y));
 
     }
 
@@ -116,7 +116,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     public SC_Tile GetTileAt (GameObject g) {
 
-        return tiles[(int)g.transform.position.x, (int)g.transform.position.y];
+        return GetTileAt(g.transform.position);
 
     }
 
@@ -128,7 +128,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     public SC_Tile GetTileAt (Vector3 pos) {
 
-        return tiles[(int)pos.x, (int)pos.y];
+        return tiles[Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y)];
 
     }
 

@@ -17,7 +17,7 @@ public class SC_Character : NetworkBehaviour {
     public bool CanMove { get; set; }
 
     [Tooltip("Time for a character to walk one tile of distance")]
-    public float moveSpeed = .25f;
+    public float moveDuration;
 
     [Tooltip("Base Maximum Health of this character")]
 	public int maxHealth;
@@ -112,13 +112,6 @@ public class SC_Character : NetworkBehaviour {
 
 	}
 
-	protected virtual void OnMouseDown() {
-
-        if (SC_UI_Manager.CanInteract && !SC_Player.localPlayer.Busy && (tileManager.GetTileAt(gameObject).CurrentDisplay == TDisplay.None))
-            TryCheckMovements();
-
-	}	
-
 	protected virtual void OnMouseOver() {
 
 		if(Input.GetMouseButtonDown(1))
@@ -127,9 +120,9 @@ public class SC_Character : NetworkBehaviour {
 	}
 
     #region Movement
-    protected virtual void TryCheckMovements () {
+    public virtual void TryCheckMovements () {
 
-        SC_Player.localPlayer.CmdCheckMovements((int)transform.position.x, (int)transform.position.y);
+        SC_Player.localPlayer.CmdCheckMovements(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
 
         uiManager.cancelMovementButton.SetActive(true);
 
@@ -159,15 +152,15 @@ public class SC_Character : NetworkBehaviour {
 
         Vector3 currentStart = transform.position;
 
-        Vector3 currentEnd = path[1].transform.position;
+        Vector3 currentEnd = new Vector3(path[1].transform.position.x, path[1].transform.position.y, transform.position.z);
 
         while (pathIndex < path.Count) {
 
-            movementTimer = Mathf.Min(movementTimer + Time.deltaTime, moveSpeed);
+            movementTimer = Mathf.Min(movementTimer + Time.deltaTime, moveDuration);
 
-            transform.SetPos(Vector3.Lerp(currentStart, currentEnd, movementTimer/moveSpeed));
+            transform.position = Vector3.Lerp(currentStart, currentEnd, movementTimer/moveDuration);
 
-            if(movementTimer == moveSpeed) {
+            if (movementTimer == moveDuration) {
 
                 pathIndex++;
 
@@ -177,13 +170,13 @@ public class SC_Character : NetworkBehaviour {
 
                     currentStart = transform.position;
 
-                    currentEnd = path[pathIndex].transform.position;
+                    currentEnd = new Vector3(path[pathIndex].transform.position.x, path[pathIndex].transform.position.y, transform.position.z);
 
                 }
 
             }
 
-			yield return null;
+			yield return new WaitForEndOfFrame();
 
 		}
 
@@ -217,9 +210,13 @@ public class SC_Character : NetworkBehaviour {
 
             if ((!moved && LastPos.Village) || (moved && target.Village)) {
 
-                SC_Player.localPlayer.Busy = true;
+                if (SC_Player.localPlayer.Turn) {
 
-                uiManager.villagePanel.SetActive(true);
+                    SC_Player.localPlayer.Busy = true;
+
+                    uiManager.villagePanel.SetActive(true);
+
+                }
 
             } else {
 

@@ -565,7 +565,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         if (!clickSecurity) {
 
-            SC_Player.localPlayer.CmdCreateSoldier(gameManager.CurrentWorkshop.transform.position, EventSystem.current.currentSelectedGameObject.GetComponentInChildren<Text>().text);
+            SC_Player.localPlayer.CmdCreateSoldier(gameManager.CurrentWorkshopPos, EventSystem.current.currentSelectedGameObject.GetComponentInChildren<Text>().text);
 
             EndQinAction("workshop");
 

@@ -22,7 +22,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
     public Constru CurrentConstru { get; set; }
 
-	public SC_Workshop CurrentWorkshop { get; set; }
+	public Vector3 CurrentWorkshopPos { get; set; }
 
 	public bool CantCancelMovement { get; set; }
 
@@ -288,7 +288,7 @@ public class SC_Game_Manager : NetworkBehaviour {
     #region Construction
     public void ConstructAt (SC_Tile tile) {
 
-        Player.CmdConstructAt((int)tile.transform.position.x, (int)tile.transform.position.y);
+        Player.CmdConstructAt(Mathf.RoundToInt(tile.transform.position.x), Mathf.RoundToInt(tile.transform.position.y));
 
     }
 

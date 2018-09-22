@@ -35,7 +35,7 @@ public class SC_Soldier : SC_Character {
 
     }
 
-    protected override void TryCheckMovements () {
+    public override void TryCheckMovements () {
 
 		if (CanMove) {
 

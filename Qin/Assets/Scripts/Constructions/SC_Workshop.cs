@@ -2,26 +2,11 @@
 
 public class SC_Workshop : SC_Construction {
 
-	public static Vector2[] spawnPositions = {
+	public void SelectWorkshop() {
 
-		new Vector2 (16, 3),
-		new Vector2 (17, 6),
-		new Vector2 (18, 1),
-		new Vector2 (16, 9),
-		new Vector2 (17, 12),
-		new Vector2 (18, 14)
+        gameManager.CurrentWorkshopPos = transform.position;
 
-	};
-
-	public void OnMouseDown() {
-
-        if (SC_UI_Manager.CanInteract && !SC_Player.localPlayer.Busy && !tileManager.GetTileAt(gameObject).Character && SC_Player.localPlayer.Qin) {
-
-            gameManager.CurrentWorkshop = this;
-
-            uiManager.DisplayWorkshopPanel();
-
-        }
+        uiManager.DisplayWorkshopPanel();
 
 	}
 

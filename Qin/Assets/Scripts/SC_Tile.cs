@@ -108,7 +108,7 @@ public class SC_Tile : NetworkBehaviour {
         if (!fightManager)
             fightManager = SC_Fight_Manager.Instance;
 
-        if ((int)transform.position.x == (gameManager.baseMapPrefab.GetComponent<SC_MapPrefab>().xSize - 1) && (int)transform.position.y == (gameManager.baseMapPrefab.GetComponent<SC_MapPrefab>().ySize - 1) && !isServer) {
+        if (Mathf.RoundToInt(transform.position.x) == (gameManager.baseMapPrefab.GetComponent<SC_MapPrefab>().xSize - 1) && Mathf.RoundToInt(transform.position.y) == (gameManager.baseMapPrefab.GetComponent<SC_MapPrefab>().ySize - 1) && !isServer) {
 
             if (gameManager.Player)
                 gameManager.Player.CmdFinishLoading();
@@ -141,7 +141,7 @@ public class SC_Tile : NetworkBehaviour {
 
                 SC_Player.localPlayer.Busy = true;
 
-                SC_Player.localPlayer.CmdMoveCharacterTo((int)transform.position.x, (int)transform.position.y);
+                SC_Player.localPlayer.CmdMoveCharacterTo(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
 
             } else if (CurrentDisplay == TDisplay.Attack) {
 
@@ -169,6 +169,13 @@ public class SC_Tile : NetworkBehaviour {
                 uiManager.EndQinAction("qinPower");
 
                 SC_Qin.UsePower(transform.position);
+
+            } else if (CurrentDisplay == TDisplay.None && SC_UI_Manager.CanInteract && !SC_Player.localPlayer.Busy) {
+
+                if (Workshop)
+                    Workshop.SelectWorkshop();
+                else if (Character)
+                    Character.TryCheckMovements();
 
             }
 
