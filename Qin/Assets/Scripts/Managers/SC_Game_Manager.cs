@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using static SC_Enums;
+using System.Collections;
 
 public class SC_Game_Manager : NetworkBehaviour {
 
@@ -161,6 +162,15 @@ public class SC_Game_Manager : NetworkBehaviour {
 			}
 
 		}		
+
+    }
+
+    public IEnumerator FinishLoading() {
+
+        while(!Player)
+            yield return null;
+
+        Player.CmdFinishLoading(); ;
 
     }
     #endregion
