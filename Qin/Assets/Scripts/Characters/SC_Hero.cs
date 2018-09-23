@@ -66,13 +66,11 @@ public class SC_Hero : SC_Character {
 
 	}
 
-	protected override void OnMouseOver() {
+	void OnMouseOver() {
 
-        base.OnMouseOver();
+		SC_Tile under = tileManager?.GetTileAt (gameObject);
 
-		SC_Tile under = tileManager.GetTileAt (gameObject);
-
-		if ((under.CurrentDisplay == TDisplay.Attack) && !attackingCharacter.Hero) {
+		if (under && (under.CurrentDisplay == TDisplay.Attack) && !attackingCharacter.Hero && SC_UI_Manager.CanInteract) {
 
             attackingCharacter.AttackTarget = under;
 

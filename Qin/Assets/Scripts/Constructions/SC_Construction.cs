@@ -49,18 +49,9 @@ public class SC_Construction : NetworkBehaviour {
 
 		Health = maxHealth;
 
-        SC_Tile under = tileManager.GetTileAt(gameObject);
-
         tileManager.GetTileAt(gameObject).Construction = this;
 
     }
-
-	protected void OnMouseOver() {
-
-		if(Input.GetMouseButtonDown(1))
-			uiManager?.ShowHideInfos (gameObject, typeof(SC_Construction));
-
-	}
 
 	public virtual void DestroyConstruction() {
 

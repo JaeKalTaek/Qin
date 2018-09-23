@@ -77,7 +77,7 @@ public class SC_Tile : NetworkBehaviour {
 
     public SC_Soldier Soldier { get { return Character as SC_Soldier; } }
 
-    public bool Qin { get; set; }
+    public SC_Qin Qin { get; set; }
 
     public bool Empty { get { return !Construction && !Character && !Qin; } }
 
@@ -108,24 +108,8 @@ public class SC_Tile : NetworkBehaviour {
         if (!fightManager)
             fightManager = SC_Fight_Manager.Instance;
 
-        if (Mathf.RoundToInt(transform.position.x) == (gameManager.baseMapPrefab.GetComponent<SC_MapPrefab>().xSize - 1) && Mathf.RoundToInt(transform.position.y) == (gameManager.baseMapPrefab.GetComponent<SC_MapPrefab>().ySize - 1) && !isServer) {
-
+        if (Mathf.RoundToInt(transform.position.x) == (gameManager.baseMapPrefab.GetComponent<SC_MapPrefab>().xSize - 1) && Mathf.RoundToInt(transform.position.y) == (gameManager.baseMapPrefab.GetComponent<SC_MapPrefab>().ySize - 1) && !isServer)
             gameManager.StartCoroutine("FinishLoading");
-
-            /*if (gameManager.Player)
-                gameManager.Player.CmdFinishLoading();
-            else if (SC_Player.localPlayer)
-                SC_Player.localPlayer.CmdFinishLoading();
-            else
-                FindObjectOfType<SC_Player>().CmdFinishLoading();*/
-
-        }
-
-    }
-
-    void OnMouseDown () {
-
-        CursorClick();
 
     }
 
@@ -174,16 +158,38 @@ public class SC_Tile : NetworkBehaviour {
 
             } else if (CurrentDisplay == TDisplay.None && SC_UI_Manager.CanInteract && !SC_Player.localPlayer.Busy) {
 
-                if (Workshop && SC_Player.localPlayer.Qin)
-                    Workshop.SelectWorkshop();
-                else if (Character && (Character.Qin == SC_Player.localPlayer.Qin))
+                if (Character && (Character.Qin == SC_Player.localPlayer.Qin))
                     Character.TryCheckMovements();
+                else if (Workshop && SC_Player.localPlayer.Qin)
+                    Workshop.SelectWorkshop();
 
             }
 
         }
 
 	}
+
+    public void CursorSecondaryClick() {
+
+        if (Character)
+            Character.ShowHideInfos();
+        else if (Construction)
+            Construction.ShowHideInfos();
+        else
+            Qin?.ShowHideInfos();
+
+    }
+
+    public void OnCursorEnter() {
+
+
+    }
+
+    public void OnCursorExit() {
+
+
+
+    }
 
     void OnMouseEnter () {
 

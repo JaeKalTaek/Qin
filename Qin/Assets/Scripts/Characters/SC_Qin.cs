@@ -43,16 +43,9 @@ public class SC_Qin : NetworkBehaviour {
 
 		uiManager.energyText.text = "Qin's Energy : " + Energy;
 
-        tileManager.GetTileAt(gameObject).Qin = true;
+        tileManager.GetTileAt(gameObject).Qin = this;
 
     }
-
-	void OnMouseOver() {
-
-		if(Input.GetMouseButtonDown(1))
-			uiManager.ShowHideInfos(gameObject, GetType());
-
-	}
 
 	public static void UsePower(Vector3 pos) {
 

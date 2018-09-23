@@ -112,13 +112,6 @@ public class SC_Character : NetworkBehaviour {
 
 	}
 
-	protected virtual void OnMouseOver() {
-
-		if(Input.GetMouseButtonDown(1))
-			uiManager?.ShowHideInfos (gameObject, GetType());
-
-	}
-
     #region Movement
     public virtual void TryCheckMovements () {
 

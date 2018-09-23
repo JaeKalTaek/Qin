@@ -10,13 +10,13 @@ public class SC_Camera : MonoBehaviour {
 
 	}
 
-    void Update() {
+    /*void Update() {
 
 		transform.position += transform.up * Time.deltaTime * Input.GetAxis ("Vertical") * moveSpeed;
 
 		transform.position += transform.right * Time.deltaTime * Input.GetAxis ("Horizontal") * moveSpeed;
 
 		transform.position += transform.forward * Time.deltaTime * Input.GetAxis ("Mouse ScrollWheel") * zoomSpeed;
-    }
+    }*/
 
 }

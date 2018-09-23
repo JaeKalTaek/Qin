@@ -49,6 +49,8 @@ public class SC_Player : NetworkBehaviour {
     [Command]
     public void CmdFinishLoading() {
 
+        NetworkServer.Spawn(Instantiate(Resources.Load<GameObject>("Prefabs/P_Cursor")));
+
         RpcFinishLoading();
 
     }
