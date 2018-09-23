@@ -174,9 +174,9 @@ public class SC_Tile : NetworkBehaviour {
 
             } else if (CurrentDisplay == TDisplay.None && SC_UI_Manager.CanInteract && !SC_Player.localPlayer.Busy) {
 
-                if (Workshop)
+                if (Workshop && SC_Player.localPlayer.Qin)
                     Workshop.SelectWorkshop();
-                else if (Character)
+                else if (Character && (Character.Qin == SC_Player.localPlayer.Qin))
                     Character.TryCheckMovements();
 
             }

@@ -52,7 +52,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
     public static SC_UI_Manager Instance { get; set; }
 
-    public static bool CanInteract { get { return SC_Player.localPlayer.Turn && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject(); } }
+    public static bool CanInteract { get { return SC_Player.localPlayer.Turn && !EventSystem.current.IsPointerOverGameObject(); } }
 
     public float clickSecurityDuration;
 
