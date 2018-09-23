@@ -66,7 +66,9 @@ public class SC_Hero : SC_Character {
 
 	}
 
-	void OnMouseEnter() {
+	protected override void OnMouseOver() {
+
+        base.OnMouseOver();
 
 		SC_Tile under = tileManager.GetTileAt (gameObject);
 
@@ -74,9 +76,9 @@ public class SC_Hero : SC_Character {
 
             attackingCharacter.AttackTarget = under;
 
-			uiManager.PreviewFight(false);
+            fightManager.RangedAttack = tileManager.TileDistance(attackingCharacter.transform.position, under) > 1;
 
-            attackingCharacter.AttackTarget = null;
+			uiManager.PreviewFight(true);
 
 		}
 

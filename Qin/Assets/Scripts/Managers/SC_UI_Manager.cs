@@ -299,87 +299,84 @@ public class SC_UI_Manager : MonoBehaviour {
     #endregion
 
     #region Fight related
-    public void PreviewFight(SC_Character attacker, bool rangedAttack) {
+    // Also called by UI
+    public void PreviewFight (bool activeWeapon) {
 
-		previewFightPanel.SetActive (true);
+        SC_Character attacker = SC_Character.attackingCharacter;
 
-		SetText ("AttackerName", attacker.characterName);
+        attacker.Hero?.SetWeapon(activeWeapon);
 
-		SetText ("AttackerWeapon", attacker.GetActiveWeapon ().weaponName);
+        previewFightPanel.SetActive(true);
 
-		/*SetText ("AttackerCrit", attacker.CriticalAmount.ToString ());
+        SetText("AttackerName", attacker.characterName);
+
+        SetText("AttackerWeapon", attacker.GetActiveWeapon().weaponName);
+
+        /*SetText ("AttackerCrit", attacker.CriticalAmount.ToString ());
 
 		SetText ("AttackerDodge", attacker.DodgeAmount.ToString ());*/
 
-		int attackedDamages = 0;
+        int attackedDamages = 0;
 
-		int attackerDamages = attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi;
+        int attackerDamages = attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi;
 
-		string attackedName = "";
+        string attackedName = "";
 
-		int attackedHP = 0;
+        int attackedHP = 0;
 
-		string attackedWeapon = "";
+        string attackedWeapon = "";
 
         /*string attackedCrit = "";
 
 		string attackedDodge = "";*/
 
-		if (attacker.AttackTarget.Character && (!attacker.AttackTarget.Construction || !attacker.AttackTarget.Bastion)) {
+        if (attacker.AttackTarget.Character && (!attacker.AttackTarget.Construction || !attacker.AttackTarget.Bastion)) {
 
-			SC_Character attacked = attacker.AttackTarget.Character;
+            SC_Character attacked = attacker.AttackTarget.Character;
 
-			attackedName = attacked.characterName;
+            attackedName = attacked.characterName;
 
-			attackedWeapon = attacked.GetActiveWeapon ().weaponName;
+            attackedWeapon = attacked.GetActiveWeapon().weaponName;
 
-			attackerDamages = fightManager.CalcDamages (attacker, attacked, false);
-			
-			if (!TileManager.GetTileAt(attacker.gameObject).Bastion && (rangedAttack && attacked.GetActiveWeapon ().ranged || !rangedAttack && !attacked.GetActiveWeapon ().IsBow))
+            attackerDamages = fightManager.CalcDamages(attacker, attacked, false);
+
+            if (!TileManager.GetTileAt(attacker.gameObject).Bastion && (fightManager.RangedAttack && attacked.GetActiveWeapon().ranged || !fightManager.RangedAttack && !attacked.GetActiveWeapon().IsBow))
                 attackedDamages = fightManager.CalcDamages(attacked, attacker, true);
 
-            attackedHP = attacked.Health - attackerDamages;		
+            attackedHP = attacked.Health - attackerDamages;
 
-			/*attackedCrit = attacked.CriticalHit.ToString ();
+            /*attackedCrit = attacked.CriticalHit.ToString ();
 
 			attackedDodge = attacked.DodgeHit.ToString ();*/
 
-		} else {
+        } else {
 
             int attackedType = attacker.AttackTarget.Construction ? 0 : attacker.AttackTarget.Qin ? 1 : 2;
 
-			attackedName = (attackedType == 0) ? attacker.AttackTarget.Construction.Name : (attackedType == 1) ? "Qin" : "";			
+            attackedName = (attackedType == 0) ? attacker.AttackTarget.Construction.Name : (attackedType == 1) ? "Qin" : "";
 
-			int attackedHealth = (attackedType == 0) ? attacker.AttackTarget.Construction.Health : (attackedType == 1) ? SC_Qin.Energy : 0;
+            int attackedHealth = (attackedType == 0) ? attacker.AttackTarget.Construction.Health : (attackedType == 1) ? SC_Qin.Energy : 0;
 
-			if (attackedType != 2) attackedHP = attackedHealth - attackerDamages;
+            if (attackedType != 2)
+                attackedHP = attackedHealth - attackerDamages;
 
-		}
+        }
 
-		SetText("AttackerHP", (Mathf.Max(attacker.Health - attackedDamages, 0)).ToString());
+        SetText("AttackerHP", (Mathf.Max(attacker.Health - attackedDamages, 0)).ToString());
 
-		SetText("AttackedName", attackedName);
+        SetText("AttackedName", attackedName);
 
-		SetText("AttackedHP", Mathf.Max(attackedHP, 0).ToString());
+        SetText("AttackedHP", Mathf.Max(attackedHP, 0).ToString());
 
         SetText("AttackerDamages", attackerDamages.ToString());
-		SetText("AttackedDamages", attackedDamages.ToString());
+        SetText("AttackedDamages", attackedDamages.ToString());
 
-		SetText("AttackedWeapon", attackedWeapon);
+        SetText("AttackedWeapon", attackedWeapon);
 
-		/*SetText("AttackedCrit", attackedCrit);
+        /*SetText("AttackedCrit", attackedCrit);
 		SetText("AttackedDodge", attackedDodge);*/
 
-	}
-
-    // Also called by UI
-    public void PreviewFight (bool activeWeapon) {
-
-        SC_Character.attackingCharacter.Hero?.SetWeapon(activeWeapon);
-
-        PreviewFight(SC_Character.attackingCharacter, fightManager.RangedAttack);
-
-        SC_Character.attackingCharacter.Hero?.SetWeapon(activeWeapon);
+        attacker.Hero?.SetWeapon(activeWeapon);
 
     }
 
