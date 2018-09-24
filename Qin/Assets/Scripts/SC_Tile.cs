@@ -75,6 +75,8 @@ public class SC_Tile : NetworkBehaviour {
 
     public SC_Character Character { get; set; }
 
+    public SC_Hero Hero { get { return Character as SC_Hero; } }
+
     public SC_Soldier Soldier { get { return Character as SC_Soldier; } }
 
     public SC_Qin Qin { get; set; }
@@ -82,6 +84,8 @@ public class SC_Tile : NetworkBehaviour {
     public bool Empty { get { return !Construction && !Character && !Qin; } }
 
     public bool Palace { get { return name.Contains("Palace"); } }
+
+    public bool CursorOn { get; set; }
 
     // Used for PathFinder
     public SC_Tile Parent { get; set; }
@@ -182,23 +186,21 @@ public class SC_Tile : NetworkBehaviour {
 
     public void OnCursorEnter() {
 
+        CursorOn = true;
+
+        if (CurrentDisplay == TDisplay.Attack)
+            Hero?.PreviewFight();
+        else if (CurrentDisplay == TDisplay.Sacrifice)
+            Soldier.ToggleDisplaySacrificeValue();
 
     }
 
     public void OnCursorExit() {
 
+        CursorOn = false;
 
-
-    }
-
-    void OnMouseEnter () {
-
-        if (CurrentDisplay == TDisplay.Sacrifice)
-            Soldier.ToggleDisplaySacrificeValue();
-
-    }
-
-    void OnMouseExit () {
+        if (CurrentDisplay == TDisplay.Attack && Hero)
+            uiManager.HidePreviewFight();
 
         if (CurrentDisplay == TDisplay.Sacrifice)
             Soldier.ToggleDisplaySacrificeValue();

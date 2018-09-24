@@ -166,9 +166,18 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         RemoveAllFilters();
 
-        foreach (SC_Tile tile in GetAttackTiles(SC_Character.attackingCharacter, SC_Character.attackingCharacter.transform.position))
-            if (tile.Attackable)
+        foreach (SC_Tile tile in GetAttackTiles(SC_Character.attackingCharacter, SC_Character.attackingCharacter.transform.position)) {
+
+            if (tile.Attackable) {
+
                 tile.ChangeDisplay(TDisplay.Attack);
+
+                if (tile.CursorOn)
+                    tile.Hero?.PreviewFight();
+
+            }
+
+        }
 
     }
 

@@ -191,7 +191,7 @@ public class SC_UI_Manager : MonoBehaviour {
 				ShowHeroInfos (g.GetComponent<SC_Hero> ());
 			else if (t == typeof(SC_Soldier))
 				ShowSoldierInfos (g.GetComponent<SC_Soldier> ());
-			else if (t == typeof(SC_Construction))
+			else if (t.IsSubclassOf(typeof(SC_Construction)))
 				ShowConstructionsInfos (g.GetComponent<SC_Construction> ());
 			else if (t == typeof(SC_Qin))
 				ShowQinInfos ();

@@ -66,11 +66,11 @@ public class SC_Hero : SC_Character {
 
 	}
 
-	void OnMouseOver() {
+	public void PreviewFight() {
 
 		SC_Tile under = tileManager?.GetTileAt (gameObject);
 
-		if (under && (under.CurrentDisplay == TDisplay.Attack) && !attackingCharacter.Hero && SC_UI_Manager.CanInteract) {
+		if (!attackingCharacter.Hero && SC_UI_Manager.CanInteract) {
 
             attackingCharacter.AttackTarget = under;
 
@@ -81,12 +81,6 @@ public class SC_Hero : SC_Character {
 		}
 
 	}
-
-	void OnMouseExit() {
-
-        uiManager.HidePreviewFight();
-
-    }
 
 	public void ChooseWeapon() {
 
