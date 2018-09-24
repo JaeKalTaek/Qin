@@ -44,12 +44,11 @@ public class SC_Camera : MonoBehaviour {
             if (cam.orthographicSize != zooms[zoomIndex])
                 cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, zooms[zoomIndex], zoomSpeed * Time.deltaTime);
 
-            float x = Mathf.Clamp(TargetPosition.x, cam.orthographicSize + .5f, SC_Tile_Manager.Instance.xSize - cam.orthographicSize - 1.5f);
-            float y = Mathf.Clamp(TargetPosition.y, cam.orthographicSize / 2 + .5f, SC_Tile_Manager.Instance.ySize - cam.orthographicSize / 2 - 1.5f);
+            float x = Mathf.Clamp(TargetPosition.x, cam.orthographicSize * cam.aspect - .5f, SC_Tile_Manager.Instance.xSize - cam.orthographicSize * cam.aspect - .5f);
+
+            float y = Mathf.Clamp(TargetPosition.y, cam.orthographicSize - .5f, SC_Tile_Manager.Instance.ySize - cam.orthographicSize - .5f);
 
             Vector3 correctPos = new Vector3(x, y, -16);
-
-            correctPos = TargetPosition;
 
             if (transform.position != correctPos)
                 transform.position = Vector3.Lerp(transform.position, correctPos, moveSpeed * Time.deltaTime);
