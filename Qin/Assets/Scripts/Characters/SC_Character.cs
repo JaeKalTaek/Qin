@@ -79,6 +79,9 @@ public class SC_Character : NetworkBehaviour {
 
     protected virtual void Awake() {
 
+        if (!gameManager)
+            gameManager = SC_Game_Manager.Instance;
+
         Qin = !Hero;
 
 		BaseColor = GetComponent<SpriteRenderer> ().color;
@@ -87,10 +90,7 @@ public class SC_Character : NetworkBehaviour {
 
     }
 
-	protected virtual void Start() {
-
-        if(!gameManager)
-            gameManager = SC_Game_Manager.Instance;
+	protected virtual void Start() {        
 
         if(!tileManager)
             tileManager = SC_Tile_Manager.Instance;
