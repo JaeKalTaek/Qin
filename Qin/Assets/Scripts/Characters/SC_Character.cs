@@ -83,6 +83,8 @@ public class SC_Character : NetworkBehaviour {
 
 		BaseColor = GetComponent<SpriteRenderer> ().color;
 
+        CanMove = Qin == gameManager.Qin;
+
     }
 
 	protected virtual void Start() {
@@ -106,9 +108,7 @@ public class SC_Character : NetworkBehaviour {
 
 		LastPos = tileManager.GetTileAt(gameObject);
 
-        LastPos.Character = this;
-
-		CanMove = Qin == gameManager.Qin;
+        LastPos.Character = this;		
 
 	}
 

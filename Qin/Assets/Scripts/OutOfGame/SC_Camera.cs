@@ -25,7 +25,7 @@ public class SC_Camera : MonoBehaviour {
 
         cam = GetComponent<Camera>();
 
-		transform.position = new Vector3 (Mathf.RoundToInt((sizeX - 1) / 2), Mathf.RoundToInt((sizeY - 1) / 2), -1);
+		transform.position = new Vector3 (Mathf.RoundToInt((sizeX - 1) / 2), Mathf.RoundToInt((sizeY - 1) / 2), -16);
 
         TargetPosition = transform.position;
 
@@ -44,8 +44,15 @@ public class SC_Camera : MonoBehaviour {
             if (cam.orthographicSize != zooms[zoomIndex])
                 cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, zooms[zoomIndex], zoomSpeed * Time.deltaTime);
 
-            if (transform.position != TargetPosition)
-                transform.position = Vector3.Lerp(transform.position, TargetPosition, moveSpeed * Time.deltaTime);
+            float x = Mathf.Clamp(TargetPosition.x, cam.orthographicSize + .5f, SC_Tile_Manager.Instance.xSize - cam.orthographicSize - 1.5f);
+            float y = Mathf.Clamp(TargetPosition.y, cam.orthographicSize / 2 + .5f, SC_Tile_Manager.Instance.ySize - cam.orthographicSize / 2 - 1.5f);
+
+            Vector3 correctPos = new Vector3(x, y, -16);
+
+            correctPos = TargetPosition;
+
+            if (transform.position != correctPos)
+                transform.position = Vector3.Lerp(transform.position, correctPos, moveSpeed * Time.deltaTime);
 
         }        
 
