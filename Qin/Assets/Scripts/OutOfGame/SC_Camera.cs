@@ -25,6 +25,9 @@ public class SC_Camera : MonoBehaviour {
 
     public Vector3 TargetPosition { get; set; }
 
+    [HideInInspector]
+    public bool minX, maxX, minY, maxY;
+
     Camera cam;
 
     private void OnValidate () {
@@ -59,9 +62,19 @@ public class SC_Camera : MonoBehaviour {
             if (cam.orthographicSize != zooms[zoomIndex])
                 cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, zooms[zoomIndex], zoomSpeed * Time.deltaTime);
 
-            float x = Mathf.Clamp(TargetPosition.x, cam.orthographicSize * cam.aspect - .5f - boardMargin, SC_Tile_Manager.Instance.xSize - cam.orthographicSize * cam.aspect - .5f + boardMargin);
+            float xMax = SC_Tile_Manager.Instance.xSize - cam.orthographicSize * cam.aspect - .5f + boardMargin;
+            float xMin = cam.orthographicSize* cam.aspect - .5f - boardMargin;
 
-            float y = Mathf.Clamp(TargetPosition.y, cam.orthographicSize - .5f - boardMargin, SC_Tile_Manager.Instance.ySize - cam.orthographicSize - .5f + boardMargin);
+            float x = Mathf.Clamp(TargetPosition.x, xMin, xMax);
+
+            x = minX ? xMin : maxX ? xMax : x;
+
+            float yMax = SC_Tile_Manager.Instance.ySize - cam.orthographicSize - .5f + boardMargin;
+            float yMin = cam.orthographicSize - .5f - boardMargin;
+
+            float y = Mathf.Clamp(TargetPosition.y, yMin, yMax);
+
+            y = minY ? yMin : maxY ? yMax : y;
 
             TargetPosition = new Vector3(x, y, -16);
 

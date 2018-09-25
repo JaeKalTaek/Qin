@@ -72,10 +72,18 @@ public class SC_Cursor : NetworkBehaviour {
 
         cameraMoved = false;
 
-        if ((Mathf.RoundToInt(newPos.x) >= 0) && (Mathf.RoundToInt(newPos.y) >= 0) && (Mathf.RoundToInt(newPos.x) < SC_Tile_Manager.Instance.xSize) && (Mathf.RoundToInt(newPos.y) < SC_Tile_Manager.Instance.ySize))
-            transform.SetPos(new Vector2(Mathf.Round(newPos.x), Mathf.Round(newPos.y)));
+        int x = Mathf.RoundToInt(newPos.x);
+        int y = Mathf.RoundToInt(newPos.y);
 
-        if(oldPos != transform.position) {
+        if ((x >= 0) && (y >= 0) && (x < SC_Tile_Manager.Instance.xSize) && (y < SC_Tile_Manager.Instance.ySize))
+            transform.SetPos(new Vector2(x, y));
+
+        cam.minX = x == 0;
+        cam.maxX = x == SC_Tile_Manager.Instance.xSize;
+        cam.minY = y == 0;
+        cam.maxY = y == SC_Tile_Manager.Instance.ySize;
+
+        if (oldPos != transform.position) {
 
             SC_Tile_Manager.Instance?.GetTileAt(oldPos)?.OnCursorExit();
 
