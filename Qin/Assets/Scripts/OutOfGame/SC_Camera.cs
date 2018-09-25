@@ -17,9 +17,22 @@ public class SC_Camera : MonoBehaviour {
     [Tooltip("Speed at which the camera lerps to its target zoom")]
     public float zoomSpeed;
 
+    [Tooltip("Speed at which the camera lerps to its target position when the player is zooming wider")]
+    public float widerZoomSpeedMultiplier;
+
+    [Tooltip("Margin between the board and the camera border")]
+    public float boardMargin;
+
     public Vector3 TargetPosition { get; set; }
 
     Camera cam;
+
+    private void OnValidate () {
+
+        if (boardMargin < 0)
+            boardMargin = 0;
+
+    }
 
     public void Setup(int sizeX, int sizeY) {
 
@@ -38,20 +51,27 @@ public class SC_Camera : MonoBehaviour {
     void Update() {        
 
         if (cam) {
-  
+
+            int previousZoomIndex = zoomIndex;
+
             zoomIndex = Mathf.Clamp(zoomIndex - Mathf.RoundToInt(Input.GetAxisRaw("Mouse ScrollWheel")), 0, zooms.Length - 1);
 
             if (cam.orthographicSize != zooms[zoomIndex])
                 cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, zooms[zoomIndex], zoomSpeed * Time.deltaTime);
 
-            float x = Mathf.Clamp(TargetPosition.x, cam.orthographicSize * cam.aspect - .5f, SC_Tile_Manager.Instance.xSize - cam.orthographicSize * cam.aspect - .5f);
+            float x = Mathf.Clamp(TargetPosition.x, cam.orthographicSize * cam.aspect - .5f - boardMargin, SC_Tile_Manager.Instance.xSize - cam.orthographicSize * cam.aspect - .5f + boardMargin);
 
-            float y = Mathf.Clamp(TargetPosition.y, cam.orthographicSize - .5f, SC_Tile_Manager.Instance.ySize - cam.orthographicSize - .5f);
+            float y = Mathf.Clamp(TargetPosition.y, cam.orthographicSize - .5f - boardMargin, SC_Tile_Manager.Instance.ySize - cam.orthographicSize - .5f + boardMargin);
 
-            Vector3 correctPos = new Vector3(x, y, -16);
+            TargetPosition = new Vector3(x, y, -16);
 
-            if (transform.position != correctPos)
-                transform.position = Vector3.Lerp(transform.position, correctPos, moveSpeed * Time.deltaTime);
+            if (transform.position != TargetPosition) {
+
+                float speed = moveSpeed * Time.deltaTime * (previousZoomIndex < zoomIndex ? widerZoomSpeedMultiplier : 1);
+
+                transform.position = Vector3.Lerp(transform.position, TargetPosition, speed);
+
+            }
 
         }        
 

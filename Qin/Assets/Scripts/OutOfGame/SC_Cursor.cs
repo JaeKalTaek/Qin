@@ -11,11 +11,21 @@ public class SC_Cursor : NetworkBehaviour {
     public float inputsMoveDelay;
     float inputsMoveTimer;
 
+    [Tooltip("Distance between the border of the cursor and the border of the camera (except when the camera is at the border of the board)")]
+    public float cursorMargin;
+
     Vector3 oldMousePos, newMousePos;
 
     bool cameraMoved;
 
     SC_Camera cam;
+
+    private void OnValidate () {
+
+        if (cursorMargin < 0)
+            cursorMargin = 0;
+
+    }
 
     void Start() {
 
@@ -94,7 +104,7 @@ public class SC_Cursor : NetworkBehaviour {
 
     Vector3 CamPos(bool x, bool sign) {
 
-        float f = sign ? .5f : -.5f;
+        float f = (.5f + cursorMargin) * (sign ? 1 : -1);
 
         return Camera.main.WorldToViewportPoint(transform.position + new Vector3(x ? f : 0, x ? 0 : f, 0));
 
