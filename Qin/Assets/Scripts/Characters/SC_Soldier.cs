@@ -37,13 +37,13 @@ public class SC_Soldier : SC_Character {
 
     public override void TryCheckMovements () {
 
-		if (CanMove) {
+        if (CanMove) {
 
-            uiManager.StopCancelConstruct();
+            gameManager.QinTurnBeginning = false;
 
             base.TryCheckMovements();
 
-		}
+        }
 
 	}
 

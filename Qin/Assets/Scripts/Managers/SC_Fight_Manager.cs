@@ -31,7 +31,7 @@ public class SC_Fight_Manager : MonoBehaviour {
         SC_Player.localPlayer.Busy = false;
 
         uiManager.HideWeapons();
-        uiManager.resetAttackChoiceButton.SetActive(false);
+        //uiManager.resetAttackChoiceButton.SetActive(false);
 
         SC_Character attacker = SC_Character.attackingCharacter;
 
@@ -45,9 +45,9 @@ public class SC_Fight_Manager : MonoBehaviour {
 
             if (attacked) {
 
-                CharacterAttack(attacker, attacked, targetConstruction, false);
+                bool killed = CharacterAttack(attacker, attacked, targetConstruction, false);
 
-                if ((RangedAttack && attacked.GetActiveWeapon().ranged) || (!RangedAttack && !attacked.GetActiveWeapon().IsBow))
+                if (!killed && ((RangedAttack && attacked.GetActiveWeapon().ranged) || (!RangedAttack && !attacked.GetActiveWeapon().IsBow)))
                     CharacterAttack(attacked, attacker, currentConstruction, true);
 
             } else if (targetConstruction) {
@@ -69,7 +69,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
     }
 
-    void CharacterAttack(SC_Character attacker, SC_Character attacked, SC_Construction attackedConstru, bool counter) {
+    bool CharacterAttack(SC_Character attacker, SC_Character attacked, SC_Construction attackedConstru, bool counter) {
 
         bool killed = false;
 
@@ -89,6 +89,8 @@ public class SC_Fight_Manager : MonoBehaviour {
 
         if(!killed)
             uiManager.TryRefreshInfos(attacked.gameObject, attacked.GetType());
+
+        return killed;
 
     }
 

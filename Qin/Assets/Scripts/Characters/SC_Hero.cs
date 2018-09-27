@@ -56,13 +56,8 @@ public class SC_Hero : SC_Character {
 
 	public override void TryCheckMovements () {
 
-		if (CanMove || (Berserk && !BerserkTurn)) {
-
+		if (CanMove || (Berserk && !BerserkTurn))
             base.TryCheckMovements();
-
-            //uiManager.ShowHeroPower (PowerUsed, name);
-
-		}
 
 	}
 
@@ -84,8 +79,10 @@ public class SC_Hero : SC_Character {
 
 	public void ChooseWeapon() {
 
-		uiManager.resetMovementButton.SetActive (false);
-		uiManager.resetAttackChoiceButton.SetActive (true);
+		/*uiManager.resetMovementButton.SetActive (false);
+		uiManager.resetAttackChoiceButton.SetActive (true);*/
+
+        uiManager.weaponChoicePanel.SetActive(true);
 
 		if ((fightManager.RangedAttack && weapon1.ranged) || (!fightManager.RangedAttack && !weapon1.IsBow))
 			uiManager.ShowWeapon (GetWeapon (true), true);

@@ -103,9 +103,9 @@ public class SC_Cursor : NetworkBehaviour {
         #endregion
 
         #region Cursor Inputs
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButtonDown("Action"))
             SC_Tile_Manager.Instance?.GetTileAt(transform.position)?.CursorClick();
-        else if (Input.GetButtonDown("Fire2"))
+        else if (Input.GetButtonDown("Infos"))
             SC_Tile_Manager.Instance?.GetTileAt(transform.position)?.CursorSecondaryClick();
         #endregion
     }

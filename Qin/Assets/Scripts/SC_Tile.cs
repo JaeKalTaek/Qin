@@ -127,7 +127,7 @@ public class SC_Tile : NetworkBehaviour {
 
             } else if (CurrentDisplay == TDisplay.Movement) {
 
-                uiManager.cancelMovementButton.SetActive(false);
+                //uiManager.unselectCharacterButton.SetActive(false);
 
                 SC_Player.localPlayer.Busy = true;
 

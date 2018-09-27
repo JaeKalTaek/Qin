@@ -217,9 +217,9 @@ public class SC_Tile_Manager : NetworkBehaviour {
         RemoveAllFilters();
 
         uiManager.HideWeapons();
-        uiManager.villagePanel.SetActive(false);
+        /*uiManager.villagePanel.SetActive(false);
         uiManager.resetMovementButton.SetActive(false);
-        uiManager.resetAttackChoiceButton.SetActive(false);
+        uiManager.resetAttackChoiceButton.SetActive(false);*/
 
         SC_Tile tileTarget = GetTileAt(target.gameObject);
 

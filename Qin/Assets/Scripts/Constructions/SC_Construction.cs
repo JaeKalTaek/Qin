@@ -102,7 +102,7 @@ public class SC_Construction : NetworkBehaviour {
 
             tileManager.DisplayConstructableTiles(lastConstru.Name == "Wall");
 
-            uiManager.cancelLastConstructButton.SetActive(false);
+            //uiManager.cancelLastConstructButton.SetActive(false);
 
         }
 

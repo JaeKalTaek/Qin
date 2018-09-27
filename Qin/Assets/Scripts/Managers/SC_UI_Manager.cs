@@ -9,22 +9,29 @@ public class SC_UI_Manager : MonoBehaviour {
     #region UI Elements
     [Header("Game")]
 	public GameObject loadingPanel;
-	public Text turns;
+	public Text turnIndicator;
 	public GameObject previewFightPanel;
 	public GameObject endTurn;
 	public GameObject victoryPanel;
 
 	[Header("Characters")]
 	public GameObject statsPanel;
-    public GameObject cancelMovementButton;
-    public GameObject resetMovementButton;
-	public GameObject weaponChoice1;
-	public GameObject resetAttackChoiceButton;
+    /*public GameObject unselectCharacterButton;
+    public GameObject resetMovementButton;	
+	public GameObject resetAttackChoiceButton;*/
+    public GameObject actionsPanel;
+    public GameObject attackButton;
+    //public GameObject waitButton;
+    public GameObject destroyConstruButton;
+    public GameObject buildConstruButton;
+    public Button cancelButton;
 
 	[Header("Heroes")]
 	public GameObject relationshipPanel;
-	public GameObject villagePanel;
-	public GameObject weaponChoice2;
+	//public GameObject villagePanel;
+    public GameObject weaponChoicePanel;
+    public GameObject weaponChoice1;
+    public GameObject weaponChoice2;
 	public GameObject usePower;
 
 	[Header("Constructions")]
@@ -35,7 +42,7 @@ public class SC_UI_Manager : MonoBehaviour {
 	public GameObject qinPanel;
 	public Transform construct;
     public Transform constructPanel;
-    public GameObject cancelLastConstructButton;
+    //public GameObject cancelLastConstructButton;
 	public Transform qinPower;
 	public Transform sacrifice;
 	public GameObject workshopPanel;
@@ -131,11 +138,11 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		HideWeapons();
 
-		villagePanel.SetActive (false);
-		//usePower.SetActive (!gameManager.Qin && !SC_Player.localPlayer.Qin);
-        cancelMovementButton.SetActive(false);
+		/*villagePanel.SetActive (false);
+		/sePower.SetActive (!gameManager.Qin && !SC_Player.localPlayer.Qin);
+        unselectCharacterButton.SetActive(false);
 		resetMovementButton.SetActive (false);
-		resetAttackChoiceButton.SetActive (false);
+		resetAttackChoiceButton.SetActive (false);*/
 
         if(gameManager.Qin) {
 
@@ -147,13 +154,13 @@ public class SC_UI_Manager : MonoBehaviour {
 
             construct.gameObject.SetActive(false);
             constructPanel.gameObject.SetActive(false);
-            cancelLastConstructButton.SetActive(false);
+            //cancelLastConstructButton.SetActive(false);
             //qinPower.gameObject.SetActive(false);
             sacrifice.gameObject.SetActive(false);
 
         }
 
-        turns.text = gameManager.Qin ? "Qin's Turn" : "Coalition's Turn n°" + ((gameManager.Turn % 3) + 1);
+        turnIndicator.text = gameManager.Qin ? "Qin's Turn" : "Coalition's Turn n°" + ((gameManager.Turn % 3) + 1);
 
         endTurn.SetActive(SC_Player.localPlayer.Turn && !SC_Player.localPlayer.Qin);
 
@@ -178,6 +185,14 @@ public class SC_UI_Manager : MonoBehaviour {
     public void SetButtonActivated(string b, string id) {
 
         SetButtonActivated(b, b != id);
+
+    }
+
+    public void SetCancelButton (Action a) {
+
+        cancelButton.onClick.RemoveAllListeners();
+        cancelButton.onClick.AddListener(delegate { a(); });
+        cancelButton.gameObject.SetActive(true);
 
     }
     #endregion
@@ -416,14 +431,15 @@ public class SC_UI_Manager : MonoBehaviour {
 
         TileManager.CheckAttack();
 
-        resetMovementButton.SetActive(!gameManager.CantCancelMovement);
+        /*resetMovementButton.SetActive(!gameManager.CantCancelMovement);
 
-        resetAttackChoiceButton.SetActive(false);
+        resetAttackChoiceButton.SetActive(false);*/
 
     }
 
     public void HideWeapons () {
 
+        weaponChoicePanel.SetActive(false);
         weaponChoice1.SetActive(false);
         weaponChoice2.SetActive(false);
         previewFightPanel.SetActive(false);
@@ -448,9 +464,11 @@ public class SC_UI_Manager : MonoBehaviour {
 
             workshopPanel.SetActive(action == "workshop");
 
-            resetMovementButton.SetActive(false);
+            //resetMovementButton.SetActive(false);
 
-            StopCancelConstruct();
+            gameManager.QinTurnBeginning = false;
+
+            cancelButton.gameObject.SetActive(false);
 
             TileManager.RemoveAllFilters();
 
@@ -473,7 +491,7 @@ public class SC_UI_Manager : MonoBehaviour {
         }
 
         if (action == "construct")
-            StopCancelConstruct();
+            cancelButton.gameObject.SetActive(false);
 
         constructPanel.gameObject.SetActive(false);
 
@@ -538,13 +556,13 @@ public class SC_UI_Manager : MonoBehaviour {
 
     }
 
-    public void StopCancelConstruct() {
+    /*public void StopCancelConstruct() {
 
         gameManager.QinTurnBeginning = false;
 
-        cancelLastConstructButton.SetActive(false);
+        //cancelLastConstructButton.SetActive(false);
 
-    }
+    }*/
     #endregion
 
     #region Workshop
@@ -588,8 +606,15 @@ public class SC_UI_Manager : MonoBehaviour {
     #endregion
 
     #region Both Players
+    void Update () {
+
+        if (Input.GetButtonDown("Cancel"))
+            cancelButton.onClick.Invoke();
+
+    }
+
     // Called by UI
-    public void ToggleHealth() {
+    public void ToggleHealth () {
 
         foreach(SC_Lifebar lifebar in FindObjectsOfType<SC_Lifebar>())
             lifebar.Toggle();
@@ -610,7 +635,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         GameObject.Find(id).GetComponent<Text>().text = text;
 
-    }
+    }    
     #endregion
 
 }

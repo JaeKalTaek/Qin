@@ -101,10 +101,10 @@ public class SC_Character : NetworkBehaviour {
         if (!fightManager)
             fightManager = SC_Fight_Manager.Instance;
 
-		Lifebar = Instantiate(Resources.Load<GameObject>("Prefabs/Characters/Components/P_Lifebar"), transform).GetComponent<SC_Lifebar>();
-		Lifebar.transform.position += new Vector3 (0, -.44f, 0);
+        Health = maxHealth;
 
-		Health = maxHealth;
+        Lifebar = Instantiate(Resources.Load<GameObject>("Prefabs/Characters/Components/P_Lifebar"), transform).GetComponent<SC_Lifebar>();
+		Lifebar.transform.position += new Vector3 (0, -.44f, 0);		
 
 		LastPos = tileManager.GetTileAt(gameObject);
 
@@ -117,8 +117,7 @@ public class SC_Character : NetworkBehaviour {
 
         SC_Player.localPlayer.CmdCheckMovements(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
 
-        uiManager.cancelMovementButton.SetActive(true);
-
+        uiManager.SetCancelButton(gameManager.UnselectCharacter);
 
     }
 
@@ -179,7 +178,7 @@ public class SC_Character : NetworkBehaviour {
 
     void FinishMovement(bool moved) {
 
-        SC_Player.localPlayer.Busy = false;
+        SC_Player.localPlayer.Busy = true;
 
         SC_Tile target = moved ? path[path.Count - 1] : null;
 
@@ -201,54 +200,44 @@ public class SC_Character : NetworkBehaviour {
 
             CanMove = (Hero.Berserk && !Hero.BerserkTurn);
 
-            if ((!moved && LastPos.Village) || (moved && target.Village)) {
+            //uiManager.villagePanel.SetActive(SC_Player.localPlayer.Turn && ((!moved && LastPos.Village) || (moved && target.Village)));
 
-                if (SC_Player.localPlayer.Turn) {
+            if (moved) {
 
-                    SC_Player.localPlayer.Busy = true;
+                if (target.Workshop) {
 
-                    uiManager.villagePanel.SetActive(true);
+                    target.Workshop.DestroyConstruction();
+
+                    gameManager.CantCancelMovement = true;
 
                 }
 
-            } else {
+                #region Pump slow
+                int pumpSlow = 0;
 
-                if (moved) {
+                foreach (SC_Pump pump in FindObjectsOfType<SC_Pump>()) {
 
-                    if (target.Workshop) {
+                    if ((tileManager.TileDistance(transform.position, pump.transform.position) <= pump.range) && (pumpSlow < pump.slowAmount))
+                        pumpSlow = pump.slowAmount;
 
-                        target.Workshop.DestroyConstruction();
+                }
 
-                        gameManager.CantCancelMovement = true;
+                if (pumpSlow != Hero.PumpSlow) {
 
-                    }
+                    Hero.movement -= (pumpSlow - Hero.PumpSlow);
 
-                    int pumpSlow = 0;
+                    uiManager.TryRefreshInfos(gameObject, typeof(SC_Hero));
 
-                    foreach (SC_Pump pump in FindObjectsOfType<SC_Pump>()) {
+                }
+                #endregion
 
-                        if ((tileManager.TileDistance(transform.position, pump.transform.position) <= pump.range) && (pumpSlow < pump.slowAmount))
-                            pumpSlow = pump.slowAmount;
-
-                    }
-
-                    if(pumpSlow != Hero.PumpSlow) {
-
-                        Hero.movement -= (pumpSlow - Hero.PumpSlow);
-
-                        uiManager.TryRefreshInfos(gameObject, typeof(SC_Hero));
-
-                    }
-
-                    Hero.ReadyToRegen = false;
-
-                }              
-
-                uiManager.resetMovementButton.SetActive(SC_Player.localPlayer.Turn && !gameManager.CantCancelMovement);
-
-                tileManager.CheckAttack();
+                Hero.ReadyToRegen = false;
 
             }
+
+            //uiManager.resetMovementButton.SetActive(SC_Player.localPlayer.Turn && !gameManager.CantCancelMovement);
+
+            tileManager.CheckAttack();
 
         } else {
 
@@ -259,7 +248,7 @@ public class SC_Character : NetworkBehaviour {
 
             } else*/ if(SC_Player.localPlayer.Turn) {
 
-                uiManager.resetMovementButton.SetActive(true);
+                //uiManager.resetMovementButton.SetActive(true);
 
             }
 
@@ -285,9 +274,9 @@ public class SC_Character : NetworkBehaviour {
 
         UnTired();
 
-        uiManager.resetMovementButton.SetActive(false);
+        /*uiManager.resetMovementButton.SetActive(false);
 
-        uiManager.cancelMovementButton.SetActive(true);
+        uiManager.unselectCharacterButton.SetActive(true);*/
 
     }
     #endregion

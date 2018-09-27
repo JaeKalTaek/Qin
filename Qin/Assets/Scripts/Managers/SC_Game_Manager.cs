@@ -280,11 +280,11 @@ public class SC_Game_Manager : NetworkBehaviour {
 
     }
 
-    public void CancelMovement () {
+    public void UnselectCharacter () {
 
         Player.CmdRemoveAllFilters();
 
-        uiManager.cancelMovementButton.SetActive(false);
+        uiManager.cancelButton.gameObject.SetActive(false);
 
     }
 
@@ -362,12 +362,12 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         }
 
-        uiManager.cancelLastConstructButton.SetActive(true);
+        //uiManager.cancelLastConstructButton.SetActive(true);
 
     }
     #endregion
 
-    #region Players Actions
+    #region Players Actions  
     public void ActionVillageFunction (bool destroy) {
 
         if (destroy) {
@@ -377,11 +377,11 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         } else {
 
-            uiManager.resetMovementButton.SetActive(true);
+            //uiManager.resetMovementButton.SetActive(true);
 
         }
 
-        uiManager.villagePanel.SetActive(false);
+        //uiManager.villagePanel.SetActive(false);
 
         tileManager.CheckAttack();
 
