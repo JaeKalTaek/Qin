@@ -25,8 +25,6 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 	public Vector3 CurrentWorkshopPos { get; set; }
 
-	public bool CantCancelMovement { get; set; }
-
 	public SC_Player Player { get; set; }
 
 	SC_UI_Manager uiManager;
@@ -259,6 +257,8 @@ public class SC_Game_Manager : NetworkBehaviour {
 
     public void CancelLastConstruction () {
 
+        uiManager.cancelButton.gameObject.SetActive(false);
+
         Player.CmdCancelLastConstru();
 
     }
@@ -274,9 +274,9 @@ public class SC_Game_Manager : NetworkBehaviour {
 
     }*/
 
-    public void ActionVillage (bool destroy) {
+    public void DestroyProductionBuilding () {
 
-        Player.CmdActionVillage(destroy);
+        Player.CmdDestroyProductionBuilding();
 
     }
 
@@ -303,6 +303,8 @@ public class SC_Game_Manager : NetworkBehaviour {
     }
 
     public void ConstructAt (int x, int y) {
+
+        tileManager.RemoveAllFilters();
 
         SC_Tile tile = tileManager.GetTileAt(x, y);
 
@@ -333,9 +335,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
     }
 
-    public void FinishConstruction () {
-
-        tileManager.RemoveAllFilters();
+    public void FinishConstruction () {        
 
         if (QinTurnBeginning) {
 
@@ -362,30 +362,17 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         }
 
-        //uiManager.cancelLastConstructButton.SetActive(true);
+        uiManager.SetCancelButton(CancelLastConstruction);
 
     }
     #endregion
 
     #region Players Actions  
-    public void ActionVillageFunction (bool destroy) {
+    public void DestroyProductionBuildingFunction () {
 
-        if (destroy) {
+        tileManager.GetTileAt(SC_Character.attackingCharacter.gameObject).Construction.DestroyConstruction();
 
-            CantCancelMovement = true;
-            tileManager.GetTileAt(SC_Character.attackingCharacter.gameObject).Construction.DestroyConstruction();
-
-        } else {
-
-            //uiManager.resetMovementButton.SetActive(true);
-
-        }
-
-        //uiManager.villagePanel.SetActive(false);
-
-        tileManager.CheckAttack();
-
-        Player.Busy = false;
+        uiManager.Wait();
 
     }
 

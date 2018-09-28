@@ -323,18 +323,18 @@ public class SC_Player : NetworkBehaviour {
     }
     #endregion
 
-    #region Village
+    #region Destroy Production Building
     [Command]
-    public void CmdActionVillage(bool destroy) {
+    public void CmdDestroyProductionBuilding( ) {
 
-        RpcActionVillage(destroy);
+        RpcDestroyProductionBuilding();
 
     }
 
     [ClientRpc]
-    void RpcActionVillage(bool destroy) {
+    void RpcDestroyProductionBuilding () {
 
-        localPlayer.gameManager.ActionVillageFunction(destroy);
+        localPlayer.gameManager.DestroyProductionBuildingFunction();
 
     }
     #endregion
@@ -358,6 +358,22 @@ public class SC_Player : NetworkBehaviour {
     void RpcSetupnewSoldier (GameObject g) {
 
         g.GetComponent<SC_Soldier>().SetupNew();
+
+    }
+    #endregion
+
+    #region Wait
+    [Command]
+    public void CmdWait() {
+
+        RpcWait();
+
+    }
+
+    [ClientRpc]
+    void RpcWait() {
+
+        SC_Character.Wait();
 
     }
     #endregion

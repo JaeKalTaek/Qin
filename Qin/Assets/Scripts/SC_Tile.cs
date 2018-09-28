@@ -73,6 +73,8 @@ public class SC_Tile : NetworkBehaviour {
 
     public SC_Pump Pump { get { return Construction as SC_Pump; } }
 
+    public bool ProductionBuilding { get { return Village || Workshop; } }
+
     public SC_Character Character { get; set; }
 
     public SC_Hero Hero { get { return Character as SC_Hero; } }
@@ -127,7 +129,7 @@ public class SC_Tile : NetworkBehaviour {
 
             } else if (CurrentDisplay == TDisplay.Movement) {
 
-                //uiManager.unselectCharacterButton.SetActive(false);
+                uiManager.cancelButton.gameObject.SetActive(false);
 
                 SC_Player.localPlayer.Busy = true;
 

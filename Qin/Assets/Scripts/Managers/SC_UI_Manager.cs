@@ -16,19 +16,14 @@ public class SC_UI_Manager : MonoBehaviour {
 
 	[Header("Characters")]
 	public GameObject statsPanel;
-    /*public GameObject unselectCharacterButton;
-    public GameObject resetMovementButton;	
-	public GameObject resetAttackChoiceButton;*/
     public GameObject actionsPanel;
     public GameObject attackButton;
-    //public GameObject waitButton;
     public GameObject destroyConstruButton;
     public GameObject buildConstruButton;
     public Button cancelButton;
 
 	[Header("Heroes")]
 	public GameObject relationshipPanel;
-	//public GameObject villagePanel;
     public GameObject weaponChoicePanel;
     public GameObject weaponChoice1;
     public GameObject weaponChoice2;
@@ -42,7 +37,6 @@ public class SC_UI_Manager : MonoBehaviour {
 	public GameObject qinPanel;
 	public Transform construct;
     public Transform constructPanel;
-    //public GameObject cancelLastConstructButton;
 	public Transform qinPower;
 	public Transform sacrifice;
 	public GameObject workshopPanel;
@@ -136,13 +130,9 @@ public class SC_UI_Manager : MonoBehaviour {
     #region Next Turn 
     public void NextTurn() {
 
-		HideWeapons();
+        //usePower.SetActive (!gameManager.Qin && !SC_Player.localPlayer.Qin);
 
-		/*villagePanel.SetActive (false);
-		/sePower.SetActive (!gameManager.Qin && !SC_Player.localPlayer.Qin);
-        unselectCharacterButton.SetActive(false);
-		resetMovementButton.SetActive (false);
-		resetAttackChoiceButton.SetActive (false);*/
+        cancelButton.gameObject.SetActive(false);
 
         if(gameManager.Qin) {
 
@@ -154,7 +144,6 @@ public class SC_UI_Manager : MonoBehaviour {
 
             construct.gameObject.SetActive(false);
             constructPanel.gameObject.SetActive(false);
-            //cancelLastConstructButton.SetActive(false);
             //qinPower.gameObject.SetActive(false);
             sacrifice.gameObject.SetActive(false);
 
@@ -429,11 +418,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         HideWeapons();
 
-        TileManager.CheckAttack();
-
-        /*resetMovementButton.SetActive(!gameManager.CantCancelMovement);
-
-        resetAttackChoiceButton.SetActive(false);*/
+        Attack();
 
     }
 
@@ -464,8 +449,6 @@ public class SC_UI_Manager : MonoBehaviour {
 
             workshopPanel.SetActive(action == "workshop");
 
-            //resetMovementButton.SetActive(false);
-
             gameManager.QinTurnBeginning = false;
 
             cancelButton.gameObject.SetActive(false);
@@ -473,8 +456,6 @@ public class SC_UI_Manager : MonoBehaviour {
             TileManager.RemoveAllFilters();
 
             SC_Player.localPlayer.CmdRemoveAllFiltersOnClient(false);
-
-            SC_Character.CancelAttack();
 
         }
 
@@ -555,14 +536,6 @@ public class SC_UI_Manager : MonoBehaviour {
         TileManager.DisplayConstructableTiles(constructions[id].Name == "Wall");
 
     }
-
-    /*public void StopCancelConstruct() {
-
-        gameManager.QinTurnBeginning = false;
-
-        //cancelLastConstructButton.SetActive(false);
-
-    }*/
     #endregion
 
     #region Workshop
@@ -608,7 +581,7 @@ public class SC_UI_Manager : MonoBehaviour {
     #region Both Players
     void Update () {
 
-        if (Input.GetButtonDown("Cancel"))
+        if (cancelButton.isActiveAndEnabled && Input.GetButtonDown("Cancel"))
             cancelButton.onClick.Invoke();
 
     }
@@ -626,6 +599,38 @@ public class SC_UI_Manager : MonoBehaviour {
         victoryPanel.GetComponentInChildren<Text>().text = (qinWon ? "Qin" : "The Heroes") + " won the war !";
 
         victoryPanel.SetActive(true);
+
+    }
+
+    public void Attack() {
+
+        actionsPanel.SetActive(false);
+
+        SetCancelButton(CancelAttack);
+
+        TileManager.CheckAttack();
+
+    }
+
+    void CancelAttack() {
+
+        TileManager.RemoveAllFilters();
+
+        actionsPanel.SetActive(true);
+
+        SetCancelButton(gameManager.ResetMovement);
+
+    }
+
+    public void Wait() {
+
+        SC_Player.localPlayer.CmdWait();
+
+        actionsPanel.SetActive(false);
+
+        cancelButton.gameObject.SetActive(false);
+
+        SC_Player.localPlayer.Busy = false;
 
     }
     #endregion

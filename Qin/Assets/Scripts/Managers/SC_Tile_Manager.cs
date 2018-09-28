@@ -141,7 +141,13 @@ public class SC_Tile_Manager : NetworkBehaviour {
     #endregion
 
     #region Attack
-    List<SC_Tile> GetAttackTiles(SC_Character attacker, Vector3 center) {
+    public List<SC_Tile> GetAttackTiles () {
+
+        return GetAttackTiles(SC_Character.attackingCharacter, SC_Character.attackingCharacter.transform.position);
+
+    }
+
+    public List<SC_Tile> GetAttackTiles(SC_Character attacker, Vector3 center) {
 
         List<SC_Tile> attackableTiles = new List<SC_Tile>();
 
@@ -166,7 +172,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         RemoveAllFilters();
 
-        foreach (SC_Tile tile in GetAttackTiles(SC_Character.attackingCharacter, SC_Character.attackingCharacter.transform.position)) {
+        foreach (SC_Tile tile in GetAttackTiles()) {
 
             if (tile.Attackable) {
 
@@ -208,18 +214,9 @@ public class SC_Tile_Manager : NetworkBehaviour {
     #region Display Movements
     public void CheckMovements (SC_Character target) {
 
-        gameManager.CantCancelMovement = false;
-
-        SC_Character.CancelAttack();
-
         SC_Character.characterToMove = target;
 
         RemoveAllFilters();
-
-        uiManager.HideWeapons();
-        /*uiManager.villagePanel.SetActive(false);
-        uiManager.resetMovementButton.SetActive(false);
-        uiManager.resetAttackChoiceButton.SetActive(false);*/
 
         SC_Tile tileTarget = GetTileAt(target.gameObject);
 
@@ -374,7 +371,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
     }
 
     public void DisplayConstructableTiles (bool wall) {
-         
+
         foreach (SC_Tile tile in GetConstructableTiles(wall))
             tile.GetComponent<SC_Tile>().ChangeDisplay(TDisplay.Construct);
 

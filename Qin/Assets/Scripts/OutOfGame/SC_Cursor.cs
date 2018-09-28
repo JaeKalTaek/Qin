@@ -20,6 +20,8 @@ public class SC_Cursor : NetworkBehaviour {
 
     SC_Camera cam;
 
+    Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
+
     private void OnValidate () {
 
         if (cursorMargin < 0)
@@ -62,7 +64,7 @@ public class SC_Cursor : NetworkBehaviour {
             
             newPos = transform.position + new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0);
 
-        } else if (Cursor.visible || ((Vector3.Distance(oldMousePos, newMousePos) >= mouseThreshold) && !cameraMoved)) {
+        } else if ((Cursor.visible || ((Vector3.Distance(oldMousePos, newMousePos) >= mouseThreshold) && !cameraMoved)) && screenRect.Contains(Input.mousePosition)) {
 
             Cursor.visible = true;
 

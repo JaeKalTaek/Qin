@@ -76,6 +76,27 @@ public class SC_Pump : SC_Construction {
 
     }
 
+    public static void UpdateHeroSlow(SC_Hero hero) {
+
+        int pumpSlow = 0;
+
+        foreach (SC_Pump pump in FindObjectsOfType<SC_Pump>()) {
+
+            if ((tileManager.TileDistance(hero.transform.position, pump.transform.position) <= pump.range) && (pumpSlow < pump.slowAmount))
+                pumpSlow = pump.slowAmount;
+
+        }
+
+        if (pumpSlow != hero.PumpSlow) {
+
+            hero.movement -= (pumpSlow - hero.PumpSlow);
+
+            uiManager.TryRefreshInfos(hero.gameObject, typeof(SC_Hero));
+
+        }
+
+    }
+
     void TrySlowHero(SC_Hero hero) {
 
         if (hero.PumpSlow < slowAmount) {

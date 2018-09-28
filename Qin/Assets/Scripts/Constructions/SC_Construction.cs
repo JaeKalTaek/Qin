@@ -74,7 +74,11 @@ public class SC_Construction : NetworkBehaviour {
 
 	}
 
-    public static void CancelLastConstruction () {        
+    public static void CancelLastConstruction () {
+
+        tileManager.RemoveAllFilters();
+
+        lastConstru.gameObject.SetActive(false);
 
         lastConstru.DestroyConstruction();
 
@@ -101,8 +105,6 @@ public class SC_Construction : NetworkBehaviour {
             SC_Player.localPlayer.Busy = true;
 
             tileManager.DisplayConstructableTiles(lastConstru.Name == "Wall");
-
-            //uiManager.cancelLastConstructButton.SetActive(false);
 
         }
 

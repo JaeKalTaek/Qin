@@ -178,8 +178,6 @@ public class SC_Character : NetworkBehaviour {
 
     void FinishMovement(bool moved) {
 
-        SC_Player.localPlayer.Busy = true;
-
         SC_Tile target = moved ? path[path.Count - 1] : null;
 
         if(moved) {
@@ -196,69 +194,41 @@ public class SC_Character : NetworkBehaviour {
 
         attackingCharacter = this;
 
+        uiManager.attackButton.SetActive(tileManager.GetAttackTiles().Count > 0);
+
         if(Hero) {
 
             CanMove = (Hero.Berserk && !Hero.BerserkTurn);
 
-            //uiManager.villagePanel.SetActive(SC_Player.localPlayer.Turn && ((!moved && LastPos.Village) || (moved && target.Village)));
+            uiManager.destroyConstruButton.SetActive((!moved && LastPos.ProductionBuilding) || (moved && target.ProductionBuilding));
 
             if (moved) {
 
-                if (target.Workshop) {
-
-                    target.Workshop.DestroyConstruction();
-
-                    gameManager.CantCancelMovement = true;
-
-                }
-
-                #region Pump slow
-                int pumpSlow = 0;
-
-                foreach (SC_Pump pump in FindObjectsOfType<SC_Pump>()) {
-
-                    if ((tileManager.TileDistance(transform.position, pump.transform.position) <= pump.range) && (pumpSlow < pump.slowAmount))
-                        pumpSlow = pump.slowAmount;
-
-                }
-
-                if (pumpSlow != Hero.PumpSlow) {
-
-                    Hero.movement -= (pumpSlow - Hero.PumpSlow);
-
-                    uiManager.TryRefreshInfos(gameObject, typeof(SC_Hero));
-
-                }
-                #endregion
+                SC_Pump.UpdateHeroSlow(Hero);
 
                 Hero.ReadyToRegen = false;
 
             }
 
-            //uiManager.resetMovementButton.SetActive(SC_Player.localPlayer.Turn && !gameManager.CantCancelMovement);
-
-            tileManager.CheckAttack();
-
         } else {
 
-            /*if(moved && tileManager.GetAt<SC_Convoy>(target)) {
+            //uiManager.buildConstruButton.SetActive()
 
-                tileManager.GetAt<SC_Convoy>(target).DestroyConvoy();
-                gameManager.cantCancelMovement = true;
+        }
 
-            } else*/ if(SC_Player.localPlayer.Turn) {
+        if (SC_Player.localPlayer.Turn) {
 
-                //uiManager.resetMovementButton.SetActive(true);
+            uiManager.actionsPanel.SetActive(true);
 
-            }
+            uiManager.SetCancelButton(gameManager.ResetMovement);
 
-            tileManager.CheckAttack();
-
-        }        
+        }
 
     }
 
     public void ResetMovementFunction () {
+
+        uiManager.actionsPanel.SetActive(false);
 
         tileManager.RemoveAllFilters();
 
@@ -274,14 +244,17 @@ public class SC_Character : NetworkBehaviour {
 
         UnTired();
 
-        /*uiManager.resetMovementButton.SetActive(false);
+        if(Hero)
+            SC_Pump.UpdateHeroSlow(Hero);
 
-        uiManager.unselectCharacterButton.SetActive(true);*/
+        uiManager.SetCancelButton(gameManager.UnselectCharacter);
+
+        SC_Player.localPlayer.Busy = false;
 
     }
     #endregion
 
-    public static void CancelAttack() {
+    public static void Wait() {
 
         if(attackingCharacter) {
 
