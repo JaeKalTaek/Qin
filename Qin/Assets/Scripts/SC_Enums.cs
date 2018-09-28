@@ -3,7 +3,7 @@
 [Serializable]
 public class SC_Enums {
 
-    public enum TDisplay { None, Movement, Attack, Construct, Sacrifice, Resurrection }
+    public enum TDisplay { None, Movement, Attack, Construct, Sacrifice, PreviewAttack }
 
     public enum ShiFuMi { Rock, Paper, Scissors, Special }
 

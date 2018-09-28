@@ -496,7 +496,7 @@ public class SC_UI_Manager : MonoBehaviour {
     }
 
     // Called by UI
-    public void DisplayResurrection () {
+    /*public void DisplayResurrection () {
 
         if (!SC_Player.localPlayer.Busy && gameManager.LastHeroDead && (SC_Qin.Energy > SC_Qin.Qin.powerCost)) {
 
@@ -506,7 +506,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         }
 
-    }
+    }*/
     #endregion
 
     #region Building
@@ -619,6 +619,8 @@ public class SC_UI_Manager : MonoBehaviour {
         actionsPanel.SetActive(true);
 
         SetCancelButton(gameManager.ResetMovement);
+
+        TileManager.PreviewAttack();
 
     }
 

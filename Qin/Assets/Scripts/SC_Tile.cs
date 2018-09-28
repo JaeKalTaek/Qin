@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Networking;
 using static SC_Enums;
 
@@ -7,7 +8,21 @@ public class SC_Tile : NetworkBehaviour {
 
     public TDisplay CurrentDisplay { get; set; }
 
+    [Header("Tile Variables")]
+    [Tooltip("Movement cost to walk on this tile")]
     public int cost;
+
+    [Tooltip("Colors for the different filters of this Tile")]
+    public FilterColor[] filtersColors;
+
+    [Serializable]
+    public struct FilterColor {
+
+        public TDisplay filter;
+
+        public Color color;
+
+    }
 
     bool MovingCharaQin { get { return SC_Character.characterToMove.Qin; } }
 
@@ -100,6 +115,8 @@ public class SC_Tile : NetworkBehaviour {
 
     static SC_Fight_Manager fightManager;
 
+    SpriteRenderer filter;
+
 	void Start() {
 
         if(!gameManager)
@@ -116,6 +133,8 @@ public class SC_Tile : NetworkBehaviour {
 
         if (Mathf.RoundToInt(transform.position.x) == (gameManager.baseMapPrefab.GetComponent<SC_MapPrefab>().xSize - 1) && Mathf.RoundToInt(transform.position.y) == (gameManager.baseMapPrefab.GetComponent<SC_MapPrefab>().ySize - 1) && !isServer)
             gameManager.StartCoroutine("FinishLoading");
+
+        filter = transform.GetChild(0).GetComponent<SpriteRenderer>();
 
     }
 
@@ -156,13 +175,13 @@ public class SC_Tile : NetworkBehaviour {
 
                 SC_Player.localPlayer.CmdDestroyCharacter(Character.gameObject);
 
-            } else if (CurrentDisplay == TDisplay.Resurrection) {
+            } /*else if (CurrentDisplay == TDisplay.Resurrection) {
 
                 uiManager.EndQinAction("qinPower");
 
                 SC_Qin.UsePower(transform.position);
 
-            } else if (CurrentDisplay == TDisplay.None && SC_UI_Manager.CanInteract && !SC_Player.localPlayer.Busy) {
+            }*/ else if (CurrentDisplay == TDisplay.None && SC_UI_Manager.CanInteract && !SC_Player.localPlayer.Busy) {
 
                 if (Character && (Character.Qin == SC_Player.localPlayer.Qin))
                     Character.TryCheckMovements();
@@ -211,8 +230,14 @@ public class SC_Tile : NetworkBehaviour {
 
     public void SetFilter(TDisplay filterName) {
 
-		foreach(SpriteRenderer sprite in GetComponentsInChildren<SpriteRenderer>())
-			sprite.enabled = sprite.name.Equals("T_Display" + filterName);
+        Color c = new Color();
+
+        foreach (FilterColor fC in filtersColors)
+            if (fC.filter == filterName)
+                c = fC.color;
+
+        filter.color = c;
+        filter.enabled = true;
 
 	}
 
@@ -220,8 +245,7 @@ public class SC_Tile : NetworkBehaviour {
 
         CurrentDisplay = TDisplay.None;
 
-		foreach (SpriteRenderer sprite in GetComponentsInChildren<SpriteRenderer>())
-			sprite.enabled = false;
+        filter.enabled = false;
 
 	}
 

@@ -224,6 +224,8 @@ public class SC_Character : NetworkBehaviour {
 
         }
 
+        tileManager.PreviewAttack();
+
     }
 
     public void ResetMovementFunction () {
@@ -255,6 +257,8 @@ public class SC_Character : NetworkBehaviour {
     #endregion
 
     public static void Wait() {
+
+        tileManager.RemoveAllFilters();
 
         if(attackingCharacter) {
 

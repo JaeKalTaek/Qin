@@ -187,6 +187,14 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }
 
+    public void PreviewAttack() {
+
+        foreach (SC_Tile t in GetAttackTiles())
+            if (t.Attackable)
+                t.SetFilter(TDisplay.PreviewAttack);
+
+    }
+
     public List<SC_Hero> HeroesInRange (SC_Hero target) {
 
         List<SC_Hero> heroesInRange = new List<SC_Hero>();
@@ -230,7 +238,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
                 foreach (SC_Tile t in GetAttackTiles(target, tile.transform.position))
                     if (t.CurrentDisplay == TDisplay.None && t.Attackable && !ClosedList.Contains(t))
-                        t.SetFilter(TDisplay.Attack);
+                        t.SetFilter(TDisplay.PreviewAttack);
 
             }
 
@@ -438,13 +446,13 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }
 
-    public void DisplayResurrection () {
+    /*public void DisplayResurrection () {
 
         foreach (SC_Tile tile in tiles)
             if (tile.Empty)
                 tile.ChangeDisplay(TDisplay.Resurrection);
 
-    }
+    }*/
     #endregion
 
 }
