@@ -369,7 +369,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
         } else {
 
             foreach (SC_Tile tile in tiles)
-                if(tile.Constructable)
+                if (tile.Constructable)
                     constructableTiles.Add(tile);
 
         }

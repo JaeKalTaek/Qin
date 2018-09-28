@@ -121,10 +121,10 @@ public class SC_Game_Manager : NetworkBehaviour {
 			if (eTile.construction != constructionType.None) {
 
                 GameObject constructionPrefab = Resources.Load<GameObject>("Prefabs/Constructions/P_" + eTile.construction);
+                if (!constructionPrefab)
+                    constructionPrefab = Instantiate(Resources.Load<GameObject>("Prefabs/Constructions/Production/P_" + eTile.construction));
 
-				GameObject go2 = Instantiate (constructionPrefab);
-
-				go2.transform.SetPos (eTile.transform);
+                GameObject go2 = Instantiate (constructionPrefab, eTile.transform.position + new Vector3(0, 0, -.51f), Quaternion.identity);
 
                 go2.transform.parent = GameObject.Find(eTile.construction + "s").transform;
 
@@ -323,6 +323,8 @@ public class SC_Game_Manager : NetworkBehaviour {
         if (isServer) {
 
             GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/Constructions/P_" + CurrentConstru));
+            if(!go)
+                go = Instantiate(Resources.Load<GameObject>("Prefabs/Constructions/Production/P_" + CurrentConstru));
             go.transform.SetPos(tile.transform);
 
             NetworkServer.Spawn(go);

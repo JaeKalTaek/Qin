@@ -62,7 +62,9 @@ public class SC_UI_Manager : MonoBehaviour {
 
     SC_Soldier[] soldiers;
 
-    SC_Construction[] constructions;
+    SC_Construction[] qinConstructions;
+
+    SC_Construction[] soldiersConstructions;
     #endregion
 
     #region Setup
@@ -106,15 +108,19 @@ public class SC_UI_Manager : MonoBehaviour {
 
         }
 
-        SetupConstructPanel("", constructPanel);
+        qinConstructions = Resources.LoadAll<SC_Construction>("Prefabs/Constructions");
 
-        SetupConstructPanel("/Production", soldierConstructPanel);
+        soldiersConstructions = Resources.LoadAll<SC_Construction>("Prefabs/Constructions/Production");
+
+        SetupConstructPanel(true, constructPanel);
+
+        SetupConstructPanel(false, soldierConstructPanel);
 
     }
 
-    void SetupConstructPanel(string path, Transform panel) {
+    void SetupConstructPanel(bool qin, Transform panel) {
 
-        constructions = Resources.LoadAll<SC_Construction>("Prefabs/Constructions" + path);
+        SC_Construction[] constructions = qin ? qinConstructions : soldiersConstructions;
 
         for (int i = 0; i < panel.childCount; i++) {
 
@@ -522,7 +528,7 @@ public class SC_UI_Manager : MonoBehaviour {
     public void UpdateConstructPanel () {
 
         for (int i = 0; i < constructPanel.childCount; i++)
-            constructPanel.GetChild(i).GetComponentInChildren<Button>().interactable = (SC_Qin.GetConstruCost(constructions[i].Name) < SC_Qin.Energy) && (TileManager.GetConstructableTiles(constructions[i].Name == "Wall").Count > 0);
+            constructPanel.GetChild(i).GetComponentInChildren<Button>().interactable = (SC_Qin.GetConstruCost(qinConstructions[i].Name) < SC_Qin.Energy) && (TileManager.GetConstructableTiles(qinConstructions[i].Name == "Wall").Count > 0);
 
     }
 
@@ -538,11 +544,11 @@ public class SC_UI_Manager : MonoBehaviour {
     // Called by UI
     public void DisplayConstructableTiles(int id) {
 
-        SC_Player.localPlayer.CmdSetConstru(constructions[id].Name);
+        SC_Player.localPlayer.CmdSetConstru(qinConstructions[id].Name);
 
         TileManager.RemoveAllFilters();
 
-        TileManager.DisplayConstructableTiles(constructions[id].Name == "Wall");
+        TileManager.DisplayConstructableTiles(qinConstructions[id].Name == "Wall");
 
     }
     #endregion
