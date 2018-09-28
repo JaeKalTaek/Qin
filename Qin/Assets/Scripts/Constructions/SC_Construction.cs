@@ -15,7 +15,10 @@ public class SC_Construction : NetworkBehaviour {
     [Tooltip("Cost for Qin to build this construction")]
     public int cost;
 
-	public SC_Lifebar Lifebar { get; set; }
+    [Tooltip("Is this a Production Construction")]
+    public bool production;
+
+    public SC_Lifebar Lifebar { get; set; }
 
     public bool GreatWall { get { return (this as SC_Bastion != null) || (this as SC_Wall != null); } }
 

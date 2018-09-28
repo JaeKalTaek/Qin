@@ -37,7 +37,8 @@ public class SC_UI_Manager : MonoBehaviour {
 	public GameObject qinPanel;
 	public Transform construct;
     public Transform constructPanel;
-	public Transform qinPower;
+    public Transform soldierConstructPanel;
+    public Transform qinPower;
 	public Transform sacrifice;
 	public GameObject workshopPanel;
     #endregion
@@ -105,11 +106,19 @@ public class SC_UI_Manager : MonoBehaviour {
 
         }
 
-        constructions = Resources.LoadAll<SC_Construction>("Prefabs/Constructions");
+        SetupConstructPanel("", constructPanel);
 
-        for (int i = 0; i < constructPanel.childCount; i++) {
+        SetupConstructPanel("/Production", soldierConstructPanel);
 
-            Transform construction = constructPanel.GetChild(i);
+    }
+
+    void SetupConstructPanel(string path, Transform panel) {
+
+        constructions = Resources.LoadAll<SC_Construction>("Prefabs/Constructions" + path);
+
+        for (int i = 0; i < panel.childCount; i++) {
+
+            Transform construction = panel.GetChild(i);
 
             if (i < constructions.Length) {
 

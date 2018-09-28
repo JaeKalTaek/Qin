@@ -88,7 +88,9 @@ public class SC_Tile : NetworkBehaviour {
 
     public SC_Pump Pump { get { return Construction as SC_Pump; } }
 
-    public bool ProductionBuilding { get { return Village || Workshop; } }
+    public bool ProductionBuilding { get { return Construction?.production ?? false; } }
+
+    public SC_Ruin Ruin { get; set; }
 
     public SC_Character Character { get; set; }
 
