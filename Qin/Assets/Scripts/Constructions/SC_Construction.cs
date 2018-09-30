@@ -6,12 +6,12 @@ public class SC_Construction : NetworkBehaviour {
 
     [Header("Constructions Variables")]
     [Tooltip("Name of the construction")]
-	public string Name;
+    public string Name;
 
     [Tooltip("Base maximum health of the construction, put 0 for a construction who doesn't have health")]
-	public int maxHealth;
+    public int maxHealth;
 
-	public int Health { get; set; }
+    public int Health { get; set; }
 
     [Tooltip("Cost for Qin to build this construction")]
     public int cost;
@@ -25,6 +25,8 @@ public class SC_Construction : NetworkBehaviour {
     public SC_Lifebar Lifebar { get; set; }
 
     public bool GreatWall { get { return (this as SC_Bastion != null) || (this as SC_Wall != null); } }
+
+    public SC_Pump Pump { get { return this as SC_Pump; } }
 
 	protected static SC_Game_Manager gameManager;
 
@@ -97,12 +99,17 @@ public class SC_Construction : NetworkBehaviour {
 
             tileManager.GetTileAt(lastConstruSoldier.gameObject).Character = lastConstruSoldier;
 
-        }
-
-        if (!gameManager.QinTurnStarting)
-            SC_Player.localPlayer.CmdChangeQinEnergy(SC_Qin.GetConstruCost(lastConstru.Name));
+        }                
 
         if (SC_Player.localPlayer.Qin) {
+
+            if (!gameManager.QinTurnStarting) {
+
+                SC_Qin.ChangeEnergy(SC_Qin.GetConstruCost(lastConstru.Name));
+
+                SC_Player.localPlayer.CmdChangeQinEnergyOnClient(SC_Qin.GetConstruCost(lastConstru.Name), false);
+
+            }
 
             uiManager.UpdateQinConstructPanel();
 

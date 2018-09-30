@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using static SC_Global;
 
 public class SC_Character : NetworkBehaviour {	   
 
@@ -46,6 +47,20 @@ public class SC_Character : NetworkBehaviour {
     public int reflexes;	
 	
     public int DodgeAmount { get; set; }
+
+    public CombatModifiers Modifiers {
+
+        get {
+
+            SC_Tile tile = tileManager.GetTileAt(gameObject);
+
+            return tile.Construction?.combatModifers ?? (tile.Ruin?.combatModifers ?? tile.combatModifers);
+
+        }
+
+    }
+
+    public int BaseDamage { get { return Mathf.Max(0, GetActiveWeapon().weaponOrQi ? strength + Modifiers.strength : qi + Modifiers.qi); } }
 
     [Tooltip("Color applied when the character is tired")]
     public Color tiredColor = new Color(.15f, .15f, .15f);
@@ -193,7 +208,13 @@ public class SC_Character : NetworkBehaviour {
 
         attackingCharacter = this;
 
-        uiManager.attackButton.SetActive(tileManager.GetAttackTiles().Count > 0);
+        bool canAttack = false;
+
+        foreach (SC_Tile tile in tileManager.GetAttackTiles())
+            if (!tile.Empty)
+                canAttack = true;
+
+        uiManager.attackButton.SetActive(canAttack);
 
         if(Hero) {
 
@@ -248,7 +269,8 @@ public class SC_Character : NetworkBehaviour {
         if(Hero)
             SC_Pump.UpdateHeroSlow(Hero);
 
-        uiManager.SetCancelButton(gameManager.UnselectCharacter);
+        if (SC_Player.localPlayer.Turn)
+            uiManager.SetCancelButton(gameManager.UnselectCharacter);
 
         SC_Player.localPlayer.Busy = false;
 

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System;
 using System.Collections;
 using UnityEngine.EventSystems;
+using static SC_Global;
 
 public class SC_UI_Manager : MonoBehaviour {
 
@@ -259,7 +260,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		SetText("Name", character.characterName);
 		SetText("Health", "Health : " + character.Health + " / " + character.maxHealth);
-		SetText("Strength", " Strength : " + character.strength);
+		SetText("Strength", " Strength : " + (character.strength + character.Modifiers.strength) + (character.Modifiers.strength == 0 ? "" : " (" + (character.Modifiers.strength > 0 ? "+" : "-") + character.Modifiers.strength + ")"));
 		SetText("Armor", " Armor : " + character.armor);
 		SetText("Qi", " Qi : " + character.qi);
 		SetText("Resistance", " Resistance : " + character.resistance);
@@ -305,6 +306,15 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		SetText("BuildingName", construction.Name);
 		SetText("BuildingHealth", construction.Health != 0 ? "Health : " + construction.Health + " / " + construction.maxHealth : "");
+
+        if (construction.Pump) {
+
+            TileManager.DisplayedPump = construction.Pump;
+
+            foreach (SC_Tile tile in TileManager.GetRange(construction.transform.position, construction.Pump.range))
+                tile.SetFilter(TDisplay.PumpRange);
+
+        }
 
 	}
 
@@ -611,6 +621,9 @@ public class SC_UI_Manager : MonoBehaviour {
 
     #region Both Players
     void Update () {
+
+        if (Input.GetButtonDown("Action") || Input.GetButtonDown("Infos") || Input.GetButtonDown("Cancel"))
+            TileManager.HidePumpRange();
 
         if (cancelButton.isActiveAndEnabled && Input.GetButtonDown("Cancel"))
             cancelButton.onClick.Invoke();

@@ -21,6 +21,8 @@ public class SC_Tile_Manager : NetworkBehaviour {
     List<SC_Tile> ClosedList { get; set; }
     Dictionary<SC_Tile, int> movementPoints = new Dictionary<SC_Tile, int>();
 
+    public SC_Pump DisplayedPump { get; set; }
+
     void Awake() {
 
         Instance = this;
@@ -164,6 +166,12 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         }
 
+        List<SC_Tile> a = new List<SC_Tile> (attackableTiles);
+
+        foreach (SC_Tile t in a)
+            if (!t.Attackable)
+                attackableTiles.Remove(t);
+
         return attackableTiles;
 
     }
@@ -174,14 +182,10 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         foreach (SC_Tile tile in GetAttackTiles()) {
 
-            if (tile.Attackable) {
+            tile.ChangeDisplay(TDisplay.Attack);
 
-                tile.ChangeDisplay(TDisplay.Attack);
-
-                if (tile.CursorOn)
-                    tile.Hero?.PreviewFight();
-
-            }
+            if (tile.CursorOn)
+                tile.Hero?.PreviewFight();
 
         }
 
@@ -190,8 +194,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
     public void PreviewAttack() {
 
         foreach (SC_Tile t in GetAttackTiles())
-            if (t.Attackable)
-                t.SetFilter(TDisplay.PreviewAttack);
+            t.SetFilter(TDisplay.PreviewAttack);
 
     }
 
@@ -237,7 +240,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
                 tile.ChangeDisplay(TDisplay.Movement);
 
                 foreach (SC_Tile t in GetAttackTiles(target, tile.transform.position))
-                    if (t.CurrentDisplay == TDisplay.None && t.Attackable && !ClosedList.Contains(t))
+                    if (t.CurrentDisplay == TDisplay.None && !ClosedList.Contains(t))
                         t.SetFilter(TDisplay.PreviewAttack);
 
             }
@@ -454,5 +457,18 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }*/
     #endregion
+
+    public void HidePumpRange () {
+
+        if (DisplayedPump) {
+
+            foreach (SC_Tile t in GetRange(DisplayedPump.transform.position, DisplayedPump.range))
+                t.RemoveFilter();
+
+            DisplayedPump = null;
+
+        }
+
+    }
 
 }
