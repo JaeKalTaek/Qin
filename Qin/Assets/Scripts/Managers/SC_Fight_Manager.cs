@@ -58,7 +58,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
             } else if (attacker.AttackTarget.Qin) {
 
-                SC_Qin.ChangeEnergy(-BaseCharaDamage(attacker));
+                SC_Qin.ChangeEnergy(-attacker.BaseDamage);
 
             }        
 
@@ -80,9 +80,9 @@ public class SC_Fight_Manager : MonoBehaviour {
         else
             killed = attacked.Hit(CalcDamages(attacker, attacked, counter), false);
 
-        attacker.CriticalAmount = (attacker.CriticalAmount >= CharactersVariables.critTrigger) ? 0 : Mathf.Min((attacker.CriticalAmount + attacker.technique + GetCombatModifiers(attacker).technique), CharactersVariables.critTrigger);
+        attacker.CriticalAmount = (attacker.CriticalAmount >= CharactersVariables.critTrigger) ? 0 : Mathf.Min((attacker.CriticalAmount + attacker.technique + attacker.Modifiers.technique), CharactersVariables.critTrigger);
 
-        attacked.DodgeAmount = (attacked.DodgeAmount >= CharactersVariables.dodgeTrigger) ? 0 : Mathf.Min((attacked.DodgeAmount + attacked.reflexes + GetCombatModifiers(attacker).reflexes), CharactersVariables.dodgeTrigger);
+        attacked.DodgeAmount = (attacked.DodgeAmount >= CharactersVariables.dodgeTrigger) ? 0 : Mathf.Min((attacked.DodgeAmount + attacked.reflexes + attacker.Modifiers.reflexes), CharactersVariables.dodgeTrigger);
 
         if (attacker.Hero && killed)
             IncreaseRelationships(attacker.Hero);
@@ -98,7 +98,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
     void HitConstruction(SC_Character attacker, SC_Construction construction, bool counter) {
 
-        construction.Health -= Mathf.CeilToInt(BaseCharaDamage(attacker) / (counter ? CharactersVariables.counterFactor : 1));
+        construction.Health -= Mathf.CeilToInt(attacker.BaseDamage / (counter ? CharactersVariables.counterFactor : 1));
 
         construction.Lifebar.UpdateGraph(construction.Health, construction.maxHealth);
 
@@ -111,7 +111,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
     public int CalcDamages (SC_Character attacker, SC_Character attacked, bool counter) {
 
-        int damages = BaseCharaDamage(attacker);
+        int damages = attacker.BaseDamage;
 
         damages = Mathf.CeilToInt(damages * attacker.GetActiveWeapon().ShiFuMiModifier(attacked.GetActiveWeapon()));
 
@@ -130,8 +130,8 @@ public class SC_Fight_Manager : MonoBehaviour {
         if (attacked.DodgeAmount == CharactersVariables.dodgeTrigger)
             damages = Mathf.FloorToInt(damages * ((100 - CharactersVariables.dodgeReductionPercentage) / 100));
 
-        int armor = attacked.armor + GetCombatModifiers(attacked).armor;
-        int resistance = attacked.resistance + GetCombatModifiers(attacked).resistance;
+        int armor = attacked.armor + attacked.Modifiers.armor;
+        int resistance = attacked.resistance + attacked.Modifiers.resistance;
 
         if (attacked.Hero) {
 
@@ -147,20 +147,6 @@ public class SC_Fight_Manager : MonoBehaviour {
             damages = Mathf.CeilToInt(damages / CharactersVariables.counterFactor);
 
         return Mathf.Max(0, damages);
-
-    }
-
-    int BaseCharaDamage(SC_Character chara) {
-
-        return Mathf.Max(0, chara.GetActiveWeapon().weaponOrQi ? chara.strength + GetCombatModifiers(chara).strength : chara.qi + GetCombatModifiers(chara).qi);
-
-    }
-
-    CombatModifiers GetCombatModifiers(SC_Character chara) {
-
-        SC_Tile tile = TileManager.GetTileAt(chara.gameObject);
-
-        return tile.Construction?.combatModifers ?? (tile.Ruin?.combatModifers ?? tile.combatModifers);
 
     }
 

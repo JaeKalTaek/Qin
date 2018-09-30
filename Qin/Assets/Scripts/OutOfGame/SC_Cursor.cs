@@ -103,11 +103,11 @@ public class SC_Cursor : NetworkBehaviour {
             cameraMoved = oldCamPos != cam.TargetPosition;
 
         }
-        #endregion
+        #endregion       
 
         #region Cursor Inputs
         if (Input.GetButtonDown("Action"))
-            SC_Tile_Manager.Instance?.GetTileAt(transform.position)?.CursorClick();
+            SC_Tile_Manager.Instance?.GetTileAt(transform.position)?.CursorClick();           
         else if (Input.GetButtonDown("Infos"))
             SC_Tile_Manager.Instance?.GetTileAt(transform.position)?.CursorSecondaryClick();
         #endregion
