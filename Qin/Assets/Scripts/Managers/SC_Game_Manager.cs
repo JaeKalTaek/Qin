@@ -17,7 +17,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
     public bool Qin { get { return Turn % 3 == 0; } }
 
-    public bool QinTurnBeginning { get; set; }
+    public bool QinTurnStarting { get; set; }
 
 	public SC_Hero LastHeroDead { get; set; }
 
@@ -61,7 +61,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 		}
 
-		QinTurnBeginning = true;
+		QinTurnStarting = true;
 
 		if (!Instance)
 			Instance = this;
@@ -103,72 +103,57 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         tileManager = SC_Tile_Manager.Instance;
 
-		if (isServer) {
-
-			GenerateBuildings ();
-			GenerateCharacters ();
-
-		}
+		if (isServer)
+			GenerateElements ();
 
 	}
 
-	void GenerateBuildings() {
+	void GenerateElements() {
 
 		foreach (Transform child in baseMapPrefab.transform) {
 
 			SC_EditorTile eTile = child.GetComponent<SC_EditorTile> ();
 
-			if (eTile.construction != constructionType.None) {
+            GameObject[] soldiers = Resources.LoadAll<GameObject>("Prefabs/Characters/Soldiers");
+
+            if (eTile.construction != ConstructionType.None) {
 
                 GameObject constructionPrefab = Resources.Load<GameObject>("Prefabs/Constructions/P_" + eTile.construction);
                 if (!constructionPrefab)
-                    constructionPrefab = Instantiate(Resources.Load<GameObject>("Prefabs/Constructions/Production/P_" + eTile.construction));
+                    constructionPrefab = Resources.Load<GameObject>("Prefabs/Constructions/Production/P_" + eTile.construction);
 
-                GameObject go2 = Instantiate (constructionPrefab, eTile.transform.position + new Vector3(0, 0, -.51f), Quaternion.identity);
+                GameObject go = Instantiate (constructionPrefab, eTile.transform.position + new Vector3(0, 0, -.51f), Quaternion.identity);
 
-                go2.transform.parent = GameObject.Find(eTile.construction + "s").transform;
+                go.transform.parent = GameObject.Find(eTile.construction + "s").transform;
 
-                NetworkServer.Spawn (go2);
+                NetworkServer.Spawn (go);
 
-			}
+			} else if (eTile.spawnSoldier || eTile.qin || eTile.heroPrefab) {
 
-		}
+                GameObject go = Instantiate(eTile.spawnSoldier ? soldiers[Random.Range(0, soldiers.Length)].gameObject : eTile.qin ? Resources.Load<GameObject>("Prefabs/Characters/P_Qin") : eTile.heroPrefab);
 
-		foreach (SC_Construction construction in FindObjectsOfType<SC_Construction>())
-			NetworkServer.Spawn (construction.gameObject);
+                go.transform.SetPos(eTile.transform);
+
+                go.transform.parent = (eTile.spawnSoldier) ? GameObject.Find("Soldiers").transform : (eTile.qin) ? null : GameObject.Find("Heroes").transform;
+
+                NetworkServer.Spawn(go);
+
+            } else if (eTile.ruin) {
+
+                NetworkServer.Spawn(Instantiate(Resources.Load<GameObject>("Prefabs/P_Ruin"), eTile.transform.position + new Vector3(0, 0, -.51f), Quaternion.identity));
+
+            }
+
+        }
 
 	}
-
-    void GenerateCharacters() {
-
-        GameObject[] soldiers = Resources.LoadAll<GameObject>("Prefabs/Characters/Soldiers");
-
-		foreach (Transform child in baseMapPrefab.transform) {
-
-			SC_EditorTile eTile = child.GetComponent<SC_EditorTile> ();
-
-			if (eTile.spawnSoldier || eTile.qin || eTile.heroPrefab) {
-
-                GameObject go2 = Instantiate(eTile.spawnSoldier ? soldiers[Random.Range(0, soldiers.Length)].gameObject : eTile.qin ? Resources.Load<GameObject>("Prefabs/Characters/P_Qin") : eTile.heroPrefab);
-
-				go2.transform.SetPos (eTile.transform);
-
-				go2.transform.parent = (eTile.spawnSoldier) ? GameObject.Find ("Soldiers").transform : (eTile.qin) ? null : GameObject.Find ("Heroes").transform;
-
-				NetworkServer.Spawn (go2);
-
-			}
-
-		}		
-
-    }
 
     public IEnumerator FinishLoading() {
 
         while(!Player)
             yield return null;
 
-        Player.CmdFinishLoading(); ;
+        Player.CmdFinishLoading();
 
     }
     #endregion
@@ -234,7 +219,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
                 Player.Busy = true;
 
-                QinTurnBeginning = true;
+                QinTurnStarting = true;
 
                 tileManager.DisplayConstructableTiles(false);
 
@@ -296,9 +281,19 @@ public class SC_Game_Manager : NetworkBehaviour {
     #endregion
 
     #region Construction
-    public void ConstructAt (SC_Tile tile) {
+    public void SoldierConstruct(int id) {
 
-        Player.CmdConstructAt(Mathf.RoundToInt(tile.transform.position.x), Mathf.RoundToInt(tile.transform.position.y));
+        uiManager.soldierConstructPanel.gameObject.SetActive(false);
+
+        uiManager.cancelButton.gameObject.SetActive(false);
+
+        tileManager.RemoveAllFilters();
+
+        Player.CmdSetConstru(uiManager.soldiersConstructions[id].Name);
+
+        Player.CmdConstructAt(Mathf.RoundToInt(SC_Character.attackingCharacter.transform.position.x), Mathf.RoundToInt(SC_Character.attackingCharacter.transform.position.y));
+
+        Player.Busy = false;
 
     }
 
@@ -308,43 +303,64 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         SC_Tile tile = tileManager.GetTileAt(x, y);
 
+        bool qinConstru = !tile.Soldier || QinTurnStarting;
+
         if (tile.Soldier) {
 
-            uiManager.HideInfosIfActive(tile.Soldier.gameObject);
+            if (!tile.Ruin) {
 
-            tile.Soldier.gameObject.SetActive(false);
+                uiManager.HideInfosIfActive(tile.Soldier.gameObject);
 
-            SC_Qin.ChangeEnergy(tile.Soldier.sacrificeValue);
+                if (QinTurnStarting) {
 
-        }
+                    SC_Construction.lastConstruSoldier = tile.Soldier;
 
-        SC_Construction.lastConstruSoldier = tile.Soldier;
+                    tile.Soldier.gameObject.SetActive(false);
+
+                    SC_Qin.ChangeEnergy(tile.Soldier.sacrificeValue);
+
+                    tile.Character = null;
+
+                } else {
+
+                    tile.Soldier.DestroyCharacter();
+
+                }
+
+            } else {
+
+                tile.Ruin.DestroyRuin();                
+
+                uiManager.Wait();
+
+            }
+
+        }        
 
         if (isServer) {
 
-            GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/Constructions/P_" + CurrentConstru));
+            GameObject go = Resources.Load<GameObject>("Prefabs/Constructions/P_" + CurrentConstru);
             if(!go)
-                go = Instantiate(Resources.Load<GameObject>("Prefabs/Constructions/Production/P_" + CurrentConstru));
-            go.transform.SetPos(tile.transform);
+                go = Resources.Load<GameObject>("Prefabs/Constructions/Production/P_" + CurrentConstru);
+
+            go = Instantiate(go, tile.transform.position + new Vector3(0, 0, -.51f), Quaternion.identity);
 
             NetworkServer.Spawn(go);
 
-            Player.CmdSetLastConstru(go);
+            if(qinConstru)
+                Player.CmdSetLastConstru(go);
 
-            Player.CmdFinishConstruction();
+            Player.CmdFinishConstruction(qinConstru);
 
         }
 
     }
 
-    public void FinishConstruction () {        
+    public void FinishConstruction (bool qinConstru) {        
 
-        if (QinTurnBeginning) {
+        if (QinTurnStarting) {
 
             Player.Busy = false;
-
-            foreach (SC_Character character in FindObjectsOfType<SC_Character>())
-                character.CanMove = character.Qin;
 
             uiManager.construct.gameObject.SetActive(true);
             //uiManager.qinPower.gameObject.SetActive(true);
@@ -353,26 +369,39 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         } else {
 
-            SC_Qin.ChangeEnergy(-SC_Qin.GetConstruCost(CurrentConstru));
+            if (qinConstru) {
 
-            Player.CmdChangeQinEnergyOnClient(-SC_Qin.GetConstruCost(CurrentConstru), false);
+                SC_Qin.ChangeEnergy(-SC_Qin.GetConstruCost(CurrentConstru));
 
-            uiManager.UpdateConstructPanel();
+                Player.CmdChangeQinEnergyOnClient(-SC_Qin.GetConstruCost(CurrentConstru), false);
 
-            if ((SC_Qin.GetConstruCost(CurrentConstru) < SC_Qin.Energy) && (tileManager.GetConstructableTiles(CurrentConstru == "Wall").Count > 0))  
-                tileManager.DisplayConstructableTiles(CurrentConstru == "Wall");
+                uiManager.UpdateQinConstructPanel();
+
+                if ((SC_Qin.GetConstruCost(CurrentConstru) < SC_Qin.Energy) && (tileManager.GetConstructableTiles(CurrentConstru == "Wall").Count > 0))
+                    tileManager.DisplayConstructableTiles(CurrentConstru == "Wall");
+
+            } else {
+
+                Player.CmdChangeQinEnergy(-SC_Qin.GetConstruCost(CurrentConstru));
+
+            }
 
         }
 
-        uiManager.SetCancelButton(CancelLastConstruction);
+        if (qinConstru)
+            uiManager.SetCancelButton(CancelLastConstruction);
 
     }
     #endregion
 
     #region Players Actions  
-    public void DestroyProductionBuildingFunction () {
+    public void DestroyOnCase () {
 
-        tileManager.GetTileAt(SC_Character.attackingCharacter.gameObject).Construction.DestroyConstruction();
+        SC_Tile tile = tileManager.GetTileAt(SC_Character.attackingCharacter.gameObject);
+
+        tile.Construction?.DestroyConstruction();
+
+        tile.Ruin?.DestroyRuin();
 
         uiManager.Wait();
 

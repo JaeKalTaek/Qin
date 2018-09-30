@@ -233,17 +233,17 @@ public class SC_Player : NetworkBehaviour {
     }
 
     [Command]
-    public void CmdFinishConstruction () {
+    public void CmdFinishConstruction (bool qinConstru) {
 
-        RpcFinishConstruction();
+        RpcFinishConstruction(qinConstru);
 
     }
 
     [ClientRpc]
-    public void RpcFinishConstruction () {
+    public void RpcFinishConstruction (bool qinConstru) {
 
         if(localPlayer.Qin)
-            localPlayer.gameManager.FinishConstruction();
+            localPlayer.gameManager.FinishConstruction(qinConstru);
 
     }
 
@@ -334,7 +334,7 @@ public class SC_Player : NetworkBehaviour {
     [ClientRpc]
     void RpcDestroyProductionBuilding () {
 
-        localPlayer.gameManager.DestroyProductionBuildingFunction();
+        localPlayer.gameManager.DestroyOnCase();
 
     }
     #endregion

@@ -15,6 +15,8 @@ public class SC_Soldier : SC_Character {
 
     GameObject sacrificeValueText;
 
+    public bool Builder { get { return characterName == "Builder"; } }
+
     protected override void Start () {
 
         base.Start();
@@ -39,7 +41,7 @@ public class SC_Soldier : SC_Character {
 
         if (CanMove) {
 
-            gameManager.QinTurnBeginning = false;
+            gameManager.QinTurnStarting = false;
 
             base.TryCheckMovements();
 

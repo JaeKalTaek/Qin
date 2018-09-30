@@ -74,7 +74,7 @@ public class SC_Tile : NetworkBehaviour {
         }
     }
 
-    public bool Constructable { get { return !name.Contains("Palace") && (!Character || (gameManager.QinTurnBeginning && Soldier)) && !Construction; } }
+    public bool Constructable { get { return !name.Contains("Palace") && (!Character || (gameManager.QinTurnStarting && Soldier)) && !Construction && !Ruin; } }
 
     public SC_Construction Construction { get; set; }
 
@@ -144,9 +144,9 @@ public class SC_Tile : NetworkBehaviour {
 
         if (SC_UI_Manager.CanInteract) {
 
-            if (CurrentDisplay == TDisplay.Construct) {                
+            if (CurrentDisplay == TDisplay.Construct) {
 
-                gameManager.ConstructAt(this);
+                SC_Player.localPlayer.CmdConstructAt(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
 
             } else if (CurrentDisplay == TDisplay.Movement) {
 

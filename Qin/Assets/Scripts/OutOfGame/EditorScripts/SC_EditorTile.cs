@@ -3,11 +3,12 @@
 public class SC_EditorTile : MonoBehaviour {
 	
     public float height;
-    public tileType tileType;
+    public TileType tileType;
 	public GameObject heroPrefab;
 	public bool spawnSoldier;
 	public bool qin;
-	public constructionType construction;
+	public ConstructionType construction;
+    public bool ruin;
 	[Header("NE PAS TOUCHER A CES PREFAB")]
 	public GameObject soldierPrefab;
 	public GameObject qinPrefab;
@@ -17,19 +18,19 @@ public class SC_EditorTile : MonoBehaviour {
 
     public static Material GetMaterialByName(string name) {
 
-        return Resources.Load<Material>("Materials/Tiles/M_" + name);
+        return Resources.Load<Material>("Materials/M_" + name);
 
     }
 
 }
 
-public enum tileType {
+public enum TileType {
 
     Plain, Forest, Mountain, Palace
 
 }
 
-public enum constructionType {
+public enum ConstructionType {
 
 	None, Village, Workshop, Bastion
 

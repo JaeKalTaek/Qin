@@ -91,11 +91,13 @@ public class SC_Construction : NetworkBehaviour {
 
             lastConstruSoldier.gameObject.SetActive(true);
 
+            tileManager.GetTileAt(lastConstruSoldier.gameObject).Character = lastConstruSoldier;
+
         }
 
         if (SC_Player.localPlayer.Qin) {
 
-            if (!gameManager.QinTurnBeginning) {
+            if (!gameManager.QinTurnStarting) {
 
                 SC_Qin.ChangeEnergy(SC_Qin.GetConstruCost(lastConstru.Name));
 
@@ -103,7 +105,7 @@ public class SC_Construction : NetworkBehaviour {
 
             }
 
-            uiManager.UpdateConstructPanel();
+            uiManager.UpdateQinConstructPanel();
 
             SC_Player.localPlayer.Busy = true;
 

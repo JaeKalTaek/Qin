@@ -64,7 +64,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
     SC_Construction[] qinConstructions;
 
-    SC_Construction[] soldiersConstructions;
+    public SC_Construction[] soldiersConstructions { get; set; }
     #endregion
 
     #region Setup
@@ -464,7 +464,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
             workshopPanel.SetActive(action == "workshop");
 
-            gameManager.QinTurnBeginning = false;
+            gameManager.QinTurnStarting = false;
 
             cancelButton.gameObject.SetActive(false);
 
@@ -525,7 +525,7 @@ public class SC_UI_Manager : MonoBehaviour {
     #endregion
 
     #region Building
-    public void UpdateConstructPanel () {
+    public void UpdateQinConstructPanel () {
 
         for (int i = 0; i < constructPanel.childCount; i++)
             constructPanel.GetChild(i).GetComponentInChildren<Button>().interactable = (SC_Qin.GetConstruCost(qinConstructions[i].Name) < SC_Qin.Energy) && (TileManager.GetConstructableTiles(qinConstructions[i].Name == "Wall").Count > 0);
@@ -533,11 +533,27 @@ public class SC_UI_Manager : MonoBehaviour {
     }
 
     // Called by UI
-    public void DisplayConstructPanel() {        
+    public void DisplayQinConstructPanel() {        
 
-        UpdateConstructPanel();
+        UpdateQinConstructPanel();
 
         StartQinAction("construct");                  
+
+    }
+
+    // Called by UI
+    public void DisplaySoldiersConstructPanel () {
+
+        actionsPanel.SetActive(false);
+
+        for (int i = 0; i < soldierConstructPanel.childCount; i++)
+            soldierConstructPanel.GetChild(i).GetComponentInChildren<Button>().interactable = (SC_Qin.GetConstruCost(soldiersConstructions[i].Name) < SC_Qin.Energy) && (TileManager.GetConstructableTiles(soldiersConstructions[i].Name == "Wall").Count > 0);
+
+        TileManager.RemoveAllFilters();
+
+        soldierConstructPanel.gameObject.SetActive(true);
+
+        SetCancelButton(CancelAction);
 
     }
 
@@ -621,13 +637,15 @@ public class SC_UI_Manager : MonoBehaviour {
 
         actionsPanel.SetActive(false);
 
-        SetCancelButton(CancelAttack);
+        SetCancelButton(CancelAction);
 
         TileManager.CheckAttack();
 
     }
 
-    void CancelAttack() {
+    void CancelAction() {
+
+        soldierConstructPanel.gameObject.SetActive(false);
 
         TileManager.RemoveAllFilters();
 

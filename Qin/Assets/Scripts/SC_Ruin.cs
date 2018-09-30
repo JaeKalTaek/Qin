@@ -8,4 +8,12 @@ public class SC_Ruin : NetworkBehaviour {
 
     }
 
+    public void DestroyRuin () {
+
+        SC_Tile_Manager.Instance.GetTileAt(gameObject).Ruin = null;
+
+        Destroy(gameObject);
+
+    }
+
 }

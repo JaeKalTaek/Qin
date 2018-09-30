@@ -20,7 +20,7 @@ public class SC_EditorTileEditor : Editor {
 
 			Selection.activeGameObject.GetComponent<SC_EditorTile> ().qin = false;
 			Selection.activeGameObject.GetComponent<SC_EditorTile> ().heroPrefab = null;
-			Selection.activeGameObject.GetComponent<SC_EditorTile> ().construction = constructionType.None;
+			Selection.activeGameObject.GetComponent<SC_EditorTile> ().construction = ConstructionType.None;
 
 			if (Selection.activeTransform.Find ("P_Soldier") == null) {
 
@@ -40,7 +40,7 @@ public class SC_EditorTileEditor : Editor {
 
 			Selection.activeGameObject.GetComponent<SC_EditorTile> ().spawnSoldier = false;
 			Selection.activeGameObject.GetComponent<SC_EditorTile> ().heroPrefab = null;
-			Selection.activeGameObject.GetComponent<SC_EditorTile> ().construction = constructionType.None;
+			Selection.activeGameObject.GetComponent<SC_EditorTile> ().construction = ConstructionType.None;
 
 			if (Selection.activeTransform.Find ("P_Qin") == null) {
 
@@ -60,7 +60,7 @@ public class SC_EditorTileEditor : Editor {
 
 			Selection.activeGameObject.GetComponent<SC_EditorTile> ().qin = false;
 			Selection.activeGameObject.GetComponent<SC_EditorTile> ().spawnSoldier = false;
-			Selection.activeGameObject.GetComponent<SC_EditorTile> ().construction = constructionType.None;
+			Selection.activeGameObject.GetComponent<SC_EditorTile> ().construction = ConstructionType.None;
 
 			if (Selection.activeTransform.Find ("P_Hero") == null) {
 				
@@ -76,7 +76,7 @@ public class SC_EditorTileEditor : Editor {
 
 		}
 
-		if (Selection.activeGameObject.GetComponent<SC_EditorTile> ().construction != constructionType.None) {
+		if (Selection.activeGameObject.GetComponent<SC_EditorTile> ().construction != ConstructionType.None) {
 
 			Selection.activeGameObject.GetComponent<SC_EditorTile> ().qin = false;
 			Selection.activeGameObject.GetComponent<SC_EditorTile> ().spawnSoldier = false;
@@ -87,9 +87,9 @@ public class SC_EditorTileEditor : Editor {
 
 			GameObject go;
 
-			if (Selection.activeGameObject.GetComponent<SC_EditorTile> ().construction == constructionType.Village)
+			if (Selection.activeGameObject.GetComponent<SC_EditorTile> ().construction == ConstructionType.Village)
 				go = Instantiate (Selection.activeGameObject.GetComponent<SC_EditorTile> ().villagePrefab, Selection.activeTransform);
-			else if (Selection.activeGameObject.GetComponent<SC_EditorTile>().construction == constructionType.Workshop)
+			else if (Selection.activeGameObject.GetComponent<SC_EditorTile>().construction == ConstructionType.Workshop)
                 go = Instantiate (Selection.activeGameObject.GetComponent<SC_EditorTile> ().workshopPrefab, Selection.activeTransform);
             else
                 go = Instantiate(Selection.activeGameObject.GetComponent<SC_EditorTile>().bastionPrefab, Selection.activeTransform);

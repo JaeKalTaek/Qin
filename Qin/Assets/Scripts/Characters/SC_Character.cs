@@ -178,7 +178,7 @@ public class SC_Character : NetworkBehaviour {
 
     void FinishMovement(bool moved) {
 
-        SC_Tile target = moved ? path[path.Count - 1] : null;
+        SC_Tile target = moved ? path[path.Count - 1] : LastPos;
 
         if(moved) {
 
@@ -200,7 +200,7 @@ public class SC_Character : NetworkBehaviour {
 
             CanMove = (Hero.Berserk && !Hero.BerserkTurn);
 
-            uiManager.destroyConstruButton.SetActive((!moved && LastPos.ProductionBuilding) || (moved && target.ProductionBuilding));
+            uiManager.destroyConstruButton.SetActive(target.ProductionBuilding || target.Ruin);
 
             if (moved) {
 
@@ -212,19 +212,19 @@ public class SC_Character : NetworkBehaviour {
 
         } else {
 
-            //uiManager.buildConstruButton.SetActive()
+            uiManager.buildConstruButton.SetActive(target.Ruin || Soldier.Builder);
 
         }
 
         if (SC_Player.localPlayer.Turn) {
 
+            tileManager.PreviewAttack();
+
             uiManager.actionsPanel.SetActive(true);
 
             uiManager.SetCancelButton(gameManager.ResetMovement);
 
-        }
-
-        tileManager.PreviewAttack();
+        }        
 
     }
 
