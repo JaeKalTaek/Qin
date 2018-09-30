@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
+using static SC_Global;
 
 public class SC_Construction : NetworkBehaviour {
 
@@ -17,6 +18,9 @@ public class SC_Construction : NetworkBehaviour {
 
     [Tooltip("Is this a Production Construction")]
     public bool production;
+
+    [Tooltip("Combat modifiers for this construction")]
+    public CombatModifiers combatModifers;
 
     public SC_Lifebar Lifebar { get; set; }
 
@@ -95,15 +99,10 @@ public class SC_Construction : NetworkBehaviour {
 
         }
 
+        if (!gameManager.QinTurnStarting)
+            SC_Player.localPlayer.CmdChangeQinEnergy(SC_Qin.GetConstruCost(lastConstru.Name));
+
         if (SC_Player.localPlayer.Qin) {
-
-            if (!gameManager.QinTurnStarting) {
-
-                SC_Qin.ChangeEnergy(SC_Qin.GetConstruCost(lastConstru.Name));
-
-                SC_Player.localPlayer.CmdChangeQinEnergyOnClient(SC_Qin.GetConstruCost(lastConstru.Name), false);
-
-            }
 
             uiManager.UpdateQinConstructPanel();
 

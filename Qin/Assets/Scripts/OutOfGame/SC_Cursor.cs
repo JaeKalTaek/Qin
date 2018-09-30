@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Networking;
 
 public class SC_Cursor : NetworkBehaviour {
@@ -64,7 +65,7 @@ public class SC_Cursor : NetworkBehaviour {
             
             newPos = transform.position + new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0);
 
-        } else if ((Cursor.visible || ((Vector3.Distance(oldMousePos, newMousePos) >= mouseThreshold) && !cameraMoved)) && screenRect.Contains(Input.mousePosition)) {
+        } else if ((Cursor.visible || ((Vector3.Distance(oldMousePos, newMousePos) >= mouseThreshold) && !cameraMoved)) && screenRect.Contains(Input.mousePosition) && !EventSystem.current.IsPointerOverGameObject()) {
 
             Cursor.visible = true;
 

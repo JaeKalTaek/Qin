@@ -1,6 +1,11 @@
-﻿using UnityEngine.Networking;
+﻿using UnityEngine;
+using UnityEngine.Networking;
+using static SC_Global;
 
 public class SC_Ruin : NetworkBehaviour {
+
+    [Tooltip("Combat modifiers for this ruin")]
+    public CombatModifiers combatModifers;
 
     void Start () {
 

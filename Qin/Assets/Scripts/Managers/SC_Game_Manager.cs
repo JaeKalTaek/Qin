@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
-using static SC_Enums;
+using static SC_Global;
 using System.Collections;
 
 public class SC_Game_Manager : NetworkBehaviour {
@@ -60,8 +60,6 @@ public class SC_Game_Manager : NetworkBehaviour {
 			SetupTileManager ();
 
 		}
-
-		QinTurnStarting = true;
 
 		if (!Instance)
 			Instance = this;
@@ -122,7 +120,7 @@ public class SC_Game_Manager : NetworkBehaviour {
                 if (!constructionPrefab)
                     constructionPrefab = Resources.Load<GameObject>("Prefabs/Constructions/Production/P_" + eTile.construction);
 
-                GameObject go = Instantiate (constructionPrefab, eTile.transform.position + new Vector3(0, 0, -.51f), Quaternion.identity);
+                GameObject go = Instantiate (constructionPrefab, eTile.transform.position + new Vector3(0, 0, -.52f), Quaternion.identity);
 
                 go.transform.parent = GameObject.Find(eTile.construction + "s").transform;
 
@@ -140,7 +138,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
             } else if (eTile.ruin) {
 
-                NetworkServer.Spawn(Instantiate(Resources.Load<GameObject>("Prefabs/P_Ruin"), eTile.transform.position + new Vector3(0, 0, -.51f), Quaternion.identity));
+                NetworkServer.Spawn(Instantiate(Resources.Load<GameObject>("Prefabs/P_Ruin"), eTile.transform.position + new Vector3(0, 0, -.52f), Quaternion.identity));
 
             }
 
@@ -215,11 +213,11 @@ public class SC_Game_Manager : NetworkBehaviour {
 
             SC_Qin.ChangeEnergy(SC_Qin.Qin.regenPerVillage * SC_Village.number);
 
+            QinTurnStarting = true;
+
             if (Player.Qin) {
 
-                Player.Busy = true;
-
-                QinTurnStarting = true;
+                Player.Busy = true;                
 
                 tileManager.DisplayConstructableTiles(false);
 
@@ -343,7 +341,7 @@ public class SC_Game_Manager : NetworkBehaviour {
             if(!go)
                 go = Resources.Load<GameObject>("Prefabs/Constructions/Production/P_" + CurrentConstru);
 
-            go = Instantiate(go, tile.transform.position + new Vector3(0, 0, -.51f), Quaternion.identity);
+            go = Instantiate(go, tile.transform.position + new Vector3(0, 0, -.52f), Quaternion.identity);
 
             NetworkServer.Spawn(go);
 

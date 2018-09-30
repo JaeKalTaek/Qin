@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
-using static SC_Enums;
+using static SC_Global;
 
 public class SC_Player : NetworkBehaviour {
 
@@ -374,6 +374,22 @@ public class SC_Player : NetworkBehaviour {
     void RpcWait() {
 
         SC_Character.Wait();
+
+    }
+    #endregion
+
+    #region Set Qin Turn Starting
+    [Command]
+    public void CmdSetQinTurnStarting(bool b) {
+
+        RpcSetQinTurnStarting(b);
+
+    }
+
+    [ClientRpc]
+    public void RpcSetQinTurnStarting (bool b) {
+
+        localPlayer.gameManager.QinTurnStarting = b;
 
     }
     #endregion

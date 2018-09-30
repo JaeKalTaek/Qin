@@ -464,7 +464,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
             workshopPanel.SetActive(action == "workshop");
 
-            gameManager.QinTurnStarting = false;
+            SC_Player.localPlayer.CmdSetQinTurnStarting(false);
 
             cancelButton.gameObject.SetActive(false);
 

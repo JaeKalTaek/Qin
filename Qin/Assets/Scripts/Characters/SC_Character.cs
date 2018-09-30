@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-using static SC_Enums;
 
 public class SC_Character : NetworkBehaviour {	   
 

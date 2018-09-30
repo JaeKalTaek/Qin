@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.Networking;
-using static SC_Enums;
+using static SC_Global;
 
 [System.Serializable]
 public class SC_Tile : NetworkBehaviour {
@@ -14,6 +14,9 @@ public class SC_Tile : NetworkBehaviour {
 
     [Tooltip("Colors for the different filters of this Tile")]
     public FilterColor[] filtersColors;
+
+    [Tooltip("Combat modifiers for this tile")]
+    public CombatModifiers combatModifers;
 
     [Serializable]
     public struct FilterColor {

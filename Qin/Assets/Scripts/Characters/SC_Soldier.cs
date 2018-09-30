@@ -41,7 +41,7 @@ public class SC_Soldier : SC_Character {
 
         if (CanMove) {
 
-            gameManager.QinTurnStarting = false;
+            SC_Player.localPlayer.CmdSetQinTurnStarting(false);
 
             base.TryCheckMovements();
 

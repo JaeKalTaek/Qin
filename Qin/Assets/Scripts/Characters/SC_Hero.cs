@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using static SC_Enums;
+using static SC_Global;
 
 public class SC_Hero : SC_Character {
 
