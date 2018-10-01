@@ -202,6 +202,8 @@ public class SC_Character : NetworkBehaviour {
 
             target.Character = this;
 
+            uiManager.TryRefreshInfos(gameObject, GetType());
+
         }
 
         CanMove = false;
@@ -259,6 +261,8 @@ public class SC_Character : NetworkBehaviour {
         transform.SetPos(LastPos.transform);
 
         LastPos.Character = this;
+
+        uiManager.TryRefreshInfos(gameObject, GetType());
 
         CanMove = true;
 

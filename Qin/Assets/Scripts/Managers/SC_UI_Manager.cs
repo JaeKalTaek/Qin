@@ -260,16 +260,26 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		SetText("Name", character.characterName);
 		SetText("Health", "Health : " + character.Health + " / " + character.maxHealth);
-		SetText("Strength", " Strength : " + (character.strength + character.Modifiers.strength) + (character.Modifiers.strength == 0 ? "" : " (" + (character.Modifiers.strength > 0 ? "+" : "-") + character.Modifiers.strength + ")"));
-		SetText("Armor", " Armor : " + character.armor);
-		SetText("Qi", " Qi : " + character.qi);
-		SetText("Resistance", " Resistance : " + character.resistance);
-		SetText("Technique", " Technique : " + character.technique + ", Crit : " + character.CriticalAmount + "/" + gameManager.CommonCharactersVariables.critTrigger);
-		SetText("Reflexes", " Reflexes : " + character.reflexes + ", Dodge : " + character.DodgeAmount + "/" + gameManager.CommonCharactersVariables.dodgeTrigger);
+		SetText("Strength", " Strength : " + GetStat(character, "strength"));
+		SetText("Armor", " Armor : " + GetStat(character, "armor"));
+		SetText("Qi", " Qi : " + GetStat(character, "qi"));
+		SetText("Resistance", " Resistance : " + GetStat(character, "resistance"));
+		SetText("Technique", " Technique : " + GetStat(character, "technique") + ", Crit : " + character.CriticalAmount + "/" + gameManager.CommonCharactersVariables.critTrigger);
+		SetText("Reflexes", " Reflexes : " + GetStat(character, "reflexes") + ", Dodge : " + character.DodgeAmount + "/" + gameManager.CommonCharactersVariables.dodgeTrigger);
         SetText("Movement", " Movement : " + character.movement);
 		SetText("WeaponsTitle", " Weapons :");
 
 	}
+
+    string GetStat(SC_Character chara, string stat) {
+
+        int baseStat = (int)typeof(SC_Character).GetField(stat).GetValue(chara);
+
+        int modifier = (int)typeof(CombatModifiers).GetField(stat).GetValue(chara.Modifiers);
+
+        return (baseStat + modifier) + (modifier == 0 ? "" : (" (" + (modifier > 0 ? "+" : "-") + modifier + ")"));
+
+    }
 
 	void ShowHeroInfos(SC_Hero hero) {
 
