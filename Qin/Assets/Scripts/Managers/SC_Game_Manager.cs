@@ -1,13 +1,10 @@
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Networking;
-using static SC_Global;
 using System.Collections;
 
 public class SC_Game_Manager : NetworkBehaviour {
 
-	public GameObject baseMapPrefab;
+	public SC_MapEditorScript baseMapPrefab;
 
     public SC_Common_Characters_Variables CommonCharactersVariables { get; set; }
 
@@ -90,8 +87,8 @@ public class SC_Game_Manager : NetworkBehaviour {
 		GameObject tm = Instantiate (Resources.Load<GameObject>("Prefabs/P_Tile_Manager"));
 		SC_Tile_Manager stm = tm.GetComponent<SC_Tile_Manager> ();
 
-		stm.xSize = baseMapPrefab.GetComponent<SC_MapPrefab>().xSize;
-		stm.ySize = baseMapPrefab.GetComponent<SC_MapPrefab>().ySize;		
+        stm.xSize = baseMapPrefab.SizeMapX;
+        stm.ySize = baseMapPrefab.SizeMapY;	
 
 		NetworkServer.Spawn (tm);
 

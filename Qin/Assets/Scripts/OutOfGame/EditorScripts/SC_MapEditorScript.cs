@@ -2,21 +2,18 @@
 
 public class SC_MapEditorScript : MonoBehaviour {
 
-    public int SizeMapX, SizeMapY;
-    public GameObject editorTilePrefab;
+    [Header("Editor Map Variables")]
+    [Tooltip("Width of the map (in number of tiles)")]
+    public int SizeMapX;
+
+    [Tooltip("Height of the map (in number of tiles)")]
+    public int SizeMapY;
 
     public void GenerateMap() {
 
-		for (int x = 0; x < SizeMapX; x++) { 
-
-            for (int y = 0; y < SizeMapY; y++) {
-
-                GameObject go = Instantiate(editorTilePrefab, new Vector3(x, y, 0), editorTilePrefab.transform.rotation);
-				go.transform.parent = GameObject.Find ("Empty_Map_Prefab").transform;
-
-            }    
-                
-        }
+		for (int x = 0; x < SizeMapX; x++)
+            for (int y = 0; y < SizeMapY; y++)
+                Instantiate(Resources.Load<GameObject>("Prefabs/Tiles/P_EditorTile"), new Vector3(x, y, 0), Quaternion.identity, transform);  
 
     }
 

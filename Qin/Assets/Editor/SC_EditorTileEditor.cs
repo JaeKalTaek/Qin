@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(SC_EditorTile))]
@@ -14,7 +12,7 @@ public class SC_EditorTileEditor : Editor {
 
         Selection.activeGameObject.GetComponent<Renderer>().material = SC_EditorTile.GetMaterialByName(Selection.activeGameObject.GetComponent<SC_EditorTile>().tileType.ToString());
 
-        Selection.activeTransform.position = new Vector3(Selection.activeTransform.position.x, Selection.activeTransform.position.y, Selection.activeGameObject.GetComponent<SC_EditorTile>().height);
+        Selection.activeTransform.position = new Vector3(Selection.activeTransform.position.x, Selection.activeTransform.position.y, 0);
 			
 		if (Selection.activeGameObject.GetComponent<SC_EditorTile> ().spawnSoldier) {
 

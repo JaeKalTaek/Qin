@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 
 public class SC_EditorTile : MonoBehaviour {
-	
-    public float height;
+
+	[Header("Editor Tile Variables")]
+    [Tooltip("Type of this tile")]
     public TileType tileType;
+
 	public GameObject heroPrefab;
 	public bool spawnSoldier;
 	public bool qin;
