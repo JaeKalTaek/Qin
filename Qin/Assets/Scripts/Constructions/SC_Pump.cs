@@ -59,7 +59,7 @@ public class SC_Pump : SC_Construction {
 
             if (hero.PumpSlow == slowAmount) {
 
-                hero.movement += slowAmount;
+                hero.Movement += slowAmount;
 
                 hero.PumpSlow = 0;
 
@@ -87,13 +87,8 @@ public class SC_Pump : SC_Construction {
 
         }
 
-        if (pumpSlow != hero.PumpSlow) {
-
-            hero.movement -= (pumpSlow - hero.PumpSlow);
-
-            uiManager.TryRefreshInfos(hero.gameObject, typeof(SC_Hero));
-
-        }
+        if (pumpSlow != hero.PumpSlow)
+            hero.Movement -= (pumpSlow - hero.PumpSlow);
 
     }
 
@@ -101,7 +96,7 @@ public class SC_Pump : SC_Construction {
 
         if (hero.PumpSlow < slowAmount) {
 
-            hero.movement -= slowAmount - hero.PumpSlow;
+            hero.Movement -= slowAmount - hero.PumpSlow;
 
             hero.PumpSlow = slowAmount;
 

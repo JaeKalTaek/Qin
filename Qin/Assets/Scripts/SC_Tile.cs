@@ -153,7 +153,7 @@ public class SC_Tile : NetworkBehaviour {
 
             } else if (CurrentDisplay == TDisplay.Movement) {
 
-                uiManager.cancelButton.gameObject.SetActive(false);
+                uiManager.cancelButton.gameObject.SetActive(false);                
 
                 SC_Player.localPlayer.Busy = true;
 
@@ -192,6 +192,8 @@ public class SC_Tile : NetworkBehaviour {
                     Character.TryCheckMovements();
                 else if (Workshop && SC_Player.localPlayer.Qin)
                     Workshop.SelectWorkshop();
+                else
+                    uiManager.playerActionsPanel.SetActive(true);
 
             }
 

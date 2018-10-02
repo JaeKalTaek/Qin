@@ -14,10 +14,11 @@ public class SC_UI_Manager : MonoBehaviour {
 	public GameObject previewFightPanel;
 	public GameObject endTurn;
 	public GameObject victoryPanel;
+    public GameObject playerActionsPanel;
 
 	[Header("Characters")]
 	public GameObject statsPanel;
-    public GameObject actionsPanel;
+    public GameObject characterActionsPanel;
     public GameObject attackButton;
     public GameObject destroyConstruButton;
     public GameObject buildConstruButton;
@@ -83,13 +84,6 @@ public class SC_UI_Manager : MonoBehaviour {
 
         fightManager = SC_Fight_Manager.Instance;
 
-        if (!qin) {
-
-			//usePower.SetActive (true);
-			endTurn.SetActive (true);
-
-		}
-
         soldiers = Resources.LoadAll<SC_Soldier>("Prefabs/Characters/Soldiers");
 
         for (int i = 0; i < workshopPanel.transform.GetChild(1).childCount; i++) {
@@ -116,6 +110,14 @@ public class SC_UI_Manager : MonoBehaviour {
         SetupConstructPanel(true, constructPanel);
 
         SetupConstructPanel(false, soldierConstructPanel);
+
+        if (gameManager.Qin) {
+
+            SetButtonActivated("construct", true);
+            SetButtonActivated("sacrifice", true);
+            //SetButtonActivated("qinPower", true);
+
+        }
 
     }
 
@@ -146,28 +148,13 @@ public class SC_UI_Manager : MonoBehaviour {
     #region Next Turn 
     public void NextTurn() {
 
+        playerActionsPanel.SetActive(false);
+
         //usePower.SetActive (!gameManager.Qin && !SC_Player.localPlayer.Qin);
 
         cancelButton.gameObject.SetActive(false);
 
-        if(gameManager.Qin) {
-
-            SetButtonActivated("construct", true);
-            SetButtonActivated("sacrifice", true);
-            SetButtonActivated("qinPower", true);
-
-        } else {
-
-            construct.gameObject.SetActive(false);
-            constructPanel.gameObject.SetActive(false);
-            //qinPower.gameObject.SetActive(false);
-            sacrifice.gameObject.SetActive(false);
-
-        }
-
         turnIndicator.text = gameManager.Qin ? "Qin's Turn" : "Coalition's Turn n°" + ((gameManager.Turn % 3) + 1);
-
-        endTurn.SetActive(SC_Player.localPlayer.Turn && !SC_Player.localPlayer.Qin);
 
 	}
     #endregion
@@ -260,24 +247,26 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		SetText("Name", character.characterName);
 		SetText("Health", "Health : " + character.Health + " / " + character.maxHealth);
-		SetText("Strength", " Strength : " + GetStat(character, "strength"));
-		SetText("Armor", " Armor : " + GetStat(character, "armor"));
-		SetText("Qi", " Qi : " + GetStat(character, "qi"));
-		SetText("Resistance", " Resistance : " + GetStat(character, "resistance"));
-		SetText("Technique", " Technique : " + GetStat(character, "technique") + ", Crit : " + character.CriticalAmount + "/" + gameManager.CommonCharactersVariables.critTrigger);
-		SetText("Reflexes", " Reflexes : " + GetStat(character, "reflexes") + ", Dodge : " + character.DodgeAmount + "/" + gameManager.CommonCharactersVariables.dodgeTrigger);
-        SetText("Movement", " Movement : " + character.movement);
+		SetText("Strength", " Strength : " + GetFightStat(character, "strength"));
+		SetText("Armor", " Armor : " + GetFightStat(character, "armor"));
+		SetText("Qi", " Qi : " + GetFightStat(character, "qi"));
+		SetText("Resistance", " Resistance : " + GetFightStat(character, "resistance"));
+		SetText("Technique", " Technique : " + GetFightStat(character, "technique") + ", Crit : " + character.CriticalAmount + "/" + gameManager.CommonCharactersVariables.critTrigger);
+		SetText("Reflexes", " Reflexes : " + GetFightStat(character, "reflexes") + ", Dodge : " + character.DodgeAmount + "/" + gameManager.CommonCharactersVariables.dodgeTrigger);
+        SetText("Movement", " Movement : " + GetModifiedStat(character.baseMovement, character.Movement - character.baseMovement));
 		SetText("WeaponsTitle", " Weapons :");
 
 	}
 
-    string GetStat(SC_Character chara, string stat) {
+    string GetFightStat(SC_Character chara, string stat) {
 
-        int baseStat = (int)typeof(SC_Character).GetField(stat).GetValue(chara);
+        return GetModifiedStat((int)typeof(SC_Character).GetField(stat).GetValue(chara), (int)typeof(CombatModifiers).GetField(stat).GetValue(chara.Modifiers));
 
-        int modifier = (int)typeof(CombatModifiers).GetField(stat).GetValue(chara.Modifiers);
+    }
 
-        return (baseStat + modifier) + (modifier == 0 ? "" : (" (" + (modifier > 0 ? "+" : "-") + modifier + ")"));
+    string GetModifiedStat(int baseStat, int modifier) {
+
+        return (baseStat + modifier) + (modifier == 0 ? "" : (" (" + baseStat + " " + (modifier > 0 ? "+" : "-") + " " + modifier + ")"));
 
     }
 
@@ -564,7 +553,7 @@ public class SC_UI_Manager : MonoBehaviour {
     // Called by UI
     public void DisplaySoldiersConstructPanel () {
 
-        actionsPanel.SetActive(false);
+        characterActionsPanel.SetActive(false);
 
         for (int i = 0; i < soldierConstructPanel.childCount; i++)
             soldierConstructPanel.GetChild(i).GetComponentInChildren<Button>().interactable = (SC_Qin.GetConstruCost(soldiersConstructions[i].Name) < SC_Qin.Energy) && (TileManager.GetConstructableTiles(soldiersConstructions[i].Name == "Wall").Count > 0);
@@ -658,7 +647,9 @@ public class SC_UI_Manager : MonoBehaviour {
 
     public void Attack() {
 
-        actionsPanel.SetActive(false);
+        SC_Cursor.Instance.CamLocked = false;
+
+        characterActionsPanel.SetActive(false);
 
         SetCancelButton(CancelAction);
 
@@ -668,11 +659,13 @@ public class SC_UI_Manager : MonoBehaviour {
 
     void CancelAction() {
 
+        SC_Cursor.Instance.CamLocked = true;
+
         soldierConstructPanel.gameObject.SetActive(false);
 
         TileManager.RemoveAllFilters();
 
-        actionsPanel.SetActive(true);
+        characterActionsPanel.SetActive(true);
 
         SetCancelButton(gameManager.ResetMovement);
 
@@ -682,9 +675,11 @@ public class SC_UI_Manager : MonoBehaviour {
 
     public void Wait() {
 
+        SC_Cursor.Instance.CamLocked = false;
+
         SC_Player.localPlayer.CmdWait();
 
-        actionsPanel.SetActive(false);
+        characterActionsPanel.SetActive(false);
 
         cancelButton.gameObject.SetActive(false);
 

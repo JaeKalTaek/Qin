@@ -12,7 +12,9 @@ public class SC_Character : NetworkBehaviour {
     public string characterName;
 
     [Tooltip("Base movement distance of this character")]
-    public int movement;
+    public int baseMovement;
+
+    public int Movement { get; set; }
 
     public bool CanMove { get; set; }
 
@@ -122,7 +124,9 @@ public class SC_Character : NetworkBehaviour {
 
 		LastPos = tileManager.GetTileAt(gameObject);
 
-        LastPos.Character = this;		
+        LastPos.Character = this;
+
+        Movement = baseMovement;
 
 	}
 
@@ -240,9 +244,11 @@ public class SC_Character : NetworkBehaviour {
 
         if (SC_Player.localPlayer.Turn) {
 
+            SC_Cursor.Instance.CamLocked = true;
+
             tileManager.PreviewAttack();
 
-            uiManager.actionsPanel.SetActive(true);
+            uiManager.characterActionsPanel.SetActive(true);
 
             uiManager.SetCancelButton(gameManager.ResetMovement);
 
@@ -252,7 +258,7 @@ public class SC_Character : NetworkBehaviour {
 
     public void ResetMovementFunction () {
 
-        uiManager.actionsPanel.SetActive(false);
+        uiManager.characterActionsPanel.SetActive(false);
 
         tileManager.RemoveAllFilters();
 
@@ -273,8 +279,13 @@ public class SC_Character : NetworkBehaviour {
         if(Hero)
             SC_Pump.UpdateHeroSlow(Hero);
 
-        if (SC_Player.localPlayer.Turn)
+        if (SC_Player.localPlayer.Turn) {
+
+            SC_Cursor.Instance.CamLocked = false;
+
             uiManager.SetCancelButton(gameManager.UnselectCharacter);
+
+        }
 
         SC_Player.localPlayer.Busy = false;
 

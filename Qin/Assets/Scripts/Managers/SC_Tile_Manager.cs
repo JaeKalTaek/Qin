@@ -254,7 +254,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
         OpenList.Clear();
         ClosedList.Clear();
 
-        movementPoints[aStartingTile] = target.movement;
+        movementPoints[aStartingTile] = target.Movement;
 
         ExpandTile(aStartingTile, target.Hero?.Berserk ?? false);
 

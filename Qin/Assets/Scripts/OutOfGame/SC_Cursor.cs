@@ -15,6 +15,8 @@ public class SC_Cursor : NetworkBehaviour {
     [Tooltip("Distance between the border of the cursor and the border of the camera (except when the camera is at the border of the board)")]
     public float cursorMargin;
 
+    public bool CamLocked { get; set; }
+
     Vector3 oldMousePos, newMousePos;
 
     bool cameraMoved;
@@ -22,6 +24,8 @@ public class SC_Cursor : NetworkBehaviour {
     SC_Camera cam;
 
     Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
+
+    public static SC_Cursor Instance { get; set; }
 
     private void OnValidate () {
 
@@ -31,6 +35,8 @@ public class SC_Cursor : NetworkBehaviour {
     }
 
     void Start() {
+
+        Instance = this;
 
         cam = FindObjectOfType<SC_Camera>();
 
@@ -65,7 +71,7 @@ public class SC_Cursor : NetworkBehaviour {
             
             newPos = transform.position + new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0);
 
-        } else if ((Cursor.visible || ((Vector3.Distance(oldMousePos, newMousePos) >= mouseThreshold) && !cameraMoved)) && screenRect.Contains(Input.mousePosition) && !EventSystem.current.IsPointerOverGameObject()) {
+        } else if ((Cursor.visible || ((Vector3.Distance(oldMousePos, newMousePos) >= mouseThreshold) && !cameraMoved)) && screenRect.Contains(Input.mousePosition) && !CamLocked) {
 
             Cursor.visible = true;
 
