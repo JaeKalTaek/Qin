@@ -15,7 +15,7 @@ public class SC_Cursor : NetworkBehaviour {
     [Tooltip("Distance between the border of the cursor and the border of the camera (except when the camera is at the border of the board)")]
     public float cursorMargin;
 
-    public bool CamLocked { get; set; }
+    public bool Locked { get; set; }
 
     Vector3 oldMousePos, newMousePos;
 
@@ -55,58 +55,62 @@ public class SC_Cursor : NetworkBehaviour {
         #region Cursor Movement
         inputsMoveTimer -= Time.deltaTime;
 
-        Vector3 oldPos = transform.position;
+        if (!Locked) {
 
-        Vector3 newPos = -Vector3.one;
+            Vector3 oldPos = transform.position;
 
-        oldMousePos = newMousePos;
+            Vector3 newPos = -Vector3.one;
 
-        newMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            oldMousePos = newMousePos;
 
-        if ((Input.GetButton("Horizontal") || Input.GetButton("Vertical")) && (inputsMoveTimer <= 0)) {
+            newMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-            inputsMoveTimer = inputsMoveDelay;
+            if ((Input.GetButton("Horizontal") || Input.GetButton("Vertical")) && (inputsMoveTimer <= 0)) {
 
-            Cursor.visible = false;
-            
-            newPos = transform.position + new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0);
+                inputsMoveTimer = inputsMoveDelay;
 
-        } else if ((Cursor.visible || ((Vector3.Distance(oldMousePos, newMousePos) >= mouseThreshold) && !cameraMoved)) && screenRect.Contains(Input.mousePosition) && !CamLocked) {
+                Cursor.visible = false;
 
-            Cursor.visible = true;
+                newPos = transform.position + new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0);
 
-            newPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            } else if ((Cursor.visible || ((Vector3.Distance(oldMousePos, newMousePos) >= mouseThreshold) && !cameraMoved)) && screenRect.Contains(Input.mousePosition)) {
 
-        }
+                Cursor.visible = true;
 
-        cameraMoved = false;
+                newPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        int x = Mathf.RoundToInt(newPos.x);
-        int y = Mathf.RoundToInt(newPos.y);
+            }
 
-        if ((x >= 0) && (y >= 0) && (x < SC_Tile_Manager.Instance.xSize) && (y < SC_Tile_Manager.Instance.ySize))
-            transform.SetPos(new Vector2(x, y));
+            cameraMoved = false;
 
-        cam.minX = x == 0;
-        cam.maxX = x == SC_Tile_Manager.Instance.xSize;
-        cam.minY = y == 0;
-        cam.maxY = y == SC_Tile_Manager.Instance.ySize;
+            int x = Mathf.RoundToInt(newPos.x);
+            int y = Mathf.RoundToInt(newPos.y);
 
-        if (oldPos != transform.position) {
+            if ((x >= 0) && (y >= 0) && (x < SC_Tile_Manager.Instance.xSize) && (y < SC_Tile_Manager.Instance.ySize))
+                transform.SetPos(new Vector2(x, y));
 
-            SC_Tile_Manager.Instance?.GetTileAt(oldPos)?.OnCursorExit();
+            cam.minX = x == 0;
+            cam.maxX = x == SC_Tile_Manager.Instance.xSize;
+            cam.minY = y == 0;
+            cam.maxY = y == SC_Tile_Manager.Instance.ySize;
 
-            SC_Tile_Manager.Instance?.GetTileAt(transform.position)?.OnCursorEnter();
+            if (oldPos != transform.position) {
 
-            float x2 = CamPos(true, true).x > 1 ? 1 : CamPos(true, false).x < 0 ? -1 : 0;
+                SC_Tile_Manager.Instance?.GetTileAt(oldPos)?.OnCursorExit();
 
-            float y2 = CamPos(false, true).y > 1 ? 1 : CamPos(false, false).y < 0 ? -1 : 0;
+                SC_Tile_Manager.Instance?.GetTileAt(transform.position)?.OnCursorEnter();
 
-            Vector3 oldCamPos = cam.TargetPosition;
+                float x2 = CamPos(true, true).x > 1 ? 1 : CamPos(true, false).x < 0 ? -1 : 0;
 
-            cam.TargetPosition += new Vector3(x2, y2, 0);
+                float y2 = CamPos(false, true).y > 1 ? 1 : CamPos(false, false).y < 0 ? -1 : 0;
 
-            cameraMoved = oldCamPos != cam.TargetPosition;
+                Vector3 oldCamPos = cam.TargetPosition;
+
+                cam.TargetPosition += new Vector3(x2, y2, 0);
+
+                cameraMoved = oldCamPos != cam.TargetPosition;
+
+            }
 
         }
         #endregion       

@@ -153,6 +153,8 @@ public class SC_Tile : NetworkBehaviour {
 
             } else if (CurrentDisplay == TDisplay.Movement) {
 
+                SC_Cursor.Instance.Locked = true;
+
                 uiManager.cancelButton.gameObject.SetActive(false);                
 
                 SC_Player.localPlayer.Busy = true;

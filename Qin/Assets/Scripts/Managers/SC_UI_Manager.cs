@@ -647,7 +647,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
     public void Attack() {
 
-        SC_Cursor.Instance.CamLocked = false;
+        SC_Cursor.Instance.Locked = false;
 
         characterActionsPanel.SetActive(false);
 
@@ -659,7 +659,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
     void CancelAction() {
 
-        SC_Cursor.Instance.CamLocked = true;
+        SC_Cursor.Instance.Locked = true;
 
         soldierConstructPanel.gameObject.SetActive(false);
 
@@ -675,7 +675,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
     public void Wait() {
 
-        SC_Cursor.Instance.CamLocked = false;
+        SC_Cursor.Instance.Locked = false;
 
         SC_Player.localPlayer.CmdWait();
 

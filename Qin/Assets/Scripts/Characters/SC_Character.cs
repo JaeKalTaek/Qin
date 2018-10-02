@@ -242,9 +242,7 @@ public class SC_Character : NetworkBehaviour {
 
         }
 
-        if (SC_Player.localPlayer.Turn) {
-
-            SC_Cursor.Instance.CamLocked = true;
+        if (SC_Player.localPlayer.Turn) {            
 
             tileManager.PreviewAttack();
 
@@ -281,7 +279,7 @@ public class SC_Character : NetworkBehaviour {
 
         if (SC_Player.localPlayer.Turn) {
 
-            SC_Cursor.Instance.CamLocked = false;
+            SC_Cursor.Instance.Locked = false;
 
             uiManager.SetCancelButton(gameManager.UnselectCharacter);
 
