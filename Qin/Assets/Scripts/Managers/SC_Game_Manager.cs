@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
+using static SC_EditorTile;
 
 public class SC_Game_Manager : NetworkBehaviour {
 
@@ -68,17 +69,8 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 	void GenerateMap() {
 
-		foreach (Transform child in baseMapPrefab.transform) {
-
-			SC_EditorTile eTile = child.GetComponent<SC_EditorTile> ();
-
-			GameObject tilePrefab = Resources.Load<GameObject>("Prefabs/Tiles/P_" + eTile.tileType);
-
-            GameObject go = Instantiate (tilePrefab, new Vector3(eTile.transform.position.x, eTile.transform.position.y, 0), eTile.transform.rotation,  GameObject.Find ("Tiles").transform);
-
-			NetworkServer.Spawn (go);
-
-		}
+		foreach (Transform child in baseMapPrefab.transform)
+			NetworkServer.Spawn (Instantiate(Resources.Load<GameObject>("Prefabs/Tiles/P_" + child.GetComponent<SC_EditorTile>().tileType), child.position, Quaternion.identity, GameObject.Find("Tiles").transform));
 
 	}
 
@@ -109,11 +101,12 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 			SC_EditorTile eTile = child.GetComponent<SC_EditorTile> ();
 
-            GameObject[] soldiers = Resources.LoadAll<GameObject>("Prefabs/Characters/Soldiers");
-
             if (eTile.construction != ConstructionType.None) {
 
-                GameObject constructionPrefab = Resources.Load<GameObject>("Prefabs/Constructions/P_" + eTile.construction);
+                GameObject constructionPrefab;
+
+                constructionPrefab = Resources.Load<GameObject>(eTile.construction == ConstructionType.Ruin ? "Prefabs/P_Ruin" : "Prefabs/Constructions/P_" + eTile.construction);
+
                 if (!constructionPrefab)
                     constructionPrefab = Resources.Load<GameObject>("Prefabs/Constructions/Production/P_" + eTile.construction);
 
@@ -123,19 +116,19 @@ public class SC_Game_Manager : NetworkBehaviour {
 
                 NetworkServer.Spawn (go);
 
-			} else if (eTile.spawnSoldier || eTile.qin || eTile.heroPrefab) {
+			}
 
-                GameObject go = Instantiate(eTile.spawnSoldier ? soldiers[Random.Range(0, soldiers.Length)].gameObject : eTile.qin ? Resources.Load<GameObject>("Prefabs/Characters/P_Qin") : eTile.heroPrefab);
+            if ((eTile.soldier != SoldierType.None) || eTile.Qin || (eTile.Hero != HeroType.None)) {
+
+                string path = "Prefabs/Characters/" + (eTile.soldier != SoldierType.None ? "Soldiers/P_" + eTile.soldier : (eTile.Qin ? "P_Qin" : "Heroes/P_" + eTile.Hero));
+
+                GameObject go = Instantiate(Resources.Load<GameObject>(path));
 
                 go.transform.SetPos(eTile.transform);
 
-                go.transform.parent = (eTile.spawnSoldier) ? GameObject.Find("Soldiers").transform : (eTile.qin) ? null : GameObject.Find("Heroes").transform;
+                go.transform.parent = eTile.soldier != SoldierType.None ? GameObject.Find("Soldiers").transform : (eTile.Qin ? null : GameObject.Find("Heroes").transform);
 
                 NetworkServer.Spawn(go);
-
-            } else if (eTile.ruin) {
-
-                NetworkServer.Spawn(Instantiate(Resources.Load<GameObject>("Prefabs/P_Ruin"), eTile.transform.position + new Vector3(0, 0, -.52f), Quaternion.identity));
 
             }
 

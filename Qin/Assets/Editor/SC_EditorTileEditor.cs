@@ -1,106 +1,140 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using static SC_EditorTile;
 
-[CustomEditor(typeof(SC_EditorTile))]
+[CustomEditor(typeof(SC_EditorTile)), CanEditMultipleObjects]
 public class SC_EditorTileEditor : Editor {
 
-	public override void OnInspectorGUI() {
+    public override void OnInspectorGUI() {
 
         DrawDefaultInspector();
 
-        SC_EditorTile myScript = (SC_EditorTile)target;
+        Object[] tiles = targets;
 
-        Selection.activeGameObject.GetComponent<Renderer>().material = SC_EditorTile.GetMaterialByName(Selection.activeGameObject.GetComponent<SC_EditorTile>().tileType.ToString());
+        foreach (Object o in tiles) {
 
-        Selection.activeTransform.position = new Vector3(Selection.activeTransform.position.x, Selection.activeTransform.position.y, 0);
-			
-		if (Selection.activeGameObject.GetComponent<SC_EditorTile> ().spawnSoldier) {
+            SC_EditorTile tile = o as SC_EditorTile;
 
-			Selection.activeGameObject.GetComponent<SC_EditorTile> ().qin = false;
-			Selection.activeGameObject.GetComponent<SC_EditorTile> ().heroPrefab = null;
-			Selection.activeGameObject.GetComponent<SC_EditorTile> ().construction = ConstructionType.None;
+            tile.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Tiles/" + tile.tileType);            
 
-			if (Selection.activeTransform.Find ("P_Soldier") == null) {
-
-				GameObject go = Instantiate (Selection.activeGameObject.GetComponent<SC_EditorTile> ().soldierPrefab, Selection.activeTransform);
-				go.transform.position = Selection.activeTransform.position + new Vector3 (0, 0, -1);
-				go.name = "P_Soldier";
-
-			}
-
-		} else if (Selection.activeTransform.Find ("P_Soldier") != null) {
-			
-				DestroyImmediate (Selection.activeTransform.Find ("P_Soldier").gameObject);
-
-		}
-
-		if (Selection.activeGameObject.GetComponent<SC_EditorTile> ().qin) {
-
-			Selection.activeGameObject.GetComponent<SC_EditorTile> ().spawnSoldier = false;
-			Selection.activeGameObject.GetComponent<SC_EditorTile> ().heroPrefab = null;
-			Selection.activeGameObject.GetComponent<SC_EditorTile> ().construction = ConstructionType.None;
-
-			if (Selection.activeTransform.Find ("P_Qin") == null) {
-
-				GameObject go = Instantiate (Selection.activeGameObject.GetComponent<SC_EditorTile> ().qinPrefab, Selection.activeTransform);
-				go.transform.position = Selection.activeTransform.position + new Vector3 (0, 0, -1);
-				go.name = "P_Qin";
-
-			}
-
-		} else if (Selection.activeTransform.Find ("P_Qin") != null) {
-
-			DestroyImmediate (Selection.activeTransform.Find ("P_Qin").gameObject);
-
-		}
-
-		if (Selection.activeGameObject.GetComponent<SC_EditorTile> ().heroPrefab != null) {
-
-			Selection.activeGameObject.GetComponent<SC_EditorTile> ().qin = false;
-			Selection.activeGameObject.GetComponent<SC_EditorTile> ().spawnSoldier = false;
-			Selection.activeGameObject.GetComponent<SC_EditorTile> ().construction = ConstructionType.None;
-
-			if (Selection.activeTransform.Find ("P_Hero") == null) {
-				
-				GameObject go = Instantiate (Selection.activeGameObject.GetComponent<SC_EditorTile> ().heroPrefab, Selection.activeTransform);
-				go.transform.position = Selection.activeTransform.position + new Vector3 (0, 0, -1);
-				go.name = "P_Hero";
-
-			}
-
-		} else if (Selection.activeTransform.Find ("P_Hero") != null) {
-			
-				DestroyImmediate (Selection.activeTransform.Find ("P_Hero").gameObject);
-
-		}
-
-		if (Selection.activeGameObject.GetComponent<SC_EditorTile> ().construction != ConstructionType.None) {
-
-			Selection.activeGameObject.GetComponent<SC_EditorTile> ().qin = false;
-			Selection.activeGameObject.GetComponent<SC_EditorTile> ().spawnSoldier = false;
-			Selection.activeGameObject.GetComponent<SC_EditorTile> ().heroPrefab = null;
-
-			if (Selection.activeTransform.Find ("P_Construction") != null)
-				DestroyImmediate (Selection.activeTransform.Find ("P_Construction").gameObject);
-
-			GameObject go;
-
-			if (Selection.activeGameObject.GetComponent<SC_EditorTile> ().construction == ConstructionType.Village)
-				go = Instantiate (Selection.activeGameObject.GetComponent<SC_EditorTile> ().villagePrefab, Selection.activeTransform);
-			else if (Selection.activeGameObject.GetComponent<SC_EditorTile>().construction == ConstructionType.Workshop)
-                go = Instantiate (Selection.activeGameObject.GetComponent<SC_EditorTile> ().workshopPrefab, Selection.activeTransform);
+            if (tile.construction != ConstructionType.None)
+                tile.ConstructionSprite = Resources.Load<Sprite>("Sprites/" + (tile.construction == ConstructionType.Ruin ? "Ruin" : "Constructions/" + tile.construction));
             else
-                go = Instantiate(Selection.activeGameObject.GetComponent<SC_EditorTile>().bastionPrefab, Selection.activeTransform);
+                tile.ConstructionSprite = null;
 
-            go.transform.position = Selection.activeTransform.position + new Vector3 (0, 0, -1);
-			go.name = "P_Construction";
+            if (tile.Hero != HeroType.None) {
 
-		} else if (Selection.activeTransform.Find ("P_Construction") != null) {
+                SC_EditorTile t = GetHeroTile(tile.Hero);
 
-			DestroyImmediate (Selection.activeTransform.Find ("P_Construction").gameObject);
+                if (t && (t != tile)) {
 
-		}
+                    t.Hero = HeroType.None;
+                    t.PrevHero = HeroType.None;
 
-    }
+                    t.CharacterSprite = null;
+
+                    heroesOnTiles.Remove(new HeroTile(tile.Hero, t));
+
+                }
+
+                if (tile.PrevHero == HeroType.None) {
+
+                    tile.soldier = SoldierType.None;
+                    tile.PrevSoldier = SoldierType.None;
+
+                    tile.Qin = false;
+                    tile.PrevQin = false;
+
+                    heroesOnTiles.Add(new HeroTile(tile.Hero, tile));
+
+                } else if (tile.PrevHero != tile.Hero) {                   
+
+                    heroesOnTiles.Remove(new HeroTile(tile.PrevHero, tile));
+
+                    heroesOnTiles.Add(new HeroTile(tile.Hero, tile));
+
+                }                        
+
+                tile.PrevHero = tile.Hero;
+
+                tile.CharacterSprite = Resources.Load<Sprite>("Sprites/Characters/Heroes/" + tile.Hero);
+
+            } else if (tile.PrevHero != HeroType.None) {
+
+                heroesOnTiles.Remove(new HeroTile(tile.PrevHero, tile));
+
+                tile.PrevHero = HeroType.None;
+
+            }
+
+            if (tile.soldier != SoldierType.None) {
+
+                if (tile.PrevSoldier == SoldierType.None) {
+
+                    if (tile.Hero != HeroType.None)
+                        heroesOnTiles.Remove(new HeroTile(tile.Hero, tile));
+
+                    tile.Hero = HeroType.None;
+                    tile.PrevHero = HeroType.None;
+
+                    tile.Qin = false;
+                    tile.PrevQin = false;
+
+                }
+
+                tile.PrevSoldier = tile.soldier;
+
+                tile.CharacterSprite = Resources.Load<Sprite>("Sprites/Characters/Soldiers/" + tile.soldier);
+
+            }
+
+            if (tile.Qin) {
+
+                if (currentQinTile && (currentQinTile != tile)) {
+
+                    currentQinTile.Qin = false;
+                    currentQinTile.CharacterSprite = null;
+
+                }
+
+                if (!tile.PrevQin) {
+
+                    tile.soldier = SoldierType.None;
+                    tile.PrevSoldier = SoldierType.None;
+
+                    if (tile.Hero != HeroType.None)
+                        heroesOnTiles.Remove(new HeroTile(tile.Hero, tile));
+
+                    tile.Hero = HeroType.None;
+                    tile.PrevHero = HeroType.None;
+
+                }
+
+                tile.PrevQin = true;
+
+                tile.CharacterSprite = Resources.Load<Sprite>("Sprites/Characters/Qin");
+
+                currentQinTile = tile;
+
+            } else if (tile.PrevQin) {
+
+                tile.PrevQin = false;
+
+                currentQinTile = null;
+
+            }
+
+            if ((tile.Hero == HeroType.None) && (tile.soldier == SoldierType.None) && !tile.Qin)
+                tile.CharacterSprite = null;
+
+        }
+
+        if (!currentQinTile)
+            EditorGUILayout.HelpBox("Qin is missing from the map", MessageType.Warning);
+
+        if (heroesOnTiles.Count < 6)
+            EditorGUILayout.HelpBox("Not all heroes are on this map", MessageType.Warning);
+
+    }    
 
 }

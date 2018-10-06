@@ -94,12 +94,6 @@ public class SC_Qin : NetworkBehaviour {
 
 	}    
 
-    public static int GetConstruCost(Constru c) {
-
-        return GetConstruCost(c.ToString());
-
-    }
-
     public static int GetConstruCost (string s) {
 
         return Resources.Load<SC_Construction>("Prefabs/Constructions/P_" + s)?.cost ?? Resources.Load<SC_Construction>("Prefabs/Constructions/Production/P_" + s).cost;

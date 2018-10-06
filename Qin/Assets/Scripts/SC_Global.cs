@@ -8,8 +8,6 @@ public class SC_Global {
 
     public enum ShiFuMi { Rock, Paper, Scissors, Special }
 
-    public enum Constru { Bastion, Wall, Village, Workshop, Pump }
-
     [Serializable]
     public struct CombatModifiers {
 
