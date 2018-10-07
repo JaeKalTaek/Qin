@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.Networking;
 
 public class SC_Cursor : NetworkBehaviour {

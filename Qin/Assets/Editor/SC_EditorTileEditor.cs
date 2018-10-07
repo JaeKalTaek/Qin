@@ -129,12 +129,6 @@ public class SC_EditorTileEditor : Editor {
 
         }
 
-        if (!currentQinTile)
-            EditorGUILayout.HelpBox("Qin is missing from the map", MessageType.Warning);
-
-        if (heroesOnTiles.Count < 6)
-            EditorGUILayout.HelpBox("Not all heroes are on this map", MessageType.Warning);
-
     }    
 
 }
