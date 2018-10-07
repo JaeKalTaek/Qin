@@ -27,54 +27,41 @@ public class SC_Tile : NetworkBehaviour {
 
     }
 
-    bool MovingCharaQin { get { return SC_Character.characterToMove.Qin; } }
+    public bool CanCharacterGoThrough (SC_Character c) {
 
-    public bool CanGoThrough {
-
-        get {
-
-            if (Character)
-                return MovingCharaQin == Character.Qin;
-            else if (Construction)
-                return (MovingCharaQin || !Bastion) && !Pump;
-            else if (Qin)
-                return MovingCharaQin;
-            else
-                return true;
-
-        }
+        if (Character)
+            return c.Qin == Character.Qin;
+        else if (Construction)
+            return (c.Qin || !Bastion) && !Pump;
+        else if (Qin)
+            return c.Qin;
+        else
+            return true;
 
     }
 
-    public bool CanSetOn {
+    public bool CanCharacterSetOn (SC_Character c) {
 
-        get {
-
-            if (Character || Qin)
-                return false;
-            else if (Construction)
-                return (MovingCharaQin || !Bastion) && !Pump;
-            else
-                return true;
-
-        }
+        if (Character || Qin)
+            return false;
+        else if (Construction)
+            return (c.Qin || !Bastion) && !Pump;
+        else
+            return true;
 
     }
 
-	public bool Attackable {
+	public bool CanCharacterAttack(SC_Character c) {
 
-        get {
+        if (Character)
+            return c.Qin != Character.Qin;
+        else if (Construction)
+            return !c.Qin && (Bastion || Pump);
+        else if (Qin)
+            return !c.Qin;
+        else
+            return true;
 
-            if (Character)
-                return MovingCharaQin != Character.Qin;
-            else if (Construction)
-                return !MovingCharaQin && (Bastion || Pump);
-            else if (Qin)
-                return !MovingCharaQin;
-            else
-                return true;
-
-        }
     }
 
     public bool Constructable { get { return !name.Contains("Palace") && (!Character || (gameManager.QinTurnStarting && Soldier)) && !Construction && !Ruin; } }
@@ -222,6 +209,8 @@ public class SC_Tile : NetworkBehaviour {
             Hero?.PreviewFight();
         else if (CurrentDisplay == TDisplay.Sacrifice)
             Soldier.ToggleDisplaySacrificeValue();
+        else if (Character && !SC_Player.localPlayer.Busy && ((Character.Qin != SC_Player.localPlayer.Qin) || (SC_Character.characterToMove != Character)))
+            tileManager.PreviewMovementAndAttack(Character, this);
 
     }
 
@@ -231,9 +220,10 @@ public class SC_Tile : NetworkBehaviour {
 
         if (CurrentDisplay == TDisplay.Attack && Hero)
             uiManager.HidePreviewFight();
-
-        if (CurrentDisplay == TDisplay.Sacrifice)
+        else if (CurrentDisplay == TDisplay.Sacrifice)
             Soldier.ToggleDisplaySacrificeValue();
+        else if (Character && Character == SC_Tile_Manager.focusedCharacter)
+            tileManager.TryStopPreview(Character);
 
     }
 

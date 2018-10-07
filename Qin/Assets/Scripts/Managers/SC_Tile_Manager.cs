@@ -18,10 +18,12 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     //Variables used to determine the movements possible
     List<SC_Tile> OpenList { get; set; }
-    List<SC_Tile> ClosedList { get; set; }
+    List<SC_Tile> MovementRange { get; set; }
     Dictionary<SC_Tile, int> movementPoints = new Dictionary<SC_Tile, int>();
 
     public SC_Pump DisplayedPump { get; set; }
+
+    public static SC_Character focusedCharacter;
 
     void Awake() {
 
@@ -51,7 +53,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 			gameManager.Player.SetTileManager (this);
 
         OpenList = new List<SC_Tile>();
-        ClosedList = new List<SC_Tile>();
+        MovementRange = new List<SC_Tile>();
 
     }
 
@@ -136,6 +138,8 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     public void RemoveAllFilters () {
 
+        focusedCharacter = null;
+
         foreach (SC_Tile tile in tiles)
             tile.RemoveFilter();
 
@@ -169,7 +173,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
         List<SC_Tile> a = new List<SC_Tile> (attackableTiles);
 
         foreach (SC_Tile t in a)
-            if (!t.Attackable)
+            if (!t.CanCharacterAttack(attacker))
                 attackableTiles.Remove(t);
 
         return attackableTiles;
@@ -231,32 +235,18 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         SC_Tile tileTarget = GetTileAt(target.gameObject);
 
-        CalcRange(tileTarget, target);
-
-        foreach (SC_Tile tile in new List<SC_Tile>(ClosedList) { tileTarget }) {
-
-            if (tile.CanSetOn || tile == tileTarget) {
-
-                tile.ChangeDisplay(TDisplay.Movement);
-
-                foreach (SC_Tile t in GetAttackTiles(target, tile.transform.position))
-                    if (t.CurrentDisplay == TDisplay.None && !ClosedList.Contains(t))
-                        t.SetFilter(TDisplay.PreviewAttack);
-
-            }
-
-        }
+        MovementRange = DisplayMovementAndAttack(target, tileTarget, false);
 
     }
 
-    void CalcRange (SC_Tile aStartingTile, SC_Character target) {
+    List<SC_Tile> DisplayMovementAndAttack (SC_Character target, SC_Tile tileTarget, bool preview) {
 
         OpenList.Clear();
-        ClosedList.Clear();
+        List<SC_Tile> movementRange = new List<SC_Tile>();
 
-        movementPoints[aStartingTile] = target.Movement;
+        movementPoints[tileTarget] = target.Movement;
 
-        ExpandTile(aStartingTile, target.Hero?.Berserk ?? false);
+        ExpandTile(ref movementRange, tileTarget, target);
 
         while (OpenList.Count > 0) {
 
@@ -266,24 +256,63 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
             OpenList.RemoveAt(OpenList.Count - 1);
 
-            ExpandTile(tile, target.Hero?.Berserk ?? false);
+            ExpandTile(ref movementRange, tile, target);
 
         }
 
+        if (SC_Player.localPlayer.Turn || preview) {
+
+            foreach (SC_Tile tile in new List<SC_Tile>(movementRange) { tileTarget }) {
+
+                if (tile.CanCharacterSetOn(target) || tile == tileTarget) {
+
+                    if (preview)
+                        tile.SetFilter(TDisplay.PreviewMovement);
+                    else
+                        tile.ChangeDisplay(TDisplay.Movement);
+
+                    foreach (SC_Tile t in GetAttackTiles(target, tile.transform.position))
+                        if (t.CurrentDisplay == TDisplay.None && !movementRange.Contains(t))
+                            t.SetFilter(TDisplay.PreviewAttack);
+
+                }
+
+            }
+        }
+
+        return movementRange;
+
     }
 
-    void ExpandTile (SC_Tile aTile, bool berserk) {
+    public void PreviewMovementAndAttack(SC_Character target, SC_Tile tileTarget) {
+
+        focusedCharacter = target;
+
+        RemoveAllFilters();
+
+        DisplayMovementAndAttack(target, tileTarget, true);
+
+    }
+
+    public void TryStopPreview(SC_Character c) {
+
+        if (c && c == focusedCharacter)
+            RemoveAllFilters();
+
+    }
+
+    void ExpandTile (ref List<SC_Tile> list, SC_Tile aTile, SC_Character target) {
 
         int parentPoints = movementPoints[aTile];
 
-        ClosedList.Add(aTile);
+        list.Add(aTile);
 
         foreach (SC_Tile tile in GetTilesAtDistance(aTile, 1)) {
 
-            if (ClosedList.Contains(tile) || OpenList.Contains(tile) || !tile.CanGoThrough)
+            if (list.Contains(tile) || OpenList.Contains(tile) || !tile.CanCharacterGoThrough(target))
                 continue;
 
-            int points = parentPoints - (berserk ? 1 : tile.cost);
+            int points = parentPoints - ((target.Hero?.Berserk ?? false) ? 1 : tile.cost);
 
             if (points >= 0) {
 
@@ -312,7 +341,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
                 foreach (SC_Tile neighbor in GetTilesAtDistance(tile, 1)) {
 
-                    if (!closedList.Contains(neighbor) && ClosedList.Contains(neighbor) && !tempList.Contains(neighbor)) {
+                    if (!closedList.Contains(neighbor) && MovementRange.Contains(neighbor) && !tempList.Contains(neighbor)) {
 
                         tempList.Add(neighbor);
                         neighbor.Parent = tile;

@@ -133,9 +133,7 @@ public class SC_Character : NetworkBehaviour {
     #region Movement
     public virtual void TryCheckMovements () {
 
-        tileManager.CheckMovements(this);
-
-        //SC_Player.localPlayer.CmdCheckMovements(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
+        SC_Player.localPlayer.CmdCheckMovements(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
 
         uiManager.SetCancelButton(gameManager.UnselectCharacter);
 
@@ -310,6 +308,8 @@ public class SC_Character : NetworkBehaviour {
     }   
 
 	public virtual void DestroyCharacter() {
+
+        tileManager.TryStopPreview(this);
 
         uiManager.HideInfosIfActive(gameObject);
 
