@@ -64,7 +64,7 @@ public class SC_Player : NetworkBehaviour {
     #endregion
 
     #region Characters movements
-    [Command]
+    /*[Command]
     public void CmdCheckMovements(int x, int y) {
 
         RpcCheckMovements(x, y);
@@ -76,7 +76,7 @@ public class SC_Player : NetworkBehaviour {
 
         localPlayer.tileManager.CheckMovements(localPlayer.tileManager.GetTileAt(x, y).Character);
 
-    }
+    }*/
 
     [Command]
     public void CmdMoveCharacterTo(int x, int y) {
