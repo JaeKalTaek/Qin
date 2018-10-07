@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public class SC_Workshop : SC_Construction {
+﻿public class SC_Workshop : SC_Construction {
 
 	public void SelectWorkshop() {
 

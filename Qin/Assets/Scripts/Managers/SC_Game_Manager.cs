@@ -283,6 +283,8 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         Player.Busy = false;
 
+        SC_Cursor.Instance.Locked = false;
+
     }
 
     public void ConstructAt (int x, int y) {
