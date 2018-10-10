@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using static SC_Global;
 
 public class SC_Fight_Manager : MonoBehaviour {
 

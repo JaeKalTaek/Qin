@@ -7,6 +7,9 @@ public class SC_EditorTile : MonoBehaviour {
     [Tooltip("Type of this tile")]
     public TileType tileType;
 
+    [Tooltip("Sprite of the river on this tile")]
+    public RiverSprite riverSprite;
+
     [Header("Construction on this tile")]
     [Tooltip("Type of construction on this tile")]
     public ConstructionType construction;    
@@ -22,23 +25,7 @@ public class SC_EditorTile : MonoBehaviour {
 
     [Tooltip("Type of Hero on this tile")]
     public HeroType Hero;
-    public HeroType PrevHero { get; set; }    
-
-    public Sprite CharacterSprite {
-
-        get { return transform.GetChild(0).GetComponent<SpriteRenderer>().sprite; }
-
-        set { transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = value; }
-
-    }
-
-    public Sprite ConstructionSprite {
-
-        get { return transform.GetChild(1).GetComponent<SpriteRenderer>().sprite; }
-
-        set { transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = value; }
-
-    }
+    public HeroType PrevHero { get; set; }
 
     public static SC_EditorTile currentQinTile;
 
@@ -58,7 +45,13 @@ public class SC_EditorTile : MonoBehaviour {
 
     public enum TileType {
 
-        Plain, Forest, Mountain, Palace
+        Plain, Forest, Mountain, Palace, River
+
+    }
+
+    public enum RiverSprite {
+
+        Big_Alone, Small_Alone, Horizontal, Vertical, LeftBottom, LeftTop, RightBottom, RightTop, T_Top, T_Bottom, T_Right, T_Left, Cross
 
     }
 
@@ -93,6 +86,12 @@ public class SC_EditorTile : MonoBehaviour {
             tile = t;
 
         }
+
+    }
+
+    public void SetSprite (int index, string s) {
+
+        transform.GetChild(index).GetComponent<SpriteRenderer>().sprite = (s == "") ? null : Resources.Load<Sprite>(s);
 
     }
 

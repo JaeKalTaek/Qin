@@ -174,12 +174,6 @@ public class SC_UI_Manager : MonoBehaviour {
 
     }
 
-    public void SetButtonActivated(string b, string id) {
-
-        SetButtonActivated(b, b != id);
-
-    }
-
     public void SetCancelButton (Action a) {
 
         cancelButton.onClick.RemoveAllListeners();
@@ -198,7 +192,7 @@ public class SC_UI_Manager : MonoBehaviour {
 				ShowHeroInfos (g.GetComponent<SC_Hero> ());
 			else if (t == typeof(SC_Soldier))
 				ShowSoldierInfos (g.GetComponent<SC_Soldier> ());
-			else if (t.IsSubclassOf(typeof(SC_Construction)))
+			else if ((t == typeof(SC_Construction)) || t.IsSubclassOf(typeof(SC_Construction)))
 				ShowConstructionsInfos (g.GetComponent<SC_Construction> ());
 			else if (t == typeof(SC_Qin))
 				ShowQinInfos ();
@@ -465,9 +459,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
             SC_Player.localPlayer.Busy = true;
 
-            SetButtonActivated("construct", action);
-            SetButtonActivated("sacrifice", action);
-            SetButtonActivated("qinPower", action);
+            SetButtonActivated(action, false);
 
             constructPanel.gameObject.SetActive(action == "construct");
 
@@ -479,7 +471,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
             TileManager.RemoveAllFilters();
 
-            SC_Player.localPlayer.CmdRemoveAllFiltersOnClient(false);
+            //SC_Player.localPlayer.CmdRemoveAllFiltersOnClient(false);
 
         }
 

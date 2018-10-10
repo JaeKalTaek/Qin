@@ -18,4 +18,22 @@ public class SC_MapEditorScript : MonoBehaviour {
 
     }
 
+    /*[InitializeOnLoad]
+    internal class PrefabExtension {
+
+        static PrefabExtension () {
+
+            PrefabUtility.prefabInstanceUpdated += (GameObject instance) => {
+
+                GameObject prefab = (GameObject)PrefabUtility.GetCorrespondingObjectFromSource(instance);
+
+                foreach (Transform t in prefab.transform)
+                    print(t.GetComponent<SC_EditorTile>().river + ", " + t.GetComponent<SC_EditorTile>().riverSprite);
+
+            };
+
+        }
+
+    }*/
+
 }

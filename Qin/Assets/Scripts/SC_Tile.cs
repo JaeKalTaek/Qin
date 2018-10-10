@@ -27,6 +27,14 @@ public class SC_Tile : NetworkBehaviour {
 
     }
 
+    [HideInInspector]
+    [SyncVar]
+    public bool river;
+
+    [HideInInspector]
+    [SyncVar]
+    public int riverSprite;
+
     public bool CanCharacterGoThrough (SC_Character c) {
 
         if (Character)
@@ -109,7 +117,16 @@ public class SC_Tile : NetworkBehaviour {
 
     SpriteRenderer filter;
 
-	void Start() {
+    public override void OnStartClient () {
+
+        base.OnStartClient();
+
+        if (river)
+            GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Tiles/River/" + (SC_EditorTile.RiverSprite)riverSprite);
+
+    }
+
+    void Start() {
 
         if(!gameManager)
             gameManager = SC_Game_Manager.Instance;
@@ -209,7 +226,7 @@ public class SC_Tile : NetworkBehaviour {
             Hero?.PreviewFight();
         else if (CurrentDisplay == TDisplay.Sacrifice)
             Soldier.ToggleDisplaySacrificeValue();
-        else if (Character && !SC_Player.localPlayer.Busy && ((Character.Qin != SC_Player.localPlayer.Qin) || (SC_Character.characterToMove != Character)))
+        else if (Character && !SC_Player.localPlayer.Busy && (!SC_Character.characterToMove || (SC_Character.characterToMove.Qin != SC_Player.localPlayer.Qin)))
             tileManager.PreviewMovementAndAttack(Character, this);
 
     }

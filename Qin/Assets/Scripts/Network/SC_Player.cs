@@ -157,7 +157,7 @@ public class SC_Player : NetworkBehaviour {
     #endregion
 
     #region Remove filters
-    [Command]
+    /*[Command]
 	public void CmdRemoveAllFilters() {
 
 		RpcRemoveAllFilters ();
@@ -169,9 +169,9 @@ public class SC_Player : NetworkBehaviour {
 
         localPlayer.tileManager.RemoveAllFilters();
 
-    }
+    }*/
 
-    [Command]
+    /*[Command]
     public void CmdRemoveAllFiltersOnClient(bool qin) {
 
         RpcRemoveAllFiltersForClient(qin);
@@ -184,7 +184,7 @@ public class SC_Player : NetworkBehaviour {
         if(localPlayer.Qin == qin)
             localPlayer.tileManager.RemoveAllFilters();
 
-    }
+    }*/
     #endregion
 
     #region Next Turn

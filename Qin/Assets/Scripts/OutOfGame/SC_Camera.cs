@@ -35,6 +35,8 @@ public class SC_Camera : MonoBehaviour {
         if (boardMargin < 0)
             boardMargin = 0;
 
+        defaultZoomIndex = Mathf.Clamp(defaultZoomIndex, 0, zooms.Length - 1);
+
     }
 
     public void Setup(int sizeX, int sizeY) {

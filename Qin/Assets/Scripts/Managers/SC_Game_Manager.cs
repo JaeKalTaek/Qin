@@ -69,8 +69,21 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 	void GenerateMap() {
 
-		foreach (Transform child in baseMapPrefab.transform)
-			NetworkServer.Spawn (Instantiate(Resources.Load<GameObject>("Prefabs/Tiles/P_" + child.GetComponent<SC_EditorTile>().tileType), child.position, Quaternion.identity, GameObject.Find("Tiles").transform));
+        foreach (Transform child in baseMapPrefab.transform) {
+
+            SC_EditorTile eTile = child.GetComponent<SC_EditorTile>();
+
+            GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/Tiles/P_" + eTile.tileType), child.position, Quaternion.identity, GameObject.Find("Tiles").transform);
+
+            SC_Tile tile = go.GetComponent<SC_Tile>();
+
+            tile.river = eTile.tileType == TileType.River;
+
+            tile.riverSprite = (int)eTile.riverSprite;            
+
+            NetworkServer.Spawn(go);
+
+        }
 
 	}
 
@@ -255,7 +268,9 @@ public class SC_Game_Manager : NetworkBehaviour {
 
     public void UnselectCharacter () {
 
-        Player.CmdRemoveAllFilters();
+        SC_Character.characterToMove = null;
+
+        tileManager.RemoveAllFilters();
 
         uiManager.cancelButton.gameObject.SetActive(false);
 

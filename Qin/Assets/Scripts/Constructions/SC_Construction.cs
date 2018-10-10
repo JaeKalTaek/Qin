@@ -66,7 +66,12 @@ public class SC_Construction : NetworkBehaviour {
 
         uiManager.HideInfosIfActive(gameObject);
 
-		tileManager.GetTileAt (gameObject).Construction = null;
+        SC_Tile under = tileManager.GetTileAt(gameObject);
+
+        if (GreatWall)
+            under.Soldier?.DestroyCharacter();
+
+        under.Construction = null;
 
         Destroy(gameObject);
 
