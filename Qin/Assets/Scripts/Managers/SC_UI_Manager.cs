@@ -154,7 +154,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         cancelButton.gameObject.SetActive(false);
 
-        turnIndicator.text = gameManager.Qin ? "Qin's Turn" : "Coalition's Turn n°" + ((gameManager.Turn % 3) + 1);
+        turnIndicator.text = gameManager.Qin ? "Qin's Turn" : (gameManager.Turn % 3 == 1 ? "1st" : "2nd") + " Coalition's Turn";
 
 	}
     #endregion
@@ -260,7 +260,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
     string GetModifiedStat(int baseStat, int modifier) {
 
-        return (baseStat + modifier) + (modifier == 0 ? "" : (" (" + baseStat + " " + (modifier > 0 ? "+" : "-") + " " + modifier + ")"));
+        return (baseStat + modifier) + (modifier == 0 ? "" : (" (" + baseStat + " " + (modifier > 0 ? "+" : "-") + " " + Mathf.Abs(modifier) + ")"));
 
     }
 

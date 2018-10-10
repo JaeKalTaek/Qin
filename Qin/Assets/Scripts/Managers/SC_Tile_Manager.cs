@@ -284,11 +284,11 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }
 
-    public void PreviewMovementAndAttack(SC_Character target, SC_Tile tileTarget) {
-
-        focusedCharacter = target;
+    public void PreviewMovementAndAttack(SC_Character target, SC_Tile tileTarget) {        
 
         RemoveAllFilters();
+
+        focusedCharacter = target;
 
         DisplayMovementAndAttack(target, tileTarget, true);
 
@@ -296,7 +296,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     public void TryStopPreview(SC_Character c) {
 
-        if (c && c == focusedCharacter)
+        if (c == focusedCharacter)
             RemoveAllFilters();
 
     }

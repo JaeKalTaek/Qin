@@ -239,7 +239,8 @@ public class SC_Tile : NetworkBehaviour {
             uiManager.HidePreviewFight();
         else if (CurrentDisplay == TDisplay.Sacrifice)
             Soldier.ToggleDisplaySacrificeValue();
-        else if (Character && Character == SC_Tile_Manager.focusedCharacter)
+
+        if (Character)
             tileManager.TryStopPreview(Character);
 
     }

@@ -226,7 +226,7 @@ public class SC_Character : NetworkBehaviour {
 
             CanMove = (Hero.Berserk && !Hero.BerserkTurn);
 
-            uiManager.destroyConstruButton.SetActive(target.ProductionBuilding || target.Ruin);
+            uiManager.destroyConstruButton.SetActive(!SC_Player.localPlayer.Qin && (target.ProductionBuilding || target.Ruin));
 
             if (moved) {
 
@@ -238,7 +238,7 @@ public class SC_Character : NetworkBehaviour {
 
         } else {
 
-            uiManager.buildConstruButton.SetActive(target.Ruin || Soldier.Builder);
+            uiManager.buildConstruButton.SetActive(SC_Player.localPlayer.Qin && (target.Ruin || Soldier.Builder));
 
         }
 
