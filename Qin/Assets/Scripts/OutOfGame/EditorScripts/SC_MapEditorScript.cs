@@ -20,9 +20,9 @@ public class SC_MapEditorScript : MonoBehaviour {
 
                 GameObject og = Resources.Load<GameObject>("Prefabs/Tiles/P_EditorTile");
 
-                GameObject go = Instantiate(og, new Vector3(x * TileSize, y * TileSize, 0), Quaternion.identity, transform);
+                /*GameObject go =*/ Instantiate(og, new Vector3(x /**TileSize*/, y /**TileSize*/, 0), Quaternion.identity, transform);
 
-                go.transform.localScale = Vector3.one * TileSize;
+                //go.transform.localScale = Vector3.one * TileSize;
 
             }
 

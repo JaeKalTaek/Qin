@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using static SC_Global;
-using static SC_Game_Manager;
 
 public class SC_Tile_Manager : NetworkBehaviour {
 
@@ -24,7 +24,17 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     public SC_Pump DisplayedPump { get; set; }
 
-    //public static SC_Character focusedCharacter;
+    [Tooltip("Colors for the different filters of the Tiles")]
+    public FilterColor[] filtersColors;
+
+    [Serializable]
+    public struct FilterColor {
+
+        public TDisplay filter;
+
+        public Color color;
+
+    }
 
     void Awake() {
 
@@ -281,23 +291,6 @@ public class SC_Tile_Manager : NetworkBehaviour {
         return movementRange;
 
     }
-
-    /*public void PreviewMovementAndAttack(SC_Character target, SC_Tile tileTarget) {        
-
-        RemoveAllFilters();
-
-        //focusedCharacter = target;
-
-        DisplayMovementAndAttack(target, tileTarget, true);
-
-    }
-
-    public void TryStopPreview(SC_Character c) {
-
-        //if (c == focusedCharacter)
-            RemoveAllFilters();
-
-    }*/
 
     void ExpandTile (ref List<SC_Tile> list, SC_Tile aTile, SC_Character target) {
 

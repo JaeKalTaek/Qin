@@ -77,7 +77,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
             SC_EditorTile eTile = child.GetComponent<SC_EditorTile>();
 
-            GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/Tiles/P_" + eTile.tileType), child.position, Quaternion.identity, GameObject.Find("Tiles").transform);
+            GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/Tiles/P_" + eTile.tileType), child.position * TileSize, Quaternion.identity, GameObject.Find("Tiles").transform);
 
             SC_Tile tile = go.GetComponent<SC_Tile>();
 
@@ -127,7 +127,7 @@ public class SC_Game_Manager : NetworkBehaviour {
                 if (!constructionPrefab)
                     constructionPrefab = Resources.Load<GameObject>("Prefabs/Constructions/Production/P_" + eTile.construction);
 
-                GameObject go = Instantiate (constructionPrefab, eTile.transform.position + new Vector3(0, 0, -.52f), Quaternion.identity);
+                GameObject go = Instantiate (constructionPrefab, eTile.transform.position * TileSize + new Vector3(0, 0, -.52f), Quaternion.identity);
 
                 go.transform.parent = GameObject.Find(eTile.construction + "s").transform;
 
@@ -141,7 +141,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
                 GameObject go = Instantiate(Resources.Load<GameObject>(path));
 
-                go.transform.SetPos(eTile.transform);
+                go.transform.SetPos(eTile.transform.position * TileSize);
 
                 go.transform.parent = eTile.soldier != SoldierType.None ? GameObject.Find("Soldiers").transform : (eTile.Qin ? null : GameObject.Find("Heroes").transform);
 

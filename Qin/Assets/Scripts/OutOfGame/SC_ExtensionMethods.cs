@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using static SC_Game_Manager;
 
 public static class SC_ExtensionMethods {
 
@@ -16,7 +17,7 @@ public static class SC_ExtensionMethods {
 
 	public static void SetPos(this Transform trans, Vector2 v2) {
 
-		trans.position = new Vector3 (Mathf.Round(v2.x), Mathf.Round(v2.y), trans.position.z);
+		trans.position = new Vector3 (v2.x, v2.y, trans.position.z);
 
 	}
 		
@@ -26,15 +27,11 @@ public static class SC_ExtensionMethods {
 
     }
 
-    public static float F (this float f) {
-
-        return f / SC_Game_Manager.TileSize;
-
-    }
-
     public static int I (this float f) {
 
-        return Mathf.RoundToInt(f.F());
+        //Debug.Log(f + ", " + TileSize);
+
+        return Mathf.RoundToInt(f / TileSize);
 
     }
 

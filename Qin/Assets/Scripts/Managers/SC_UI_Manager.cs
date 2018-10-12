@@ -258,7 +258,7 @@ public class SC_UI_Manager : MonoBehaviour {
         SetText("Movement", " Movement : " + GetModifiedStat(character.baseMovement, character.Movement - character.baseMovement));
 		SetText("WeaponsTitle", " Weapons :");
 
-        if (SC_Character.CanPreviewMovement)
+        if (SC_Tile.CanChangeFilters)
             TileManager.DisplayMovementAndAttack(character, true);
 
     }

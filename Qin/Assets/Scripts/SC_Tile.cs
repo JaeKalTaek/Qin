@@ -2,8 +2,9 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using static SC_Global;
+using static SC_Character;
 
-[System.Serializable]
+[Serializable]
 public class SC_Tile : NetworkBehaviour {
 
     public TDisplay CurrentDisplay { get; set; }
@@ -12,20 +13,8 @@ public class SC_Tile : NetworkBehaviour {
     [Tooltip("Movement cost to walk on this tile")]
     public int cost;
 
-    [Tooltip("Colors for the different filters of this Tile")]
-    public FilterColor[] filtersColors;
-
     [Tooltip("Combat modifiers for this tile")]
     public CombatModifiers combatModifers;
-
-    [Serializable]
-    public struct FilterColor {
-
-        public TDisplay filter;
-
-        public Color color;
-
-    }
 
     [HideInInspector]
     [SyncVar]
@@ -116,6 +105,8 @@ public class SC_Tile : NetworkBehaviour {
     static SC_Fight_Manager fightManager;
 
     SpriteRenderer filter;
+
+    public static bool CanChangeFilters { get { return (!characterToMove || (characterToMove.Qin != SC_Player.localPlayer.Qin)) && !SC_Player.localPlayer.Busy; } }
 
     public override void OnStartClient () {
 
@@ -243,7 +234,7 @@ public class SC_Tile : NetworkBehaviour {
         else if (CurrentDisplay == TDisplay.Sacrifice)
             Soldier.ToggleDisplaySacrificeValue();
 
-        uiManager.HideInfos(SC_Character.CanPreviewMovement);
+        uiManager.HideInfos(CanChangeFilters);
 
     }
 
@@ -251,7 +242,7 @@ public class SC_Tile : NetworkBehaviour {
 
         Color c = new Color();
 
-        foreach (FilterColor fC in filtersColors)
+        foreach (SC_Tile_Manager.FilterColor fC in tileManager.filtersColors)
             if (fC.filter == filterName)
                 c = fC.color;
 

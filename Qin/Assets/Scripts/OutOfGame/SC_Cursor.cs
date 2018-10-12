@@ -87,7 +87,7 @@ public class SC_Cursor : NetworkBehaviour {
             int y = newPos.y.I();
 
             if ((x >= 0) && (y >= 0) && (x < SC_Tile_Manager.Instance.xSize) && (y < SC_Tile_Manager.Instance.ySize))
-                transform.SetPos(new Vector2(x, y));
+                transform.SetPos(new Vector2(x, y) * TileSize);
 
             cam.minX = x == 0;
             cam.maxX = x == SC_Tile_Manager.Instance.xSize;

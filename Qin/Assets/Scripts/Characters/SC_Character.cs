@@ -81,8 +81,6 @@ public class SC_Character : NetworkBehaviour {
 
     List<SC_Tile> path;
 
-    public static bool CanPreviewMovement { get { return !characterToMove || (characterToMove.Qin != SC_Player.localPlayer.Qin); } }
-
     public static SC_Character attackingCharacter, characterToMove;
 
     public SC_Tile Tile { get { return tileManager.GetTileAt(gameObject); } }
