@@ -10,7 +10,6 @@ public class SC_Network_Manager : NetworkLobbyManager {
 	bool side, quitting, stoppedMatchmaking;
 	MatchInfo createdMatch = null;
 
-	#region Networking
 	void OnEnable() {
 
 		SceneManager.activeSceneChanged += OnSceneChanged;
@@ -154,6 +153,5 @@ public class SC_Network_Manager : NetworkLobbyManager {
 		return isQinHost;
 
 	}
-	#endregion
 
 }
