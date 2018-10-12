@@ -56,7 +56,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
     public static SC_UI_Manager Instance { get; set; }
 
-    public static bool CanInteract { get { return SC_Player.localPlayer.Turn && !EventSystem.current.IsPointerOverGameObject(); } }
+    public static bool CanInteract { get { return SC_Player.localPlayer.Turn && (!EventSystem.current.IsPointerOverGameObject() || !Cursor.visible); } }
 
     public float clickSecurityDuration;
 
@@ -184,42 +184,50 @@ public class SC_UI_Manager : MonoBehaviour {
     #endregion
 
     #region Infos
-    public void ShowHideInfos(GameObject g, Type t) {
+    public void ShowInfos(GameObject g, Type t) {
 
-		if(HideInfos (g)) {
+        //HideInfos(false);
 
-			if (t == typeof(SC_Hero))
-				ShowHeroInfos (g.GetComponent<SC_Hero> ());
-			else if (t == typeof(SC_Soldier))
-				ShowSoldierInfos (g.GetComponent<SC_Soldier> ());
-			else if ((t == typeof(SC_Construction)) || t.IsSubclassOf(typeof(SC_Construction)))
-				ShowConstructionsInfos (g.GetComponent<SC_Construction> ());
-			else if (t == typeof(SC_Qin))
-				ShowQinInfos ();
-			else
-				print ("ERRROR");
+        CurrentGameObject = g;
 
-		}
+        if (t == typeof(SC_Hero))
+            ShowHeroInfos(g.GetComponent<SC_Hero>());
+        else if (t == typeof(SC_Soldier))
+            ShowSoldierInfos(g.GetComponent<SC_Soldier>());
+        else if (t.IsSubclassOf(typeof(SC_Construction)))
+            ShowConstructionsInfos(g.GetComponent<SC_Construction>());
+        else if (t == typeof(SC_Qin))
+            ShowQinInfos();
+        else if (t == typeof(SC_Ruin)) {
+
+            buildingInfosPanel.SetActive(true);
+
+            SetText("BuildingName", "Ruin");
+            SetText("BuildingHealth", "");
+
+        } else
+            print("ERRROR");
 
 	}
 
     public void HideInfosIfActive(GameObject g) {
 
         if (CurrentGameObject == g)
-            HideInfos(g);
+            HideInfos(true);
 
     }
 
-	public bool HideInfos(GameObject g) {
+	public void HideInfos(bool removeFilters) {
+
+        if (removeFilters)
+            TileManager.RemoveAllFilters();
 
 		statsPanel.SetActive (false);
 		relationshipPanel.SetActive (false);
 		buildingInfosPanel.SetActive (false);
 		qinPanel.SetActive (false);
 
-        CurrentGameObject = (CurrentGameObject == g) ? null : g;
-
-        return CurrentGameObject;
+        CurrentGameObject = null;
 
 	}
 
@@ -229,7 +237,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
             CurrentGameObject = null;
 
-            ShowHideInfos(g, t);
+            ShowInfos(g, t);
 
         }
 
@@ -250,7 +258,10 @@ public class SC_UI_Manager : MonoBehaviour {
         SetText("Movement", " Movement : " + GetModifiedStat(character.baseMovement, character.Movement - character.baseMovement));
 		SetText("WeaponsTitle", " Weapons :");
 
-	}
+        if (SC_Character.CanPreviewMovement)
+            TileManager.DisplayMovementAndAttack(character, true);
+
+    }
 
     string GetFightStat(SC_Character chara, string stat) {
 
@@ -362,7 +373,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
             attackerDamages = fightManager.CalcDamages(attacker, attacked, false);
 
-            if (!TileManager.GetTileAt(attacker.gameObject).Bastion && (fightManager.RangedAttack && attacked.GetActiveWeapon().ranged || !fightManager.RangedAttack && !attacked.GetActiveWeapon().IsBow))
+            if (!attacker.Tile.Bastion && (fightManager.RangedAttack && attacked.GetActiveWeapon().ranged || !fightManager.RangedAttack && !attacked.GetActiveWeapon().IsBow))
                 attackedDamages = fightManager.CalcDamages(attacked, attacker, true);
 
             attackedHP = attacked.Health - attackerDamages;

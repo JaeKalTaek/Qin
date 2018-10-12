@@ -41,7 +41,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
             SC_Character attacked = attacker.AttackTarget.Character;
             SC_Construction targetConstruction = attacker.AttackTarget.Construction;
-            SC_Construction currentConstruction = TileManager.GetTileAt(attacker.gameObject).Construction;
+            SC_Construction currentConstruction = attacker.Tile.Construction;
 
             if (attacked) {
 
@@ -62,10 +62,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
         }
 
-        if (attacker.Hero)
-            attacker.Hero.BerserkTurn = attacker.Hero.Berserk;
-
-        SC_Character.attackingCharacter = null;
+        SC_Character.Wait();
 
     }
 
@@ -103,7 +100,7 @@ public class SC_Fight_Manager : MonoBehaviour {
         if (construction.Health <= 0)
             construction.DestroyConstruction();
         else
-            uiManager.TryRefreshInfos(construction.gameObject, typeof(SC_Construction));
+            uiManager.TryRefreshInfos(construction.gameObject, construction.GetType());
 
     }
 
@@ -214,11 +211,11 @@ public class SC_Fight_Manager : MonoBehaviour {
 
             if (saver && nearestTile) {
 
-                TileManager.GetTileAt(saver.gameObject).Character = null;
+                saver.Tile.Character = null;
 
                 saver.transform.SetPos(TileManager.GetUnoccupiedNeighbor(toSave).transform);
 
-                TileManager.GetTileAt(saver.gameObject).Character = saver;
+                saver.Tile.Character = saver;
 
             } else {
 

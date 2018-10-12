@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
+using static SC_Game_Manager;
 
 public class SC_Cursor : NetworkBehaviour {
 
@@ -70,7 +71,7 @@ public class SC_Cursor : NetworkBehaviour {
 
                 Cursor.visible = false;
 
-                newPos = transform.position + new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0);
+                newPos = transform.position + new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0) * TileSize;
 
             } else if ((Cursor.visible || ((Vector3.Distance(oldMousePos, newMousePos) >= mouseThreshold) && !cameraMoved)) && screenRect.Contains(Input.mousePosition)) {
 
@@ -82,8 +83,8 @@ public class SC_Cursor : NetworkBehaviour {
 
             cameraMoved = false;
 
-            int x = Mathf.RoundToInt(newPos.x);
-            int y = Mathf.RoundToInt(newPos.y);
+            int x = newPos.x.I();
+            int y = newPos.y.I();
 
             if ((x >= 0) && (y >= 0) && (x < SC_Tile_Manager.Instance.xSize) && (y < SC_Tile_Manager.Instance.ySize))
                 transform.SetPos(new Vector2(x, y));
@@ -105,7 +106,7 @@ public class SC_Cursor : NetworkBehaviour {
 
                 Vector3 oldCamPos = cam.TargetPosition;
 
-                cam.TargetPosition += new Vector3(x2, y2, 0);
+                cam.TargetPosition += new Vector3(x2, y2, 0) * TileSize;
 
                 cameraMoved = oldCamPos != cam.TargetPosition;
 
@@ -117,8 +118,8 @@ public class SC_Cursor : NetworkBehaviour {
         #region Cursor Inputs
         if (Input.GetButtonDown("Action"))
             SC_Tile_Manager.Instance?.GetTileAt(transform.position)?.CursorClick();           
-        else if (Input.GetButtonDown("Infos"))
-            SC_Tile_Manager.Instance?.GetTileAt(transform.position)?.CursorSecondaryClick();
+        /*else if (Input.GetButtonDown("Infos"))
+            SC_Tile_Manager.Instance?.GetTileAt(transform.position)?.CursorSecondaryClick();*/
         #endregion
     }
 

@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using static SC_Global;
+using static SC_Game_Manager;
 
 public class SC_Tile_Manager : NetworkBehaviour {
 
@@ -23,7 +24,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     public SC_Pump DisplayedPump { get; set; }
 
-    public static SC_Character focusedCharacter;
+    //public static SC_Character focusedCharacter;
 
     void Awake() {
 
@@ -45,7 +46,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
         tiles = new SC_Tile[xSize, ySize];
 
 		foreach (SC_Tile t in FindObjectsOfType<SC_Tile>())
-			tiles [Mathf.RoundToInt(t.transform.position.x), Mathf.RoundToInt(t.transform.position.y)] = t;
+			tiles [t.transform.position.x.I(), t.transform.position.y.I()] = t;
 
 		gameManager.FinishSetup ();
 
@@ -102,10 +103,9 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     public int TileDistance (Vector3 a, Vector3 b) {
 
-        return Mathf.Abs(Mathf.RoundToInt(a.x) - Mathf.RoundToInt(b.x)) + Mathf.Abs(Mathf.RoundToInt(a.y) - Mathf.RoundToInt(b.y));
+        return Mathf.Abs((a.x - b.x).I()) + Mathf.Abs((a.y - b.y).I());
 
     }
-
     public SC_Tile GetUnoccupiedNeighbor (SC_Character target) {
 
         SC_Tile t = null;
@@ -132,13 +132,13 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     public SC_Tile GetTileAt (Vector3 pos) {
 
-        return tiles[Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y)];
+        return tiles[pos.x.I(), pos.y.I()];
 
     }
 
     public void RemoveAllFilters () {
 
-        focusedCharacter = null;
+        //focusedCharacter = null;
 
         foreach (SC_Tile tile in tiles)
             tile.RemoveFilter();
@@ -233,20 +233,18 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         RemoveAllFilters();
 
-        SC_Tile tileTarget = GetTileAt(target.gameObject);
-
-        MovementRange = DisplayMovementAndAttack(target, tileTarget, false);
+        MovementRange = DisplayMovementAndAttack(target, false);
 
     }
 
-    List<SC_Tile> DisplayMovementAndAttack (SC_Character target, SC_Tile tileTarget, bool preview) {
+    public List<SC_Tile> DisplayMovementAndAttack (SC_Character target, bool preview) {        
 
         OpenList.Clear();
         List<SC_Tile> movementRange = new List<SC_Tile>();
 
-        movementPoints[tileTarget] = target.Movement;
+        movementPoints[target.Tile] = target.Movement;
 
-        ExpandTile(ref movementRange, tileTarget, target);
+        ExpandTile(ref movementRange, target.Tile, target);
 
         while (OpenList.Count > 0) {
 
@@ -262,9 +260,9 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         if (SC_Player.localPlayer.Turn || preview) {
 
-            foreach (SC_Tile tile in new List<SC_Tile>(movementRange) { tileTarget }) {
+            foreach (SC_Tile tile in new List<SC_Tile>(movementRange) { target.Tile }) {
 
-                if (tile.CanCharacterSetOn(target) || tile == tileTarget) {
+                if (tile.CanCharacterSetOn(target)) {
 
                     if (preview)
                         tile.SetFilter(TDisplay.PreviewMovement);
@@ -284,11 +282,11 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }
 
-    public void PreviewMovementAndAttack(SC_Character target, SC_Tile tileTarget) {        
+    /*public void PreviewMovementAndAttack(SC_Character target, SC_Tile tileTarget) {        
 
         RemoveAllFilters();
 
-        focusedCharacter = target;
+        //focusedCharacter = target;
 
         DisplayMovementAndAttack(target, tileTarget, true);
 
@@ -296,10 +294,10 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     public void TryStopPreview(SC_Character c) {
 
-        if (c == focusedCharacter)
+        //if (c == focusedCharacter)
             RemoveAllFilters();
 
-    }
+    }*/
 
     void ExpandTile (ref List<SC_Tile> list, SC_Tile aTile, SC_Character target) {
 
@@ -474,7 +472,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
     public void DisplaySacrifices () {        
 
         foreach (SC_Soldier soldier in FindObjectsOfType<SC_Soldier>())
-            GetTileAt(soldier.gameObject).ChangeDisplay(TDisplay.Sacrifice);
+            soldier.Tile.ChangeDisplay(TDisplay.Sacrifice);
 
     }
 

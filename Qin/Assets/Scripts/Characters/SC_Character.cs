@@ -50,17 +50,7 @@ public class SC_Character : NetworkBehaviour {
 	
     public int DodgeAmount { get; set; }
 
-    public CombatModifiers Modifiers {
-
-        get {
-
-            SC_Tile tile = tileManager.GetTileAt(gameObject);
-
-            return tile.Construction?.combatModifers ?? (tile.Ruin?.combatModifers ?? tile.combatModifers);
-
-        }
-
-    }
+    public CombatModifiers Modifiers { get { return Tile.Construction?.combatModifers ?? (Tile.Ruin?.combatModifers ?? Tile.combatModifers); } }
 
     public int BaseDamage { get { return Mathf.Max(0, GetActiveWeapon().weaponOrQi ? strength + Modifiers.strength : qi + Modifiers.qi); } }
 
@@ -91,7 +81,11 @@ public class SC_Character : NetworkBehaviour {
 
     List<SC_Tile> path;
 
+    public static bool CanPreviewMovement { get { return !characterToMove || (characterToMove.Qin != SC_Player.localPlayer.Qin); } }
+
     public static SC_Character attackingCharacter, characterToMove;
+
+    public SC_Tile Tile { get { return tileManager.GetTileAt(gameObject); } }
 
     protected virtual void Awake() {
 
@@ -122,7 +116,7 @@ public class SC_Character : NetworkBehaviour {
         Lifebar = Instantiate(Resources.Load<GameObject>("Prefabs/Characters/Components/P_Lifebar"), transform).GetComponent<SC_Lifebar>();
 		Lifebar.transform.position += new Vector3 (0, -.44f, 0);		
 
-		LastPos = tileManager.GetTileAt(gameObject);
+		LastPos = Tile;
 
         LastPos.Character = this;
 
@@ -133,7 +127,7 @@ public class SC_Character : NetworkBehaviour {
     #region Movement
     public virtual void TryCheckMovements () {
 
-        SC_Player.localPlayer.CmdCheckMovements(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
+        SC_Player.localPlayer.CmdCheckMovements(transform.position.x.I(), transform.position.y.I());
 
         uiManager.SetCancelButton(gameManager.UnselectCharacter);
 
@@ -143,7 +137,7 @@ public class SC_Character : NetworkBehaviour {
 
         tileManager.RemoveAllFilters();
 
-        LastPos = tileManager.GetTileAt(gameObject);
+        LastPos = Tile;
 
         path = tileManager.PathFinder(LastPos, target);
 
@@ -260,7 +254,7 @@ public class SC_Character : NetworkBehaviour {
 
         tileManager.RemoveAllFilters();
 
-        tileManager.GetTileAt(gameObject).Character = null;
+        Tile.Character = null;
 
         transform.SetPos(LastPos.transform);
 
@@ -294,6 +288,8 @@ public class SC_Character : NetworkBehaviour {
 
         tileManager.RemoveAllFilters();
 
+        characterToMove = null;
+
         if(attackingCharacter) {
 
             attackingCharacter.Tire();
@@ -309,11 +305,11 @@ public class SC_Character : NetworkBehaviour {
 
 	public virtual void DestroyCharacter() {
 
-        tileManager.TryStopPreview(this);
+        //tileManager.TryStopPreview(this);
 
         uiManager.HideInfosIfActive(gameObject);
 
-        tileManager.GetTileAt(gameObject).Character = null;
+        Tile.Character = null;
 
 	}
 

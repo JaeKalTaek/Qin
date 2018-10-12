@@ -22,7 +22,19 @@ public static class SC_ExtensionMethods {
 		
     public static void ShowHideInfos(this MonoBehaviour MB) {
 
-        SC_UI_Manager.Instance.ShowHideInfos(MB.gameObject, MB.GetType());
+        SC_UI_Manager.Instance.ShowInfos(MB.gameObject, MB.GetType());
+
+    }
+
+    public static float F (this float f) {
+
+        return f / SC_Game_Manager.TileSize;
+
+    }
+
+    public static int I (this float f) {
+
+        return Mathf.RoundToInt(f.F());
 
     }
 

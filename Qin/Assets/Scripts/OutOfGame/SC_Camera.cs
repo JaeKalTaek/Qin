@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using static SC_Game_Manager;
 
 public class SC_Camera : MonoBehaviour {
 		
@@ -43,7 +44,7 @@ public class SC_Camera : MonoBehaviour {
 
         cam = GetComponent<Camera>();
 
-		transform.position = new Vector3 (Mathf.RoundToInt((sizeX - 1) / 2), Mathf.RoundToInt((sizeY - 1) / 2), -16);
+		transform.position = new Vector3 (((sizeX - 1) / 2) * TileSize, ((sizeY - 1) / 2) * TileSize, -16);
 
         TargetPosition = transform.position;
 
@@ -64,14 +65,14 @@ public class SC_Camera : MonoBehaviour {
             if (cam.orthographicSize != zooms[zoomIndex])
                 cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, zooms[zoomIndex], zoomSpeed * Time.deltaTime);
 
-            float xMax = SC_Tile_Manager.Instance.xSize - cam.orthographicSize * cam.aspect - .5f + boardMargin;
+            float xMax = SC_Tile_Manager.Instance.xSize * TileSize - cam.orthographicSize * cam.aspect - .5f + boardMargin;
             float xMin = cam.orthographicSize* cam.aspect - .5f - boardMargin;
 
             float x = Mathf.Clamp(TargetPosition.x, xMin, xMax);
 
             x = minX ? xMin : maxX ? xMax : x;
 
-            float yMax = SC_Tile_Manager.Instance.ySize - cam.orthographicSize - .5f + boardMargin;
+            float yMax = SC_Tile_Manager.Instance.ySize * TileSize - cam.orthographicSize - .5f + boardMargin;
             float yMin = cam.orthographicSize - .5f - boardMargin;
 
             float y = Mathf.Clamp(TargetPosition.y, yMin, yMax);

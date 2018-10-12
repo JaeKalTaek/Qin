@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
-using static SC_Global;
 
 public class SC_Qin : NetworkBehaviour {
 
@@ -21,7 +20,7 @@ public class SC_Qin : NetworkBehaviour {
     [Tooltip("Energy won for each village at the beginning of each of Qin's turn")]
     public int regenPerVillage;
 
-    static SC_Game_Manager gameManager;
+    //static SC_Game_Manager gameManager;
 
 	static SC_Tile_Manager tileManager;
 
@@ -33,7 +32,7 @@ public class SC_Qin : NetworkBehaviour {
 
 		Qin = this;
 
-		gameManager = FindObjectOfType<SC_Game_Manager> ();
+		//gameManager = FindObjectOfType<SC_Game_Manager> ();
 
 		tileManager = FindObjectOfType<SC_Tile_Manager> ();
 
@@ -47,7 +46,7 @@ public class SC_Qin : NetworkBehaviour {
 
     }
 
-	public static void UsePower(Vector3 pos) {
+	/*public static void UsePower(Vector3 pos) {
 
 		SC_Hero hero = gameManager.LastHeroDead;
 
@@ -78,7 +77,7 @@ public class SC_Qin : NetworkBehaviour {
 
 		gameManager.LastHeroDead = null;
 
-	}
+	}*/
 
 	public static void ChangeEnergy(int amount) {
 

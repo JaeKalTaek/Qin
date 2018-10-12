@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
-using UnityEngine.Networking;
 
-public class SC_Lifebar : NetworkBehaviour {
+public class SC_Lifebar : MonoBehaviour {
 
 	Transform health, health2;
 	GameObject lifebar;
@@ -16,7 +15,7 @@ public class SC_Lifebar : NetworkBehaviour {
 
     public void UpdateGraph(int h, int maxH) {
 
-        float percentage = h / maxH;
+        float percentage = (float)h / maxH;
 
         health.localScale = new Vector3(percentage, 1, 1);
         health2.localScale = new Vector3(percentage, 1, 1);

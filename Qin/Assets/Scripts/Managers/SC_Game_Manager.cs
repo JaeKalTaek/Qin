@@ -29,6 +29,8 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 	SC_Tile_Manager tileManager;
 
+    public static float TileSize;
+
     #region Setup
     private void Awake () {
 
@@ -37,6 +39,8 @@ public class SC_Game_Manager : NetworkBehaviour {
     }
 
     void Start() {
+
+        TileSize = baseMapPrefab.TileSize;
 
         CommonCharactersVariables = Resources.Load<SC_Common_Characters_Variables>("Prefabs/Characters/P_Common_Characters_Variables");
 
@@ -294,7 +298,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         Player.CmdSetConstru(uiManager.soldiersConstructions[id].Name);
 
-        Player.CmdConstructAt(Mathf.RoundToInt(SC_Character.attackingCharacter.transform.position.x), Mathf.RoundToInt(SC_Character.attackingCharacter.transform.position.y));
+        Player.CmdConstructAt(SC_Character.attackingCharacter.transform.position.x.I(), SC_Character.attackingCharacter.transform.position.y.I());
 
         Player.Busy = false;
 
@@ -402,11 +406,9 @@ public class SC_Game_Manager : NetworkBehaviour {
     #region Players Actions  
     public void DestroyOnCase () {
 
-        SC_Tile tile = tileManager.GetTileAt(SC_Character.attackingCharacter.gameObject);
+        SC_Character.attackingCharacter.Tile.Construction?.DestroyConstruction();
 
-        tile.Construction?.DestroyConstruction();
-
-        tile.Ruin?.DestroyRuin();
+        SC_Character.attackingCharacter.Tile.Ruin?.DestroyRuin();
 
         uiManager.Wait();
 

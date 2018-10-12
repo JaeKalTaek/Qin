@@ -50,7 +50,7 @@ public class SC_Tile : NetworkBehaviour {
 
     public bool CanCharacterSetOn (SC_Character c) {
 
-        if (Character || Qin)
+        if ((Character && (Character != c)) || Qin)
             return false;
         else if (Construction)
             return (c.Qin || !Bastion) && !Pump;
@@ -98,7 +98,7 @@ public class SC_Tile : NetworkBehaviour {
 
     public SC_Qin Qin { get; set; }
 
-    public bool Empty { get { return !Construction && !Character && !Qin; } }
+    public bool Empty { get { return !Construction && !Character && !Qin && !Ruin; } }
 
     public bool Palace { get { return name.Contains("Palace"); } }
 
@@ -140,7 +140,7 @@ public class SC_Tile : NetworkBehaviour {
         if (!fightManager)
             fightManager = SC_Fight_Manager.Instance;
 
-        if (Mathf.RoundToInt(transform.position.x) == (gameManager.baseMapPrefab.SizeMapX - 1) && Mathf.RoundToInt(transform.position.y) == (gameManager.baseMapPrefab.SizeMapY - 1) && !isServer)
+        if (transform.position.x.I() == (gameManager.baseMapPrefab.SizeMapX - 1) && transform.position.y.I() == (gameManager.baseMapPrefab.SizeMapY - 1) && !isServer)
             gameManager.StartCoroutine("FinishLoading");
 
         filter = transform.GetChild(0).GetComponent<SpriteRenderer>();
@@ -153,7 +153,7 @@ public class SC_Tile : NetworkBehaviour {
 
             if (CurrentDisplay == TDisplay.Construct) {
 
-                SC_Player.localPlayer.CmdConstructAt(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
+                SC_Player.localPlayer.CmdConstructAt(transform.position.x.I(), transform.position.y.I());
 
             } else if (CurrentDisplay == TDisplay.Movement) {
 
@@ -163,7 +163,7 @@ public class SC_Tile : NetworkBehaviour {
 
                 SC_Player.localPlayer.Busy = true;
 
-                SC_Player.localPlayer.CmdMoveCharacterTo(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
+                SC_Player.localPlayer.CmdMoveCharacterTo(transform.position.x.I(), transform.position.y.I());
 
             } else if (CurrentDisplay == TDisplay.Attack) {
 
@@ -207,7 +207,7 @@ public class SC_Tile : NetworkBehaviour {
 
 	}
 
-    public void CursorSecondaryClick() {
+    /*public void CursorSecondaryClick() {
 
         if (Character)
             Character.ShowHideInfos();
@@ -216,7 +216,7 @@ public class SC_Tile : NetworkBehaviour {
         else
             Qin?.ShowHideInfos();
 
-    }
+    }*/
 
     public void OnCursorEnter() {
 
@@ -226,8 +226,11 @@ public class SC_Tile : NetworkBehaviour {
             Hero?.PreviewFight();
         else if (CurrentDisplay == TDisplay.Sacrifice)
             Soldier.ToggleDisplaySacrificeValue();
-        else if (Character && !SC_Player.localPlayer.Busy && (!SC_Character.characterToMove || (SC_Character.characterToMove.Qin != SC_Player.localPlayer.Qin)))
-            tileManager.PreviewMovementAndAttack(Character, this);
+        else if (!Empty)
+            (Character ?? Construction ?? Ruin ?? Qin ?? default(MonoBehaviour)).ShowHideInfos();
+
+        /*else if (Character && !SC_Player.localPlayer.Busy && (!SC_Character.characterToMove || (SC_Character.characterToMove.Qin != SC_Player.localPlayer.Qin)))
+            tileManager.PreviewMovementAndAttack(Character, this);*/
 
     }
 
@@ -240,8 +243,7 @@ public class SC_Tile : NetworkBehaviour {
         else if (CurrentDisplay == TDisplay.Sacrifice)
             Soldier.ToggleDisplaySacrificeValue();
 
-        if (Character)
-            tileManager.TryStopPreview(Character);
+        uiManager.HideInfos(SC_Character.CanPreviewMovement);
 
     }
 

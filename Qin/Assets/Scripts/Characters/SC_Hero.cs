@@ -63,13 +63,11 @@ public class SC_Hero : SC_Character {
 
 	public void PreviewFight() {
 
-		SC_Tile under = tileManager?.GetTileAt (gameObject);
-
 		if (!attackingCharacter.Hero && SC_UI_Manager.CanInteract) {
 
-            attackingCharacter.AttackTarget = under;
+            attackingCharacter.AttackTarget = Tile;
 
-            fightManager.RangedAttack = tileManager.TileDistance(attackingCharacter.transform.position, under) > 1;
+            fightManager.RangedAttack = tileManager.TileDistance(attackingCharacter.transform.position, Tile) > 1;
 
 			uiManager.PreviewFight(true);
 
@@ -101,7 +99,7 @@ public class SC_Hero : SC_Character {
 
 	public void Regen() {
 
-		if (tileManager.GetTileAt(gameObject).Village) {
+		if (Tile.Village) {
 
             if (ReadyToRegen) {
 
