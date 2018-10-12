@@ -186,8 +186,6 @@ public class SC_UI_Manager : MonoBehaviour {
     #region Infos
     public void ShowInfos(GameObject g, Type t) {
 
-        //HideInfos(false);
-
         CurrentGameObject = g;
 
         if (t == typeof(SC_Hero))

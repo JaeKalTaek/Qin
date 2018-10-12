@@ -29,8 +29,6 @@ public static class SC_ExtensionMethods {
 
     public static int I (this float f) {
 
-        //Debug.Log(f + ", " + TileSize);
-
         return Mathf.RoundToInt(f / TileSize);
 
     }

@@ -18,6 +18,14 @@ public class SC_Tile : NetworkBehaviour {
 
     [HideInInspector]
     [SyncVar]
+    public string tileType;
+
+    [HideInInspector]
+    [SyncVar]
+    public int tileSprite;
+
+    [HideInInspector]
+    [SyncVar]
     public bool river;
 
     [HideInInspector]
@@ -112,8 +120,7 @@ public class SC_Tile : NetworkBehaviour {
 
         base.OnStartClient();
 
-        if (river)
-            GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Tiles/River/" + (SC_EditorTile.RiverSprite)riverSprite);
+        GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Tiles/" + (river ? ("River/" + (SC_EditorTile.RiverSprite)riverSprite) : (tileType + "/" + tileSprite)));
 
     }
 
@@ -158,12 +165,12 @@ public class SC_Tile : NetworkBehaviour {
 
             } else if (CurrentDisplay == TDisplay.Attack) {
 
-                fightManager.RangedAttack = tileManager.TileDistance(SC_Character.attackingCharacter.transform.position, this) > 1;
+                fightManager.RangedAttack = tileManager.TileDistance(attackingCharacter.transform.position, this) > 1;
 
                 SC_Player.localPlayer.CmdPrepareForAttack(fightManager.RangedAttack, gameObject, !SC_Player.localPlayer.Qin);
 
-                if (SC_Character.attackingCharacter.Hero)
-                    SC_Character.attackingCharacter.Hero.ChooseWeapon();
+                if (attackingCharacter.Hero)
+                    attackingCharacter.Hero.ChooseWeapon();
                 else
                     SC_Player.localPlayer.CmdAttack();
 
@@ -219,9 +226,6 @@ public class SC_Tile : NetworkBehaviour {
             Soldier.ToggleDisplaySacrificeValue();
         else if (!Empty)
             (Character ?? Construction ?? Ruin ?? Qin ?? default(MonoBehaviour)).ShowHideInfos();
-
-        /*else if (Character && !SC_Player.localPlayer.Busy && (!SC_Character.characterToMove || (SC_Character.characterToMove.Qin != SC_Player.localPlayer.Qin)))
-            tileManager.PreviewMovementAndAttack(Character, this);*/
 
     }
 

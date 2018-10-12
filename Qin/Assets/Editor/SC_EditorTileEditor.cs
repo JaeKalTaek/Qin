@@ -15,7 +15,7 @@ public class SC_EditorTileEditor : Editor {
 
             SC_EditorTile tile = o as SC_EditorTile;
 
-            tile.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Tiles/" + (tile.tileType == TileType.River ? "River/" + tile.riverSprite : tile.tileType + ""));
+            tile.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Tiles/" + (tile.tileType == TileType.River ? "River/" + tile.riverSprite : tile.tileType + "/0"));
 
             tile.SetSprite(0, tile.construction == ConstructionType.None ? "" : ("Sprites/" + (tile.construction == ConstructionType.Ruin ? "Ruin" : "Constructions/" + tile.construction)));
 
