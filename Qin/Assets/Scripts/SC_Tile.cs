@@ -230,6 +230,8 @@ public class SC_Tile : NetworkBehaviour {
         else if (!Empty)
             (Character ?? Construction ?? Ruin ?? Qin ?? default(MonoBehaviour)).ShowHideInfos();
 
+        uiManager.MenuPos();
+
     }
 
     public void OnCursorExit() {

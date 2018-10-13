@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using static SC_Global;
 
@@ -68,6 +69,8 @@ public class SC_UI_Manager : MonoBehaviour {
     SC_Construction[] qinConstructions;
 
     public SC_Construction[] soldiersConstructions { get; set; }
+
+    public SC_Tile currentTile;
     #endregion
 
     #region Setup
@@ -695,7 +698,27 @@ public class SC_UI_Manager : MonoBehaviour {
 
         GameObject.Find(id).GetComponent<Text>().text = text;
 
-    }    
+    }
     #endregion
 
+    #region Menu Position
+    
+    //Move the menu next to the tile
+    public void MenuPos()
+    {
+        RectTransform Rect = characterActionsPanel.GetComponent<RectTransform>();
+
+        //Get the viewport position of the tile
+        currentTile = TileManager.GetTileAt(SC_Cursor.Instance.gameObject);
+        Vector3 currentTileViewportPos = Camera.main.WorldToViewportPoint(currentTile.transform.position);
+
+        //If tile on the left side of the screen, offset the menu on the right
+        //If tile on the right side of the screen, offset the menu on the left
+        int offset = currentTileViewportPos.x < 0.5 ? 1 : -1;
+
+        Rect.anchorMin = new Vector3(currentTileViewportPos.x + (offset * (0.1f + 0.1f*(1/Camera.main.orthographicSize))), currentTileViewportPos.y, currentTileViewportPos.z);
+        Rect.anchorMax = Rect.anchorMin;
+    }
+
+    #endregion
 }
