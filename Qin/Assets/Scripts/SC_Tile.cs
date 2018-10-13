@@ -168,7 +168,7 @@ public class SC_Tile : NetworkBehaviour {
 
             } else if (CurrentDisplay == TDisplay.Attack) {
 
-                fightManager.RangedAttack = tileManager.TileDistance(attackingCharacter.transform.position, this) > 1;
+                fightManager.RangedAttack = SC_Tile_Manager.TileDistance(attackingCharacter.transform.position, this) > 1;
 
                 SC_Player.localPlayer.CmdPrepareForAttack(fightManager.RangedAttack, gameObject, !SC_Player.localPlayer.Qin);
 

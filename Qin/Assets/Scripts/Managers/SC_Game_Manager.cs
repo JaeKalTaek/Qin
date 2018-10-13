@@ -83,7 +83,8 @@ public class SC_Game_Manager : NetworkBehaviour {
 
             tile.tileType = eTile.tileType.ToString();
 
-            tile.tileSprite = Random.Range(0, Resources.LoadAll<Sprite>("Sprites/Tiles/" + eTile.tileType).Length);
+            if(eTile.tileType != TileType.Changing)
+                tile.tileSprite = Random.Range(0, Resources.LoadAll<Sprite>("Sprites/Tiles/" + eTile.tileType).Length);
 
             tile.riverSprite = (int)eTile.riverSprite;            
 

@@ -69,19 +69,19 @@ public class SC_Tile_Manager : NetworkBehaviour {
     }
 
     #region Utility Functions
-    public List<SC_Tile> GetTilesAtDistance(SC_Tile center, int distance) {
+    public static List<T> GetTilesAtDistance<T>(Array array, T center, int distance) where T : MonoBehaviour {
 
-        return GetTilesAtDistance(center.transform.position, distance);
+        return GetTilesAtDistance<T>(array, center.transform.position, distance);
 
     }
 
-    public List<SC_Tile> GetTilesAtDistance(Vector3 center, int distance) {
+    public static List<T> GetTilesAtDistance<T>(Array array, Vector3 center, int distance) where T : MonoBehaviour {
 
-        List<SC_Tile> returnValue = new List<SC_Tile>();
+        List<T> returnValue = new List<T>();
 
-        foreach(SC_Tile tile in tiles) {
+        foreach(T tile in array) {
 
-            if (TileDistance(center, tile) == distance)
+            if (TileDistance<T>(center, tile) == distance)
                 returnValue.Add(tile);
 
         }
@@ -105,13 +105,13 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }
 
-    public int TileDistance(Vector3 a, SC_Tile b) {
+    public static int TileDistance<T>(Vector3 a, T b) where T : MonoBehaviour {
 
         return TileDistance(a, b.transform.position);
 
     }
 
-    public int TileDistance (Vector3 a, Vector3 b) {
+    public static int TileDistance (Vector3 a, Vector3 b) {
 
         return Mathf.Abs((a.x - b.x).I()) + Mathf.Abs((a.y - b.y).I());
 
@@ -120,7 +120,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         SC_Tile t = null;
 
-        foreach (SC_Tile tile in GetTilesAtDistance(target.transform.position, 1))
+        foreach (SC_Tile tile in GetTilesAtDistance<SC_Tile>(tiles, target.transform.position, 1))
             if (tile.Empty)
                 t = tile;
 
@@ -170,13 +170,13 @@ public class SC_Tile_Manager : NetworkBehaviour {
         if (attacker.HasRange) {
 
             if (attacker.Soldier && attacker.GetActiveWeapon().IsBow)
-                attackableTiles = GetTilesAtDistance(center, 2);
+                attackableTiles = GetTilesAtDistance<SC_Tile>(tiles, center, 2);
             else
                 attackableTiles = GetRange(center, 2);
 
         } else {
 
-            attackableTiles = GetTilesAtDistance(center, 1);
+            attackableTiles = GetTilesAtDistance<SC_Tile>(tiles, center, 1);
 
         }
 
@@ -298,7 +298,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         list.Add(aTile);
 
-        foreach (SC_Tile tile in GetTilesAtDistance(aTile, 1)) {
+        foreach (SC_Tile tile in GetTilesAtDistance(tiles, aTile, 1)) {
 
             if (list.Contains(tile) || OpenList.Contains(tile) || !tile.CanCharacterGoThrough(target))
                 continue;
@@ -330,7 +330,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
             foreach (SC_Tile tile in openList) {
 
-                foreach (SC_Tile neighbor in GetTilesAtDistance(tile, 1)) {
+                foreach (SC_Tile neighbor in GetTilesAtDistance(tiles, tile, 1)) {
 
                     if (!closedList.Contains(neighbor) && MovementRange.Contains(neighbor) && !tempList.Contains(neighbor)) {
 
@@ -381,7 +381,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
                 if (construction.GreatWall) {
 
-                    foreach (SC_Tile neighbor in GetTilesAtDistance(construction.transform.position, 1))
+                    foreach (SC_Tile neighbor in GetTilesAtDistance<SC_Tile>(tiles, construction.transform.position, 1))
                         if (neighbor.Constructable && !constructableTiles.Contains(neighbor))
                             constructableTiles.Add(neighbor);
 
@@ -410,7 +410,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     public void UpdateNeighborWallGraph (SC_Tile center) {
 
-        foreach (SC_Tile tile in GetTilesAtDistance(center, 1))
+        foreach (SC_Tile tile in GetTilesAtDistance(tiles, center, 1))
             if (tile.Bastion)
                 UpdateWallGraph(tile.Bastion.gameObject);
 
@@ -427,7 +427,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
         bool top = false;
         int count = 0;
 
-        foreach (SC_Tile tile in GetTilesAtDistance(under, 1)) {
+        foreach (SC_Tile tile in GetTilesAtDistance(tiles, under, 1)) {
 
             if (tile.Bastion) {
 

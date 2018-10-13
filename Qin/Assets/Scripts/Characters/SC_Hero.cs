@@ -79,7 +79,7 @@ public class SC_Hero : SC_Character {
 
             attackingCharacter.AttackTarget = Tile;
 
-            fightManager.RangedAttack = tileManager.TileDistance(attackingCharacter.transform.position, Tile) > 1;
+            fightManager.RangedAttack = SC_Tile_Manager.TileDistance(attackingCharacter.transform.position, Tile) > 1;
 
 			uiManager.PreviewFight(true);
 

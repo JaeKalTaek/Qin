@@ -310,7 +310,7 @@ public class SC_UI_Manager : MonoBehaviour {
 		SetText("BuildingName", construction.Name);
 		SetText("BuildingHealth", construction.Health != 0 ? "Health : " + construction.Health + " / " + construction.maxHealth : "");
 
-        if (construction.Pump) {
+        if (SC_Tile.CanChangeFilters && construction.Pump) {
 
             TileManager.DisplayedPump = construction.Pump;
 

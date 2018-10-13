@@ -18,7 +18,7 @@ public class SC_Pump : SC_Construction {
 
         foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
 
-            if (tileManager.TileDistance(transform.position, hero.transform.position) <= range)
+            if (SC_Tile_Manager.TileDistance(transform.position, hero.transform.position) <= range)
                 action(hero);
 
         }
@@ -85,7 +85,7 @@ public class SC_Pump : SC_Construction {
 
         foreach (SC_Pump pump in FindObjectsOfType<SC_Pump>()) {
 
-            if ((tileManager.TileDistance(hero.transform.position, pump.transform.position) <= pump.range) && (pumpSlow < pump.slowAmount))
+            if ((SC_Tile_Manager.TileDistance(hero.transform.position, pump.transform.position) <= pump.range) && (pumpSlow < pump.slowAmount))
                 pumpSlow = pump.slowAmount;
 
         }

@@ -13,6 +13,8 @@ public class SC_EditorTile : MonoBehaviour {
     [Tooltip("Region to which this tile belongs")]
     public int region = -1;
 
+    public static List<SC_EditorTile>[] regions;
+
     [Header("Construction on this tile")]
     [Tooltip("Type of construction on this tile")]
     public ConstructionType construction;    
@@ -99,6 +101,21 @@ public class SC_EditorTile : MonoBehaviour {
     public void SetSprite (int index, string s) {
 
         transform.GetChild(index).GetComponent<SpriteRenderer>().sprite = (s == "") ? null : Resources.Load<Sprite>(s);
+
+    }
+
+    public static void ChangeTileRegion(SC_EditorTile tile) {
+
+        if (regions[tile.region].Count == 0)
+            regions[tile.region].Add(tile);
+        else {
+
+            bool canAdd = false;
+
+            /*foreach(SC_EditorTile eT in regions[tile.region])
+                if(SC_Tile_Manager.GetTilesAtDistance(regions))*/
+
+        }
 
     }
 
