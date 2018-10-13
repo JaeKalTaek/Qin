@@ -56,7 +56,7 @@ public class SC_Player : NetworkBehaviour {
     [ClientRpc]
     void RpcFinishLoading() {
 
-        localPlayer.Busy = true;
+        //localPlayer.Busy = true;
 
         Instantiate(Resources.Load<GameObject>("Prefabs/P_Cursor"));
 
