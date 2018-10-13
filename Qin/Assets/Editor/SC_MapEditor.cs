@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
+using static SC_EditorTile;
 
 [CustomEditor(typeof(SC_MapEditorScript))]
 public class SC_MapEditor : Editor {
@@ -10,7 +12,9 @@ public class SC_MapEditor : Editor {
 
         DrawDefaultInspector();
 
-        generated = ((SC_MapEditorScript)target).transform.childCount > 0;
+        SC_MapEditorScript map = ((SC_MapEditorScript)target);
+
+        generated = map.transform.childCount > 0;
 
         if (GameObject.Find(target.name)) {
 
@@ -18,15 +22,46 @@ public class SC_MapEditor : Editor {
 
                 generated = true;
 
-                ((SC_MapEditorScript)target).GenerateMap();
+                map.GenerateMap();
 
             }
 
-            if (!SC_EditorTile.currentQinTile)
-                EditorGUILayout.HelpBox("Qin is missing from the map", MessageType.Warning);
+            if (generated) {
 
-            if(SC_EditorTile.heroesOnTiles.Count < 6)
-                EditorGUILayout.HelpBox("Not all heroes are on this map", MessageType.Warning);
+                if (!currentQinTile)
+                    EditorGUILayout.HelpBox("Qin is missing from the map", MessageType.Warning);
+
+                if (heroesOnTiles.Count < 6)
+                    EditorGUILayout.HelpBox("Not all heroes are on this map", MessageType.Warning);
+
+                if (regions != null) {
+
+                    bool regionMissing = false;
+
+                    int tilesInRegion = 0;
+
+                    foreach (List<SC_EditorTile> region in regions) {
+
+                        if (region.Count < 1)
+                            regionMissing = true;
+
+                        tilesInRegion += region.Count;
+
+                    }
+
+                    if (regionMissing)
+                        EditorGUILayout.HelpBox("At least one region doesn't have a tile", MessageType.Warning);
+
+                    if (tilesInRegion < map.SizeMapX * map.SizeMapY)
+                        EditorGUILayout.HelpBox("At least one tile has no region", MessageType.Warning);
+
+                } else {
+
+                    EditorGUILayout.HelpBox("Regions are not setup", MessageType.Warning);
+
+                }
+
+            }
 
         }        
 

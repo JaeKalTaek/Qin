@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using static SC_Game_Manager;
 
 public static class SC_ExtensionMethods {
 
@@ -29,7 +28,9 @@ public static class SC_ExtensionMethods {
 
     public static int I (this float f) {
 
-        return Mathf.RoundToInt(f / TileSize);
+        float s = GameObject.FindObjectOfType<SC_MapEditorScript>()?.TileSize ?? SC_Game_Manager.TileSize;
+
+        return Mathf.RoundToInt(f / s);
 
     }
 

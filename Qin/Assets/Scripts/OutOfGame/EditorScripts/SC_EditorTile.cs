@@ -11,7 +11,9 @@ public class SC_EditorTile : MonoBehaviour {
     public RiverSprite riverSprite;
 
     [Tooltip("Region to which this tile belongs")]
-    public int region = -1;
+    public Region region;
+
+    public Region PrevRegion { get; set; }
 
     public static List<SC_EditorTile>[] regions;
 
@@ -40,6 +42,8 @@ public class SC_EditorTile : MonoBehaviour {
 
     public bool IsChanging { get { return tileType == TileType.Changing; } }
 
+    static SC_MapEditorScript map;
+
     public static SC_EditorTile GetHeroTile (HeroType h) {
 
         SC_EditorTile tile = null;
@@ -55,6 +59,12 @@ public class SC_EditorTile : MonoBehaviour {
     public enum TileType {
 
         Plain, Forest, Mountain, Palace, River, Changing
+
+    }
+
+    public enum Region {
+
+        None, Zhao, Wei, Chu, Qi, Yan, Han
 
     }
 
@@ -106,16 +116,46 @@ public class SC_EditorTile : MonoBehaviour {
 
     public static void ChangeTileRegion(SC_EditorTile tile) {
 
-        if (regions[tile.region].Count == 0)
-            regions[tile.region].Add(tile);
-        else {
+        if (!map)
+            map = FindObjectOfType<SC_MapEditorScript>();
 
-            bool canAdd = false;
+        if (regions == null)
+            map.SetupMap();
 
-            /*foreach(SC_EditorTile eT in regions[tile.region])
-                if(SC_Tile_Manager.GetTilesAtDistance(regions))*/
+        bool changed = true;      
+
+        int r = (int)tile.region - 1;
+
+        if (r != -1) {
+
+            if (regions[r].Count == 0)
+                regions[r].Add(tile);
+            else {
+
+                bool canAdd = false;
+
+                foreach (SC_EditorTile eTile in regions[r])
+                    if (SC_Tile_Manager.TileDistance(tile.transform.position, eTile.transform.position) <= 1)
+                        canAdd = true;
+
+                if (canAdd)
+                    regions[r].Add(tile);
+                else
+                    changed = false;
+
+            }
 
         }
+
+        if(changed) {
+
+            if (tile.PrevRegion != Region.None)
+                regions[(int)tile.PrevRegion - 1].Remove(tile);
+
+            tile.PrevRegion = tile.region;
+
+        } else
+            tile.region = tile.PrevRegion;        
 
     }
 

@@ -14,16 +14,22 @@ public class SC_MapEditorScript : MonoBehaviour {
     [Tooltip("Size of a tile")]
     public float TileSize = .96f;
 
-    public void GenerateMap() {
+    public void GenerateMap() {              
+
+        for (int x = 0; x < SizeMapX; x++)
+            for (int y = 0; y < SizeMapY; y++)
+                Instantiate(Resources.Load<GameObject>("Prefabs/Tiles/P_EditorTile"), new Vector3(x * TileSize, y * TileSize, 0), Quaternion.identity, transform);
+
+        SetupMap();
+
+    }
+
+    public void SetupMap() {
 
         regions = new List<SC_EditorTile>[6];
 
         for (int i = 0; i < regions.Length; i++)
-            regions[i] = new List<SC_EditorTile>();        
-
-        for (int x = 0; x < SizeMapX; x++)
-            for (int y = 0; y < SizeMapY; y++)
-                Instantiate(Resources.Load<GameObject>("Prefabs/Tiles/P_EditorTile"), new Vector3(x, y, 0), Quaternion.identity, transform);
+            regions[i] = new List<SC_EditorTile>();
 
     }
 

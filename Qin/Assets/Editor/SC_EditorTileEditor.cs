@@ -21,6 +21,9 @@ public class SC_EditorTileEditor : Editor {
 
             tile.SetSprite(0, tile.construction == ConstructionType.None ? "" : ("Sprites/" + (tile.construction == ConstructionType.Ruin ? "Ruin" : "Constructions/" + tile.construction)));
 
+            if (tile.PrevRegion != tile.region)
+                ChangeTileRegion(tile);
+
             if (tile.Hero != HeroType.None) {
 
                 SC_EditorTile t = GetHeroTile(tile.Hero);

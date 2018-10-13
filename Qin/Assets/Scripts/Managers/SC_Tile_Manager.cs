@@ -81,7 +81,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         foreach(T tile in array) {
 
-            if (TileDistance<T>(center, tile) == distance)
+            if (TileDistance(center, tile) == distance)
                 returnValue.Add(tile);
 
         }
