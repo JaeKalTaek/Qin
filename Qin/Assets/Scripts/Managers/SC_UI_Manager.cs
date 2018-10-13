@@ -704,9 +704,9 @@ public class SC_UI_Manager : MonoBehaviour {
     #region Menu Position
     
     //Move the menu next to the tile
-    public void MenuPos()
+    public void MenuPos(GameObject menu)
     {
-        RectTransform Rect = characterActionsPanel.GetComponent<RectTransform>();
+        RectTransform Rect = menu.GetComponent<RectTransform>();
 
         //Get the viewport position of the tile
         currentTile = TileManager.GetTileAt(SC_Cursor.Instance.gameObject);
@@ -716,7 +716,7 @@ public class SC_UI_Manager : MonoBehaviour {
         //If tile on the right side of the screen, offset the menu on the left
         int offset = currentTileViewportPos.x < 0.5 ? 1 : -1;
 
-        Rect.anchorMin = new Vector3(currentTileViewportPos.x + (offset * (0.1f + 0.1f*(1/Camera.main.orthographicSize))), currentTileViewportPos.y, currentTileViewportPos.z);
+        Rect.anchorMin = new Vector3(currentTileViewportPos.x + (offset * (0.1f + (0.05f*(1/(Mathf.Pow(Camera.main.orthographicSize, Camera.main.orthographicSize/4)))))), currentTileViewportPos.y, currentTileViewportPos.z);
         Rect.anchorMax = Rect.anchorMin;
     }
 
