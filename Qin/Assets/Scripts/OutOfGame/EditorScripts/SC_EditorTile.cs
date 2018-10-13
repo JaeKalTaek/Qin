@@ -10,6 +10,9 @@ public class SC_EditorTile : MonoBehaviour {
     [Tooltip("Sprite of the river on this tile")]
     public RiverSprite riverSprite;
 
+    [Tooltip("Region to which this tile belongs")]
+    public int region = -1;
+
     [Header("Construction on this tile")]
     [Tooltip("Type of construction on this tile")]
     public ConstructionType construction;    
