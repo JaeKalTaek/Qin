@@ -56,9 +56,11 @@ public class SC_Player : NetworkBehaviour {
     [ClientRpc]
     void RpcFinishLoading() {
 
+        localPlayer.Busy = true;
+
         Instantiate(Resources.Load<GameObject>("Prefabs/P_Cursor"));
 
-        localPlayer.uiManager.loadingPanel.SetActive(false);
+        localPlayer.uiManager.connectingPanel.SetActive(false);
 
     }
     #endregion

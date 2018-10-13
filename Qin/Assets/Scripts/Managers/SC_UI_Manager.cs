@@ -10,7 +10,8 @@ public class SC_UI_Manager : MonoBehaviour {
     #region UI Elements
     [Header("Game")]
 	public GameObject loadingPanel;
-	public Text turnIndicator;
+    public GameObject connectingPanel;
+    public Text turnIndicator;
 	public GameObject previewFightPanel;
 	public GameObject endTurn;
 	public GameObject victoryPanel;

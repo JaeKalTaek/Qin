@@ -121,7 +121,9 @@ public class SC_Tile : NetworkBehaviour {
         cost = t.cost;
         combatModifers = t.combatModifers;
 
-        GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Tiles/" + tileType + "/" + (tileType == "River" ? (SC_EditorTile.RiverSprite)riverSprite + "" : tileSprite + ""));
+        string s = tileType == "Changing" ? "Changing" : tileType + "/" + (tileType == "River" ? (SC_EditorTile.RiverSprite)riverSprite + "" : tileSprite + "");
+
+        GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Tiles/" + s);
 
     }
 

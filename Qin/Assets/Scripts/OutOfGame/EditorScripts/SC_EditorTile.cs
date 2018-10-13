@@ -31,6 +31,10 @@ public class SC_EditorTile : MonoBehaviour {
 
     public static List<HeroTile> heroesOnTiles = new List<HeroTile>();
 
+    public bool IsRiver { get { return tileType == TileType.River; } }
+
+    public bool IsChanging { get { return tileType == TileType.Changing; } }
+
     public static SC_EditorTile GetHeroTile (HeroType h) {
 
         SC_EditorTile tile = null;
@@ -45,7 +49,7 @@ public class SC_EditorTile : MonoBehaviour {
 
     public enum TileType {
 
-        Plain, Forest, Mountain, Palace, River
+        Plain, Forest, Mountain, Palace, River, Changing
 
     }
 
