@@ -34,6 +34,9 @@ public class SC_Game_Manager : NetworkBehaviour {
     #region Setup
     private void Awake () {
 
+        if (!Instance)
+            Instance = this;
+
         SC_Village.number = 0;
 
     }
@@ -61,10 +64,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 			GenerateMap ();
 			SetupTileManager ();
 
-		}
-
-		if (!Instance)
-			Instance = this;
+		}		
 
         uiManager = SC_UI_Manager.Instance;
 		uiManager.SetupUI (FindObjectOfType<SC_Network_Manager>().IsQinHost() == isServer);
