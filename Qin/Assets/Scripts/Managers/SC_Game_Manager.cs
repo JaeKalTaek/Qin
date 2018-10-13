@@ -77,15 +77,13 @@ public class SC_Game_Manager : NetworkBehaviour {
 
             SC_EditorTile eTile = child.GetComponent<SC_EditorTile>();
 
-            GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/Tiles/P_" + eTile.tileType), child.position * TileSize, Quaternion.identity, GameObject.Find("Tiles").transform);
+            GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/Tiles/P_BaseTile"), child.position * TileSize, Quaternion.identity, GameObject.Find("Tiles").transform);
 
             SC_Tile tile = go.GetComponent<SC_Tile>();
 
             tile.tileType = eTile.tileType.ToString();
 
             tile.tileSprite = Random.Range(0, Resources.LoadAll<Sprite>("Sprites/Tiles/" + eTile.tileType).Length);
-
-            tile.river = eTile.tileType == TileType.River;
 
             tile.riverSprite = (int)eTile.riverSprite;            
 
@@ -141,13 +139,14 @@ public class SC_Game_Manager : NetworkBehaviour {
 
             if ((eTile.soldier != SoldierType.None) || eTile.Qin || (eTile.Hero != HeroType.None)) {
 
-                string path = "Prefabs/Characters/" + (eTile.soldier != SoldierType.None ? "Soldiers/P_" + eTile.soldier : (eTile.Qin ? "P_Qin" : "Heroes/P_" + eTile.Hero));
+                string path = "Prefabs/Characters/" + (eTile.soldier != SoldierType.None ? "Soldiers/P_BaseSoldier" : (eTile.Qin ? "P_Qin" : "Heroes/P_BaseHero"));
 
-                GameObject go = Instantiate(Resources.Load<GameObject>(path));
+                Transform parent = eTile.soldier != SoldierType.None ? GameObject.Find("Soldiers").transform : (eTile.Qin ? null : GameObject.Find("Heroes").transform);
 
-                go.transform.SetPos(eTile.transform.position * TileSize);
+                GameObject go = Instantiate(Resources.Load<GameObject>(path), eTile.transform.position * TileSize + new Vector3(0, 0, -.53f), Quaternion.identity, parent);
 
-                go.transform.parent = eTile.soldier != SoldierType.None ? GameObject.Find("Soldiers").transform : (eTile.Qin ? null : GameObject.Find("Heroes").transform);
+                if(!eTile.Qin)
+                    go.GetComponent<SC_Character>().characterPath = "Prefabs/Characters/" + (eTile.soldier != SoldierType.None ? "Soldiers/P_" + eTile.soldier : (eTile.Qin ? "P_Qin" : "Heroes/P_" + eTile.Hero));
 
                 NetworkServer.Spawn(go);
 

@@ -32,7 +32,19 @@ public class SC_Hero : SC_Character {
 
     public int PumpSlow { get; set; }
 
-	protected override void Start() {
+    public override void OnStartClient () {
+
+        base.OnStartClient();
+
+        weapon1 = loadedCharacter.Hero.weapon1;
+
+        weapon2 = loadedCharacter.Hero.weapon2;
+
+        berserkColor = loadedCharacter.Hero.berserkColor;
+
+    }
+
+    protected override void Start() {
 
 		base.Start();
 

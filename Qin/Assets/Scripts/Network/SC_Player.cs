@@ -47,9 +47,7 @@ public class SC_Player : NetworkBehaviour {
 
     #region Loading
     [Command]
-    public void CmdFinishLoading() {
-
-        NetworkServer.Spawn(Instantiate(Resources.Load<GameObject>("Prefabs/P_Cursor")));
+    public void CmdFinishLoading() {        
 
         RpcFinishLoading();
 
@@ -57,6 +55,8 @@ public class SC_Player : NetworkBehaviour {
 
     [ClientRpc]
     void RpcFinishLoading() {
+
+        Instantiate(Resources.Load<GameObject>("Prefabs/P_Cursor"));
 
         localPlayer.uiManager.loadingPanel.SetActive(false);
 

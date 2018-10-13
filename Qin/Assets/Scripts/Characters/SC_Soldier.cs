@@ -17,6 +17,18 @@ public class SC_Soldier : SC_Character {
 
     public bool Builder { get { return characterName == "Builder"; } }
 
+    public override void OnStartClient () {
+
+        base.OnStartClient();
+
+        weapon = loadedCharacter.Soldier.weapon;
+
+        cost = loadedCharacter.Soldier.cost;
+
+        sacrificeValue = loadedCharacter.Soldier.sacrificeValue;
+
+    }
+
     protected override void Start () {
 
         base.Start();

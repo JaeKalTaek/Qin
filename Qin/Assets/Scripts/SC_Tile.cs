@@ -26,10 +26,6 @@ public class SC_Tile : NetworkBehaviour {
 
     [HideInInspector]
     [SyncVar]
-    public bool river;
-
-    [HideInInspector]
-    [SyncVar]
     public int riverSprite;
 
     public bool CanCharacterGoThrough (SC_Character c) {
@@ -120,7 +116,12 @@ public class SC_Tile : NetworkBehaviour {
 
         base.OnStartClient();
 
-        GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Tiles/" + (river ? ("River/" + (SC_EditorTile.RiverSprite)riverSprite) : (tileType + "/" + tileSprite)));
+        SC_Tile t = Resources.Load<SC_Tile>("Prefabs/Tiles/P_" + tileType);
+
+        cost = t.cost;
+        combatModifers = t.combatModifers;
+
+        GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Tiles/" + tileType + "/" + (tileType == "River" ? (SC_EditorTile.RiverSprite)riverSprite + "" : tileSprite + ""));
 
     }
 

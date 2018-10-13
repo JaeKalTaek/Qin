@@ -85,6 +85,12 @@ public class SC_Character : NetworkBehaviour {
 
     public SC_Tile Tile { get { return tileManager.GetTileAt(gameObject); } }
 
+    [HideInInspector]
+    [SyncVar]
+    public string characterPath;
+
+    protected SC_Character loadedCharacter;
+
     protected virtual void Awake() {
 
         if (!gameManager)
@@ -94,11 +100,41 @@ public class SC_Character : NetworkBehaviour {
 
 		BaseColor = GetComponent<SpriteRenderer> ().color;
 
-        CanMove = Qin == gameManager.Qin;
+        CanMove = Qin == gameManager.Qin;        
 
     }
 
-	protected virtual void Start() {        
+    public override void OnStartClient () {
+
+        loadedCharacter = Resources.Load<SC_Character>(characterPath);
+
+        characterName = loadedCharacter.characterName;
+
+        baseMovement = loadedCharacter.baseMovement;
+
+        moveDuration = loadedCharacter.moveDuration;
+
+        maxHealth = loadedCharacter.maxHealth;
+
+        strength = loadedCharacter.strength;
+
+        armor = loadedCharacter.armor;
+
+        qi = loadedCharacter.qi;
+
+        resistance = loadedCharacter.resistance;
+
+        technique = loadedCharacter.technique;
+
+        reflexes = loadedCharacter.reflexes;
+
+        tiredColor = loadedCharacter.tiredColor;
+
+        GetComponent<SpriteRenderer>().sprite = loadedCharacter.GetComponent<SpriteRenderer>().sprite;
+
+    }
+
+    protected virtual void Start() {
 
         if(!tileManager)
             tileManager = SC_Tile_Manager.Instance;
