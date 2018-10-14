@@ -28,9 +28,7 @@ public static class SC_ExtensionMethods {
 
     public static int I (this float f) {
 
-        float s = GameObject.FindObjectOfType<SC_MapEditorScript>()?.TileSize ?? SC_Game_Manager.TileSize;
-
-        return Mathf.RoundToInt(f / s);
+        return Mathf.RoundToInt(f / .96f);
 
     }
 
