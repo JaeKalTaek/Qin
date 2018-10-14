@@ -40,8 +40,8 @@ MonoBehaviour:
     y: 0
     width: 289
     height: 932
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 277, y: 71}
+  m_MaxSize: {x: 4002, y: 4021}
   m_ActualView: {fileID: 14}
   m_Panes:
   - {fileID: 14}
@@ -65,8 +65,8 @@ MonoBehaviour:
     y: 0
     width: 662
     height: 271
-  m_MinSize: {x: 104, y: 121}
-  m_MaxSize: {x: 4004, y: 4021}
+  m_MinSize: {x: 100, y: 100}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 20}
   m_Panes:
   - {fileID: 20}
@@ -92,10 +92,10 @@ MonoBehaviour:
     y: 661
     width: 969
     height: 271
-  m_MinSize: {x: 336, y: 271}
-  m_MaxSize: {x: 14006, y: 10021}
+  m_MinSize: {x: 332, y: 271}
+  m_MaxSize: {x: 14002, y: 10021}
   vertical: 0
-  controlID: 116
+  controlID: 48
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -116,8 +116,8 @@ MonoBehaviour:
     y: 30
     width: 1258
     height: 932
-  m_MinSize: {x: 679, y: 492}
-  m_MaxSize: {x: 18006, y: 14042}
+  m_MinSize: {x: 681, y: 492}
+  m_MaxSize: {x: 18004, y: 14042}
   vertical: 0
   controlID: 9
 --- !u!114 &6
@@ -191,7 +191,7 @@ MonoBehaviour:
     y: 0
     width: 1258
     height: 982
-  m_MinSize: {x: 950, y: 300}
+  m_MinSize: {x: 950, y: 542}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &9
 MonoBehaviour:
@@ -255,7 +255,7 @@ MonoBehaviour:
     width: 969
     height: 932
   m_MinSize: {x: 404, y: 492}
-  m_MaxSize: {x: 14006, y: 14042}
+  m_MaxSize: {x: 14002, y: 14042}
   vertical: 1
   controlID: 10
 --- !u!114 &12
@@ -405,20 +405,20 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Resources/Prefabs/Characters
+    - Assets/Scripts/OutOfGame
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Resources/Prefabs/Characters
+  - Assets/Scripts/OutOfGame
   m_LastFoldersGridSize: 16
   m_LastProjectPath: C:\Users\Ben\Documents\Qin\Qin
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 187}
-    m_SelectedIDs: 76360000
-    m_LastClickedID: 13942
-    m_ExpandedIDs: 00000000642d0000142e0000443600004c39000000ca9a3b
+    scrollPos: {x: 0, y: 87}
+    m_SelectedIDs: 80dc0000
+    m_LastClickedID: 56448
+    m_ExpandedIDs: 0000000008d7000098db000080dc000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -446,7 +446,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000642d0000142e0000443600004c390000
+    m_ExpandedIDs: 0000000008d700009ed7000080dc000034df0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -530,7 +530,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 3650fbffbc50fbff5452fbff5852fbff8abdfbff0abefbffa2bffbffa6bffbffecc4fbff6cc5fbff04c7fbff08c7fbff881bfcff081cfcffa01dfcffa41dfcff1c73fcff9c73fcff2675fcff2a75fcffcc76fcff4e83fcff92d7fcff12d8fcff9cd9fcffa0d9fcffcadafcff6e62fdff607bfdff967cfdffdac2fdff20c6fdfff6cbfdff041afeff841afeff0e1cfeff121cfeff5e1dfeffd220feffd074feff5075feffda76feffde76fefffe77feff9217ffff4668ffffc668ffff506affff546affff9e6bffff5e7cffff2ca5ffff26a6ffff86a8ffff00f9ffff18fbffff00000000a0d90000f0360100243701009e420100
+    m_ExpandedIDs: a00ffeff2a10feffc211feffc611feff4c23feff00000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 

@@ -55,6 +55,10 @@ public class SC_Cursor : NetworkBehaviour {
         #region Cursor Movement
         inputsMoveTimer -= Time.deltaTime;
 
+        oldMousePos = newMousePos;
+
+        newMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
         if ((Vector3.Distance(oldMousePos, newMousePos) >= mouseThreshold) && !cameraMoved)
              Cursor.visible = true;
 
@@ -64,11 +68,7 @@ public class SC_Cursor : NetworkBehaviour {
 
             Vector3 oldPos = transform.position;
 
-            Vector3 newPos = -Vector3.one;
-
-            oldMousePos = newMousePos;
-
-            newMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector3 newPos = -Vector3.one;            
 
             if ((Input.GetButton("Horizontal") || Input.GetButton("Vertical")) && (inputsMoveTimer <= 0)) {
 
