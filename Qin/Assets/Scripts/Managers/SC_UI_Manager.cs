@@ -650,7 +650,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         g.GetComponent<Image>().color = r ? readyColor : notReadyColor;
 
-        g.GetComponentInChildren<Text>().text = r ? "Ready" : "Not Ready";
+        g.GetComponentInChildren<Text>().text = ((g == readyButton) ? "" : "Other Player ") + (r ? "Ready" : "Not Ready");
 
     }
 
