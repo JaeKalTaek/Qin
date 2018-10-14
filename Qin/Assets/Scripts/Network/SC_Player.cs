@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
-using static SC_Global;
 
 public class SC_Player : NetworkBehaviour {
 

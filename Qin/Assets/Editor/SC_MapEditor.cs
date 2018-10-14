@@ -16,7 +16,7 @@ public class SC_MapEditor : Editor {
 
         generated = map.transform.childCount > 0;
 
-        if (GameObject.Find(target.name)) {
+        if (GameObject.Find(target.name)) {            
 
             if (!generated && GUILayout.Button("Generate map")) {
 
@@ -36,21 +36,20 @@ public class SC_MapEditor : Editor {
 
                 if (regions != null) {
 
-                    bool regionMissing = false;
-
                     int tilesInRegion = 0;
+
+                    int nbr = 0;
 
                     foreach (List<SC_EditorTile> region in regions) {
 
                         if (region.Count < 1)
-                            regionMissing = true;
+                            EditorGUILayout.HelpBox(((Region)nbr) + " region doesn't have a tile", MessageType.Warning);
+
+                        nbr++;
 
                         tilesInRegion += region.Count;
 
                     }
-
-                    if (regionMissing)
-                        EditorGUILayout.HelpBox("At least one region doesn't have a tile", MessageType.Warning);
 
                     if (tilesInRegion < map.SizeMapX * map.SizeMapY)
                         EditorGUILayout.HelpBox("At least one tile has no region", MessageType.Warning);

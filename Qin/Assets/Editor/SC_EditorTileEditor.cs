@@ -5,132 +5,136 @@ using static SC_EditorTile;
 [CustomEditor(typeof(SC_EditorTile)), CanEditMultipleObjects]
 public class SC_EditorTileEditor : Editor {
 
-    public override void OnInspectorGUI() {
+    public override void OnInspectorGUI () {
 
         DrawDefaultInspector();
 
-        Object[] tiles = targets;
+        if (GameObject.Find(target.name)) {
 
-        foreach (Object o in tiles) {
+            Object[] tiles = targets;
 
-            SC_EditorTile tile = o as SC_EditorTile;
+            foreach (Object o in tiles) {
 
-            string s = (tile.IsChanging ? "Changing" : (tile.IsRiver ? "River/" + tile.riverSprite : tile.tileType + "/0"));
+                SC_EditorTile tile = o as SC_EditorTile;
 
-            tile.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Tiles/" + s);
+                string s = (tile.IsChanging ? "Changing" : (tile.IsRiver ? "River/" + tile.riverSprite : tile.tileType + "/0"));
 
-            tile.SetSprite(0, tile.construction == ConstructionType.None ? "" : ("Sprites/" + (tile.construction == ConstructionType.Ruin ? "Ruin" : "Constructions/" + tile.construction)));
+                tile.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Tiles/" + s);
 
-            if (tile.PrevRegion != tile.region)
-                ChangeTileRegion(tile);
+                tile.SetSprite(0, tile.construction == ConstructionType.None ? "" : ("Sprites/" + (tile.construction == ConstructionType.Ruin ? "Ruin" : "Constructions/" + tile.construction)));
 
-            if (tile.Hero != HeroType.None) {
+                if (tile.PrevRegion != tile.region)
+                    ChangeTileRegion(tile);
 
-                SC_EditorTile t = GetHeroTile(tile.Hero);
+                if (tile.Hero != HeroType.None) {
 
-                if (t && (t != tile)) {
+                    SC_EditorTile t = GetHeroTile(tile.Hero);
 
-                    t.Hero = HeroType.None;
-                    t.PrevHero = HeroType.None;
+                    if (t && (t != tile)) {
 
-                    t.SetSprite(1, "");
+                        t.Hero = HeroType.None;
+                        t.PrevHero = HeroType.None;
 
-                    heroesOnTiles.Remove(new HeroTile(tile.Hero, t));
+                        t.SetSprite(1, "");
 
-                }
+                        heroesOnTiles.Remove(new HeroTile(tile.Hero, t));
 
-                if (tile.PrevHero == HeroType.None) {
+                    }
 
-                    tile.soldier = SoldierType.None;
-                    tile.PrevSoldier = SoldierType.None;
+                    if (tile.PrevHero == HeroType.None) {
 
-                    tile.Qin = false;
-                    tile.PrevQin = false;
+                        tile.soldier = SoldierType.None;
+                        tile.PrevSoldier = SoldierType.None;
 
-                    heroesOnTiles.Add(new HeroTile(tile.Hero, tile));
+                        tile.Qin = false;
+                        tile.PrevQin = false;
 
-                } else if (tile.PrevHero != tile.Hero) {                   
+                        heroesOnTiles.Add(new HeroTile(tile.Hero, tile));
+
+                    } else if (tile.PrevHero != tile.Hero) {
+
+                        heroesOnTiles.Remove(new HeroTile(tile.PrevHero, tile));
+
+                        heroesOnTiles.Add(new HeroTile(tile.Hero, tile));
+
+                    }
+
+                    tile.PrevHero = tile.Hero;
+
+                    tile.SetSprite(1, "Sprites/Characters/Heroes/" + tile.Hero);
+
+                } else if (tile.PrevHero != HeroType.None) {
 
                     heroesOnTiles.Remove(new HeroTile(tile.PrevHero, tile));
 
-                    heroesOnTiles.Add(new HeroTile(tile.Hero, tile));
-
-                }                        
-
-                tile.PrevHero = tile.Hero;
-
-                tile.SetSprite (1, "Sprites/Characters/Heroes/" + tile.Hero);
-
-            } else if (tile.PrevHero != HeroType.None) {
-
-                heroesOnTiles.Remove(new HeroTile(tile.PrevHero, tile));
-
-                tile.PrevHero = HeroType.None;
-
-            }
-
-            if (tile.soldier != SoldierType.None) {
-
-                if (tile.PrevSoldier == SoldierType.None) {
-
-                    if (tile.Hero != HeroType.None)
-                        heroesOnTiles.Remove(new HeroTile(tile.Hero, tile));
-
-                    tile.Hero = HeroType.None;
                     tile.PrevHero = HeroType.None;
 
-                    tile.Qin = false;
+                }
+
+                if (tile.soldier != SoldierType.None) {
+
+                    if (tile.PrevSoldier == SoldierType.None) {
+
+                        if (tile.Hero != HeroType.None)
+                            heroesOnTiles.Remove(new HeroTile(tile.Hero, tile));
+
+                        tile.Hero = HeroType.None;
+                        tile.PrevHero = HeroType.None;
+
+                        tile.Qin = false;
+                        tile.PrevQin = false;
+
+                    }
+
+                    tile.PrevSoldier = tile.soldier;
+
+                    tile.SetSprite(1, "Sprites/Characters/Soldiers/" + tile.soldier);
+
+                }
+
+                if (tile.Qin) {
+
+                    if (currentQinTile && (currentQinTile != tile)) {
+
+                        currentQinTile.Qin = false;
+                        currentQinTile.SetSprite(2, "");
+
+                    }
+
+                    if (!tile.PrevQin) {
+
+                        tile.soldier = SoldierType.None;
+                        tile.PrevSoldier = SoldierType.None;
+
+                        if (tile.Hero != HeroType.None)
+                            heroesOnTiles.Remove(new HeroTile(tile.Hero, tile));
+
+                        tile.Hero = HeroType.None;
+                        tile.PrevHero = HeroType.None;
+
+                    }
+
+                    tile.PrevQin = true;
+
+                    tile.SetSprite(1, "Sprites/Characters/Qin");
+
+                    currentQinTile = tile;
+
+                } else if (tile.PrevQin) {
+
                     tile.PrevQin = false;
 
+                    currentQinTile = null;
+
                 }
 
-                tile.PrevSoldier = tile.soldier;
-
-                tile.SetSprite (1, "Sprites/Characters/Soldiers/" + tile.soldier);
+                if ((tile.Hero == HeroType.None) && (tile.soldier == SoldierType.None) && !tile.Qin)
+                    tile.SetSprite(1, "");
 
             }
-
-            if (tile.Qin) {
-
-                if (currentQinTile && (currentQinTile != tile)) {
-
-                    currentQinTile.Qin = false;
-                    currentQinTile.SetSprite (2, "");
-
-                }
-
-                if (!tile.PrevQin) {
-
-                    tile.soldier = SoldierType.None;
-                    tile.PrevSoldier = SoldierType.None;
-
-                    if (tile.Hero != HeroType.None)
-                        heroesOnTiles.Remove(new HeroTile(tile.Hero, tile));
-
-                    tile.Hero = HeroType.None;
-                    tile.PrevHero = HeroType.None;
-
-                }
-
-                tile.PrevQin = true;
-
-                tile.SetSprite (1, "Sprites/Characters/Qin");
-
-                currentQinTile = tile;
-
-            } else if (tile.PrevQin) {
-
-                tile.PrevQin = false;
-
-                currentQinTile = null;
-
-            }
-
-            if ((tile.Hero == HeroType.None) && (tile.soldier == SoldierType.None) && !tile.Qin)
-                tile.SetSprite(1, "");
 
         }
 
-    }    
+    }
 
 }

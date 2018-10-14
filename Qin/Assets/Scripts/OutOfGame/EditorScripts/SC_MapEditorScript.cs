@@ -14,6 +14,8 @@ public class SC_MapEditorScript : MonoBehaviour {
     [Tooltip("Size of a tile")]
     public float TileSize = .96f;
 
+    public SC_EditorTile[] Tiles { get; set; }
+
     public void GenerateMap() {              
 
         for (int x = 0; x < SizeMapX; x++)
@@ -30,6 +32,8 @@ public class SC_MapEditorScript : MonoBehaviour {
 
         for (int i = 0; i < regions.Length; i++)
             regions[i] = new List<SC_EditorTile>();
+
+        Tiles = FindObjectsOfType<SC_EditorTile>();
 
     }
 

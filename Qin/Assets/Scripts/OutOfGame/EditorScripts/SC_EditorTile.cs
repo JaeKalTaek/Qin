@@ -11,7 +11,7 @@ public class SC_EditorTile : MonoBehaviour {
     public RiverSprite riverSprite;
 
     [Tooltip("Region to which this tile belongs")]
-    public Region region;
+    public Region region = Region.None;
 
     public Region PrevRegion { get; set; }
 
@@ -64,7 +64,7 @@ public class SC_EditorTile : MonoBehaviour {
 
     public enum Region {
 
-        None, Zhao, Wei, Chu, Qi, Yan, Han
+        None = -1, Zhao, Wei, Chu, Qi, Yan, Han
 
     }
 
@@ -124,7 +124,7 @@ public class SC_EditorTile : MonoBehaviour {
 
         bool changed = true;      
 
-        int r = (int)tile.region - 1;
+        int r = (int)tile.region;
 
         if (r != -1) {
 
@@ -150,12 +150,48 @@ public class SC_EditorTile : MonoBehaviour {
         if(changed) {
 
             if (tile.PrevRegion != Region.None)
-                regions[(int)tile.PrevRegion - 1].Remove(tile);
+                regions[(int)tile.PrevRegion].Remove(tile);
+
+            tile.UpdateBorders();
+
+            foreach (SC_EditorTile eTile in SC_Tile_Manager.GetTilesAtDistance(map.Tiles, tile, 1))
+                eTile.UpdateBorders();
 
             tile.PrevRegion = tile.region;
 
         } else
             tile.region = tile.PrevRegion;        
+
+    }
+
+    Transform Borders { get { return transform.GetChild(2); } }
+
+    public void UpdateBorders() {
+
+        Borders.gameObject.SetActive(region != Region.None);
+
+        if (region != Region.None) {
+
+            foreach (SC_EditorTile eTile in SC_Tile_Manager.GetTilesAtDistance(map.Tiles, this, 1)) {
+
+                if (eTile.transform.position.y > transform.position.y)
+                    SetBorderSprite(0, eTile);
+                else if (eTile.transform.position.x < transform.position.x)
+                    SetBorderSprite(1, eTile);
+                else if (eTile.transform.position.x > transform.position.x)
+                    SetBorderSprite(2, eTile);
+                else
+                    SetBorderSprite(3, eTile);
+
+            }
+
+        }
+
+    }
+
+    void SetBorderSprite(int i, SC_EditorTile eTile) {
+
+        Borders.GetChild(i).GetComponent<SpriteRenderer>().sprite = eTile.region == region ? null : Resources.Load<Sprite>("Sprites/RegionBorders/" + region);
 
     }
 
