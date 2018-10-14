@@ -147,7 +147,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
                 GameObject constructionPrefab = TryLoadConstruction() ?? TryLoadConstruction("Production/") ?? TryLoadConstruction("Special/");
 
-                NetworkServer.Spawn (Instantiate(constructionPrefab, eTile.transform.position + new Vector3(0, 0, -.52f), Quaternion.identity, GameObject.Find(eTile.construction + "s").transform));
+                NetworkServer.Spawn (Instantiate(constructionPrefab, eTile.transform.position + new Vector3(0, 0, -.51f), Quaternion.identity, GameObject.Find(eTile.construction + "s").transform));
 
 			}
 
@@ -369,7 +369,7 @@ public class SC_Game_Manager : NetworkBehaviour {
             if(!go)
                 go = Resources.Load<GameObject>("Prefabs/Constructions/Production/P_" + CurrentConstru);
 
-            go = Instantiate(go, tile.transform.position + new Vector3(0, 0, -.52f), Quaternion.identity);
+            go = Instantiate(go, tile.transform.position + new Vector3(0, 0, -.51f), Quaternion.identity);
 
             NetworkServer.Spawn(go);
 

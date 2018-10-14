@@ -486,7 +486,8 @@ public class SC_UI_Manager : MonoBehaviour {
 
             localPlayer.Busy = true;
 
-            SetButtonActivated(action, false);
+            if(action != "workshop")
+                SetButtonActivated(action, false);
 
             constructPanel.gameObject.SetActive(action == "construct");
 
