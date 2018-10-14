@@ -41,6 +41,17 @@ public class SC_Hero : SC_Character {
 
         berserkColor = loadedCharacter.Hero.berserkColor;
 
+        heroesAlive++;
+
+        if (heroesAlive == 5)
+            SetupHeroesRelationships();
+
+    }
+
+    /*protected override void Start () {
+
+        base.Start();
+
         Relationships = new Dictionary<string, int>();
         RelationshipKeys = new List<string>();
 
@@ -54,12 +65,34 @@ public class SC_Hero : SC_Character {
             }
 
         }
-
+    
         heroesAlive++;
+
+    }*/
+
+    public static void SetupHeroesRelationships() {
+
+        foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
+
+            hero.Relationships = new Dictionary<string, int>();
+            hero.RelationshipKeys = new List<string>();
+
+            foreach (SC_Hero hero2 in FindObjectsOfType<SC_Hero>()) {
+
+                if (hero != hero2) {
+
+                    hero.Relationships.Add(hero2.characterName, 0);
+                    hero.RelationshipKeys.Add(hero2.characterName);
+
+                }
+
+            }
+
+        }
 
     }
 
-	public override void TryCheckMovements () {
+    public override void TryCheckMovements () {
 
 		if (CanMove || (Berserk && !BerserkTurn))
             base.TryCheckMovements();
