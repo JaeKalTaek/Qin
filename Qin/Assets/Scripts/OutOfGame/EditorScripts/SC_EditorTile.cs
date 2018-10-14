@@ -119,7 +119,7 @@ public class SC_EditorTile : MonoBehaviour {
         if (!map)
             map = FindObjectOfType<SC_MapEditorScript>();
 
-        if (regions == null)
+        if (regions == null || map.Tiles == null)
             map.SetupMap();
 
         bool changed = true;      
