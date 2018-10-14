@@ -203,7 +203,7 @@ public class SC_Tile : NetworkBehaviour {
                 else if (Workshop && SC_Player.localPlayer.Qin)
                     Workshop.SelectWorkshop();
                 else
-                    uiManager.MenuPos(uiManager.playerActionsPanel);
+                    uiManager.menuManager.MenuPos(SC_Menu_Manager.MenuType.Player);
 
             }
 

@@ -63,6 +63,8 @@ public class SC_UI_Manager : MonoBehaviour {
 
     static SC_Fight_Manager fightManager;
 
+    public SC_Menu_Manager menuManager { get; set; }
+
     public static SC_UI_Manager Instance { get; set; }
 
     public static bool CanInteract { get {
@@ -96,6 +98,8 @@ public class SC_UI_Manager : MonoBehaviour {
         TileManager = SC_Tile_Manager.Instance;
 
         fightManager = SC_Fight_Manager.Instance;
+
+        menuManager = SC_Menu_Manager.Instance;
 
         soldiers = Resources.LoadAll<SC_Soldier>("Prefabs/Characters/Soldiers");
 
@@ -726,28 +730,5 @@ public class SC_UI_Manager : MonoBehaviour {
         GameObject.Find(id).GetComponent<Text>().text = text;
 
     }
-    #endregion
-
-    #region Menu Position
-    
-    //Move the menu next to the tile
-    public void MenuPos(GameObject menu) {
-
-        RectTransform Rect = menu.GetComponent<RectTransform>();
-
-        //Get the viewport position of the tile
-        Vector3 currentTileViewportPos = Camera.main.WorldToViewportPoint(TileManager.GetTileAt(SC_Cursor.Instance.gameObject).transform.position);
-
-        //If tile on the left side of the screen, offset the menu on the right
-        //If tile on the right side of the screen, offset the menu on the left
-        int offset = currentTileViewportPos.x < 0.5 ? 1 : -1;
-
-        Rect.anchorMin = new Vector3(currentTileViewportPos.x + (offset * (0.1f + (0.05f*(1/(Mathf.Pow(Camera.main.orthographicSize, Camera.main.orthographicSize/4)))))), currentTileViewportPos.y, currentTileViewportPos.z);
-        Rect.anchorMax = Rect.anchorMin;
-
-        menu.SetActive(true);
-
-    }
-
     #endregion
 }
