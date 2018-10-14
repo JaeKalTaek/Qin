@@ -79,19 +79,17 @@ public class SC_Game_Manager : NetworkBehaviour {
 
             GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/Tiles/P_BaseTile"), child.position, Quaternion.identity, GameObject.Find("Tiles").transform);
 
-            SC_Tile tile = go.GetComponent<SC_Tile>();
+            bool[] borders = new bool[4];
 
-            /*tile.tileType = eTile.tileType.ToString();
+            for (int i = 0; i < eTile.transform.GetChild(2).childCount; i++)
+                borders[i] = eTile.transform.GetChild(2).GetChild(i).GetComponent<SpriteRenderer>().sprite;
 
-            if(eTile.tileType != TileType.Changing)
-                tile.tileSprite = Random.Range(0, Resources.LoadAll<Sprite>("Sprites/Tiles/" + eTile.tileType).Length);
-
-            tile.riverSprite = (int)eTile.riverSprite;   */
-
-            tile.infos = new SC_Tile.TileInfos(
+            go.GetComponent<SC_Tile>().infos = new SC_Tile.TileInfos(
                 eTile.tileType.ToString(),
                 Random.Range(0, Resources.LoadAll<Sprite>("Sprites/Tiles/" + eTile.tileType).Length),
-                (int)eTile.riverSprite
+                (int)eTile.riverSprite,
+                (int)eTile.region,
+                borders
             );
 
             NetworkServer.Spawn(go);
@@ -121,6 +119,14 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 	}
 
+    SC_EditorTile currentETile;
+
+    GameObject TryLoadConstruction(string p = "") {
+
+        return Resources.Load<GameObject>("Prefabs/Constructions/" + p + "P_" + currentETile.construction);
+
+    }
+
 	void GenerateElements() {
 
 		foreach (Transform child in baseMapPrefab.transform) {
@@ -129,18 +135,11 @@ public class SC_Game_Manager : NetworkBehaviour {
 
             if (eTile.construction != ConstructionType.None) {
 
-                GameObject constructionPrefab;
+                currentETile = eTile;
 
-                constructionPrefab = Resources.Load<GameObject>(eTile.construction == ConstructionType.Ruin ? "Prefabs/P_Ruin" : "Prefabs/Constructions/P_" + eTile.construction);
+                GameObject constructionPrefab = TryLoadConstruction() ?? TryLoadConstruction("Production/") ?? TryLoadConstruction("Special/");
 
-                if (!constructionPrefab)
-                    constructionPrefab = Resources.Load<GameObject>("Prefabs/Constructions/Production/P_" + eTile.construction);
-
-                GameObject go = Instantiate (constructionPrefab, eTile.transform.position + new Vector3(0, 0, -.52f), Quaternion.identity);
-
-                go.transform.parent = GameObject.Find(eTile.construction + "s").transform;
-
-                NetworkServer.Spawn (go);
+                NetworkServer.Spawn (Instantiate(constructionPrefab, eTile.transform.position + new Vector3(0, 0, -.52f), Quaternion.identity, GameObject.Find(eTile.construction + "s").transform));
 
 			}
 
@@ -306,7 +305,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         tileManager.RemoveAllFilters();
 
-        Player.CmdSetConstru(uiManager.soldiersConstructions[id].Name);
+        Player.CmdSetConstru(uiManager.SoldiersConstructions[id].Name);
 
         Player.CmdConstructAt(SC_Character.attackingCharacter.transform.position.x.I(), SC_Character.attackingCharacter.transform.position.y.I());
 

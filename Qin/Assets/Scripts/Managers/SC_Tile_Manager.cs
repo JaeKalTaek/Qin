@@ -11,6 +11,8 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 	public SC_Tile[,] tiles;
 
+    public List<SC_Tile>[] regions;
+
 	static SC_Game_Manager gameManager;
 
     static SC_UI_Manager uiManager;
@@ -55,8 +57,19 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         tiles = new SC_Tile[xSize, ySize];
 
-		foreach (SC_Tile t in FindObjectsOfType<SC_Tile>())
-			tiles [t.transform.position.x.I(), t.transform.position.y.I()] = t;
+        regions = new List<SC_Tile>[6];
+
+        for (int i = 0; i < regions.Length; i++)
+            regions[i] = new List<SC_Tile>();
+
+        foreach (SC_Tile t in FindObjectsOfType<SC_Tile>()) {
+
+            tiles[t.transform.position.x.I(), t.transform.position.y.I()] = t;
+
+            if(t.Region != -1)
+                regions[t.Region].Add(t);
+
+        }
 
 		gameManager.FinishSetup ();
 
@@ -429,7 +442,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         foreach (SC_Tile tile in GetTilesAtDistance(tiles, under, 1)) {
 
-            if (tile.Bastion) {
+            if (tile.GreatWall) {
 
                 if (tile.transform.position.x < under.transform.position.x)
                     left = true;

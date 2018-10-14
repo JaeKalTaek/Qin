@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using static SC_Global;
 
@@ -68,9 +67,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
     SC_Construction[] qinConstructions;
 
-    public SC_Construction[] soldiersConstructions { get; set; }
-
-    public SC_Tile currentTile;
+    public SC_Construction[] SoldiersConstructions { get; set; }
     #endregion
 
     #region Setup
@@ -109,7 +106,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         qinConstructions = Resources.LoadAll<SC_Construction>("Prefabs/Constructions");
 
-        soldiersConstructions = Resources.LoadAll<SC_Construction>("Prefabs/Constructions/Production");
+        SoldiersConstructions = Resources.LoadAll<SC_Construction>("Prefabs/Constructions/Production");
 
         SetupConstructPanel(true, constructPanel);
 
@@ -127,7 +124,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
     void SetupConstructPanel(bool qin, Transform panel) {
 
-        SC_Construction[] constructions = qin ? qinConstructions : soldiersConstructions;
+        SC_Construction[] constructions = qin ? qinConstructions : SoldiersConstructions;
 
         for (int i = 0; i < panel.childCount; i++) {
 
@@ -365,7 +362,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		string attackedDodge = "";*/
 
-        if (attacker.AttackTarget.Character && (!attacker.AttackTarget.Construction || !attacker.AttackTarget.Bastion)) {
+        if (attacker.AttackTarget.Character && !attacker.AttackTarget.GreatWall) {
 
             SC_Character attacked = attacker.AttackTarget.Character;
 
@@ -375,7 +372,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
             attackerDamages = fightManager.CalcDamages(attacker, attacked, false);
 
-            if (!attacker.Tile.Bastion && (fightManager.RangedAttack && attacked.GetActiveWeapon().ranged || !fightManager.RangedAttack && !attacked.GetActiveWeapon().IsBow))
+            if (!attacker.Tile.GreatWall && (fightManager.RangedAttack && attacked.GetActiveWeapon().ranged || !fightManager.RangedAttack && !attacked.GetActiveWeapon().IsBow))
                 attackedDamages = fightManager.CalcDamages(attacked, attacker, true);
 
             attackedHP = attacked.Health - attackerDamages;
@@ -561,7 +558,7 @@ public class SC_UI_Manager : MonoBehaviour {
         characterActionsPanel.SetActive(false);
 
         for (int i = 0; i < soldierConstructPanel.childCount; i++)
-            soldierConstructPanel.GetChild(i).GetComponentInChildren<Button>().interactable = (SC_Qin.GetConstruCost(soldiersConstructions[i].Name) < SC_Qin.Energy) && (TileManager.GetConstructableTiles(soldiersConstructions[i].Name == "Wall").Count > 0);
+            soldierConstructPanel.GetChild(i).GetComponentInChildren<Button>().interactable = (SC_Qin.GetConstruCost(SoldiersConstructions[i].Name) < SC_Qin.Energy) && (TileManager.GetConstructableTiles(SoldiersConstructions[i].Name == "Wall").Count > 0);
 
         TileManager.RemoveAllFilters();
 
@@ -709,8 +706,7 @@ public class SC_UI_Manager : MonoBehaviour {
         RectTransform Rect = menu.GetComponent<RectTransform>();
 
         //Get the viewport position of the tile
-        currentTile = TileManager.GetTileAt(SC_Cursor.Instance.gameObject);
-        Vector3 currentTileViewportPos = Camera.main.WorldToViewportPoint(currentTile.transform.position);
+        Vector3 currentTileViewportPos = Camera.main.WorldToViewportPoint(TileManager.GetTileAt(SC_Cursor.Instance.gameObject).transform.position);
 
         //If tile on the left side of the screen, offset the menu on the right
         //If tile on the right side of the screen, offset the menu on the left

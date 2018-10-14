@@ -76,7 +76,7 @@ public class SC_EditorTile : MonoBehaviour {
 
     public enum ConstructionType {
 
-        None, Village, Workshop, Bastion, Wall, Ruin
+        None, Village, Workshop, Bastion, Wall, Ruin, Castle
 
     }
 

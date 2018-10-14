@@ -70,7 +70,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
         bool killed = false;
 
-        if (attackedConstru?.GreatWall ?? false)
+        if (attackedConstru.GreatWall)
             HitConstruction(attacker, attackedConstru, counter);
         else
             killed = attacked.Hit(CalcDamages(attacker, attacked, counter), false);

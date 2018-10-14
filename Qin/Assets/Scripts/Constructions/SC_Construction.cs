@@ -24,7 +24,7 @@ public class SC_Construction : NetworkBehaviour {
 
     public SC_Lifebar Lifebar { get; set; }
 
-    public bool GreatWall { get { return (this as SC_Bastion != null) || (this as SC_Wall != null); } }
+    public bool GreatWall { get { return (this as SC_Castle) || (this as SC_Bastion) || (this as SC_Wall); } }
 
     public SC_Pump Pump { get { return this as SC_Pump; } }
 
@@ -57,6 +57,13 @@ public class SC_Construction : NetworkBehaviour {
 			uiManager = FindObjectOfType<SC_UI_Manager> ();
 
 		Health = maxHealth;
+
+        if(Health != 0) {
+
+            Lifebar = Instantiate(Resources.Load<GameObject>("Prefabs/Characters/Components/P_Lifebar"), transform).GetComponent<SC_Lifebar>();
+            Lifebar.transform.position += new Vector3(0, -.44f, 0);
+
+        }
 
         tileManager.GetTileAt(gameObject).Construction = this;
 

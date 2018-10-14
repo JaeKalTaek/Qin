@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using static SC_Global;
 using static SC_Character;
+using static SC_EditorTile;
 
 [Serializable]
 public class SC_Tile : NetworkBehaviour {
@@ -19,24 +20,14 @@ public class SC_Tile : NetworkBehaviour {
     [SyncVar]
     public TileInfos infos;
 
-    /*[HideInInspector]
-    [SyncVar]
-    public string tileType;
-
-    [HideInInspector]
-    [SyncVar]
-    public int tileSprite;
-
-    [HideInInspector]
-    [SyncVar]
-    public int riverSprite;*/
+    public int Region { get { return infos.region; } }
 
     public bool CanCharacterGoThrough (SC_Character c) {
 
         if (Character)
             return c.Qin == Character.Qin;
         else if (Construction)
-            return (c.Qin || !Bastion) && !Pump;
+            return (c.Qin || !Construction.GreatWall) && !Pump;
         else if (Qin)
             return c.Qin;
         else
@@ -49,7 +40,7 @@ public class SC_Tile : NetworkBehaviour {
         if ((Character && (Character != c)) || Qin)
             return false;
         else if (Construction)
-            return (c.Qin || !Bastion) && !Pump;
+            return (c.Qin || !Construction.GreatWall) && !Pump;
         else
             return true;
 
@@ -60,7 +51,7 @@ public class SC_Tile : NetworkBehaviour {
         if (Character)
             return c.Qin != Character.Qin;
         else if (Construction)
-            return !c.Qin && (Bastion || Pump);
+            return !c.Qin && (Construction.GreatWall || Pump);
         else if (Qin)
             return !c.Qin;
         else
@@ -76,7 +67,7 @@ public class SC_Tile : NetworkBehaviour {
 
     public SC_Bastion Bastion { get { return Construction as SC_Bastion; } }
 
-    public SC_Wall Wall { get { return Construction as SC_Wall; } }
+    public bool GreatWall { get { return Construction?.GreatWall ?? false; } }
 
     public SC_Workshop Workshop { get { return Construction as SC_Workshop; } }
 
@@ -124,9 +115,16 @@ public class SC_Tile : NetworkBehaviour {
         cost = t.cost;
         combatModifers = t.combatModifers;
 
-        string s = infos.type == "Changing" ? "Changing" : infos.type + "/" + (infos.type == "River" ? (SC_EditorTile.RiverSprite)infos.riverSprite + "" : infos.sprite + "");
+        string s = infos.type == "Changing" ? "Changing" : infos.type + "/" + (infos.type == "River" ? (RiverSprite)infos.riverSprite + "" : infos.sprite + "");
 
         GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Tiles/" + s);
+
+        if(infos.region != -1) {
+
+            for (int i = 0; i < transform.GetChild(1).childCount; i++)
+                transform.GetChild(1).GetChild(i).GetComponent<SpriteRenderer>().sprite = infos.borders[i] ? Resources.Load<Sprite>("Sprites/RegionBorders/" + (Region)infos.region) : null;
+
+        }
 
     }
 
@@ -288,13 +286,21 @@ public class SC_Tile : NetworkBehaviour {
 
         public int riverSprite;
 
-        public TileInfos(string t, int s, int rS) {
+        public int region;
+
+        public bool[] borders;
+
+        public TileInfos(string t, int s, int rS, int r, bool[] b) {
 
             type = t;
 
             sprite = s;
 
             riverSprite = rS;
+
+            region = r;
+
+            borders = b;
 
         }
 
