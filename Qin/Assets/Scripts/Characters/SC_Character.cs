@@ -71,6 +71,8 @@ public class SC_Character : NetworkBehaviour {
 
     public SC_Tile LastPos { get; set; }
 
+    public enum Actions {Attack, Wait};
+
     protected static SC_Tile_Manager tileManager;
 
 	protected static SC_Game_Manager gameManager;
@@ -274,7 +276,7 @@ public class SC_Character : NetworkBehaviour {
 
             tileManager.PreviewAttack();
 
-            uiManager.menuManager.MenuPos(SC_Menu_Manager.MenuType.Character);
+            uiManager.menuManager.MenuPos(SC_Menu_Manager.actionMenu.Character);
 
             uiManager.SetCancelButton(gameManager.ResetMovement);
 

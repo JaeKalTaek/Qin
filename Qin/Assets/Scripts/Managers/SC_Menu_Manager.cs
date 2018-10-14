@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using static SC_Global;
 using static SC_Player;
@@ -16,7 +17,9 @@ public class SC_Menu_Manager : MonoBehaviour {
 
     public static SC_Menu_Manager Instance { get; set; }
 
-    public enum MenuType {Player, Character};
+    public enum actionMenu {Player, Character};
+
+    List<SC_Character.Actions> actionsToDisplay;
 
     GameObject menu; 
 
@@ -43,14 +46,14 @@ public class SC_Menu_Manager : MonoBehaviour {
     #region Menu Position
 
     //Move the menu next to the tile
-    public void MenuPos(MenuType type)
+    public void MenuPos(actionMenu type)
     {
         switch (type)
         {
-            case MenuType.Character:
+            case actionMenu.Character:
                 menu = uiManager.characterActionsPanel;
                 break;
-            case MenuType.Player:
+            case actionMenu.Player:
                 menu = uiManager.playerActionsPanel;
                 break;
         }
