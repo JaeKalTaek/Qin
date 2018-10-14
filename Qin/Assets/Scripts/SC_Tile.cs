@@ -200,13 +200,16 @@ public class SC_Tile : NetworkBehaviour {
                 else if (Workshop && SC_Player.localPlayer.Qin)
                     Workshop.SelectWorkshop();
                 else
+                {
                     uiManager.playerActionsPanel.SetActive(true);
+                    uiManager.MenuPos(uiManager.playerActionsPanel);
+                }
 
             }
 
         }
 
-	}
+    }
 
     /*public void CursorSecondaryClick() {
 

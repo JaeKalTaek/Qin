@@ -275,6 +275,7 @@ public class SC_Character : NetworkBehaviour {
             tileManager.PreviewAttack();
 
             uiManager.characterActionsPanel.SetActive(true);
+            uiManager.MenuPos(uiManager.characterActionsPanel);
 
             uiManager.SetCancelButton(gameManager.ResetMovement);
 
