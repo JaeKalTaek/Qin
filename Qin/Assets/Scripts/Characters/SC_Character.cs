@@ -113,10 +113,15 @@ public class SC_Character : NetworkBehaviour {
         characterName = loadedCharacter.characterName;
 
         baseMovement = loadedCharacter.baseMovement;
+        Movement = baseMovement;
 
         moveDuration = loadedCharacter.moveDuration;
 
         maxHealth = loadedCharacter.maxHealth;
+        Health = maxHealth;
+
+        Lifebar = Instantiate(Resources.Load<GameObject>("Prefabs/Characters/Components/P_Lifebar"), transform).GetComponent<SC_Lifebar>();
+        Lifebar.transform.position += new Vector3(0, -.44f, 0);
 
         strength = loadedCharacter.strength;
 
@@ -145,18 +150,11 @@ public class SC_Character : NetworkBehaviour {
             uiManager = SC_UI_Manager.Instance;
 
         if (!fightManager)
-            fightManager = SC_Fight_Manager.Instance;
-
-        Health = maxHealth;
-
-        Lifebar = Instantiate(Resources.Load<GameObject>("Prefabs/Characters/Components/P_Lifebar"), transform).GetComponent<SC_Lifebar>();
-		Lifebar.transform.position += new Vector3 (0, -.44f, 0);		
+            fightManager = SC_Fight_Manager.Instance;               	
 
 		LastPos = Tile;
 
-        LastPos.Character = this;
-
-        Movement = baseMovement;
+        LastPos.Character = this;        
 
 	}
 

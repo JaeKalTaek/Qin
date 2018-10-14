@@ -95,8 +95,6 @@ public class SC_UI_Manager : MonoBehaviour {
 
         gameManager = SC_Game_Manager.Instance;
 
-        TileManager = SC_Tile_Manager.Instance;
-
         fightManager = SC_Fight_Manager.Instance;
 
         menuManager = SC_Menu_Manager.Instance;

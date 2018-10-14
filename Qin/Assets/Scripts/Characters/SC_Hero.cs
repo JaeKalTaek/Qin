@@ -43,7 +43,7 @@ public class SC_Hero : SC_Character {
 
         heroesAlive++;
 
-        if (heroesAlive == 5)
+        if (heroesAlive == 6)
             SetupHeroesRelationships();
 
     }

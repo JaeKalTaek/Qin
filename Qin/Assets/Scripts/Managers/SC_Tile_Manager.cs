@@ -53,6 +53,8 @@ public class SC_Tile_Manager : NetworkBehaviour {
         uiManager = SC_UI_Manager.Instance;
         uiManager.TileManager = this;
 
+        uiManager.menuManager.TileManager = this;
+
         SC_Fight_Manager.Instance.TileManager = this;
 
         FindObjectOfType<SC_Camera>().Setup(xSize, ySize);

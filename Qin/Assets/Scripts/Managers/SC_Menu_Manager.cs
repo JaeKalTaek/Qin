@@ -1,11 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.EventSystems;
-using static SC_Global;
-using static SC_Player;
 
 public class SC_Menu_Manager : MonoBehaviour {
 
@@ -13,7 +7,7 @@ public class SC_Menu_Manager : MonoBehaviour {
 
     static SC_UI_Manager uiManager;
 
-    static SC_Tile_Manager tileManager;
+    public SC_Tile_Manager TileManager { get; set; }
 
     public static SC_Menu_Manager Instance { get; set; }
 
@@ -31,8 +25,6 @@ public class SC_Menu_Manager : MonoBehaviour {
     void Start () {
  
         uiManager = SC_UI_Manager.Instance;
-
-        tileManager = uiManager.TileManager;
 
     }
 
@@ -61,7 +53,7 @@ public class SC_Menu_Manager : MonoBehaviour {
         RectTransform Rect = menu.GetComponent<RectTransform>();
 
         //Get the viewport position of the tile
-        Vector3 currentTileViewportPos = Camera.main.WorldToViewportPoint(tileManager.GetTileAt(SC_Cursor.Instance.gameObject).transform.position);
+        Vector3 currentTileViewportPos = Camera.main.WorldToViewportPoint(TileManager.GetTileAt(SC_Cursor.Instance.gameObject).transform.position);
 
         //If tile on the left side of the screen, offset the menu on the right
         //If tile on the right side of the screen, offset the menu on the left
