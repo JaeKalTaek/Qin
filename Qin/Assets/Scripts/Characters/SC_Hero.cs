@@ -48,28 +48,6 @@ public class SC_Hero : SC_Character {
 
     }
 
-    /*protected override void Start () {
-
-        base.Start();
-
-        Relationships = new Dictionary<string, int>();
-        RelationshipKeys = new List<string>();
-
-        foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
-
-            if (!ReferenceEquals(hero, this)) {
-
-                Relationships.Add(hero.characterName, 0);
-                RelationshipKeys.Add(hero.characterName);
-
-            }
-
-        }
-    
-        heroesAlive++;
-
-    }*/
-
     public static void SetupHeroesRelationships() {
 
         foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {

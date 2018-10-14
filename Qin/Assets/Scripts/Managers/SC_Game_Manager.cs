@@ -153,7 +153,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
             if ((eTile.soldier != SoldierType.None) || eTile.Qin || (eTile.Hero != HeroType.None)) {
 
-                string path = "Prefabs/Characters/" + (eTile.soldier != SoldierType.None ? "Soldiers/P_BaseSoldier" : (eTile.Qin ? "P_Qin" : "Heroes/P_BaseHero"));
+                string path = "Prefabs/Characters/" + (eTile.soldier != SoldierType.None ? "P_BaseSoldier" : (eTile.Qin ? "P_Qin" : "Heroes/P_BaseHero"));
 
                 Transform parent = eTile.soldier != SoldierType.None ? GameObject.Find("Soldiers").transform : (eTile.Qin ? null : GameObject.Find("Heroes").transform);
 
@@ -452,7 +452,10 @@ public class SC_Game_Manager : NetworkBehaviour {
 
     public void CreateSoldier(Vector3 pos, string soldierName) {
 
-        GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/Characters/Soldiers/P_" + soldierName), GameObject.Find("Soldiers").transform);
+        GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/Characters/P_BaseSoldier"), GameObject.Find("Soldiers").transform);
+
+        go.GetComponent<SC_Soldier>().characterPath = "Prefabs/Characters/Soldiers/P_" + soldierName;
+
         go.transform.SetPos(pos);
 
         NetworkServer.Spawn(go);

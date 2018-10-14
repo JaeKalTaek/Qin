@@ -55,7 +55,7 @@ public class SC_Tile : NetworkBehaviour {
         else if (Qin)
             return !c.Qin;
         else
-            return true;
+            return !Pump;
 
     }
 
