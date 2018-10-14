@@ -4,13 +4,21 @@ using System;
 using System.Collections;
 using UnityEngine.EventSystems;
 using static SC_Global;
+using static SC_Player;
 
 public class SC_UI_Manager : MonoBehaviour {
 
     #region UI Elements
-    [Header("Game")]
-	public GameObject loadingPanel;
+    [Header("Preparation")]
+    public GameObject preparationPanel;
     public GameObject connectingPanel;
+    public GameObject readyButton;
+    public GameObject otherPlayerReady;
+    public Color readyColor, notReadyColor;
+
+    [Header("Game")]
+    public GameObject gamePanel;
+	public GameObject loadingPanel;    
     public Text turnIndicator;
 	public GameObject previewFightPanel;
 	public GameObject endTurn;
@@ -57,7 +65,11 @@ public class SC_UI_Manager : MonoBehaviour {
 
     public static SC_UI_Manager Instance { get; set; }
 
-    public static bool CanInteract { get { return SC_Player.localPlayer.Turn && (!EventSystem.current.IsPointerOverGameObject() || !Cursor.visible); } }
+    public static bool CanInteract { get {
+
+        return localPlayer.Turn && (!EventSystem.current.IsPointerOverGameObject() || !Cursor.visible) && !gameManager.prep;
+
+    } }
 
     public float clickSecurityDuration;
 
@@ -119,6 +131,9 @@ public class SC_UI_Manager : MonoBehaviour {
             //SetButtonActivated("qinPower", true);
 
         }
+
+        preparationPanel.SetActive(gameManager.prep);
+        gamePanel.SetActive(!gameManager.prep);
 
     }
 
@@ -465,9 +480,9 @@ public class SC_UI_Manager : MonoBehaviour {
     #region Actions
     public void StartQinAction(string action) {
 
-        if (!SC_Player.localPlayer.Busy) {
+        if (!localPlayer.Busy) {
 
-            SC_Player.localPlayer.Busy = true;
+            localPlayer.Busy = true;
 
             SetButtonActivated(action, false);
 
@@ -475,7 +490,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
             workshopPanel.SetActive(action == "workshop");
 
-            SC_Player.localPlayer.CmdSetQinTurnStarting(false);
+            localPlayer.CmdSetQinTurnStarting(false);
 
             cancelButton.gameObject.SetActive(false);
 
@@ -504,14 +519,14 @@ public class SC_UI_Manager : MonoBehaviour {
 
         workshopPanel.SetActive(false);
 
-        SC_Player.localPlayer.Busy = false;
+        localPlayer.Busy = false;
 
     }
 
     // Called by UI
     public void DisplaySacrifices () {
 
-        if (!SC_Player.localPlayer.Busy) {
+        if (!localPlayer.Busy) {
 
             StartQinAction("sacrifice");
 
@@ -571,7 +586,7 @@ public class SC_UI_Manager : MonoBehaviour {
     // Called by UI
     public void DisplayConstructableTiles(int id) {
 
-        SC_Player.localPlayer.CmdSetConstru(qinConstructions[id].Name);
+        localPlayer.CmdSetConstru(qinConstructions[id].Name);
 
         TileManager.RemoveAllFilters();
 
@@ -609,7 +624,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         if (!clickSecurity) {            
 
-            SC_Player.localPlayer.CmdCreateSoldier(gameManager.CurrentWorkshopPos, soldiers[id].characterName);
+            localPlayer.CmdCreateSoldier(gameManager.CurrentWorkshopPos, soldiers[id].characterName);
 
             EndQinAction("workshop");
 
@@ -621,10 +636,25 @@ public class SC_UI_Manager : MonoBehaviour {
     #endregion
 
     #region Both Players
-    void Update () {
+    public void SetReady () {
 
-        if (Input.GetButtonDown("Action") || Input.GetButtonDown("Infos") || Input.GetButtonDown("Cancel"))
-            TileManager.HidePumpRange();
+        localPlayer.Ready ^= true;
+
+        SetReady(readyButton, localPlayer.Ready);
+
+        localPlayer.CmdReady(localPlayer.Ready, localPlayer.Qin);
+
+    }
+
+    public void SetReady(GameObject g, bool r) {
+
+        g.GetComponent<Image>().color = r ? readyColor : notReadyColor;
+
+        g.GetComponentInChildren<Text>().text = r ? "Ready" : "Not Ready";
+
+    }
+
+    void Update () {
 
         if (cancelButton.isActiveAndEnabled && Input.GetButtonDown("Cancel"))
             cancelButton.onClick.Invoke();
@@ -679,13 +709,13 @@ public class SC_UI_Manager : MonoBehaviour {
 
         SC_Cursor.Instance.Locked = false;
 
-        SC_Player.localPlayer.CmdWait();
+        localPlayer.CmdWait();
 
         characterActionsPanel.SetActive(false);
 
         cancelButton.gameObject.SetActive(false);
 
-        SC_Player.localPlayer.Busy = false;
+        localPlayer.Busy = false;
 
     }
     #endregion

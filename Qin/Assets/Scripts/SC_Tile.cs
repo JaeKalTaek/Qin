@@ -142,7 +142,7 @@ public class SC_Tile : NetworkBehaviour {
         if (!fightManager)
             fightManager = SC_Fight_Manager.Instance;
 
-        if (transform.position.x.I() == (gameManager.baseMapPrefab.SizeMapX - 1) && transform.position.y.I() == (gameManager.baseMapPrefab.SizeMapY - 1) && !isServer)
+        if (transform.position.x.I() == (gameManager.CurrentMapPrefab.SizeMapX - 1) && transform.position.y.I() == (gameManager.CurrentMapPrefab.SizeMapY - 1) && !isServer)
             gameManager.StartCoroutine("FinishLoading");
 
         filter = transform.GetChild(0).GetComponent<SpriteRenderer>();

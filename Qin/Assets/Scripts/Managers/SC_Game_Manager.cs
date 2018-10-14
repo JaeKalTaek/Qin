@@ -5,7 +5,13 @@ using static SC_EditorTile;
 
 public class SC_Game_Manager : NetworkBehaviour {
 
-	public SC_MapEditorScript baseMapPrefab;
+    public SC_MapEditorScript playMapPrefab;
+
+    public SC_MapEditorScript prepMapPrefab;
+
+    public bool prep;
+
+    public SC_MapEditorScript CurrentMapPrefab { get; set; }
 
     public SC_Common_Characters_Variables CommonCharactersVariables { get; set; }
 
@@ -39,11 +45,13 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         SC_Village.number = 0;
 
+        CurrentMapPrefab = prep ? prepMapPrefab : playMapPrefab;
+
     }
 
     void Start() {
 
-        TileSize = baseMapPrefab.TileSize;
+        TileSize = CurrentMapPrefab.TileSize;
 
         CommonCharactersVariables = Resources.Load<SC_Common_Characters_Variables>("Prefabs/Characters/P_Common_Characters_Variables");
 
@@ -73,7 +81,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 	void GenerateMap() {
 
-        foreach (Transform child in baseMapPrefab.transform) {
+        foreach (Transform child in CurrentMapPrefab.transform) {
 
             SC_EditorTile eTile = child.GetComponent<SC_EditorTile>();
 
@@ -103,8 +111,8 @@ public class SC_Game_Manager : NetworkBehaviour {
 		GameObject tm = Instantiate (Resources.Load<GameObject>("Prefabs/P_Tile_Manager"));
 		SC_Tile_Manager stm = tm.GetComponent<SC_Tile_Manager> ();
 
-        stm.xSize = baseMapPrefab.SizeMapX;
-        stm.ySize = baseMapPrefab.SizeMapY;	
+        stm.xSize = CurrentMapPrefab.SizeMapX;
+        stm.ySize = CurrentMapPrefab.SizeMapY;	
 
 		NetworkServer.Spawn (tm);
 
@@ -129,7 +137,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 	void GenerateElements() {
 
-		foreach (Transform child in baseMapPrefab.transform) {
+		foreach (Transform child in CurrentMapPrefab.transform) {
 
 			SC_EditorTile eTile = child.GetComponent<SC_EditorTile> ();
 
@@ -167,7 +175,7 @@ public class SC_Game_Manager : NetworkBehaviour {
         while(!Player)
             yield return null;
 
-        Player.CmdFinishLoading();
+        Player.CmdFinishConnecting();
 
     }
     #endregion
@@ -247,7 +255,7 @@ public class SC_Game_Manager : NetworkBehaviour {
     }
     #endregion
 
-    #region Methods called by UI
+    #region Methods called by UI  
     public void SetAttackWeapon (bool usedActiveWeapon) {
 
         Player.CmdHeroAttack(usedActiveWeapon);

@@ -20,6 +20,8 @@ public class SC_Player : NetworkBehaviour {
 
     public bool Busy { get; set; }
 
+    public bool Ready { get; set; }
+
 	public override void OnStartLocalPlayer () {
 
         SetSide();
@@ -44,22 +46,40 @@ public class SC_Player : NetworkBehaviour {
 
     #region Commands
 
-    #region Loading
+    #region Connecting
     [Command]
-    public void CmdFinishLoading() {        
+    public void CmdFinishConnecting() {        
 
-        RpcFinishLoading();
+        RpcFinishConnecting();
 
     }
 
     [ClientRpc]
-    void RpcFinishLoading() {
-
-        //localPlayer.Busy = true;
+    void RpcFinishConnecting() {
 
         Instantiate(Resources.Load<GameObject>("Prefabs/P_Cursor"));
 
         localPlayer.uiManager.connectingPanel.SetActive(false);
+
+    }
+    #endregion
+
+    #region Ready
+    [Command]
+    public void CmdReady (bool ready, bool qin) {
+
+        RpcReady(ready, qin);
+
+    }
+
+    [ClientRpc]
+    void RpcReady (bool ready, bool qin) {
+
+        if (localPlayer.Qin != qin) {
+
+            uiManager.SetReady(uiManager.otherPlayerReady, ready);
+
+        }
 
     }
     #endregion

@@ -55,6 +55,11 @@ public class SC_Cursor : NetworkBehaviour {
         #region Cursor Movement
         inputsMoveTimer -= Time.deltaTime;
 
+        if ((Vector3.Distance(oldMousePos, newMousePos) >= mouseThreshold) && !cameraMoved)
+             Cursor.visible = true;
+
+        cameraMoved = false;
+
         if (!Locked) {
 
             Vector3 oldPos = transform.position;
@@ -73,15 +78,11 @@ public class SC_Cursor : NetworkBehaviour {
 
                 newPos = transform.position + new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0) * TileSize;
 
-            } else if ((Cursor.visible || ((Vector3.Distance(oldMousePos, newMousePos) >= mouseThreshold) && !cameraMoved)) && screenRect.Contains(Input.mousePosition)) {
-
-                Cursor.visible = true;
+            } else if (Cursor.visible && screenRect.Contains(Input.mousePosition)) {
 
                 newPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-            }
-
-            cameraMoved = false;
+            }            
 
             int x = newPos.x.I();
             int y = newPos.y.I();

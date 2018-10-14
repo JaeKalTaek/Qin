@@ -11,9 +11,11 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 	public SC_Tile[,] tiles;
 
-    public List<SC_Tile>[] regions;
+    //public List<SC_Tile>[] regions;
 
-	static SC_Game_Manager gameManager;
+    public List<SC_Tile> changingTiles;
+
+    static SC_Game_Manager gameManager;
 
     static SC_UI_Manager uiManager;
 
@@ -57,17 +59,22 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         tiles = new SC_Tile[xSize, ySize];
 
-        regions = new List<SC_Tile>[6];
+        /*regions = new List<SC_Tile>[6];
 
         for (int i = 0; i < regions.Length; i++)
-            regions[i] = new List<SC_Tile>();
+            regions[i] = new List<SC_Tile>();*/
+
+        changingTiles = new List<SC_Tile>();
 
         foreach (SC_Tile t in FindObjectsOfType<SC_Tile>()) {
 
             tiles[t.transform.position.x.I(), t.transform.position.y.I()] = t;
 
-            if(t.Region != -1)
-                regions[t.Region].Add(t);
+            if (t.infos.type == SC_EditorTile.TileType.Changing.ToString())
+                changingTiles.Add(t);
+
+            /*if(t.Region != -1)
+                regions[t.Region].Add(t);*/
 
         }
 
@@ -490,18 +497,5 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }*/
     #endregion
-
-    public void HidePumpRange () {
-
-        if (DisplayedPump) {
-
-            foreach (SC_Tile t in GetRange(DisplayedPump.transform.position, DisplayedPump.range))
-                t.RemoveFilter();
-
-            DisplayedPump = null;
-
-        }
-
-    }
 
 }
