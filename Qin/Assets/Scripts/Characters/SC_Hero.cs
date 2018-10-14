@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using static SC_Global;
 
 public class SC_Hero : SC_Character {
 
@@ -42,29 +41,23 @@ public class SC_Hero : SC_Character {
 
         berserkColor = loadedCharacter.Hero.berserkColor;
 
-    }
-
-    protected override void Start() {
-
-		base.Start();
-
-		Relationships = new Dictionary<string, int> ();
+        Relationships = new Dictionary<string, int>();
         RelationshipKeys = new List<string>();
 
         foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
 
-			if (!ReferenceEquals (hero, this)) {
+            if (!ReferenceEquals(hero, this)) {
 
-				Relationships.Add (hero.characterName, 0);
-				RelationshipKeys.Add (hero.characterName);
+                Relationships.Add(hero.characterName, 0);
+                RelationshipKeys.Add(hero.characterName);
 
-			}
+            }
 
-		}
+        }
 
-		heroesAlive++;
+        heroesAlive++;
 
-	}
+    }
 
 	public override void TryCheckMovements () {
 

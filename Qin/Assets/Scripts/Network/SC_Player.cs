@@ -34,19 +34,15 @@ public class SC_Player : NetworkBehaviour {
 			gameManager.Player = this;
 
 		if(FindObjectOfType<SC_Tile_Manager> ())
-			tileManager = FindObjectOfType<SC_Tile_Manager> ();        
+			tileManager = FindObjectOfType<SC_Tile_Manager> ();
+
+        uiManager = SC_UI_Manager.Instance;
 
         fightManager = SC_Fight_Manager.Instance;
 
         localPlayer = this;
 		
 	}
-
-    void Start () {
-
-        uiManager = SC_UI_Manager.Instance;
-
-    }
 
     #region Commands
 
@@ -81,7 +77,7 @@ public class SC_Player : NetworkBehaviour {
 
         if (localPlayer.Qin != qin) {
 
-            uiManager.SetReady(uiManager.otherPlayerReady, ready);
+            localPlayer.uiManager.SetReady(localPlayer.uiManager.otherPlayerReady, ready);
 
             if (ready && localPlayer.Ready)
                 CmdBothPlayersReady();
@@ -100,11 +96,13 @@ public class SC_Player : NetworkBehaviour {
     [ClientRpc]
     void RpcBothPlayersReady () {
 
-        gameManager.prep = false;
+        localPlayer.gameManager.prep = false;
 
-        uiManager.preparationPanel.SetActive(false);
+        localPlayer.uiManager.loadingPanel.SetActive(true);
 
-        uiManager.gamePanel.SetActive(true);
+        localPlayer.uiManager.preparationPanel.SetActive(false);
+
+        localPlayer.uiManager.gamePanel.SetActive(true);
 
     }
     #endregion
