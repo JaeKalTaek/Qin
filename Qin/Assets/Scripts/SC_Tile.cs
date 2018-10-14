@@ -194,17 +194,16 @@ public class SC_Tile : NetworkBehaviour {
 
                 SC_Qin.UsePower(transform.position);
 
-            }*/ else if (CurrentDisplay == TDisplay.None && SC_UI_Manager.CanInteract && !SC_Player.localPlayer.Busy) {
+            }*/
+
+            if (CurrentDisplay == TDisplay.None && !SC_Player.localPlayer.Busy) {
 
                 if (Character && (Character.Qin == SC_Player.localPlayer.Qin))
                     Character.TryCheckMovements();
                 else if (Workshop && SC_Player.localPlayer.Qin)
                     Workshop.SelectWorkshop();
                 else
-                {
-                    uiManager.playerActionsPanel.SetActive(true);
                     uiManager.MenuPos(uiManager.playerActionsPanel);
-                }
 
             }
 

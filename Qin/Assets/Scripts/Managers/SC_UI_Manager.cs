@@ -701,8 +701,8 @@ public class SC_UI_Manager : MonoBehaviour {
     #region Menu Position
     
     //Move the menu next to the tile
-    public void MenuPos(GameObject menu)
-    {
+    public void MenuPos(GameObject menu) {
+
         RectTransform Rect = menu.GetComponent<RectTransform>();
 
         //Get the viewport position of the tile
@@ -714,6 +714,9 @@ public class SC_UI_Manager : MonoBehaviour {
 
         Rect.anchorMin = new Vector3(currentTileViewportPos.x + (offset * (0.1f + (0.05f*(1/(Mathf.Pow(Camera.main.orthographicSize, Camera.main.orthographicSize/4)))))), currentTileViewportPos.y, currentTileViewportPos.z);
         Rect.anchorMax = Rect.anchorMin;
+
+        menu.SetActive(true);
+
     }
 
     #endregion
