@@ -81,12 +81,18 @@ public class SC_Game_Manager : NetworkBehaviour {
 
             SC_Tile tile = go.GetComponent<SC_Tile>();
 
-            tile.tileType = eTile.tileType.ToString();
+            /*tile.tileType = eTile.tileType.ToString();
 
             if(eTile.tileType != TileType.Changing)
                 tile.tileSprite = Random.Range(0, Resources.LoadAll<Sprite>("Sprites/Tiles/" + eTile.tileType).Length);
 
-            tile.riverSprite = (int)eTile.riverSprite;            
+            tile.riverSprite = (int)eTile.riverSprite;   */
+
+            tile.infos = new SC_Tile.TileInfos(
+                eTile.tileType.ToString(),
+                Random.Range(0, Resources.LoadAll<Sprite>("Sprites/Tiles/" + eTile.tileType).Length),
+                (int)eTile.riverSprite
+            );
 
             NetworkServer.Spawn(go);
 

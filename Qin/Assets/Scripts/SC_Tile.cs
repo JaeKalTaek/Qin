@@ -16,7 +16,10 @@ public class SC_Tile : NetworkBehaviour {
     [Tooltip("Combat modifiers for this tile")]
     public CombatModifiers combatModifers;
 
-    [HideInInspector]
+    [SyncVar]
+    public TileInfos infos;
+
+    /*[HideInInspector]
     [SyncVar]
     public string tileType;
 
@@ -26,7 +29,7 @@ public class SC_Tile : NetworkBehaviour {
 
     [HideInInspector]
     [SyncVar]
-    public int riverSprite;
+    public int riverSprite;*/
 
     public bool CanCharacterGoThrough (SC_Character c) {
 
@@ -116,12 +119,12 @@ public class SC_Tile : NetworkBehaviour {
 
         base.OnStartClient();
 
-        SC_Tile t = Resources.Load<SC_Tile>("Prefabs/Tiles/P_" + tileType);
+        SC_Tile t = Resources.Load<SC_Tile>("Prefabs/Tiles/P_" + infos.type);
 
         cost = t.cost;
         combatModifers = t.combatModifers;
 
-        string s = tileType == "Changing" ? "Changing" : tileType + "/" + (tileType == "River" ? (SC_EditorTile.RiverSprite)riverSprite + "" : tileSprite + "");
+        string s = infos.type == "Changing" ? "Changing" : infos.type + "/" + (infos.type == "River" ? (SC_EditorTile.RiverSprite)infos.riverSprite + "" : infos.sprite + "");
 
         GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Tiles/" + s);
 
@@ -274,6 +277,26 @@ public class SC_Tile : NetworkBehaviour {
         CurrentDisplay = d;
 
         SetFilter(d);
+
+    }
+
+    public struct TileInfos {
+
+        public string type;
+
+        public int sprite;
+
+        public int riverSprite;
+
+        public TileInfos(string t, int s, int rS) {
+
+            type = t;
+
+            sprite = s;
+
+            riverSprite = rS;
+
+        }
 
     }
 
