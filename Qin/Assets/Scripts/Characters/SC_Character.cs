@@ -71,7 +71,9 @@ public class SC_Character : NetworkBehaviour {
 
     public SC_Tile LastPos { get; set; }
 
-    public enum Actions {Attack, Wait};
+    public List<SC_Global.Actions> possiblePlayerActions;
+
+    public List<SC_Global.Actions> possibleCharacterActions;
 
     protected static SC_Tile_Manager tileManager;
 
