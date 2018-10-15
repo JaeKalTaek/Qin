@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using static SC_EditorTile;
 using static SC_Global;
 
 public class SC_Tile_Manager : NetworkBehaviour {
@@ -72,7 +73,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
             tiles[t.transform.position.x.I(), t.transform.position.y.I()] = t;
 
-            if (t.infos.type == SC_EditorTile.TileType.Changing.ToString())
+            if (t.infos.type == "Changing")
                 changingTiles.Add(t);
 
             /*if(t.Region != -1)
@@ -442,7 +443,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         SC_Construction construction = go.GetComponent<SC_Construction>();
 
-        SC_Tile under = GetTileAt(go);
+        SC_Tile under = construction.Tile;
 
         bool left = false;
         bool right = false;

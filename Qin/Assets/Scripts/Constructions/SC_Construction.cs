@@ -28,6 +28,8 @@ public class SC_Construction : NetworkBehaviour {
 
     public SC_Pump Pump { get { return this as SC_Pump; } }
 
+    public SC_Tile Tile { get { return tileManager.GetTileAt(gameObject);  } }
+
 	protected static SC_Game_Manager gameManager;
 
 	protected static SC_Tile_Manager tileManager;
@@ -44,7 +46,7 @@ public class SC_Construction : NetworkBehaviour {
             tileManager = FindObjectOfType<SC_Tile_Manager>();
 
         if (tileManager && (tileManager.tiles != null))
-            tileManager.GetTileAt(gameObject).Construction = this;
+            Tile.Construction = this;
 
     }
 
@@ -65,7 +67,7 @@ public class SC_Construction : NetworkBehaviour {
 
         }
 
-        tileManager.GetTileAt(gameObject).Construction = this;
+        Tile.Construction = this;
 
     }
 
@@ -73,12 +75,10 @@ public class SC_Construction : NetworkBehaviour {
 
         uiManager.HideInfosIfActive(gameObject);
 
-        SC_Tile under = tileManager.GetTileAt(gameObject);
-
         if (GreatWall)
-            under.Soldier?.DestroyCharacter();
+            Tile.Soldier?.DestroyCharacter();
 
-        under.Construction = null;
+        Tile.Construction = null;
 
         Destroy(gameObject);
 
@@ -109,7 +109,7 @@ public class SC_Construction : NetworkBehaviour {
 
             lastConstruSoldier.gameObject.SetActive(true);
 
-            tileManager.GetTileAt(lastConstruSoldier.gameObject).Character = lastConstruSoldier;
+            lastConstruSoldier.Tile.Character = lastConstruSoldier;
 
         }                
 

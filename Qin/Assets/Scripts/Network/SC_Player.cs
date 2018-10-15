@@ -80,7 +80,7 @@ public class SC_Player : NetworkBehaviour {
             localPlayer.uiManager.SetReady(localPlayer.uiManager.otherPlayerReady, ready);
 
             if (ready && localPlayer.Ready)
-                CmdBothPlayersReady();
+                localPlayer.CmdBothPlayersReady();
 
         }
 
@@ -96,13 +96,27 @@ public class SC_Player : NetworkBehaviour {
     [ClientRpc]
     void RpcBothPlayersReady () {
 
-        localPlayer.gameManager.prep = false;
+        localPlayer.uiManager.Load();
 
-        localPlayer.uiManager.loadingPanel.SetActive(true);
+        localPlayer.gameManager.Load();        
 
-        localPlayer.uiManager.preparationPanel.SetActive(false);
+    }
+    #endregion
 
-        localPlayer.uiManager.gamePanel.SetActive(true);
+    #region Castle changes tile type
+    [Command]
+    public void CmdChangeTileType(GameObject tile, string newType, int newSprite) {
+
+        RpcChangeTileType(tile, newType, newSprite);
+
+    }
+
+    [ClientRpc]
+    void RpcChangeTileType(GameObject tile, string newType, int newSprite) {
+
+        tile.GetComponent<SC_Tile>().infos.type = newType;
+
+        tile.GetComponent<SC_Tile>().infos.sprite = newSprite;
 
     }
     #endregion

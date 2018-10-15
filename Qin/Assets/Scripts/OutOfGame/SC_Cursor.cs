@@ -40,7 +40,7 @@ public class SC_Cursor : NetworkBehaviour {
 
         cam = FindObjectOfType<SC_Camera>();
 
-        oldMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        oldMousePos = SC_Global.WorldMousePos;
 
         newMousePos = oldMousePos;
 
@@ -57,7 +57,7 @@ public class SC_Cursor : NetworkBehaviour {
 
         oldMousePos = newMousePos;
 
-        newMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        newMousePos = SC_Global.WorldMousePos;
 
         if ((Vector3.Distance(oldMousePos, newMousePos) >= mouseThreshold) && !cameraMoved)
              Cursor.visible = true;
@@ -80,7 +80,7 @@ public class SC_Cursor : NetworkBehaviour {
 
             } else if (Cursor.visible && screenRect.Contains(Input.mousePosition)) {
 
-                newPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                newPos = SC_Global.WorldMousePos;
 
             }            
 

@@ -13,7 +13,7 @@ public class SC_Menu_Manager : MonoBehaviour {
 
     public enum actionMenu {Player, Character};
 
-    List<SC_Global.Actions> actionsToDisplay;
+    //List<SC_Global.Actions> actionsToDisplay;
 
     GameObject menu; 
 
@@ -39,7 +39,7 @@ public class SC_Menu_Manager : MonoBehaviour {
 
     public void DisplayActions(List<SC_Global.Actions> actions)
     {
-        actionsToDisplay = actions;
+        //actionsToDisplay = actions;
     }
 
     //Move the menu next to the tile

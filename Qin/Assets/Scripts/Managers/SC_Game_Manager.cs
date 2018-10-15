@@ -170,12 +170,23 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 	}
 
-    public IEnumerator FinishLoading() {
+    public IEnumerator FinishConnecting() {
 
         while(!Player)
             yield return null;
 
         Player.CmdFinishConnecting();
+
+    }
+
+    public void Load() {       
+
+        foreach(SC_Tile t in tileManager.changingTiles)
+            t.SetupTile();
+
+        uiManager.loadingPanel.SetActive(false);
+
+        prep = false;
 
     }
     #endregion

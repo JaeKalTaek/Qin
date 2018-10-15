@@ -67,6 +67,8 @@ public class SC_Tile : NetworkBehaviour {
 
     public SC_Bastion Bastion { get { return Construction as SC_Bastion; } }
 
+    public SC_Castle Castle { get { return Construction as SC_Castle; } }
+
     public bool GreatWall { get { return Construction?.GreatWall ?? false; } }
 
     public SC_Workshop Workshop { get { return Construction as SC_Workshop; } }
@@ -110,6 +112,21 @@ public class SC_Tile : NetworkBehaviour {
 
         base.OnStartClient();
 
+        SetupTile();
+
+        if (infos.region != -1) {
+
+            for (int i = 0; i < transform.GetChild(1).childCount; i++)
+                transform.GetChild(1).GetChild(i).GetComponent<SpriteRenderer>().sprite = infos.borders[i] ? Resources.Load<Sprite>("Sprites/RegionBorders/" + (Region)infos.region) : null;
+
+        }
+
+    }
+
+    public void SetupTile() {
+
+        //print(infos.type);
+
         SC_Tile t = Resources.Load<SC_Tile>("Prefabs/Tiles/P_" + infos.type);
 
         cost = t.cost;
@@ -118,13 +135,6 @@ public class SC_Tile : NetworkBehaviour {
         string s = infos.type == "Changing" ? "Changing" : infos.type + "/" + (infos.type == "River" ? (RiverSprite)infos.riverSprite + "" : infos.sprite + "");
 
         GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Tiles/" + s);
-
-        if(infos.region != -1) {
-
-            for (int i = 0; i < transform.GetChild(1).childCount; i++)
-                transform.GetChild(1).GetChild(i).GetComponent<SpriteRenderer>().sprite = infos.borders[i] ? Resources.Load<Sprite>("Sprites/RegionBorders/" + (Region)infos.region) : null;
-
-        }
 
     }
 
@@ -143,7 +153,7 @@ public class SC_Tile : NetworkBehaviour {
             fightManager = SC_Fight_Manager.Instance;
 
         if (transform.position.x.I() == (gameManager.CurrentMapPrefab.SizeMapX - 1) && transform.position.y.I() == (gameManager.CurrentMapPrefab.SizeMapY - 1) && !isServer)
-            gameManager.StartCoroutine("FinishLoading");
+            gameManager.StartCoroutine("FinishConnecting");
 
         filter = transform.GetChild(0).GetComponent<SpriteRenderer>();
 

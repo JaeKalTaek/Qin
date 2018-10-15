@@ -93,7 +93,7 @@ e90403eeda069970e0b9de1533de13a6 UnityEngine.UI.dll:UnityEngine.UI.ToggleGroup
 e6179a85db016c69405cd3242999aa65 Assembly-CSharp-firstpass.dll:FMODUnity.StudioEventEmitter
 486cd95c82d8305219c352c06b776e1f Assembly-CSharp.dll:.SC_Fight_Manager
 1da208394e312f63f4105cf32b80b96e Assembly-CSharp.dll:.SC_Wall
-89e93046830c75dd8dd1860ff6a00dbe Assembly-CSharp.dll:.SC_Hero
+5b7ff5f9a90d3b57fe3844077405bf40 Assembly-CSharp.dll:.SC_Hero
 486cd95c82d8305219c352c06b776e1f UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationPlayableAsset
 9e61f3535f3c55760a1cedfbd114f4af UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationTrack
 754551afe4f2531f58476bf14c510657 UnityEngine.Timeline.dll:UnityEngine.Timeline.AnimationPlayableAsset
@@ -139,7 +139,7 @@ dfd33ff9ae3ce8d7ca1f22b475ec2387 UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 f16835701e71dd5d6fb1fed4b7aff1d8 Unity.TextMeshPro.dll:TMPro.TMP_Asset
 486cd95c82d8305219c352c06b776e1f Assembly-CSharp.dll:.SC_Lifebar
 582c7e5fb3fe13234bb905eb2fb548a9 Assembly-CSharp.dll:.SC_Menu
-8b73ed37848dc1694ec0bdb5812eed3f Assembly-CSharp.dll:.SC_Character
+1a9b30d6dbaa39baed77b7b51c4132bb Assembly-CSharp.dll:.SC_Character
 ccad2b9f2aaf2daba7a82966eb2efbd4 Assembly-CSharp-firstpass.dll:.FMOD_StudioEventEmitter
 a265d36a8da1efd68fa21af9cfc7f843 Assembly-CSharp-firstpass.dll:FMODUnity.StudioListener
 486cd95c82d8305219c352c06b776e1f Unity.TextMeshPro.dll:TMPro.TMP_SpriteAnimator
@@ -180,7 +180,7 @@ e033f131358cea5a0eabf9561e781deb UnityEngine.TestRunner.dll:UnityEngine.TestTool
 70f7dc248db3379548a88e8d4fa049f8 UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioRoom
 28a95668dd28649297d595834fe8417e UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioSoundfieldExtension
 28a95668dd28649297d595834fe8417e UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioSourceExtension
-0e290ecad2c84104495e0561291b4f45 Assembly-CSharp.dll:.SC_Soldier
+0c4f240e4d5b519aef51b5ee2102c080 Assembly-CSharp.dll:.SC_Soldier
 1da208394e312f63f4105cf32b80b96e Assembly-CSharp.dll:.SC_Construction
 d75dc834c5dec688db75a55a1724c90f UnityEngine.HoloLens.dll:UnityEngine.Audio.AudioSpatializerMicrosoft
 486cd95c82d8305219c352c06b776e1f UnityEngine.HoloLens.dll:UnityEngine.EventSystems.HoloLensInput
@@ -189,7 +189,7 @@ e1ea12ca952c81d81a9a21fdf34446ed UnityEngine.HoloLens.dll:UnityEngine.EventSyste
 dfd33ff9ae3ce8d7ca1f22b475ec2387 UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.SpatialMappingRenderer
 4f35353293366c0878c1e523bf25fd98 Assembly-CSharp.dll:.SC_Common_Characters_Variables
 aac9c55ae7ba4b95b852a7d9c191acd1 Unity.TextMeshPro.dll:TMPro.TextMeshProUGUI
-1656f0a840d9f9f4bdfa77b928b2de98 Assembly-CSharp.dll:.SC_UI_Manager
+bfd7942fda3f9f21b5777b79f8488847 Assembly-CSharp.dll:.SC_UI_Manager
 56a155358b938fead4703a62bf8f3798 Assembly-CSharp-firstpass.dll:.FMODAsset
 0a006f3734181ba8b26758f0866152c0 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
 b811a0bc522b887e09f59559258b673f Assembly-CSharp.dll:.SC_Tile_Manager

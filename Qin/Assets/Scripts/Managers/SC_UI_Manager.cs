@@ -10,8 +10,10 @@ public class SC_UI_Manager : MonoBehaviour {
 
     #region UI Elements
     [Header("Preparation")]
-    public GameObject preparationPanel;
     public GameObject connectingPanel;
+    public GameObject preparationPanel;
+    public GameObject qinPreparationPanel;
+    public GameObject heroesPreparationPanel;
     public GameObject readyButton;
     public GameObject otherPlayerReady;
     public Color readyColor, notReadyColor;
@@ -134,8 +136,16 @@ public class SC_UI_Manager : MonoBehaviour {
 
         }
 
-        preparationPanel.SetActive(gameManager.prep);
-        gamePanel.SetActive(!gameManager.prep);
+        if (gameManager.prep) {
+
+            qinPreparationPanel.SetActive(qin);
+
+            heroesPreparationPanel.SetActive(!qin);
+
+            preparationPanel.SetActive(true);
+
+        } else
+            gamePanel.SetActive(true);
 
     }
 
@@ -159,6 +169,72 @@ public class SC_UI_Manager : MonoBehaviour {
             }
 
         }
+
+    }
+    #endregion
+
+    #region Preparation Phase
+    public void SetReady () {
+
+        bool canSetReady = true;
+
+        if(localPlayer.Qin) {
+
+            foreach (SC_Castle castle in FindObjectsOfType<SC_Castle>())
+                if (castle.CastleType == null)             
+                    canSetReady = false;
+
+        }
+
+        if (canSetReady) {
+
+            localPlayer.Ready ^= true;
+
+            SetReady(readyButton, localPlayer.Ready);
+
+            localPlayer.CmdReady(localPlayer.Ready, localPlayer.Qin);
+
+        }
+
+    }
+
+    public void SetReady (GameObject g, bool r) {
+
+        g.GetComponent<Image>().color = r ? readyColor : notReadyColor;
+
+        g.GetComponentInChildren<Text>().text = ((g == readyButton) ? "" : "Other Player ") + (r ? "Ready" : "Not Ready");
+
+    }
+
+    GameObject draggedCastle;
+
+    public void StartDragCastle(string castleType) {
+
+        GameObject go = Resources.Load<GameObject>("Prefabs/Constructions/Special/P_Drag&DropCastle");
+
+        go.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Castles/" + castleType);
+
+        draggedCastle = Instantiate(go, new Vector3(WorldMousePos.x, WorldMousePos.y, -.54f) , Quaternion.identity);
+
+        draggedCastle.name = castleType;
+
+    }
+
+    public void DropCastle() {
+
+        TileManager.GetTileAt(WorldMousePos).Castle?.SetCastle(draggedCastle.name);
+
+        Destroy(draggedCastle);
+
+    }
+
+    public void Load() {
+
+        loadingPanel.SetActive(true);
+
+        preparationPanel.SetActive(false);
+
+        gamePanel.SetActive(true);
 
     }
     #endregion
@@ -638,26 +714,11 @@ public class SC_UI_Manager : MonoBehaviour {
 
     #endregion
 
-    #region Both Players
-    public void SetReady () {
-
-        localPlayer.Ready ^= true;
-
-        SetReady(readyButton, localPlayer.Ready);
-
-        localPlayer.CmdReady(localPlayer.Ready, localPlayer.Qin);
-
-    }
-
-    public void SetReady(GameObject g, bool r) {
-
-        g.GetComponent<Image>().color = r ? readyColor : notReadyColor;
-
-        g.GetComponentInChildren<Text>().text = ((g == readyButton) ? "" : "Other Player ") + (r ? "Ready" : "Not Ready");
-
-    }
-
+    #region Both Players  
     void Update () {
+
+        if(draggedCastle)
+            draggedCastle.transform.SetPos(WorldMousePos);
 
         if (cancelButton.isActiveAndEnabled && Input.GetButtonDown("Cancel"))
             cancelButton.onClick.Invoke();

@@ -8,7 +8,7 @@ public class SC_Bastion : SC_Construction {
 
         tileManager.UpdateWallGraph(gameObject);
 
-        tileManager.UpdateNeighborWallGraph(tileManager.GetTileAt(gameObject));
+        tileManager.UpdateNeighborWallGraph(Tile);
 
     }
 
@@ -18,7 +18,7 @@ public class SC_Bastion : SC_Construction {
 
 		base.DestroyConstruction ();
 
-        tileManager.UpdateNeighborWallGraph (tileManager.GetTileAt (gameObject));
+        tileManager.UpdateNeighborWallGraph (Tile);
 
 	}
 

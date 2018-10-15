@@ -11,6 +11,10 @@ public class SC_Global {
 
     public enum Actions { Attack, Inventory, Wait, Build, Sacrifice, Destroy, EndTurn, Concede, Options, Cancel }
 
+    //public enum CastleType { None = -1, Desert, Forest, River, Mountain, Snow, Plain }
+
+    public static Vector3 WorldMousePos { get { return Camera.main.ScreenToWorldPoint(Input.mousePosition); } }
+
     [Serializable]
     public struct CombatModifiers {
 
