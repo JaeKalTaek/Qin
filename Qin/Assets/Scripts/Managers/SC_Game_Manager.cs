@@ -45,6 +45,8 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         SC_Village.number = 0;
 
+        SC_Castle.castlesNbr = 0;
+
         CurrentMapPrefab = prep ? prepMapPrefab : playMapPrefab;
 
     }
