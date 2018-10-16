@@ -165,7 +165,15 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     public SC_Tile GetTileAt (Vector3 pos) {
 
-        return tiles[pos.x.I(), pos.y.I()];
+        try {
+
+            return tiles[pos.x.I(), pos.y.I()];
+
+        } catch (IndexOutOfRangeException) {
+
+            return null;
+
+        }
 
     }
 

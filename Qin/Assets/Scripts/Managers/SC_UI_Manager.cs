@@ -222,7 +222,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
     public void DropCastle() {
 
-        TileManager.GetTileAt(WorldMousePos).Castle?.SetCastle(draggedCastle.name);
+        TileManager.GetTileAt(WorldMousePos)?.Castle?.SetCastle(draggedCastle.name);
 
         Destroy(draggedCastle);
 
