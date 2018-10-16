@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using static SC_Global;
 using System.Collections.Generic;
 
 public class SC_Menu_Manager : MonoBehaviour {
@@ -13,7 +14,13 @@ public class SC_Menu_Manager : MonoBehaviour {
 
     public enum actionMenu {Player, Character};
 
-    //List<SC_Global.Actions> actionsToDisplay;
+    public GameObject PanelMenu;
+
+    public GameObject ButtonMenu;
+
+    List<Actions> actionsToDisplay = new List<Actions>();
+
+    Dictionary<Actions, int> ActionsIndex = new Dictionary<Actions, int>();
 
     GameObject menu; 
 
@@ -37,9 +44,16 @@ public class SC_Menu_Manager : MonoBehaviour {
 
     #region Menu Management
 
-    public void DisplayActions(List<SC_Global.Actions> actions)
+    public void DisplayActions(List<Actions> actions)
     {
-        //actionsToDisplay = actions;
+        int actionIndex;
+
+        actionsToDisplay = actions;
+
+        foreach(Actions action in actionsToDisplay)
+        {
+            //actionIndex = ActionsIndex.TryGetValue(action);
+        }
     }
 
     //Move the menu next to the tile
@@ -68,7 +82,6 @@ public class SC_Menu_Manager : MonoBehaviour {
         Rect.anchorMax = Rect.anchorMin;
 
         menu.SetActive(true);
-
     }
 
     #endregion
