@@ -84,6 +84,8 @@ public class SC_UI_Manager : MonoBehaviour {
     SC_Construction[] qinConstructions;
 
     public SC_Construction[] SoldiersConstructions { get; set; }
+
+    GameObject grid;
     #endregion
 
     #region Setup
@@ -146,6 +148,13 @@ public class SC_UI_Manager : MonoBehaviour {
 
         } else
             gamePanel.SetActive(true);
+
+        // Setup Grid
+        SpriteRenderer gridRenderer = Instantiate(Resources.Load<GameObject>("Prefabs/UI/P_Grid").GetComponent<SpriteRenderer>());
+        Vector3 size = new Vector3(gameManager.CurrentMapPrefab.SizeMapX, gameManager.CurrentMapPrefab.SizeMapY, 1) * gameManager.CurrentMapPrefab.TileSize;
+        gridRenderer.size = new Vector2(size.x, size.y);
+        grid = gridRenderer.gameObject;
+        grid.transform.position = (size - Vector3.one * gameManager.CurrentMapPrefab.TileSize) / 2f;        
 
     }
 
@@ -716,6 +725,9 @@ public class SC_UI_Manager : MonoBehaviour {
 
     #region Both Players  
     void Update () {
+
+        if(Input.GetButtonDown("ToggleGrid"))
+            grid.SetActive(!grid.activeSelf);
 
         if(draggedCastle)
             draggedCastle.transform.SetPos(WorldMousePos);
