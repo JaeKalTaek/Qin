@@ -4,17 +4,17 @@ using UnityEngine;
 using UnityEngine.Networking;
 using static SC_Global;
 
-public abstract class SC_Character : NetworkBehaviour {	   
+public abstract class SC_Character : NetworkBehaviour {
 
-    // Public Variables
+    #region Stats
     [Header("Character variables")]
     [Tooltip("Name of this character")]
     public string characterName;
 
     [Tooltip("Base movement distance of this character")]
     public int baseMovement;
-
-    public int Movement { get; set; }
+    public int MovementModifiers { get; set; }
+    public int Movement { get { return Mathf.Max(0, baseMovement + MovementModifiers); } }    
 
     public bool CanMove { get; set; }
 
@@ -29,30 +29,45 @@ public abstract class SC_Character : NetworkBehaviour {
     public SC_Lifebar Lifebar { get; set; }
 
     [Tooltip("Strength of this character")]
-    public int strength;
+    public int baseStrength;
+    public int StrengthModifiers { get; set; }
+    public int Strength { get { return Mathf.Max(0, baseStrength + StrengthModifiers + CombatModifiers.strength); } }
 
     [Tooltip("Armor of this character")]
-    public int armor;
+    public int baseArmor;
+    public int ArmorModifiers { get; set; }
+    public int Armor { get { return baseArmor + ArmorModifiers + CombatModifiers.armor; } }
 
     [Tooltip("Qi of this character")]
-    public int qi;
+    public int baseQi;
+    public int QiModifiers { get; set; }
+    public int Qi { get { return Mathf.Max(0, baseQi + QiModifiers + CombatModifiers.qi); } }
 
     [Tooltip("Resistance of this character")]
-    public int resistance;
+    public int baseResistance;
+    public int ResistanceModifiers { get; set; }
+    public int Resistance { get { return baseResistance + ResistanceModifiers + CombatModifiers.resistance; } }
 
     [Tooltip("Technique of this character, amount of Crits Jauge gained after attacking")]
-    public int technique;
+    public int baseTechnique;
+    public int TechniqueModifiers { get; set; }
+    public int Technique { get { return Mathf.Max(0, baseTechnique + TechniqueModifiers + CombatModifiers.technique); } }
 
     public int CriticalAmount { get; set; }
 
     [Tooltip("Reflexes of this character, amount of Dodge Jauge gained after being attacked")]
-    public int reflexes;	
-	
+    public int baseReflexes;	
+    public int ReflexesModifiers { get; set; }
+    public int Reflexes { get { return Mathf.Max(0, baseReflexes + ReflexesModifiers + CombatModifiers.reflexes); } }
+
     public int DodgeAmount { get; set; }
 
-    public CombatModifiers Modifiers { get { return Tile.Construction?.combatModifers ?? (Tile.Ruin?.combatModifers ?? Tile.combatModifers); } }
+    public int RangeModifiers { get; set; }
 
-    public int BaseDamage { get { return Mathf.Max(0, GetActiveWeapon().physical ? strength + Modifiers.strength : qi + Modifiers.qi); } }
+    public SC_CombatModifiers CombatModifiers { get { return Tile.Construction?.combatModifers ?? (Tile.Ruin?.combatModifers ?? Tile.combatModifers); } }
+
+    public int BaseDamage { get { return GetActiveWeapon().physical ? Strength : Qi; } }
+    #endregion
 
     [Tooltip("Color applied when the character is tired")]
     public Color tiredColor = new Color(.15f, .15f, .15f);
@@ -67,14 +82,13 @@ public abstract class SC_Character : NetworkBehaviour {
 
     public SC_Tile AttackTarget { get; set; }
 
-    //public bool HasRange { get { return Hero ? Hero.weapon1.ranged || Hero.weapon2.ranged : Soldier.weapon.ranged; } }
-
     public SC_Tile LastPos { get; set; }
 
     public List<Actions> possiblePlayerActions;
 
     public List<Actions> possibleCharacterActions;
 
+    #region Managers
     protected static SC_Tile_Manager tileManager;
 
 	protected static SC_Game_Manager gameManager;
@@ -82,6 +96,7 @@ public abstract class SC_Character : NetworkBehaviour {
 	protected static SC_UI_Manager uiManager;
 
     protected static SC_Fight_Manager fightManager;
+    #endregion
 
     List<SC_Tile> path;
 
@@ -115,7 +130,6 @@ public abstract class SC_Character : NetworkBehaviour {
         characterName = loadedCharacter.characterName;
 
         baseMovement = loadedCharacter.baseMovement;
-        Movement = baseMovement;
 
         moveDuration = loadedCharacter.moveDuration;
 
@@ -125,17 +139,17 @@ public abstract class SC_Character : NetworkBehaviour {
         Lifebar = Instantiate(Resources.Load<GameObject>("Prefabs/Characters/Components/P_Lifebar"), transform).GetComponent<SC_Lifebar>();
         Lifebar.transform.position += new Vector3(0, -.44f, 0);
 
-        strength = loadedCharacter.strength;
+        baseStrength = loadedCharacter.baseStrength;
 
-        armor = loadedCharacter.armor;
+        baseArmor = loadedCharacter.baseArmor;
 
-        qi = loadedCharacter.qi;
+        baseQi = loadedCharacter.baseQi;
 
-        resistance = loadedCharacter.resistance;
+        baseResistance = loadedCharacter.baseResistance;
 
-        technique = loadedCharacter.technique;
+        baseTechnique = loadedCharacter.baseTechnique;
 
-        reflexes = loadedCharacter.reflexes;
+        baseReflexes = loadedCharacter.baseReflexes;
 
         tiredColor = loadedCharacter.tiredColor;
 

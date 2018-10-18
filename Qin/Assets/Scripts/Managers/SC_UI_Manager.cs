@@ -350,13 +350,13 @@ public class SC_UI_Manager : MonoBehaviour {
 
 		SetText("Name", character.characterName);
 		SetText("Health", "Health : " + character.Health + " / " + character.maxHealth);
-		SetText("Strength", " Strength : " + GetFightStat(character, "strength"));
-		SetText("Armor", " Armor : " + GetFightStat(character, "armor"));
-		SetText("Qi", " Qi : " + GetFightStat(character, "qi"));
-		SetText("Resistance", " Resistance : " + GetFightStat(character, "resistance"));
-		SetText("Technique", " Technique : " + GetFightStat(character, "technique") + ", Crit : " + character.CriticalAmount + "/" + gameManager.CommonCharactersVariables.critTrigger);
-		SetText("Reflexes", " Reflexes : " + GetFightStat(character, "reflexes") + ", Dodge : " + character.DodgeAmount + "/" + gameManager.CommonCharactersVariables.dodgeTrigger);
-        SetText("Movement", " Movement : " + GetModifiedStat(character.baseMovement, character.Movement - character.baseMovement));
+		SetText("Strength", " Strength : " + GetStat(character, "Strength"));
+		SetText("Armor", " Armor : " + GetStat(character, "Armor"));
+		SetText("Qi", " Qi : " + GetStat(character, "Qi"));
+		SetText("Resistance", " Resistance : " + GetStat(character, "Resistance"));
+		SetText("Technique", " Technique : " + GetStat(character, "Technique") + ", Crit : " + character.CriticalAmount + "/" + gameManager.CommonCharactersVariables.critTrigger);
+		SetText("Reflexes", " Reflexes : " + GetStat(character, "Reflexes") + ", Dodge : " + character.DodgeAmount + "/" + gameManager.CommonCharactersVariables.dodgeTrigger);
+        SetText("Movement", " Movement : " + GetStat(character, "Movement"));
 		SetText("WeaponsTitle", " Weapons :");
 
         if (SC_Tile.CanChangeFilters)
@@ -364,15 +364,15 @@ public class SC_UI_Manager : MonoBehaviour {
 
     }
 
-    string GetFightStat(SC_Character chara, string stat) {
+    string GetStat(SC_Character chara, string id) {        
 
-        return GetModifiedStat((int)typeof(SC_Character).GetField(stat).GetValue(chara), (int)typeof(CombatModifiers).GetField(stat).GetValue(chara.Modifiers));
+        int stat = (int)chara.GetType().GetProperty(id).GetValue(chara);
 
-    }
+        int baseStat = (int)chara.GetType().GetField("base" + id).GetValue(chara);
 
-    string GetModifiedStat(int baseStat, int modifier) {
+        int modifiers = (int)chara.GetType().GetProperty(id + "Modifiers").GetValue(chara);
 
-        return (baseStat + modifier) + (modifier == 0 ? "" : (" (" + baseStat + " " + (modifier > 0 ? "+" : "-") + " " + Mathf.Abs(modifier) + ")"));
+        return stat + (modifiers == 0 ? "" : (" (" + baseStat + " " + (modifiers > 0 ? "+" : "-") + " " + Mathf.Abs(modifiers) + ")"));
 
     }
 
@@ -452,7 +452,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         int attackedDamages = 0;
 
-        int attackerDamages = attacker.GetActiveWeapon().physical ? attacker.strength : attacker.qi;
+        int attackerDamages = attacker.BaseDamage;
 
         string attackedName = "";
 

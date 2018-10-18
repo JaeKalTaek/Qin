@@ -15,7 +15,7 @@ public class SC_Tile : NetworkBehaviour {
     public int cost;
 
     [Tooltip("Combat modifiers for this tile")]
-    public CombatModifiers combatModifers;
+    public SC_CombatModifiers combatModifers;
 
     [SyncVar]
     public TileInfos infos;

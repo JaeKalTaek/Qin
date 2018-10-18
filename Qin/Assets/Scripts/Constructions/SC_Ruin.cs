@@ -5,7 +5,7 @@ using static SC_Global;
 public class SC_Ruin : NetworkBehaviour {
 
     [Tooltip("Combat modifiers for this ruin")]
-    public CombatModifiers combatModifers;
+    public SC_CombatModifiers combatModifers;
 
     void Start () {
 

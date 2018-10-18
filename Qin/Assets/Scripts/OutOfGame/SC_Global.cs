@@ -16,7 +16,7 @@ public class SC_Global {
     public static Vector3 WorldMousePos { get { return Camera.main.ScreenToWorldPoint(Input.mousePosition); } }
 
     [Serializable]
-    public struct CombatModifiers {
+    public struct SC_CombatModifiers {
 
         [Header("Combat Modifiers")]
         [Tooltip("Strength Modifier")]

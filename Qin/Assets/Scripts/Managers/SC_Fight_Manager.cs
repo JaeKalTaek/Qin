@@ -77,9 +77,9 @@ public class SC_Fight_Manager : MonoBehaviour {
         else
             killed = attacked.Hit(CalcDamages(attacker, attacked, counter), false);
 
-        attacker.CriticalAmount = (attacker.CriticalAmount >= CharactersVariables.critTrigger) ? 0 : Mathf.Min((attacker.CriticalAmount + attacker.technique + attacker.Modifiers.technique), CharactersVariables.critTrigger);
+        attacker.CriticalAmount = (attacker.CriticalAmount >= CharactersVariables.critTrigger) ? 0 : Mathf.Min((attacker.CriticalAmount + attacker.Technique), CharactersVariables.critTrigger);
 
-        attacked.DodgeAmount = (attacked.DodgeAmount >= CharactersVariables.dodgeTrigger) ? 0 : Mathf.Min((attacked.DodgeAmount + attacked.reflexes + attacker.Modifiers.reflexes), CharactersVariables.dodgeTrigger);
+        attacked.DodgeAmount = (attacked.DodgeAmount >= CharactersVariables.dodgeTrigger) ? 0 : Mathf.Min((attacked.DodgeAmount + attacked.Reflexes), CharactersVariables.dodgeTrigger);
 
         if (attacker.Hero && killed)
             IncreaseRelationships(attacker.Hero);
@@ -127,8 +127,8 @@ public class SC_Fight_Manager : MonoBehaviour {
         if (attacked.DodgeAmount == CharactersVariables.dodgeTrigger)
             damages = Mathf.FloorToInt(damages * ((100 - CharactersVariables.dodgeReductionPercentage) / 100));
 
-        int armor = attacked.armor + attacked.Modifiers.armor;
-        int resistance = attacked.resistance + attacked.Modifiers.resistance;
+        int armor = attacked.Armor;
+        int resistance = attacked.Resistance;
 
         if (attacked.Hero) {
 

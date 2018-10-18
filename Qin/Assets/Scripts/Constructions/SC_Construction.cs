@@ -20,7 +20,7 @@ public class SC_Construction : NetworkBehaviour {
     public bool production;
 
     [Tooltip("Combat modifiers for this construction")]
-    public CombatModifiers combatModifers;
+    public SC_CombatModifiers combatModifers;
 
     public SC_Lifebar Lifebar { get; set; }
 
