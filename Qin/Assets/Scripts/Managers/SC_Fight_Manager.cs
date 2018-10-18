@@ -3,7 +3,9 @@ using UnityEngine;
 
 public class SC_Fight_Manager : MonoBehaviour {
 
-    public bool RangedAttack { get; set; }
+    //public bool RangedAttack { get; set; }
+
+    public int AttackRange { get; set; }
 
     SC_UI_Manager uiManager;
 
@@ -47,7 +49,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
                 bool killed = CharacterAttack(attacker, attacked, targetConstruction, false);
 
-                if (!killed && ((RangedAttack && attacked.GetActiveWeapon().ranged) || (!RangedAttack && attacked.GetActiveWeapon().CanMelee)))
+                if (!killed && attacked.GetActiveWeapon().Range.In(AttackRange))
                     CharacterAttack(attacked, attacker, currentConstruction, true);
 
             } else if (targetConstruction) {
@@ -136,7 +138,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
         }
 
-        damages -= (attacker.GetActiveWeapon().weaponOrQi) ? armor : resistance;
+        damages -= (attacker.GetActiveWeapon().physical) ? armor : resistance;
 
         if (counter)
             damages = Mathf.CeilToInt(damages / CharactersVariables.counterFactor);

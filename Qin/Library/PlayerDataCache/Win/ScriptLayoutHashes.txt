@@ -194,7 +194,7 @@ bfd7942fda3f9f21b5777b79f8488847 Assembly-CSharp.dll:.SC_UI_Manager
 0a006f3734181ba8b26758f0866152c0 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
 b811a0bc522b887e09f59559258b673f Assembly-CSharp.dll:.SC_Tile_Manager
 72ba25802bb1625a8b5c0b7b0a82292a Assembly-CSharp-firstpass.dll:FMODUnity.StudioParameterTrigger
-371efdd0e40d95a76db6ac8e6f4fe332 Assembly-CSharp.dll:.SC_Weapon
+1b054c420299799fc56ba01df7625725 Assembly-CSharp.dll:.SC_Weapon
 1da208394e312f63f4105cf32b80b96e Assembly-CSharp.dll:.SC_Workshop
 1da208394e312f63f4105cf32b80b96e Assembly-CSharp.dll:.SC_Castle
 e04611b8715e6833d2bd7010fc6be10b Unity.TextMeshPro.dll:TMPro.TMP_StyleSheet

@@ -32,4 +32,10 @@ public static class SC_ExtensionMethods {
 
     }
 
+    public static bool In (this Vector2 v, int i) {
+
+        return (i >= v.x) && (i <= v.y);
+
+    }
+
 }

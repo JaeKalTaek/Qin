@@ -452,7 +452,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         int attackedDamages = 0;
 
-        int attackerDamages = attacker.GetActiveWeapon().weaponOrQi ? attacker.strength : attacker.qi;
+        int attackerDamages = attacker.GetActiveWeapon().physical ? attacker.strength : attacker.qi;
 
         string attackedName = "";
 
@@ -474,7 +474,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
             attackerDamages = fightManager.CalcDamages(attacker, attacked, false);
 
-            if (!attacker.Tile.GreatWall && (fightManager.RangedAttack && attacked.GetActiveWeapon().ranged || !fightManager.RangedAttack && attacked.GetActiveWeapon().CanMelee))
+            if (!attacker.Tile.GreatWall && attacked.GetActiveWeapon().Range.In(fightManager.AttackRange))
                 attackedDamages = fightManager.CalcDamages(attacked, attacker, true);
 
             attackedHP = attacked.Health - attackerDamages;

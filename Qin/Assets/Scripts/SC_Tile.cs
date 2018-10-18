@@ -179,9 +179,9 @@ public class SC_Tile : NetworkBehaviour {
 
             } else if (CurrentDisplay == TDisplay.Attack) {
 
-                fightManager.RangedAttack = SC_Tile_Manager.TileDistance(attackingCharacter.transform.position, this) > 1;
+                fightManager.AttackRange = SC_Tile_Manager.TileDistance(attackingCharacter.transform.position, this);
 
-                SC_Player.localPlayer.CmdPrepareForAttack(fightManager.RangedAttack, gameObject, !SC_Player.localPlayer.Qin);
+                SC_Player.localPlayer.CmdPrepareForAttack(fightManager.AttackRange, gameObject, !SC_Player.localPlayer.Qin);
 
                 if (attackingCharacter.Hero)
                     attackingCharacter.Hero.ChooseWeapon();

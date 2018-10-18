@@ -52,7 +52,7 @@ public class SC_Character : NetworkBehaviour {
 
     public CombatModifiers Modifiers { get { return Tile.Construction?.combatModifers ?? (Tile.Ruin?.combatModifers ?? Tile.combatModifers); } }
 
-    public int BaseDamage { get { return Mathf.Max(0, GetActiveWeapon().weaponOrQi ? strength + Modifiers.strength : qi + Modifiers.qi); } }
+    public int BaseDamage { get { return Mathf.Max(0, GetActiveWeapon().physical ? strength + Modifiers.strength : qi + Modifiers.qi); } }
 
     [Tooltip("Color applied when the character is tired")]
     public Color tiredColor = new Color(.15f, .15f, .15f);
@@ -67,13 +67,13 @@ public class SC_Character : NetworkBehaviour {
 
     public SC_Tile AttackTarget { get; set; }
 
-    public bool HasRange { get { return Hero ? Hero.weapon1.ranged || Hero.weapon2.ranged : Soldier.weapon.ranged; } }
+    //public bool HasRange { get { return Hero ? Hero.weapon1.ranged || Hero.weapon2.ranged : Soldier.weapon.ranged; } }
 
     public SC_Tile LastPos { get; set; }
 
-    public List<SC_Global.Actions> possiblePlayerActions;
+    public List<Actions> possiblePlayerActions;
 
-    public List<SC_Global.Actions> possibleCharacterActions;
+    public List<Actions> possibleCharacterActions;
 
     protected static SC_Tile_Manager tileManager;
 
@@ -381,5 +381,14 @@ public class SC_Character : NetworkBehaviour {
 		GetComponent<SpriteRenderer> ().color = BaseColor;
 
 	}
+
+    public Vector2 GetRange() {
+
+        if (Hero)
+            return new Vector2(Mathf.Min(Hero.weapon1.minRange, Hero.weapon2.minRange), Mathf.Max(Hero.weapon1.maxRange, Hero.weapon2.maxRange));
+        else
+            return new Vector2(Soldier.weapon.minRange, Soldier.weapon.maxRange);
+
+    }
 
 }

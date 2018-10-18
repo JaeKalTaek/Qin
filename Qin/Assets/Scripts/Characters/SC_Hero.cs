@@ -83,9 +83,9 @@ public class SC_Hero : SC_Character {
 
             attackingCharacter.AttackTarget = Tile;
 
-            fightManager.RangedAttack = SC_Tile_Manager.TileDistance(attackingCharacter.transform.position, Tile) > 1;
+            fightManager.AttackRange = SC_Tile_Manager.TileDistance(attackingCharacter.transform.position, Tile);
 
-			uiManager.PreviewFight(true);
+            uiManager.PreviewFight(true);
 
 		}
 
@@ -95,10 +95,10 @@ public class SC_Hero : SC_Character {
 
         uiManager.weaponChoicePanel.SetActive(true);
 
-		if ((fightManager.RangedAttack && weapon1.ranged) || (!fightManager.RangedAttack && weapon1.CanMelee))
+		if (weapon1.Range.In(fightManager.AttackRange))
 			uiManager.ShowWeapon (GetWeapon (true), true);
 
-		if ((fightManager.RangedAttack && weapon2.ranged) || (!fightManager.RangedAttack && weapon2.CanMelee))
+		if (weapon2.Range.In(fightManager.AttackRange))
 			uiManager.ShowWeapon (GetWeapon (false), false);
 
         uiManager.SetCancelButton(uiManager.ResetAttackChoice);

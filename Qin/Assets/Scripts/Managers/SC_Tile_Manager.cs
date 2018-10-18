@@ -114,11 +114,19 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     public List<SC_Tile> GetRange(Vector3 center, int distance) {
 
+        return GetRange(center, new Vector2(0, distance));
+
+    }
+
+    public List<SC_Tile> GetRange (Vector3 center, Vector2 range) {
+
         List<SC_Tile> returnValue = new List<SC_Tile>();
 
         foreach (SC_Tile tile in tiles) {
 
-            if (TileDistance(center, tile) <= distance)
+            int dist = TileDistance(center, tile);
+
+            if ((dist >= range.x) && (dist <= range.y))
                 returnValue.Add(tile);
 
         }
@@ -195,26 +203,9 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     public List<SC_Tile> GetAttackTiles(SC_Character attacker, Vector3 center) {
 
-        List<SC_Tile> attackableTiles = new List<SC_Tile>();
+        List<SC_Tile> attackableTiles = GetRange(center, attacker.GetRange());
 
-        if (attacker.HasRange) {
-
-            if (!(attacker.Soldier?.weapon.CanMelee ?? true))
-                attackableTiles = GetTilesAtDistance<SC_Tile>(tiles, center, 2);
-            else
-                attackableTiles = GetRange(center, 2);
-
-        } else {
-
-            attackableTiles = GetTilesAtDistance<SC_Tile>(tiles, center, 1);
-
-        }
-
-        List<SC_Tile> a = new List<SC_Tile> (attackableTiles);
-
-        foreach (SC_Tile t in a)
-            if (!t.CanCharacterAttack(attacker))
-                attackableTiles.Remove(t);
+        attackableTiles.RemoveAll(t => !t.CanCharacterAttack(attacker));
 
         return attackableTiles;
 
