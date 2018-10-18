@@ -254,4 +254,10 @@ public class SC_Hero : SC_Character {
 
 	}
 
+    public override Vector2 GetRange () {
+
+        return new Vector2(Mathf.Min(weapon1.minRange, weapon2.minRange), Mathf.Max(weapon1.maxRange, weapon2.maxRange));
+
+    }
+
 }

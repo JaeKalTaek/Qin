@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using static SC_Global;
 
-public class SC_Character : NetworkBehaviour {	   
+public abstract class SC_Character : NetworkBehaviour {	   
 
     // Public Variables
     [Header("Character variables")]
@@ -382,13 +382,6 @@ public class SC_Character : NetworkBehaviour {
 
 	}
 
-    public Vector2 GetRange() {
-
-        if (Hero)
-            return new Vector2(Mathf.Min(Hero.weapon1.minRange, Hero.weapon2.minRange), Mathf.Max(Hero.weapon1.maxRange, Hero.weapon2.maxRange));
-        else
-            return new Vector2(Soldier.weapon.minRange, Soldier.weapon.maxRange);
-
-    }
+    public abstract Vector2 GetRange ();
 
 }

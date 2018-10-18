@@ -89,4 +89,10 @@ public class SC_Soldier : SC_Character {
 
     }
 
+    public override Vector2 GetRange () {
+
+        return weapon.Range;
+
+    }
+
 }
