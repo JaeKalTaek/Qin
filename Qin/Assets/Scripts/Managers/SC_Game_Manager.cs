@@ -181,7 +181,11 @@ public class SC_Game_Manager : NetworkBehaviour {
 
     }
 
-    public void Load() {       
+    public void Load() {
+
+        if(!Player.Qin)
+            foreach (SC_Castle castle in FindObjectsOfType<SC_Castle>())
+                castle.Setup();
 
         foreach(SC_Tile t in tileManager.changingTiles)
             t.SetupTile();

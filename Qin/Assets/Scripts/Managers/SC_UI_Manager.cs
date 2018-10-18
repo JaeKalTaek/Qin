@@ -221,7 +221,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         GameObject go = Resources.Load<GameObject>("Prefabs/Constructions/Special/P_Drag&DropCastle");
 
-        go.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Castles/" + castleType);
+        go.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Constructions/Castles/" + castleType);
 
         draggedCastle = Instantiate(go, new Vector3(WorldMousePos.x, WorldMousePos.y, -.54f) , Quaternion.identity);
 
@@ -474,7 +474,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
             attackerDamages = fightManager.CalcDamages(attacker, attacked, false);
 
-            if (!attacker.Tile.GreatWall && (fightManager.RangedAttack && attacked.GetActiveWeapon().ranged || !fightManager.RangedAttack && !attacked.GetActiveWeapon().IsBow))
+            if (!attacker.Tile.GreatWall && (fightManager.RangedAttack && attacked.GetActiveWeapon().ranged || !fightManager.RangedAttack && attacked.GetActiveWeapon().CanMelee))
                 attackedDamages = fightManager.CalcDamages(attacked, attacker, true);
 
             attackedHP = attacked.Health - attackerDamages;

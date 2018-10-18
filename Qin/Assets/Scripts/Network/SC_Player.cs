@@ -105,18 +105,16 @@ public class SC_Player : NetworkBehaviour {
 
     #region Castle changes tile type
     [Command]
-    public void CmdChangeTileType(GameObject tile, string newType, int newSprite) {
+    public void CmdChangeCastleType(GameObject castle, string newType, int newSprite) {
 
-        RpcChangeTileType(tile, newType, newSprite);
+        RpcChangeCastleType(castle, newType, newSprite);
 
     }
 
     [ClientRpc]
-    void RpcChangeTileType(GameObject tile, string newType, int newSprite) {
+    void RpcChangeCastleType(GameObject castle, string newType, int newSprite) {
 
-        tile.GetComponent<SC_Tile>().infos.type = newType;
-
-        tile.GetComponent<SC_Tile>().infos.sprite = newSprite;
+        castle.GetComponent<SC_Castle>().SetCastle(newType, newSprite);
 
     }
     #endregion

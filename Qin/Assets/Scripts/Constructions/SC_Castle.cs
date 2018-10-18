@@ -14,15 +14,38 @@ public class SC_Castle : SC_Construction {
 
     }
 
-    public void SetCastle(string type) {
+    public void SetCastle (string type) {
+
+        SC_Player.localPlayer.CmdChangeCastleType(gameObject, type, Random.Range(0, Resources.LoadAll<Sprite>("Sprites/Tiles/" + type).Length));
+
+    }
+
+    public void SetCastle (string type, int sprite) {
 
         CastleType = type;
 
-        GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Castles/" + type);
+        if(SC_Player.localPlayer.Qin)
+            Setup();
 
-        foreach(SC_Tile t in tileManager.changingTiles)
-            if(t.Region == Tile.Region)
-                SC_Player.localPlayer.CmdChangeTileType(t.gameObject, type, Random.Range(0, Resources.LoadAll<Sprite>("Sprites/Tiles/" + type).Length));
+        foreach (SC_Tile t in tileManager.changingTiles) {
+
+            if (t.Region == Tile.Region) {
+
+                t.GetComponent<SC_Tile>().infos.type = CastleType;
+
+                t.GetComponent<SC_Tile>().infos.sprite = sprite;
+
+            }
+
+        }
+
+    }
+
+    public void Setup() {
+
+        Name = CastleType + " Castle";
+
+        GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Constructions/Castles/" + CastleType);
 
     }
 

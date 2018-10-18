@@ -47,7 +47,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
                 bool killed = CharacterAttack(attacker, attacked, targetConstruction, false);
 
-                if (!killed && ((RangedAttack && attacked.GetActiveWeapon().ranged) || (!RangedAttack && !attacked.GetActiveWeapon().IsBow)))
+                if (!killed && ((RangedAttack && attacked.GetActiveWeapon().ranged) || (!RangedAttack && attacked.GetActiveWeapon().CanMelee)))
                     CharacterAttack(attacked, attacker, currentConstruction, true);
 
             } else if (targetConstruction) {
@@ -108,7 +108,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
         int damages = attacker.BaseDamage;
 
-        damages = Mathf.CeilToInt(damages * attacker.GetActiveWeapon().ShiFuMiModifier(attacked.GetActiveWeapon()));
+        //damages = Mathf.CeilToInt(damages * attacker.GetActiveWeapon().ShiFuMiModifier(attacked.GetActiveWeapon()));
 
         if (attacker.Hero)
             damages += Mathf.CeilToInt(damages * RelationBoost(attacker.Hero));

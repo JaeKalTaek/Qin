@@ -95,10 +95,10 @@ public class SC_Hero : SC_Character {
 
         uiManager.weaponChoicePanel.SetActive(true);
 
-		if ((fightManager.RangedAttack && weapon1.ranged) || (!fightManager.RangedAttack && !weapon1.IsBow))
+		if ((fightManager.RangedAttack && weapon1.ranged) || (!fightManager.RangedAttack && weapon1.CanMelee))
 			uiManager.ShowWeapon (GetWeapon (true), true);
 
-		if ((fightManager.RangedAttack && weapon2.ranged) || (!fightManager.RangedAttack && !weapon2.IsBow))
+		if ((fightManager.RangedAttack && weapon2.ranged) || (!fightManager.RangedAttack && weapon2.CanMelee))
 			uiManager.ShowWeapon (GetWeapon (false), false);
 
         uiManager.SetCancelButton(uiManager.ResetAttackChoice);

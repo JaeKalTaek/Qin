@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using static SC_Global;
+//using static SC_Global;
 
 public class SC_Weapon : MonoBehaviour {
 
@@ -7,11 +7,16 @@ public class SC_Weapon : MonoBehaviour {
 
     public string weaponName;
 
-    public ShiFuMi value;
+    public int minRange;
 
-    public bool IsBow { get { return value == ShiFuMi.Special; } }
 
-    public float ShiFuMiModifier(SC_Weapon opponent) {
+    public bool CanMelee { get { return minRange <= 1; } }
+
+    //public ShiFuMi value;
+
+    //public bool IsBow { get { return value == ShiFuMi.Special; } }
+
+    /*public float ShiFuMiModifier(SC_Weapon opponent) {
 
 		if ((weaponOrQi == opponent.weaponOrQi) && (value != ShiFuMi.Special) && (opponent.value != ShiFuMi.Special) && (value != opponent.value))
             return ((value == ShiFuMi.Rock && opponent.value == ShiFuMi.Scissors) ||
@@ -21,6 +26,6 @@ public class SC_Weapon : MonoBehaviour {
         else
             return 1;
 
-    }
+    }*/
          
 }

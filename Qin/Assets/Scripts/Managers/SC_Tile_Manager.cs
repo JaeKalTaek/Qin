@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-using static SC_EditorTile;
 using static SC_Global;
 
 public class SC_Tile_Manager : NetworkBehaviour {
@@ -200,7 +199,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         if (attacker.HasRange) {
 
-            if (attacker.Soldier && attacker.GetActiveWeapon().IsBow)
+            if (!(attacker.Soldier?.weapon.CanMelee ?? true))
                 attackableTiles = GetTilesAtDistance<SC_Tile>(tiles, center, 2);
             else
                 attackableTiles = GetRange(center, 2);
