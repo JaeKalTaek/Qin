@@ -352,7 +352,7 @@ public class SC_UI_Manager : MonoBehaviour {
 		SetText("Health", "Health : " + character.Health + " / " + character.maxHealth);
 		SetText("Strength", " Strength : " + GetStat(character, "Strength"));
 		SetText("Armor", " Armor : " + GetStat(character, "Armor"));
-		SetText("Qi", " Qi : " + GetStat(character, "Qi"));
+		SetText("Chi", " Chi : " + GetStat(character, "Chi"));
 		SetText("Resistance", " Resistance : " + GetStat(character, "Resistance"));
 		SetText("Technique", " Technique : " + GetStat(character, "Technique") + ", Crit : " + character.CriticalAmount + "/" + gameManager.CommonCharactersVariables.critTrigger);
 		SetText("Reflexes", " Reflexes : " + GetStat(character, "Reflexes") + ", Dodge : " + character.DodgeAmount + "/" + gameManager.CommonCharactersVariables.dodgeTrigger);

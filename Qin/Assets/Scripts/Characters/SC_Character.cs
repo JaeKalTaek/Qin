@@ -21,10 +21,10 @@ public abstract class SC_Character : NetworkBehaviour {
     public int StrengthModifiers { get; set; }
     public int Strength { get { return Mathf.Max(0, baseStrength + StrengthModifiers + CombatModifiers.strength); } }
 
-    [Tooltip("Qi of this character")]
-    public int baseQi;
-    public int QiModifiers { get; set; }
-    public int Qi { get { return Mathf.Max(0, baseQi + QiModifiers + CombatModifiers.qi); } }
+    [Tooltip("Chi of this character")]
+    public int baseChi;
+    public int ChiModifiers { get; set; }
+    public int Chi { get { return Mathf.Max(0, baseChi + ChiModifiers + CombatModifiers.chi); } }
 
     [Tooltip("Armor of this character")]
     public int baseArmor;
@@ -60,19 +60,11 @@ public abstract class SC_Character : NetworkBehaviour {
     [Tooltip("Time for a character to walk one tile of distance")]
     public float moveDuration;
 
-    
-
-   
-
-    
-
-    
-
     public int RangeModifiers { get; set; }
 
     public SC_CombatModifiers CombatModifiers { get { return Tile.Construction?.combatModifers ?? (Tile.Ruin?.combatModifers ?? Tile.combatModifers); } }
 
-    public int BaseDamage { get { return GetActiveWeapon().physical ? Strength : Qi; } }
+    public int BaseDamage { get { return GetActiveWeapon().physical ? Strength : Chi; } }
     #endregion
 
     [Tooltip("Color applied when the character is tired")]
@@ -131,7 +123,8 @@ public abstract class SC_Character : NetworkBehaviour {
 
     public override void OnStartClient () {
 
-        loadedCharacter = Resources.Load<SC_Character>(characterPath);
+        loadedCharacter = Resources.Load<SC_Character>(characterPath);        
+
 
         characterName = loadedCharacter.characterName;
 
@@ -149,7 +142,7 @@ public abstract class SC_Character : NetworkBehaviour {
 
         baseArmor = loadedCharacter.baseArmor;
 
-        baseQi = loadedCharacter.baseQi;
+        baseChi = loadedCharacter.baseChi;
 
         baseResistance = loadedCharacter.baseResistance;
 

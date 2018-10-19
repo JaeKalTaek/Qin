@@ -7,7 +7,7 @@ public class SC_Weapon : MonoBehaviour {
     [Tooltip("Name of this weapon")]
     public string weaponName;
 
-    [Tooltip("Does this weapon inflict physical or qi damages")]
+    [Tooltip("Does this weapon inflict physical or chi damages")]
     public bool physical;    
 
     [Tooltip("Minimum range of this weapon")]

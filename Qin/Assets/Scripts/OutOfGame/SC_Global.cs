@@ -22,8 +22,8 @@ public class SC_Global {
         [Tooltip("Strength Modifier")]
         public int strength;
 
-        [Tooltip("Qi Modifier")]
-        public int qi;
+        [Tooltip("Chi Modifier")]
+        public int chi;
 
         [Tooltip("Armor Modifier")]
         public int armor;
