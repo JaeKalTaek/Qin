@@ -11,21 +11,9 @@ public abstract class SC_Character : NetworkBehaviour {
     [Tooltip("Name of this character")]
     public string characterName;
 
-    [Tooltip("Base movement distance of this character")]
-    public int baseMovement;
-    public int MovementModifiers { get; set; }
-    public int Movement { get { return Mathf.Max(0, baseMovement + MovementModifiers); } }    
-
-    public bool CanMove { get; set; }
-
-    [Tooltip("Time for a character to walk one tile of distance")]
-    public float moveDuration;
-
     [Tooltip("Base Maximum Health of this character")]
-	public int maxHealth;
-
+    public int maxHealth;
     public int Health { get; set; }
-
     public SC_Lifebar Lifebar { get; set; }
 
     [Tooltip("Strength of this character")]
@@ -33,15 +21,15 @@ public abstract class SC_Character : NetworkBehaviour {
     public int StrengthModifiers { get; set; }
     public int Strength { get { return Mathf.Max(0, baseStrength + StrengthModifiers + CombatModifiers.strength); } }
 
-    [Tooltip("Armor of this character")]
-    public int baseArmor;
-    public int ArmorModifiers { get; set; }
-    public int Armor { get { return baseArmor + ArmorModifiers + CombatModifiers.armor; } }
-
     [Tooltip("Qi of this character")]
     public int baseQi;
     public int QiModifiers { get; set; }
     public int Qi { get { return Mathf.Max(0, baseQi + QiModifiers + CombatModifiers.qi); } }
+
+    [Tooltip("Armor of this character")]
+    public int baseArmor;
+    public int ArmorModifiers { get; set; }
+    public int Armor { get { return baseArmor + ArmorModifiers + CombatModifiers.armor; } }
 
     [Tooltip("Resistance of this character")]
     public int baseResistance;
@@ -56,11 +44,29 @@ public abstract class SC_Character : NetworkBehaviour {
     public int CriticalAmount { get; set; }
 
     [Tooltip("Reflexes of this character, amount of Dodge Jauge gained after being attacked")]
-    public int baseReflexes;	
+    public int baseReflexes;
     public int ReflexesModifiers { get; set; }
     public int Reflexes { get { return Mathf.Max(0, baseReflexes + ReflexesModifiers + CombatModifiers.reflexes); } }
 
     public int DodgeAmount { get; set; }
+
+    [Tooltip("Base movement distance of this character")]
+    public int baseMovement;
+    public int MovementModifiers { get; set; }
+    public int Movement { get { return Mathf.Max(0, baseMovement + MovementModifiers); } }    
+
+    public bool CanMove { get; set; }
+
+    [Tooltip("Time for a character to walk one tile of distance")]
+    public float moveDuration;
+
+    
+
+   
+
+    
+
+    
 
     public int RangeModifiers { get; set; }
 
