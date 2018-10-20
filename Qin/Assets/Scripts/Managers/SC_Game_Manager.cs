@@ -155,14 +155,14 @@ public class SC_Game_Manager : NetworkBehaviour {
 
             if ((eTile.soldier != SoldierType.None) || eTile.Qin || (eTile.Hero != HeroType.None)) {
 
-                string path = "Prefabs/Characters/" + (eTile.soldier != SoldierType.None ? "P_BaseSoldier" : (eTile.Qin ? "P_Qin" : "Heroes/P_BaseHero"));
+                string basePath = "Prefabs/Characters/" + (eTile.soldier != SoldierType.None ? "P_BaseSoldier" : (eTile.Qin ? "P_Qin" : "Heroes/P_BaseHero"));
 
                 Transform parent = eTile.soldier != SoldierType.None ? GameObject.Find("Soldiers").transform : (eTile.Qin ? null : GameObject.Find("Heroes").transform);
 
-                GameObject go = Instantiate(Resources.Load<GameObject>(path), eTile.transform.position + new Vector3(0, 0, -.53f), Quaternion.identity, parent);
+                GameObject go = Instantiate(Resources.Load<GameObject>(basePath), eTile.transform.position + new Vector3(0, 0, -.53f), Quaternion.identity, parent);
 
                 if(!eTile.Qin)
-                    go.GetComponent<SC_Character>().characterPath = "Prefabs/Characters/" + (eTile.soldier != SoldierType.None ? "Soldiers/P_" + eTile.soldier : (eTile.Qin ? "P_Qin" : "Heroes/P_" + eTile.Hero));
+                    go.GetComponent<SC_Character>().characterPath = "Prefabs/Characters/" + (eTile.soldier != SoldierType.None ? "Soldiers/P_" + eTile.soldier : "Heroes/P_" + eTile.Hero);
 
                 NetworkServer.Spawn(go);
 
@@ -183,11 +183,26 @@ public class SC_Game_Manager : NetworkBehaviour {
 
     public void Load() {
 
-        if(!Player.Qin)
-            foreach (SC_Castle castle in FindObjectsOfType<SC_Castle>())
+        Transform demonsParent = GameObject.Find("Demons").transform;
+
+        foreach (SC_Castle castle in FindObjectsOfType<SC_Castle>()) {
+
+            if (!Player.Qin)
                 castle.Setup();
 
-        foreach(SC_Tile t in tileManager.changingTiles)
+            if(isServer) {
+
+                GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/Characters/Demons/P_BaseDemon"), castle.transform.position + new Vector3(0, 0, -.53f), Quaternion.identity, demonsParent);
+
+                go.GetComponent<SC_Character>().characterPath = "Prefabs/Characters/Demons/P_" + castle.CastleType + "Demon";
+
+                NetworkServer.Spawn(go);
+
+            }
+            
+        }
+
+        foreach (SC_Tile t in tileManager.changingTiles)
             t.SetupTile();
 
         uiManager.loadingPanel.SetActive(false);

@@ -78,6 +78,8 @@ public abstract class SC_Character : NetworkBehaviour {
 
     public SC_Soldier Soldier { get { return this as SC_Soldier; } }
 
+    public SC_Demon Demon { get { return this as SC_Demon; } }
+
     public SC_Tile AttackTarget { get; set; }
 
     public SC_Tile LastPos { get; set; }
@@ -123,8 +125,7 @@ public abstract class SC_Character : NetworkBehaviour {
 
     public override void OnStartClient () {
 
-        loadedCharacter = Resources.Load<SC_Character>(characterPath);        
-
+        loadedCharacter = Resources.Load<SC_Character>(characterPath);      
 
         characterName = loadedCharacter.characterName;
 
@@ -265,7 +266,7 @@ public abstract class SC_Character : NetworkBehaviour {
 
         uiManager.attackButton.SetActive(canAttack);
 
-        if(Hero) {
+        if (Hero) {
 
             CanMove = (Hero.Berserk && !Hero.BerserkTurn);
 
@@ -279,7 +280,7 @@ public abstract class SC_Character : NetworkBehaviour {
 
             }
 
-        } else {
+        } else if (Soldier) {
 
             uiManager.buildConstruButton.SetActive(SC_Player.localPlayer.Qin && (target.Ruin || Soldier.Builder) && target.Constructable);
 
@@ -353,8 +354,6 @@ public abstract class SC_Character : NetworkBehaviour {
     }   
 
 	public virtual void DestroyCharacter() {
-
-        //tileManager.TryStopPreview(this);
 
         uiManager.HideInfosIfActive(gameObject);
 

@@ -59,7 +59,7 @@ public class SC_Tile : NetworkBehaviour {
 
     }
 
-    public bool Constructable { get { return (infos.type != "Palace") && (!Character || (gameManager.QinTurnStarting && Soldier)) && !Construction && !Ruin && RegionValid; } }
+    public bool Constructable { get { return (!Character || (gameManager.QinTurnStarting && Soldier)) && !Construction && !Ruin && RegionValid; } }
 
     bool RegionValid { get { return (Region != -1) && SC_Tile_Manager.constructableRegions[Region]; } }
 
