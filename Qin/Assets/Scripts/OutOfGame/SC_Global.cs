@@ -37,6 +37,9 @@ public class SC_Global {
         [Tooltip("Reflexes Modifier")]
         public int reflexes;
 
+        [Tooltip("Range Modifier")]
+        public int range;
+
     }
 
     public static List<Actions> ActionsUpdate(Actions action, List<Actions> actions, bool add)
