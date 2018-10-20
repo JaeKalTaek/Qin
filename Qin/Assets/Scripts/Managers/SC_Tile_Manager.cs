@@ -11,7 +11,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
 	public SC_Tile[,] tiles;
 
-    //public List<SC_Tile>[] regions;
+    public List<SC_Tile>[] regions;
 
     public List<SC_Tile> changingTiles;
 
@@ -40,6 +40,8 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }
 
+    public static bool[] constructableRegions;
+
     void Awake() {
 
         Instance = this;
@@ -47,6 +49,11 @@ public class SC_Tile_Manager : NetworkBehaviour {
     }
 
     void Start () {
+
+        constructableRegions = new bool[6];
+
+        for (int i = 0; i < constructableRegions.Length; i++)
+            constructableRegions[i] = true;
 
         gameManager = SC_Game_Manager.Instance;
 
@@ -61,10 +68,10 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         tiles = new SC_Tile[xSize, ySize];
 
-        /*regions = new List<SC_Tile>[6];
+        regions = new List<SC_Tile>[6];
 
         for (int i = 0; i < regions.Length; i++)
-            regions[i] = new List<SC_Tile>();*/
+            regions[i] = new List<SC_Tile>();
 
         changingTiles = new List<SC_Tile>();
 
@@ -75,8 +82,8 @@ public class SC_Tile_Manager : NetworkBehaviour {
             if (t.infos.type == "Changing")
                 changingTiles.Add(t);
 
-            /*if(t.Region != -1)
-                regions[t.Region].Add(t);*/
+            if(t.Region != -1)
+                regions[t.Region].Add(t);
 
         }
 
@@ -412,9 +419,15 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         } else {
 
-            foreach (SC_Tile tile in tiles)
+            for (int i = 0; i < regions.Length; i++)
+                if (constructableRegions[i])
+                    foreach (SC_Tile tile in regions[i])
+                        if (tile.Constructable)
+                            constructableTiles.Add(tile);
+
+            /*foreach (SC_Tile tile in tiles)
                 if (tile.Constructable)
-                    constructableTiles.Add(tile);
+                    constructableTiles.Add(tile);*/
 
         }
 

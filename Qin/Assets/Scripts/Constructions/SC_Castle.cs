@@ -53,6 +53,11 @@ public class SC_Castle : SC_Construction {
 
         base.DestroyConstruction();
 
+        SC_Tile_Manager.constructableRegions[Tile.Region] = false;
+
+        foreach (SC_Tile t in tileManager.regions[Tile.Region])
+            t.Ruin?.DestroyRuin();
+
         castlesNbr--;
 
         if (castlesNbr < 1)

@@ -59,7 +59,9 @@ public class SC_Tile : NetworkBehaviour {
 
     }
 
-    public bool Constructable { get { return (infos.type != "Palace") && (!Character || (gameManager.QinTurnStarting && Soldier)) && !Construction && !Ruin; } }
+    public bool Constructable { get { return (infos.type != "Palace") && (!Character || (gameManager.QinTurnStarting && Soldier)) && !Construction && !Ruin && RegionValid; } }
+
+    bool RegionValid { get { return (Region != -1) && SC_Tile_Manager.constructableRegions[Region]; } }
 
     public SC_Construction Construction { get; set; }
 
@@ -124,8 +126,6 @@ public class SC_Tile : NetworkBehaviour {
     }
 
     public void SetupTile() {
-
-        //print(infos.type);
 
         SC_Tile t = Resources.Load<SC_Tile>("Prefabs/Tiles/P_" + infos.type);
 

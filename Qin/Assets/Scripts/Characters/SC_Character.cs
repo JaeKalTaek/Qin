@@ -281,7 +281,7 @@ public abstract class SC_Character : NetworkBehaviour {
 
         } else {
 
-            uiManager.buildConstruButton.SetActive(SC_Player.localPlayer.Qin && (target.Ruin || Soldier.Builder));
+            uiManager.buildConstruButton.SetActive(SC_Player.localPlayer.Qin && (target.Ruin || Soldier.Builder) && target.Constructable);
 
         }
 
