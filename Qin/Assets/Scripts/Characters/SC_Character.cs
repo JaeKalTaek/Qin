@@ -76,6 +76,8 @@ public abstract class SC_Character : NetworkBehaviour {
 
     public SC_Hero Hero { get { return this as SC_Hero; } }
 
+    public SC_BaseQinChara BaseQinChara { get { return this as SC_BaseQinChara; } }
+
     public SC_Soldier Soldier { get { return this as SC_Soldier; } }
 
     public SC_Demon Demon { get { return this as SC_Demon; } }
@@ -363,7 +365,7 @@ public abstract class SC_Character : NetworkBehaviour {
 
 	public SC_Weapon GetActiveWeapon() {
 
-		return Hero?.GetWeapon(true) ?? Soldier.weapon;
+		return Hero?.GetWeapon(true) ?? BaseQinChara.weapon;
 
 	}	
 

@@ -293,8 +293,8 @@ public class SC_UI_Manager : MonoBehaviour {
 
         if (t == typeof(SC_Hero))
             ShowHeroInfos(g.GetComponent<SC_Hero>());
-        else if (t == typeof(SC_Soldier))
-            ShowSoldierInfos(g.GetComponent<SC_Soldier>());
+        else if (t.IsSubclassOf(typeof(SC_BaseQinChara)))
+            ShowBaseQinCharaInfos(g.GetComponent<SC_BaseQinChara>());
         else if (t.IsSubclassOf(typeof(SC_Construction)))
             ShowConstructionsInfos(g.GetComponent<SC_Construction>());
         else if (t == typeof(SC_Qin))
@@ -396,11 +396,11 @@ public class SC_UI_Manager : MonoBehaviour {
 
 	}
 
-	void ShowSoldierInfos(SC_Soldier soldier) {
+	void ShowBaseQinCharaInfos (SC_BaseQinChara baseQinChara) {
 
-		ShowCharacterInfos (soldier);
+		ShowCharacterInfos (baseQinChara);
 
-		SetText("Weapon 1", "  - " + soldier.weapon.weaponName);
+		SetText("Weapon 1", "  - " + baseQinChara.weapon.weaponName);
 		SetText("Weapon 2", "");
 
 	}     

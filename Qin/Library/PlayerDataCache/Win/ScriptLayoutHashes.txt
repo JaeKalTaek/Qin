@@ -206,3 +206,4 @@ c514e0230410569ca3719e557b8a7844 Assembly-CSharp.dll:.SC_EditorTile
 93307bd34e39d73fd24e00ec39c25a91 Unity.TextMeshPro.dll:TMPro.TMP_SubMesh
 42e6590aedbcfee193e9e996047a3462 Assembly-CSharp.dll:.SC_Network_Manager
 17be8cd08e7d69b5d4ec55742ef395f0 Assembly-CSharp-firstpass.dll:FMODUnity.StudioBankLoader
+b0e1eb46023089882d271aff0f7589c0 Assembly-CSharp.dll:.SC_BaseQinChara
