@@ -49,7 +49,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
                 bool killed = CharacterAttack(attacker, attacked, targetConstruction, false);
 
-                if (!killed && attacked.GetActiveWeapon().Range.In(AttackRange))
+                if (!killed && attacked.GetActiveWeapon().Range(attacked).In(AttackRange))
                     CharacterAttack(attacked, attacker, currentConstruction, true);
 
             } else if (targetConstruction) {

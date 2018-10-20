@@ -11,14 +11,24 @@ public class SC_Weapon : MonoBehaviour {
     public bool physical;    
 
     [Tooltip("Minimum range of this weapon")]
-    public int minRange;
+    public int minRange;    
 
     [Tooltip("Maxmimum range of this weapon")]
-    public int maxRange;
+    public int maxRange;    
 
     public bool CanMelee { get { return minRange <= 1; } }
 
-    public Vector2 Range { get { return new Vector2(minRange, maxRange); } }
+    public Vector2 Range (SC_Character owner) {
+
+        return new Vector2(minRange, MaxRange(owner));
+
+    }
+
+    public int MaxRange(SC_Character owner) {
+        
+        return (maxRange == 1) ? maxRange : Mathf.Max(minRange, maxRange + owner.Range);
+
+    }
 
     //public ShiFuMi value;
 
@@ -35,5 +45,5 @@ public class SC_Weapon : MonoBehaviour {
             return 1;
 
     }*/
-         
+
 }

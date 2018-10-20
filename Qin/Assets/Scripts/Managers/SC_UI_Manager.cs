@@ -474,7 +474,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
             attackerDamages = fightManager.CalcDamages(attacker, attacked, false);
 
-            if (!attacker.Tile.GreatWall && attacked.GetActiveWeapon().Range.In(fightManager.AttackRange))
+            if (!attacker.Tile.GreatWall && attacked.GetActiveWeapon().Range(attacked).In(fightManager.AttackRange))
                 attackedDamages = fightManager.CalcDamages(attacked, attacker, true);
 
             attackedHP = attacked.Health - attackerDamages;

@@ -19,34 +19,34 @@ public abstract class SC_Character : NetworkBehaviour {
     [Tooltip("Strength of this character")]
     public int baseStrength;
     public int StrengthModifiers { get; set; }
-    public int Strength { get { return Mathf.Max(0, baseStrength + StrengthModifiers + CombatModifiers.strength); } }
+    public int Strength { get { return Mathf.Max(0, baseStrength + StrengthModifiers + CombatModifiers.strength + DemonsModifier("strength")); } }
 
     [Tooltip("Chi of this character")]
     public int baseChi;
     public int ChiModifiers { get; set; }
-    public int Chi { get { return Mathf.Max(0, baseChi + ChiModifiers + CombatModifiers.chi); } }
+    public int Chi { get { return Mathf.Max(0, baseChi + ChiModifiers + CombatModifiers.chi + DemonsModifier("chi")); } }
 
     [Tooltip("Armor of this character")]
     public int baseArmor;
     public int ArmorModifiers { get; set; }
-    public int Armor { get { return baseArmor + ArmorModifiers + CombatModifiers.armor; } }
+    public int Armor { get { return baseArmor + ArmorModifiers + CombatModifiers.armor + DemonsModifier("armor"); } }
 
     [Tooltip("Resistance of this character")]
     public int baseResistance;
     public int ResistanceModifiers { get; set; }
-    public int Resistance { get { return baseResistance + ResistanceModifiers + CombatModifiers.resistance; } }
+    public int Resistance { get { return baseResistance + ResistanceModifiers + CombatModifiers.resistance + DemonsModifier("resistance"); } }
 
     [Tooltip("Technique of this character, amount of Crits Jauge gained after attacking")]
     public int baseTechnique;
     public int TechniqueModifiers { get; set; }
-    public int Technique { get { return Mathf.Max(0, baseTechnique + TechniqueModifiers + CombatModifiers.technique); } }
+    public int Technique { get { return Mathf.Max(0, baseTechnique + TechniqueModifiers + CombatModifiers.technique + DemonsModifier("technique")); } }
 
     public int CriticalAmount { get; set; }
 
     [Tooltip("Reflexes of this character, amount of Dodge Jauge gained after being attacked")]
     public int baseReflexes;
     public int ReflexesModifiers { get; set; }
-    public int Reflexes { get { return Mathf.Max(0, baseReflexes + ReflexesModifiers + CombatModifiers.reflexes); } }
+    public int Reflexes { get { return Mathf.Max(0, baseReflexes + ReflexesModifiers + CombatModifiers.reflexes + DemonsModifier("reflexes")); } }
 
     public int DodgeAmount { get; set; }
 
@@ -61,8 +61,11 @@ public abstract class SC_Character : NetworkBehaviour {
     public float moveDuration;
 
     public int RangeModifiers { get; set; }
+    public int Range { get { return CombatModifiers.range + RangeModifiers + DemonsModifier("range"); } }
 
     public SC_CombatModifiers CombatModifiers { get { return Tile.Construction?.combatModifers ?? (Tile.Ruin?.combatModifers ?? Tile.combatModifers); } }
+
+    public List<DemonAura> DemonAuras { get; set; }    
 
     public int BaseDamage { get { return GetActiveWeapon().physical ? Strength : Chi; } }
     #endregion
@@ -121,7 +124,9 @@ public abstract class SC_Character : NetworkBehaviour {
 
 		BaseColor = GetComponent<SpriteRenderer> ().color;
 
-        CanMove = Qin == gameManager.Qin;        
+        CanMove = Qin == gameManager.Qin;
+
+        DemonAuras = new List<DemonAura>();
 
     }
 
@@ -250,9 +255,7 @@ public abstract class SC_Character : NetworkBehaviour {
 
             LastPos.Character = null;
 
-            target.Character = this;
-
-            uiManager.TryRefreshInfos(gameObject, GetType());
+            target.Character = this;            
 
         }
 
@@ -286,7 +289,14 @@ public abstract class SC_Character : NetworkBehaviour {
 
             uiManager.buildConstruButton.SetActive(SC_Player.localPlayer.Qin && (target.Ruin || Soldier.Builder) && target.Constructable);
 
+        } else if (Demon) {
+
+
+
         }
+
+        if(moved)
+            uiManager.TryRefreshInfos(gameObject, GetType());
 
         if (SC_Player.localPlayer.Turn) {            
 
@@ -397,5 +407,45 @@ public abstract class SC_Character : NetworkBehaviour {
 	}
 
     public abstract Vector2 GetRange ();
+
+    public struct DemonAura {
+
+        public string demon;
+
+        public SC_CombatModifiers aura;
+
+        public DemonAura(string d, SC_CombatModifiers a) {
+
+            demon = d;
+
+            aura = a;
+
+        }
+
+    }
+
+    int DemonsModifier(string id) {
+
+        int modif = 0;
+
+        foreach (DemonAura dA in DemonAuras)
+            modif += (int)dA.aura.GetType().GetField(id).GetValue(dA.aura);
+
+        return modif;
+
+    }
+
+    public void TryAddAura(string demon, SC_CombatModifiers aura) {
+
+        bool notHere = true;
+
+        foreach (DemonAura dA in DemonAuras)
+            if (dA.demon == demon)
+                notHere = false;
+
+        if (notHere)
+            DemonAuras.Add(new DemonAura(demon, aura));
+
+    }
 
 }

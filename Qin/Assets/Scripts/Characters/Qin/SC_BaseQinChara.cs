@@ -41,7 +41,7 @@ public class SC_BaseQinChara : SC_Character {
 
     public override Vector2 GetRange () {
 
-        return weapon.Range;
+        return weapon.Range(this);
 
     }
 
