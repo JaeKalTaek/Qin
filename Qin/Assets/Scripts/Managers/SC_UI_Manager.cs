@@ -219,7 +219,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
     public void StartDragCastle(string castleType) {
 
-        GameObject go = Resources.Load<GameObject>("Prefabs/Constructions/Special/P_Drag&DropCastle");
+        GameObject go = Resources.Load<GameObject>("Prefabs/UI/P_Drag&DropCastle");
 
         go.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Constructions/Castles/" + castleType);
 
