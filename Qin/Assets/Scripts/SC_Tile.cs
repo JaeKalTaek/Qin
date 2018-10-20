@@ -59,7 +59,7 @@ public class SC_Tile : NetworkBehaviour {
 
     }
 
-    public bool Constructable { get { return !name.Contains("Palace") && (!Character || (gameManager.QinTurnStarting && Soldier)) && !Construction && !Ruin; } }
+    public bool Constructable { get { return (infos.type != "Palace") && (!Character || (gameManager.QinTurnStarting && Soldier)) && !Construction && !Ruin; } }
 
     public SC_Construction Construction { get; set; }
 
