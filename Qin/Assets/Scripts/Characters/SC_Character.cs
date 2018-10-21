@@ -63,9 +63,7 @@ public abstract class SC_Character : NetworkBehaviour {
     public int RangeModifiers { get; set; }
     public int Range { get { return CombatModifiers.range + RangeModifiers + DemonsModifier("range"); } }
 
-    public SC_CombatModifiers CombatModifiers { get { return Tile.Construction?.combatModifers ?? (Tile.Ruin?.combatModifers ?? Tile.combatModifers); } }
-
-    public List<DemonAura> DemonAuras { get; set; }    
+    public SC_CombatModifiers CombatModifiers { get { return Tile.Construction?.combatModifers ?? (Tile.Ruin?.combatModifers ?? Tile.combatModifers); } }     
 
     public int BaseDamage { get { return GetActiveWeapon().physical ? Strength : Chi; } }
     #endregion
@@ -124,9 +122,7 @@ public abstract class SC_Character : NetworkBehaviour {
 
 		BaseColor = GetComponent<SpriteRenderer> ().color;
 
-        CanMove = Qin == gameManager.Qin;
-
-        DemonAuras = new List<DemonAura>();
+        CanMove = Qin == gameManager.Qin;        
 
     }
 
@@ -291,7 +287,13 @@ public abstract class SC_Character : NetworkBehaviour {
 
         } else if (Demon) {
 
+            if (moved) {
 
+                Demon.RemoveAura(false, LastPos);
+
+                Demon.AddAura(false);
+
+            }
 
         }
 
@@ -406,46 +408,20 @@ public abstract class SC_Character : NetworkBehaviour {
 
 	}
 
-    public abstract Vector2 GetRange ();
-
-    public struct DemonAura {
-
-        public string demon;
-
-        public SC_CombatModifiers aura;
-
-        public DemonAura(string d, SC_CombatModifiers a) {
-
-            demon = d;
-
-            aura = a;
-
-        }
-
-    }
+    public abstract Vector2 GetRange ();    
 
     int DemonsModifier(string id) {
 
+        if (Demon)
+            return 0;
+
         int modif = 0;
 
-        foreach (DemonAura dA in DemonAuras)
-            modif += (int)dA.aura.GetType().GetField(id).GetValue(dA.aura);
+        foreach (DemonAura dA in Tile.DemonAuras)
+            modif += (int)dA.aura.GetType().GetField(id).GetValue(dA.aura) * (Qin ? 1 : -1);
 
         return modif;
 
-    }
-
-    public void TryAddAura(string demon, SC_CombatModifiers aura) {
-
-        bool notHere = true;
-
-        foreach (DemonAura dA in DemonAuras)
-            if (dA.demon == demon)
-                notHere = false;
-
-        if (notHere)
-            DemonAuras.Add(new DemonAura(demon, aura));
-
-    }
+    }    
 
 }

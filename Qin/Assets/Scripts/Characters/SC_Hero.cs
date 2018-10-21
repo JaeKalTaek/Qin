@@ -25,11 +25,11 @@ public class SC_Hero : SC_Character {
     [Tooltip("Color applied when the character is berserker")]
     public Color berserkColor;
 
-	static int heroesAlive;
-
     public bool ReadyToRegen { get; set; }
 
     public int PumpSlow { get; set; }
+
+    public static List<SC_Hero> heroes;
 
     public override void OnStartClient () {
 
@@ -41,21 +41,24 @@ public class SC_Hero : SC_Character {
 
         berserkColor = loadedCharacter.Hero.berserkColor;
 
-        heroesAlive++;
+        if (heroes == null)
+            heroes = new List<SC_Hero>();
 
-        if (heroesAlive == 6)
+        heroes.Add(this);
+
+        if (heroes.Count == 6)
             SetupHeroesRelationships();
 
     }
 
     public static void SetupHeroesRelationships() {
 
-        foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
+        foreach (SC_Hero hero in heroes) {
 
             hero.Relationships = new Dictionary<string, int>();
             hero.RelationshipKeys = new List<string>();
 
-            foreach (SC_Hero hero2 in FindObjectsOfType<SC_Hero>()) {
+            foreach (SC_Hero hero2 in heroes) {
 
                 if (hero != hero2) {
 
@@ -210,7 +213,7 @@ public class SC_Hero : SC_Character {
 
 		gameManager.LastHeroDead = this;        
 
-		foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
+		foreach (SC_Hero hero in heroes) {
 
 			int value = 0;
 			Relationships.TryGetValue (hero.characterName, out value);
@@ -229,9 +232,10 @@ public class SC_Hero : SC_Character {
 
 		gameObject.SetActive (false);
 
-		heroesAlive--;
+        heroes.Remove(this);
 
-		if (heroesAlive <= 0)
+
+        if (heroes.Count <= 0)
 			uiManager.ShowVictory (true);
 
 	}

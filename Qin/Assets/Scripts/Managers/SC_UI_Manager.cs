@@ -370,7 +370,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         int baseStat = (int)chara.GetType().GetField("base" + id).GetValue(chara);
 
-        int modifiers = (int)chara.GetType().GetProperty(id + "Modifiers").GetValue(chara);
+        int modifiers = stat - baseStat;
 
         return stat + (modifiers == 0 ? "" : (" (" + baseStat + " " + (modifiers > 0 ? "+" : "-") + " " + Mathf.Abs(modifiers) + ")"));
 

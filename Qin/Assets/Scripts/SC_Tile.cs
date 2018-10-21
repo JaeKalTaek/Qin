@@ -4,6 +4,7 @@ using UnityEngine.Networking;
 using static SC_Global;
 using static SC_Character;
 using static SC_EditorTile;
+using System.Collections.Generic;
 
 [Serializable]
 public class SC_Tile : NetworkBehaviour {
@@ -61,7 +62,7 @@ public class SC_Tile : NetworkBehaviour {
 
     public bool Constructable { get { return (!Character || (gameManager.QinTurnStarting && Soldier)) && !Construction && !Ruin && RegionValid; } }
 
-    bool RegionValid { get { return (Region != -1) && SC_Tile_Manager.constructableRegions[Region]; } }
+    bool RegionValid { get { return (Region != -1) && SC_Castle.castles[Region]; } }
 
     public SC_Construction Construction { get; set; }
 
@@ -84,6 +85,8 @@ public class SC_Tile : NetworkBehaviour {
     public SC_Character Character { get; set; }
 
     public SC_Hero Hero { get { return Character as SC_Hero; } }
+
+    public SC_Demon Demon { get { return Character as SC_Demon; } }
 
     public SC_Soldier Soldier { get { return Character as SC_Soldier; } }
 
@@ -110,6 +113,8 @@ public class SC_Tile : NetworkBehaviour {
 
     public static bool CanChangeFilters { get { return (!characterToMove || (characterToMove.Qin != SC_Player.localPlayer.Qin)) && !SC_Player.localPlayer.Busy; } }
 
+    public List<DemonAura> DemonAuras { get; set; }
+
     public override void OnStartClient () {
 
         base.OnStartClient();
@@ -122,6 +127,8 @@ public class SC_Tile : NetworkBehaviour {
                 transform.GetChild(1).GetChild(i).GetComponent<SpriteRenderer>().sprite = infos.borders[i] ? Resources.Load<Sprite>("Sprites/RegionBorders/" + (Region)infos.region) : null;
 
         }
+
+        DemonAuras = new List<DemonAura>();
 
     }
 
@@ -287,32 +294,19 @@ public class SC_Tile : NetworkBehaviour {
 
     }
 
-    public struct TileInfos {
+    public void TryAddAura (string demon, SC_CombatModifiers aura) {
 
-        public string type;
+        print(name + ", " + demon);
 
-        public int sprite;
+        bool notHere = true;
 
-        public int riverSprite;
+        foreach (DemonAura dA in DemonAuras)
+            if (dA.demon == demon)
+                notHere = false;
 
-        public int region;
+        if (notHere)
+            DemonAuras.Add(new DemonAura(demon, aura));
 
-        public bool[] borders;
-
-        public TileInfos(string t, int s, int rS, int r, bool[] b) {
-
-            type = t;
-
-            sprite = s;
-
-            riverSprite = rS;
-
-            region = r;
-
-            borders = b;
-
-        }
-
-    }
+    }    
 
 }

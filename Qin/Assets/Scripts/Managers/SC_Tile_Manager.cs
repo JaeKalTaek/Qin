@@ -40,8 +40,6 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }
 
-    public static bool[] constructableRegions;
-
     void Awake() {
 
         Instance = this;
@@ -49,11 +47,6 @@ public class SC_Tile_Manager : NetworkBehaviour {
     }
 
     void Start () {
-
-        constructableRegions = new bool[6];
-
-        for (int i = 0; i < constructableRegions.Length; i++)
-            constructableRegions[i] = true;
 
         gameManager = SC_Game_Manager.Instance;
 
@@ -420,7 +413,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
         } else {
 
             for (int i = 0; i < regions.Length; i++)
-                if (constructableRegions[i])
+                if (SC_Castle.castles[i])
                     foreach (SC_Tile tile in regions[i])
                         if (tile.Constructable)
                             constructableTiles.Add(tile);

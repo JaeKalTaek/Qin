@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using static SC_Global;
 
 public class SC_Demon : SC_BaseQinChara {
 
@@ -7,21 +8,26 @@ public class SC_Demon : SC_BaseQinChara {
     public int auraRange;
 
     [Tooltip("Modifiers applied by the aura of this demon")]
-    public SC_Global.SC_CombatModifiers auraModifiers;
+    public SC_CombatModifiers auraModifiers;
 
     [Tooltip("Number of turns for this demon to respawn at its castle after being killed")]
     public int respawnTime;
 
-    delegate void Action (SC_Character parameter);
+    public int Alive { get; set; }
 
-    void PerformAction (Action action) {
+    SC_Tile spawnTile;
 
-        foreach (SC_Character chara in FindObjectsOfType<SC_Character>()) {
+    public override void OnStartClient () {
 
-            if (SC_Tile_Manager.TileDistance(transform.position, chara.transform.position) <= auraRange)
-                action(chara);
+        base.OnStartClient();
 
-        }
+        auraRange = loadedCharacter.Demon.auraRange;
+
+        auraModifiers = loadedCharacter.Demon.auraModifiers;
+
+        respawnTime = loadedCharacter.Demon.respawnTime;
+
+        Alive = -1;
 
     }
 
@@ -29,30 +35,62 @@ public class SC_Demon : SC_BaseQinChara {
 
         base.Start();
 
-        PerformAction((SC_Character chara) => {
+        AddAura(true);
 
-            chara.TryAddAura(characterName, auraModifiers);
+        spawnTile = Tile;
 
-            uiManager.TryRefreshInfos(chara.gameObject, chara.GetType());
+    }
+
+    delegate void Action (SC_Tile tile);
+
+    void PerformAction (Action action, SC_Tile center = null) {
+
+        foreach (SC_Tile tile in tileManager.GetRange(center ? center.transform.position : transform.position, auraRange))
+            action(tile);
+
+    }
+
+    public void AddAura(bool refreshInfos) {
+
+        PerformAction((SC_Tile tile) => {
+
+            tile.TryAddAura(characterName, auraModifiers);
+
+            if (refreshInfos && tile.Character)
+                uiManager.TryRefreshInfos(tile.Character.gameObject, tile.Character.GetType());
 
         });
 
     }
 
+    public void RemoveAura(bool refreshInfos, SC_Tile center = null) {
+
+        PerformAction((SC_Tile tile) => {
+
+            tile.DemonAuras.Remove(new DemonAura(characterName, auraModifiers));
+
+            if (refreshInfos && tile.Character)
+                uiManager.TryRefreshInfos(tile.Character.gameObject, tile.Character.GetType());
+
+        }, center);
+
+    }    
+
     public override void DestroyCharacter () {
 
-        PerformAction((SC_Character chara) => {
-
-            chara.DemonAuras.Remove(new DemonAura(characterName, auraModifiers));
-
-            uiManager.TryRefreshInfos(chara.gameObject, chara.GetType());
-
-        });
+        RemoveAura(true);
 
         base.DestroyCharacter();
 
-        /*if (isServer)
-            SC_Player.localPlayer.CmdDestroyGameObject(gameObject);*/
+        if (isServer && !SC_Castle.castles[spawnTile.Region])
+            SC_Player.localPlayer.CmdDestroyGameObject(gameObject);
+        else {
+
+            Alive = 0;
+
+            gameObject.SetActive(false);
+
+        }
 
     }
 

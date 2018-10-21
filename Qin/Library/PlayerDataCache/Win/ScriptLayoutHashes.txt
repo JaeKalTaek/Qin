@@ -136,7 +136,7 @@ e1ea12ca952c81d81a9a21fdf34446ed UnityEngine.HoloLens.dll:UnityEngine.EventSyste
 dfd33ff9ae3ce8d7ca1f22b475ec2387 UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.SpatialMappingRenderer
 96f3ea9f23b6f08e60710ebb4af49174 Unity.TextMeshPro.dll:TMPro.TMP_SpriteAsset
 4ed5b8603ccea74c01fbbed8b6066cc4 Assembly-CSharp.dll:.SC_Village
-e71d83d5116e5f5eb0ed0b2fd00f8bf7 Assembly-CSharp.dll:.SC_Demon
+460dc432f0e86eacbbb78370fc5b4ae0 Assembly-CSharp.dll:.SC_Demon
 0ddb2c46096a1e59e0dce07886ce4769 Assembly-CSharp-firstpass.dll:.FMODEventTrack
 f16835701e71dd5d6fb1fed4b7aff1d8 Unity.TextMeshPro.dll:TMPro.TMP_Asset
 486cd95c82d8305219c352c06b776e1f Assembly-CSharp.dll:.SC_Lifebar

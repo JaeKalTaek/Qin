@@ -2,15 +2,15 @@
 
 public class SC_Castle : SC_Construction {
 
-    public static int castlesNbr;
-
     public string CastleType { get; set; }
+
+    public static bool[] castles;
 
     protected override void Start () {
 
         base.Start();
 
-        castlesNbr++;
+        castles[Tile.Region] = true;
 
     }
 
@@ -53,14 +53,18 @@ public class SC_Castle : SC_Construction {
 
         base.DestroyConstruction();
 
-        SC_Tile_Manager.constructableRegions[Tile.Region] = false;
-
         foreach (SC_Tile t in tileManager.regions[Tile.Region])
             t.Ruin?.DestroyRuin();
 
-        castlesNbr--;
+        castles[Tile.Region] = false;
 
-        if (castlesNbr < 1)
+        bool victory = true;
+
+        foreach (bool b in castles)
+            if (b)
+                victory = false;
+
+        if (victory)
             uiManager.ShowVictory(false);
 
     }

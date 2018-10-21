@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
 using static SC_EditorTile;
+using static SC_Global;
 
 public class SC_Game_Manager : NetworkBehaviour {
 
@@ -45,7 +46,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         SC_Village.number = 0;
 
-        SC_Castle.castlesNbr = 0;
+        SC_Castle.castles = new bool[6];
 
         CurrentMapPrefab = prep ? prepMapPrefab : playMapPrefab;
 
@@ -94,7 +95,7 @@ public class SC_Game_Manager : NetworkBehaviour {
             for (int i = 0; i < eTile.transform.GetChild(2).childCount; i++)
                 borders[i] = eTile.transform.GetChild(2).GetChild(i).GetComponent<SpriteRenderer>().sprite;
 
-            go.GetComponent<SC_Tile>().infos = new SC_Tile.TileInfos(
+            go.GetComponent<SC_Tile>().infos = new TileInfos(
                 eTile.tileType.ToString(),
                 Random.Range(0, Resources.LoadAll<Sprite>("Sprites/Tiles/" + eTile.tileType).Length),
                 (int)eTile.riverSprite,
@@ -264,8 +265,11 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         if (Qin) {
 
-            foreach (SC_Pump p in FindObjectsOfType<SC_Pump>())
-                p.Drain();
+            if(SC_Pump.pumps != null)
+                foreach (SC_Pump p in SC_Pump.pumps)
+                 p.Drain();
+
+
 
             SC_Qin.ChangeEnergy(SC_Qin.Qin.regenPerVillage * SC_Village.number);
 

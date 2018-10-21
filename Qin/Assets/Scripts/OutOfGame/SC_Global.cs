@@ -52,4 +52,48 @@ public class SC_Global {
         return actions;
     }
 
+    public struct TileInfos {
+
+        public string type;
+
+        public int sprite;
+
+        public int riverSprite;
+
+        public int region;
+
+        public bool[] borders;
+
+        public TileInfos (string t, int s, int rS, int r, bool[] b) {
+
+            type = t;
+
+            sprite = s;
+
+            riverSprite = rS;
+
+            region = r;
+
+            borders = b;
+
+        }
+
+    }
+
+    public struct DemonAura {
+
+        public string demon;
+
+        public SC_CombatModifiers aura;
+
+        public DemonAura (string d, SC_CombatModifiers a) {
+
+            demon = d;
+
+            aura = a;
+
+        }
+
+    }
+
 }

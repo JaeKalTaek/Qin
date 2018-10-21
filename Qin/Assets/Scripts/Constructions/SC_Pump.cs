@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class SC_Pump : SC_Construction {
 
@@ -14,9 +15,11 @@ public class SC_Pump : SC_Construction {
 
     delegate void Action (SC_Hero parameter);
 
+    public static List<SC_Pump> pumps;
+
     void PerformAction(Action action) {
 
-        foreach (SC_Hero hero in FindObjectsOfType<SC_Hero>()) {
+        foreach (SC_Hero hero in SC_Hero.heroes) {
 
             if (SC_Tile_Manager.TileDistance(transform.position, hero.transform.position) <= range)
                 action(hero);
@@ -29,7 +32,12 @@ public class SC_Pump : SC_Construction {
 
         base.Start();
 
-        PerformAction((SC_Hero hero) => {
+        if (pumps == null)
+            pumps = new List<SC_Pump>();
+
+        pumps.Add(this);
+
+        PerformAction ((SC_Hero hero) => {
 
             TrySlowHero(hero);
 
@@ -63,7 +71,7 @@ public class SC_Pump : SC_Construction {
 
                 hero.PumpSlow = 0;
 
-                foreach (SC_Pump pump in FindObjectsOfType<SC_Pump>())
+                foreach (SC_Pump pump in pumps)
                     TrySlowHero(hero);
 
                 uiManager.TryRefreshInfos(hero.gameObject, typeof(SC_Hero));
@@ -72,23 +80,29 @@ public class SC_Pump : SC_Construction {
 
         });
 
+        pumps.Remove(this);
+
         base.DestroyConstruction();
 
     }
 
     public static void UpdateHeroSlow(SC_Hero hero) {
 
-        int pumpSlow = 0;
+        if (pumps != null) {
 
-        foreach (SC_Pump pump in FindObjectsOfType<SC_Pump>()) {
+            int pumpSlow = hero.PumpSlow;
 
-            if ((SC_Tile_Manager.TileDistance(hero.transform.position, pump.transform.position) <= pump.range) && (pumpSlow < pump.slowAmount))
-                pumpSlow = pump.slowAmount;
+            foreach (SC_Pump pump in pumps) {
+
+                if ((SC_Tile_Manager.TileDistance(hero.transform.position, pump.transform.position) <= pump.range) && (pumpSlow < pump.slowAmount))
+                    pumpSlow = pump.slowAmount;
+
+            }
+
+            if (pumpSlow != hero.PumpSlow)
+                hero.MovementModifiers -= (pumpSlow - hero.PumpSlow);
 
         }
-
-        if (pumpSlow != hero.PumpSlow)
-            hero.MovementModifiers -= (pumpSlow - hero.PumpSlow);
 
     }
 
