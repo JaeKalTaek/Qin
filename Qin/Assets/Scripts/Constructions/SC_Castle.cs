@@ -51,12 +51,15 @@ public class SC_Castle : SC_Construction {
 
     public override void DestroyConstruction () {
 
-        base.DestroyConstruction();
+        base.DestroyConstruction();        
 
         foreach (SC_Tile t in tileManager.regions[Tile.Region])
             t.Ruin?.DestroyRuin();
 
         castles[Tile.Region] = false;
+
+        if (SC_Demon.demons[Tile.Region].Alive != -1)
+            SC_Demon.demons[Tile.Region].DestroyCharacter();
 
         bool victory = true;
 

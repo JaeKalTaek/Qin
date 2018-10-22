@@ -17,6 +17,8 @@ public class SC_Demon : SC_BaseQinChara {
 
     SC_Tile spawnTile;
 
+    public static SC_Demon[] demons;
+
     public override void OnStartClient () {
 
         base.OnStartClient();
@@ -38,6 +40,8 @@ public class SC_Demon : SC_BaseQinChara {
         AddAura(true);
 
         spawnTile = Tile;
+
+        demons[Tile.Region] = this;
 
     }
 
@@ -74,7 +78,37 @@ public class SC_Demon : SC_BaseQinChara {
 
         }, center);
 
-    }    
+    }
+    
+    public void TryRespawn() {
+
+        Alive++;
+
+        if (Alive > respawnTime) {
+
+            SC_Tile respawnTile = spawnTile.CanCharacterSetOn(this) ? spawnTile : tileManager.GetUnoccupiedNeighbor(this);
+
+            if (respawnTile) {
+
+                Alive = -1;
+
+                Health = maxHealth;
+
+                transform.SetPos(respawnTile.transform);
+
+                respawnTile.Character = this;
+
+                LastPos = respawnTile;
+
+                AddAura(true);
+
+                gameObject.SetActive(true);
+
+            }
+
+        }
+
+    }
 
     public override void DestroyCharacter () {
 
@@ -82,9 +116,13 @@ public class SC_Demon : SC_BaseQinChara {
 
         base.DestroyCharacter();
 
-        if (isServer && !SC_Castle.castles[spawnTile.Region])
+        if (isServer && !SC_Castle.castles[spawnTile.Region]) {
+
+            Alive = -1;
+
             SC_Player.localPlayer.CmdDestroyGameObject(gameObject);
-        else {
+
+        } else {
 
             Alive = 0;
 

@@ -39,7 +39,7 @@ public class SC_Fight_Manager : MonoBehaviour {
 
         attacker.Tire();
 
-        if (!attacker.AttackTarget.Empty) {
+        if (!attacker.AttackTarget.Empty && attacker.AttackTarget.CanCharacterAttack(attacker)) {
 
             SC_Character attacked = attacker.AttackTarget.Character;
             SC_Construction targetConstruction = attacker.AttackTarget.Construction;

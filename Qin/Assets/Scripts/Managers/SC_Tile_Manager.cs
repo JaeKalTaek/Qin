@@ -146,12 +146,13 @@ public class SC_Tile_Manager : NetworkBehaviour {
         return Mathf.Abs((a.x - b.x).I()) + Mathf.Abs((a.y - b.y).I());
 
     }
+
     public SC_Tile GetUnoccupiedNeighbor (SC_Character target) {
 
         SC_Tile t = null;
 
         foreach (SC_Tile tile in GetTilesAtDistance<SC_Tile>(tiles, target.transform.position, 1))
-            if (tile.Empty)
+            if (tile.CanCharacterSetOn(target))
                 t = tile;
 
         return t;
@@ -185,8 +186,6 @@ public class SC_Tile_Manager : NetworkBehaviour {
     }
 
     public void RemoveAllFilters () {
-
-        //focusedCharacter = null;
 
         foreach (SC_Tile tile in tiles)
             tile.RemoveFilter();
@@ -417,10 +416,6 @@ public class SC_Tile_Manager : NetworkBehaviour {
                     foreach (SC_Tile tile in regions[i])
                         if (tile.Constructable)
                             constructableTiles.Add(tile);
-
-            /*foreach (SC_Tile tile in tiles)
-                if (tile.Constructable)
-                    constructableTiles.Add(tile);*/
 
         }
 

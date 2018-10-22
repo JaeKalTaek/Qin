@@ -262,7 +262,7 @@ public abstract class SC_Character : NetworkBehaviour {
         bool canAttack = false;
 
         foreach (SC_Tile tile in tileManager.GetAttackTiles())
-            if (!tile.Empty)
+            if (!tile.Empty && tile.CanCharacterAttack(this))
                 canAttack = true;
 
         uiManager.attackButton.SetActive(canAttack);

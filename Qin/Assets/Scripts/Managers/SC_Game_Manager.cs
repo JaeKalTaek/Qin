@@ -48,6 +48,8 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         SC_Castle.castles = new bool[6];
 
+        SC_Demon.demons = new SC_Demon[6];
+
         CurrentMapPrefab = prep ? prepMapPrefab : playMapPrefab;
 
     }
@@ -269,7 +271,9 @@ public class SC_Game_Manager : NetworkBehaviour {
                 foreach (SC_Pump p in SC_Pump.pumps)
                  p.Drain();
 
-
+            foreach(SC_Demon d in SC_Demon.demons)
+                if(d.Alive != -1)
+                    d.TryRespawn();
 
             SC_Qin.ChangeEnergy(SC_Qin.Qin.regenPerVillage * SC_Village.number);
 

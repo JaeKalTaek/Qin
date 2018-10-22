@@ -296,8 +296,6 @@ public class SC_Tile : NetworkBehaviour {
 
     public void TryAddAura (string demon, SC_CombatModifiers aura) {
 
-        print(name + ", " + demon);
-
         bool notHere = true;
 
         foreach (DemonAura dA in DemonAuras)
