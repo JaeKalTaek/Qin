@@ -80,6 +80,12 @@ public class SC_EditorTile : MonoBehaviour {
 
     }
 
+    public enum CastleType {
+
+        Plain, River, Mountain, Forest, Desert, Snow
+
+    }
+
     public enum SoldierType {
 
         None, Adept, Archer, Builder, Guard, Herald, Hermit, Lancer, Monk, Scout
