@@ -43,6 +43,8 @@ public class SC_Demon : SC_BaseQinChara {
 
         demons[Tile.Region] = this;
 
+        transform.parent = uiManager.demonsT;
+
     }
 
     delegate void Action (SC_Tile tile);

@@ -10,6 +10,8 @@ public class SC_Bastion : SC_Construction {
 
         tileManager.UpdateNeighborWallGraph(Tile);
 
+        transform.parent = uiManager.bastionsT;
+
     }
 
     public override void DestroyConstruction () {

@@ -51,6 +51,14 @@ public class SC_Hero : SC_Character {
 
     }
 
+    protected override void Start () {
+
+        base.Start();
+
+        transform.parent = uiManager.heroesT;
+
+    }
+
     public static void SetupHeroesRelationships() {
 
         foreach (SC_Hero hero in heroes) {

@@ -12,6 +12,8 @@ public class SC_Castle : SC_Construction {
 
         castles[Tile.Region] = true;
 
+        transform.parent = uiManager.castlesT;
+
     }
 
     public void SetCastle (string type) {

@@ -54,6 +54,18 @@ public class SC_UI_Manager : MonoBehaviour {
     public Transform qinPower;
 	public Transform sacrifice;
 	public GameObject workshopPanel;
+
+    [Header("Transforms")]
+    public Transform tilesT;
+    public Transform soldiersT;
+    public Transform heroesT;
+    public Transform demonsT;
+    public Transform wallsT;
+    public Transform bastionsT;
+    public Transform castlesT;
+    public Transform workshopsT;
+    public Transform ruinsT;
+    public Transform villagesT;
     #endregion
 
     #region Variables
@@ -79,7 +91,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
     bool clickSecurity;
 
-    SC_Soldier[] soldiers;
+    public SC_Soldier[] basicSoldiers;
 
     SC_Construction[] qinConstructions;
 
@@ -103,16 +115,16 @@ public class SC_UI_Manager : MonoBehaviour {
 
         menuManager = SC_Menu_Manager.Instance;
 
-        soldiers = Resources.LoadAll<SC_Soldier>("Prefabs/Characters/Soldiers");
+        basicSoldiers = Resources.LoadAll<SC_Soldier>("Prefabs/Characters/Soldiers/Basic");
 
         for (int i = 0; i < workshopPanel.transform.GetChild(1).childCount; i++) {
 
             Transform soldier = workshopPanel.transform.GetChild(1).GetChild(i);
 
-            if (i < soldiers.Length) {
+            if (i < basicSoldiers.Length) {
 
-                soldier.GetChild(0).GetComponentInChildren<Text>().text = soldiers[i].characterName;
-                soldier.GetChild(1).GetComponentInChildren<Text>().text = soldiers[i].cost.ToString();
+                soldier.GetChild(0).GetComponentInChildren<Text>().text = basicSoldiers[i].characterName;
+                soldier.GetChild(1).GetComponentInChildren<Text>().text = basicSoldiers[i].cost.ToString();
 
             } else {
 
@@ -689,7 +701,7 @@ public class SC_UI_Manager : MonoBehaviour {
         Transform uiSoldiers = workshopPanel.transform.GetChild(1);
 
         for (int i = 0; i < uiSoldiers.childCount; i++)
-            uiSoldiers.GetChild(i).GetComponentInChildren<Button>().interactable = soldiers[i].cost < SC_Qin.Energy;
+            uiSoldiers.GetChild(i).GetComponentInChildren<Button>().interactable = basicSoldiers[i].cost < SC_Qin.Energy;
 
         StartCoroutine(ClickSafety());
 
@@ -712,7 +724,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         if (!clickSecurity) {            
 
-            localPlayer.CmdCreateSoldier(gameManager.CurrentWorkshopPos, soldiers[id].characterName);
+            localPlayer.CmdCreateSoldier(gameManager.CurrentWorkshopPos, basicSoldiers[id].characterName);
 
             EndQinAction("workshop");
 

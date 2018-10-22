@@ -32,6 +32,8 @@ public class SC_Soldier : SC_BaseQinChara {
 
         sacrificeValueText.GetComponent<TextMeshPro>().text = sacrificeValue.ToString();
 
+        transform.parent = uiManager.soldiersT;
+
     }
 
     public void SetupNew() {

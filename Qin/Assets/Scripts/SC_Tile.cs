@@ -164,6 +164,8 @@ public class SC_Tile : NetworkBehaviour {
 
         filter = transform.GetChild(0).GetComponent<SpriteRenderer>();
 
+        transform.parent = uiManager.tilesT;
+
     }
 
     public void CursorClick() {

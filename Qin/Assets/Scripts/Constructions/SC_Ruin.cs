@@ -11,6 +11,8 @@ public class SC_Ruin : NetworkBehaviour {
 
         SC_Tile_Manager.Instance.GetTileAt(gameObject).Ruin = this;
 
+        transform.parent = SC_UI_Manager.Instance.ruinsT;
+
     }
 
     public void DestroyRuin () {

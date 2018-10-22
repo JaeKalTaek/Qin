@@ -82,7 +82,7 @@ public class SC_EditorTile : MonoBehaviour {
 
     public enum SoldierType {
 
-        None, Adept, Archer, Builder, Cavalier, Hermit, Lancer, Monk, Scout
+        None, Adept, Archer, Builder, Guard, Herald, Hermit, Lancer, Monk, Scout
 
     }
 

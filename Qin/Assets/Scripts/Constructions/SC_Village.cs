@@ -10,6 +10,8 @@ public class SC_Village : SC_Construction {
 
 		number++;
 
+        transform.parent = uiManager.villagesT;
+
 	}
 
 	public override void DestroyConstruction() {
