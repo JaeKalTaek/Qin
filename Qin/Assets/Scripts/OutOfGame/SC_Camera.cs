@@ -21,20 +21,20 @@ public class SC_Camera : MonoBehaviour {
     [Tooltip("Speed at which the camera lerps to its target position when the player is zooming wider")]
     public float widerZoomSpeedMultiplier;
 
-    [Tooltip("Margin between the board and the camera border")]
-    public float boardMargin;
+    /*[Tooltip("Margin between the board and the camera border")]
+    public float boardMargin;*/
 
     public Vector3 TargetPosition { get; set; }
 
-    [HideInInspector]
-    public bool minX, maxX, minY, maxY;
+    /*[HideInInspector]
+    public bool minX, maxX, minY, maxY;*/
 
     Camera cam;
 
     private void OnValidate () {
 
-        if (boardMargin < 0)
-            boardMargin = 0;
+        /*if (boardMargin < 0)
+            boardMargin = 0;*/
 
         defaultZoomIndex = Mathf.Clamp(defaultZoomIndex, 0, zooms.Length - 1);
 
@@ -65,7 +65,7 @@ public class SC_Camera : MonoBehaviour {
             if (cam.orthographicSize != zooms[zoomIndex])
                 cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, zooms[zoomIndex], zoomSpeed * Time.deltaTime);
 
-            float xMax = SC_Tile_Manager.Instance.xSize * TileSize - cam.orthographicSize * cam.aspect - .5f + boardMargin;
+            /*float xMax = SC_Tile_Manager.Instance.xSize * TileSize - cam.orthographicSize * cam.aspect - .5f + boardMargin;
             float xMin = cam.orthographicSize* cam.aspect - .5f - boardMargin;
 
             float x = Mathf.Clamp(TargetPosition.x, xMin, xMax);
@@ -79,7 +79,7 @@ public class SC_Camera : MonoBehaviour {
 
             y = minY ? yMin : maxY ? yMax : y;
 
-            TargetPosition = new Vector3(x, y, -16);
+            TargetPosition = new Vector3(x, y, -16);*/
 
             if (transform.position != TargetPosition) {
 

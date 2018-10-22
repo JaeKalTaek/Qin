@@ -90,10 +90,10 @@ public class SC_Cursor : NetworkBehaviour {
             if ((x >= 0) && (y >= 0) && (x < SC_Tile_Manager.Instance.xSize) && (y < SC_Tile_Manager.Instance.ySize))
                 transform.SetPos(new Vector2(x, y) * TileSize);
 
-            cam.minX = x == 0;
+            /*cam.minX = x == 0;
             cam.maxX = x == SC_Tile_Manager.Instance.xSize;
             cam.minY = y == 0;
-            cam.maxY = y == SC_Tile_Manager.Instance.ySize;
+            cam.maxY = y == SC_Tile_Manager.Instance.ySize;*/
 
             if (oldPos != transform.position) {
 
