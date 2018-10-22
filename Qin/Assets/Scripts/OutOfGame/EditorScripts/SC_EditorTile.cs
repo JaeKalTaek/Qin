@@ -70,7 +70,7 @@ public class SC_EditorTile : MonoBehaviour {
 
     public enum RiverSprite {
 
-        Big_Alone, Small_Alone, Horizontal, Vertical, LeftBottom, LeftTop, RightBottom, RightTop, T_Top, T_Bottom, T_Right, T_Left, Cross
+        Horizontal, Vertical, Bottom, Left, Top, Right, LeftBottom, LeftTop, RightBottom, RightTop, T_Top, T_Bottom, T_Right, T_Left, Cross, Big_Alone, Big_Alone_2, Small_Alone
 
     }
 
