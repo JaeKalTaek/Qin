@@ -5,7 +5,7 @@ using UnityEngine;
 [Serializable]
 public class SC_Global {
 
-    public enum TDisplay { None, Movement, Attack, Construct, Sacrifice, PreviewAttack, PumpRange, PreviewMovement }
+    public enum TDisplay { None = -1, Attack = 0, Sacrifice = 1, Construct = 2, Movement = 3 }
 
     public enum ShiFuMi { Rock, Paper, Scissors, Special }
 

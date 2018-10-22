@@ -50,6 +50,8 @@ public class SC_Game_Manager : NetworkBehaviour {
 
         SC_Demon.demons = new SC_Demon[6];
 
+        SC_Tile.filters = Resources.LoadAll<Sprite>("Sprites/Tiles/Filters");
+
         CurrentMapPrefab = prep ? prepMapPrefab : playMapPrefab;
 
     }

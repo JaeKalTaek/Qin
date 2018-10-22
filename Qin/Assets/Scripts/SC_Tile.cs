@@ -115,6 +115,8 @@ public class SC_Tile : NetworkBehaviour {
 
     public List<DemonAura> DemonAuras { get; set; }
 
+    public static Sprite[] filters;
+
     public override void OnStartClient () {
 
         base.OnStartClient();
@@ -201,7 +203,7 @@ public class SC_Tile : NetworkBehaviour {
 
                 SC_Player.localPlayer.CmdChangeQinEnergy(Soldier.sacrificeValue);
 
-                RemoveFilter();
+                RemoveDisplay();
 
                 Character.CanMove = false;
 
@@ -267,20 +269,25 @@ public class SC_Tile : NetworkBehaviour {
 
     }
 
-    public void SetFilter(TDisplay filterName) {
+    public void SetFilter(TDisplay displayFilter, bool preview = false) {
 
-        Color c = new Color();
+        if (displayFilter == TDisplay.None) {
 
-        foreach (SC_Tile_Manager.FilterColor fC in tileManager.filtersColors)
-            if (fC.filter == filterName)
-                c = fC.color;
+            filter.enabled = false;
 
-        filter.color = c;
-        filter.enabled = true;
+        } else {
+
+            filter.color = new Color(1, 1, 1, preview ? .7f : 1);
+
+            filter.sprite = filters[(int)Enum.Parse(typeof(TDisplay), displayFilter.ToString())];
+
+            filter.enabled = true;
+
+        }
 
 	}
 
-	public void RemoveFilter() {
+	public void RemoveDisplay() {
 
         CurrentDisplay = TDisplay.None;
 

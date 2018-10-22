@@ -26,19 +26,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
     List<SC_Tile> MovementRange { get; set; }
     Dictionary<SC_Tile, int> movementPoints = new Dictionary<SC_Tile, int>();
 
-    public SC_Pump DisplayedPump { get; set; }
-
-    [Tooltip("Colors for the different filters of the Tiles")]
-    public FilterColor[] filtersColors;
-
-    [Serializable]
-    public struct FilterColor {
-
-        public TDisplay filter;
-
-        public Color color;
-
-    }
+    public SC_Pump DisplayedPump { get; set; }    
 
     void Awake() {
 
@@ -188,7 +176,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
     public void RemoveAllFilters () {
 
         foreach (SC_Tile tile in tiles)
-            tile.RemoveFilter();
+            tile.RemoveDisplay();
 
     }
     #endregion
@@ -228,7 +216,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
     public void PreviewAttack() {
 
         foreach (SC_Tile t in GetAttackTiles())
-            t.SetFilter(TDisplay.PreviewAttack);
+            t.SetFilter(TDisplay.Attack, true);
 
     }
 
@@ -295,13 +283,13 @@ public class SC_Tile_Manager : NetworkBehaviour {
                 if (tile.CanCharacterSetOn(target)) {
 
                     if (preview)
-                        tile.SetFilter(TDisplay.PreviewMovement);
+                        tile.SetFilter(TDisplay.Movement, true);
                     else
                         tile.ChangeDisplay(TDisplay.Movement);
 
                     foreach (SC_Tile t in GetAttackTiles(target, tile.transform.position))
                         if (t.CurrentDisplay == TDisplay.None && !movementRange.Contains(t))
-                            t.SetFilter(TDisplay.PreviewAttack);
+                            t.SetFilter(TDisplay.Attack, true);
 
                 }
 

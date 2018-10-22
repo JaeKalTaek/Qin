@@ -429,7 +429,7 @@ public class SC_UI_Manager : MonoBehaviour {
             TileManager.DisplayedPump = construction.Pump;
 
             foreach (SC_Tile tile in TileManager.GetRange(construction.transform.position, construction.Pump.range))
-                tile.SetFilter(TDisplay.PumpRange);
+                tile.SetFilter(TDisplay.Attack);
 
         }
 
