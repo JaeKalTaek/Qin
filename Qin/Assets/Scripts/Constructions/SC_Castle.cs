@@ -1,10 +1,22 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 
 public class SC_Castle : SC_Construction {
 
-    public string CastleType { get; set; }
+    [HideInInspector]
+    [SyncVar]
+    public string CastleType;
 
     public static bool[] castles;
+
+    public override void OnStartClient () {
+
+        base.OnStartClient();
+
+        if (!SC_Game_Manager.Instance.prep)
+            Setup();
+
+    }
 
     protected override void Start () {
 

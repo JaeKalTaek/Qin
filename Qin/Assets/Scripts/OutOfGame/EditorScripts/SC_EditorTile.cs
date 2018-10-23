@@ -19,7 +19,10 @@ public class SC_EditorTile : MonoBehaviour {
 
     [Header("Construction on this tile")]
     [Tooltip("Type of construction on this tile")]
-    public ConstructionType construction;    
+    public ConstructionType construction;
+
+    [Tooltip("Type of the castle on this tile")]
+    public CastleType castleType;
 
     [Header("Character on this tile")]
     [Tooltip("Type of Soldier on this tile")]

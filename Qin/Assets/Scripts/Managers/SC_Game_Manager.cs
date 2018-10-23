@@ -154,7 +154,17 @@ public class SC_Game_Manager : NetworkBehaviour {
 
                 GameObject constructionPrefab = TryLoadConstruction() ?? TryLoadConstruction("Production/") ?? TryLoadConstruction("Special/");
 
-                NetworkServer.Spawn (Instantiate(constructionPrefab, eTile.transform.position, Quaternion.identity));
+                GameObject go = Instantiate(constructionPrefab, eTile.transform.position, Quaternion.identity);
+
+                NetworkServer.Spawn (go);
+
+                if ((eTile.construction == ConstructionType.Castle) && !prep) {
+
+                    go.GetComponent<SC_Castle>().CastleType = eTile.castleType.ToString();
+
+                    SpawnDemon(eTile.transform.position, eTile.castleType.ToString());
+
+                }
 
 			}
 
@@ -175,6 +185,16 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 	}
 
+    public void SpawnDemon(Vector3 pos, string type) {
+
+        GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/Characters/Demons/P_BaseDemon"), pos, Quaternion.identity);
+
+        go.GetComponent<SC_Character>().characterPath = "Prefabs/Characters/Demons/P_" + type + "Demon";
+
+        NetworkServer.Spawn(go);
+
+    }
+
     public IEnumerator FinishConnecting() {
 
         while(!Player)
@@ -191,15 +211,8 @@ public class SC_Game_Manager : NetworkBehaviour {
             if (!Player.Qin)
                 castle.Setup();
 
-            if(isServer) {
-
-                GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/Characters/Demons/P_BaseDemon"), castle.transform.position + new Vector3(0, 0, -.53f), Quaternion.identity);
-
-                go.GetComponent<SC_Character>().characterPath = "Prefabs/Characters/Demons/P_" + castle.CastleType + "Demon";
-
-                NetworkServer.Spawn(go);
-
-            }
+            if(isServer)
+                SpawnDemon(castle.transform.position, castle.CastleType);
             
         }
 

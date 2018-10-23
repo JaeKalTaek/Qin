@@ -21,7 +21,7 @@ public class SC_EditorTileEditor : Editor {
 
                 tile.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Tiles/" + s);
 
-                tile.SetSprite(0, tile.construction == ConstructionType.None ? "" : ("Sprites/Constructions/" + tile.construction));
+                tile.SetSprite(0, tile.construction == ConstructionType.None ? "" : (tile.construction == ConstructionType.Castle ? ("Sprites/Constructions/Castles/" + tile.castleType) : ("Sprites/Constructions/" + tile.construction)));
 
                 if (tile.PrevRegion != tile.region)
                     ChangeTileRegion(tile);
