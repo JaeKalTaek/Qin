@@ -266,9 +266,12 @@ public class SC_Hero : SC_Character {
 
 	}
 
-    public override Vector2 GetRange () {
+    public override Vector2 GetRange (SC_Tile t = null) {
 
-        return new Vector2(Mathf.Min(weapon1.minRange, weapon2.minRange), Mathf.Max(weapon1.MaxRange(this), weapon2.MaxRange(this)));
+        if (!t)
+            t = Tile;
+
+        return new Vector2(Mathf.Min(weapon1.minRange, weapon2.minRange), Mathf.Max(weapon1.MaxRange(this, t), weapon2.MaxRange(this, t)));
 
     }
 

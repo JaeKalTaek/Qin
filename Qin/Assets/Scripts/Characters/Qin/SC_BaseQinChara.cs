@@ -39,9 +39,9 @@ public class SC_BaseQinChara : SC_Character {
 
     }
 
-    public override Vector2 GetRange () {
+    public override Vector2 GetRange (SC_Tile t = null) {
 
-        return weapon.Range(this);
+        return weapon.Range(this, t);
 
     }
 

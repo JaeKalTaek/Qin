@@ -184,13 +184,13 @@ public class SC_Tile_Manager : NetworkBehaviour {
     #region Attack
     public List<SC_Tile> GetAttackTiles () {
 
-        return GetAttackTiles(SC_Character.attackingCharacter, SC_Character.attackingCharacter.transform.position);
+        return GetAttackTiles(SC_Character.attackingCharacter, SC_Character.attackingCharacter.Tile);
 
     }
 
-    public List<SC_Tile> GetAttackTiles(SC_Character attacker, Vector3 center) {
+    public List<SC_Tile> GetAttackTiles(SC_Character attacker, SC_Tile center) {
 
-        List<SC_Tile> attackableTiles = GetRange(center, attacker.GetRange());
+        List<SC_Tile> attackableTiles = GetRange(center.transform.position, attacker.GetRange(center));
 
         attackableTiles.RemoveAll(t => !t.CanCharacterAttack(attacker));
 
@@ -287,7 +287,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
                     else
                         tile.ChangeDisplay(TDisplay.Movement);
 
-                    foreach (SC_Tile t in GetAttackTiles(target, tile.transform.position))
+                    foreach (SC_Tile t in GetAttackTiles(target, tile))
                         if (t.CurrentDisplay == TDisplay.None && !movementRange.Contains(t))
                             t.SetFilter(TDisplay.Attack, true);
 

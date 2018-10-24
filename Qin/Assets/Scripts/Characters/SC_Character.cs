@@ -60,8 +60,7 @@ public abstract class SC_Character : NetworkBehaviour {
     [Tooltip("Time for a character to walk one tile of distance")]
     public float moveDuration;
 
-    public int RangeModifiers { get; set; }
-    public int Range { get { return CombatModifiers().range + RangeModifiers + DemonsModifier("range"); } }        
+    public int RangeModifiers { get; set; }      
 
     public int BaseDamage { get { return GetActiveWeapon().physical ? Strength : Chi; } }
     #endregion
@@ -406,7 +405,13 @@ public abstract class SC_Character : NetworkBehaviour {
 
 	}
 
-    public abstract Vector2 GetRange ();
+    public abstract Vector2 GetRange (SC_Tile t = null);
+
+    public int Range (SC_Tile t) {
+
+        return CombatModifiers(t).range + RangeModifiers + DemonsModifier("range", t);
+
+    } 
 
     public SC_CombatModifiers CombatModifiers(SC_Tile t = null) {
 

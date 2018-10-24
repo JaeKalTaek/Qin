@@ -18,15 +18,18 @@ public class SC_Weapon : MonoBehaviour {
 
     public bool CanMelee { get { return minRange <= 1; } }
 
-    public Vector2 Range (SC_Character owner) {
+    public Vector2 Range (SC_Character owner, SC_Tile t = null) {
 
-        return new Vector2(minRange, MaxRange(owner));
+        if (!t)
+            t = owner.Tile;
+
+        return new Vector2(minRange, MaxRange(owner, t));
 
     }
 
-    public int MaxRange(SC_Character owner) {
-        
-        return (maxRange == 1) ? maxRange : Mathf.Max(minRange, maxRange + owner.Range);
+    public int MaxRange(SC_Character owner, SC_Tile t) {
+
+        return (maxRange == 1) ? maxRange : Mathf.Max(minRange, maxRange + owner.Range(t));
 
     }
 
