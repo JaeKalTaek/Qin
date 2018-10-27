@@ -15,6 +15,12 @@ public class SC_Cursor : NetworkBehaviour {
     [Tooltip("Distance between the border of the cursor and the border of the camera (except when the camera is at the border of the board)")]
     public float cursorMargin;
 
+    [Tooltip("Distance between the mouse and the border of the camera for the camera to move")]
+    public float mouseMargin;
+
+    [Tooltip("Speed at which the camera moves when \"pushed\" by the mouse")]
+    public float mouseCameraSpeed;
+
     public bool Locked { get; set; }
 
     Vector3 oldMousePos, newMousePos;
@@ -99,19 +105,34 @@ public class SC_Cursor : NetworkBehaviour {
 
                 SC_Tile_Manager.Instance?.GetTileAt(oldPos)?.OnCursorExit();
 
-                SC_Tile_Manager.Instance?.GetTileAt(transform.position)?.OnCursorEnter();
+                SC_Tile_Manager.Instance?.GetTileAt(transform.position)?.OnCursorEnter();                
 
-                float x2 = CamPos(true, true).x > 1 ? 1 : CamPos(true, false).x < 0 ? -1 : 0;
+                if (!Cursor.visible) {
 
-                float y2 = CamPos(false, true).y > 1 ? 1 : CamPos(false, false).y < 0 ? -1 : 0;
+                    Vector3 oldCamPos = cam.TargetPosition;
 
-                Vector3 oldCamPos = cam.TargetPosition;
+                    Vector3 topRight = CursorCamPos(true);
+                    Vector3 bottomLeft = CursorCamPos(false);
 
-                cam.TargetPosition += new Vector3(x2, y2, 0) * TileSize;
+                    cam.TargetPosition += new Vector3(topRight.x > 1 ? 1 : bottomLeft.x < 0 ? -1 : 0, topRight.y > 1 ? 1 : bottomLeft.y < 0 ? -1 : 0, 0) * TileSize;
 
-                cameraMoved = oldCamPos != cam.TargetPosition;
+                    cameraMoved = oldCamPos != cam.TargetPosition;
+
+                }
 
             }
+
+            /*if (Cursor.visible) {
+
+                Vector3 topRight = MouseCamPos(true);
+                Vector3 bottomLeft = MouseCamPos(false);
+
+                float x2 = topRight.x > 1 ? topRight.x - 1 : bottomLeft.x < 0 ? -bottomLeft.x : 0;
+                float y2 = topRight.y > 1 ? topRight.y - 1 : bottomLeft.y < 0 ? -bottomLeft.y : 0;
+
+                cam.TargetPosition += new Vector3(x2, y2, 0) * mouseCameraSpeed;
+
+            }*/
 
         }
         #endregion       
@@ -124,11 +145,17 @@ public class SC_Cursor : NetworkBehaviour {
         #endregion
     }
 
-    Vector3 CamPos(bool x, bool sign) {
+    Vector3 CursorCamPos(bool sign) {
 
-        float f = (.5f + cursorMargin) * (sign ? 1 : -1);
+        float f = ((TileSize / 2) + cursorMargin) * (sign ? 1 : -1);
 
-        return Camera.main.WorldToViewportPoint(transform.position + new Vector3(x ? f : 0, x ? 0 : f, 0));
+        return Camera.main.WorldToViewportPoint(transform.position + new Vector3(f, f, 0));
+
+    }
+
+    Vector3 MouseCamPos(bool sign) {
+
+        return Camera.main.WorldToViewportPoint(SC_Global.WorldMousePos + new Vector3(mouseMargin, mouseMargin, 0) * (sign ? 1 : -1));
 
     }
 

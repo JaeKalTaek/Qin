@@ -239,35 +239,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 	    Turn++;
 
-        tileManager.RemoveAllFilters();
-
-        foreach (SC_Character character in FindObjectsOfType<SC_Character>()) {
-
-			if (character.Hero) {
-
-                character.Hero.Regen ();
-
-				if (Qin) {
-
-					if (character.Hero.PowerUsed)
-                        character.Hero.PowerBacklash++;
-
-					if (character.Hero.PowerBacklash >= 2)
-                        character.Hero.DestroyCharacter ();  
-
-				} else {
-
-                    character.Hero.BerserkTurn = false;
-
-				}
-
-			}
-
-			character.UnTired ();
-            
-            character.CanMove = character.Qin == Qin;
-
-        }
+        tileManager.RemoveAllFilters();        
 
         SC_Character.attackingCharacter = null;
 
@@ -298,10 +270,37 @@ public class SC_Game_Manager : NetworkBehaviour {
 
             }
 
-
 		}
 
-		uiManager.NextTurn ();
+        foreach (SC_Character character in FindObjectsOfType<SC_Character>()) {
+
+            if (character.Hero) {
+
+                character.Hero.Regen();
+
+                if (Qin) {
+
+                    if (character.Hero.PowerUsed)
+                        character.Hero.PowerBacklash++;
+
+                    if (character.Hero.PowerBacklash >= 2)
+                        character.Hero.DestroyCharacter();
+
+                } else {
+
+                    character.Hero.BerserkTurn = false;
+
+                }
+
+            }
+
+            character.UnTired();
+
+            character.CanMove = character.Qin == Qin;
+
+        }
+
+        uiManager.NextTurn ();
         
     }
     #endregion

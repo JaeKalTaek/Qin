@@ -128,7 +128,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
             } else {
 
-                soldier.gameObject.SetActive(false);
+                Destroy(soldier.gameObject);
 
             }
 

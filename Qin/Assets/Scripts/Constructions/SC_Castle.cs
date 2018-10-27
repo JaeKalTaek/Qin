@@ -72,8 +72,7 @@ public class SC_Castle : SC_Construction {
 
         castles[Tile.Region] = false;
 
-        if (SC_Demon.demons[Tile.Region].Alive != -1)
-            SC_Demon.demons[Tile.Region].DestroyCharacter();
+        SC_Demon.demons[Tile.Region].DestroyCharacter();
 
         bool victory = true;
 

@@ -96,6 +96,10 @@ public class SC_Demon : SC_BaseQinChara {
 
                 Health = maxHealth;
 
+                CriticalAmount = 0;
+
+                DodgeAmount = 0;
+
                 transform.SetPos(respawnTile.transform);
 
                 respawnTile.Character = this;
@@ -119,8 +123,6 @@ public class SC_Demon : SC_BaseQinChara {
         base.DestroyCharacter();
 
         if (isServer && !SC_Castle.castles[spawnTile.Region]) {
-
-            Alive = -1;
 
             SC_Player.localPlayer.CmdDestroyGameObject(gameObject);
 
