@@ -13,13 +13,7 @@ public class SC_Cursor : NetworkBehaviour {
     float inputsMoveTimer;
 
     [Tooltip("Distance between the border of the cursor and the border of the camera (except when the camera is at the border of the board)")]
-    public float cursorMargin;
-
-    [Tooltip("Distance between the mouse and the border of the camera for the camera to move")]
-    public float mouseMargin;
-
-    [Tooltip("Speed at which the camera moves when \"pushed\" by the mouse")]
-    public float mouseCameraSpeed;
+    public float cursorMargin;    
 
     public bool Locked { get; set; }
 
@@ -120,19 +114,7 @@ public class SC_Cursor : NetworkBehaviour {
 
                 }
 
-            }
-
-            /*if (Cursor.visible) {
-
-                Vector3 topRight = MouseCamPos(true);
-                Vector3 bottomLeft = MouseCamPos(false);
-
-                float x2 = topRight.x > 1 ? topRight.x - 1 : bottomLeft.x < 0 ? -bottomLeft.x : 0;
-                float y2 = topRight.y > 1 ? topRight.y - 1 : bottomLeft.y < 0 ? -bottomLeft.y : 0;
-
-                cam.TargetPosition += new Vector3(x2, y2, 0) * mouseCameraSpeed;
-
-            }*/
+            }            
 
         }
         #endregion       
@@ -151,12 +133,6 @@ public class SC_Cursor : NetworkBehaviour {
 
         return Camera.main.WorldToViewportPoint(transform.position + new Vector3(f, f, 0));
 
-    }
-
-    Vector3 MouseCamPos(bool sign) {
-
-        return Camera.main.WorldToViewportPoint(SC_Global.WorldMousePos + new Vector3(mouseMargin, mouseMargin, 0) * (sign ? 1 : -1));
-
-    }
+    }    
 
 }

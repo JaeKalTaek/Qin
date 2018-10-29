@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using static SC_Game_Manager;
+using static SC_Global;
 
 public class SC_Camera : MonoBehaviour {
 		
@@ -20,6 +21,18 @@ public class SC_Camera : MonoBehaviour {
 
     [Tooltip("Speed at which the camera lerps to its target position when the player is zooming wider")]
     public float widerZoomSpeedMultiplier;
+
+    [Header("Mouse Cursor")]
+    [Tooltip("Distance between the mouse and the border of the camera for the camera to move")]
+    public float mouseMargin;
+
+    [Tooltip("Speed at which the camera moves when \"pushed\" by the mouse")]
+    public float mouseCameraSpeed;
+
+    [Tooltip("Maximum distance you can push the camera to using the mouse")]
+    public float maxMouseMovement;
+
+    float MaxMouseMovement { get { return maxMouseMovement * TileSize; } }
 
     /*[Tooltip("Margin between the board and the camera border")]
     public float boardMargin;*/
@@ -81,6 +94,19 @@ public class SC_Camera : MonoBehaviour {
 
             TargetPosition = new Vector3(x, y, -16);*/
 
+            if (Cursor.visible && (WorldMousePos.x > -MaxMouseMovement) && (WorldMousePos.y > -MaxMouseMovement) &&
+                (WorldMousePos.x < (SC_Tile_Manager.Instance.xSize + maxMouseMovement) * TileSize) && (WorldMousePos.y < (SC_Tile_Manager.Instance.ySize + maxMouseMovement) * TileSize)) {
+
+                Vector3 topRight = MouseCamPos(true);
+                Vector3 bottomLeft = MouseCamPos(false);
+
+                float x2 = topRight.x > 1 ? topRight.x - 1 : bottomLeft.x < 0 ? bottomLeft.x : 0;
+                float y2 = topRight.y > 1 ? topRight.y - 1 : bottomLeft.y < 0 ? bottomLeft.y : 0;
+
+                TargetPosition += new Vector3(x2, y2, 0) * mouseCameraSpeed;
+
+            }
+
             if (transform.position != TargetPosition) {
 
                 float speed = moveSpeed * Time.deltaTime * (previousZoomIndex < zoomIndex ? widerZoomSpeedMultiplier : 1);
@@ -90,6 +116,12 @@ public class SC_Camera : MonoBehaviour {
             }
 
         }        
+
+    }
+
+    Vector3 MouseCamPos (bool sign) {
+
+        return Camera.main.WorldToViewportPoint(WorldMousePos + new Vector3(mouseMargin, mouseMargin, 0) * (sign ? 1 : -1));
 
     }
 
