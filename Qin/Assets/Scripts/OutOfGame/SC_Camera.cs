@@ -100,8 +100,8 @@ public class SC_Camera : MonoBehaviour {
                 Vector3 topRight = MouseCamPos(true);
                 Vector3 bottomLeft = MouseCamPos(false);
 
-                float x2 = topRight.x > 1 ? topRight.x - 1 : bottomLeft.x < 0 ? bottomLeft.x : 0;
-                float y2 = topRight.y > 1 ? topRight.y - 1 : bottomLeft.y < 0 ? bottomLeft.y : 0;
+                float x2 = topRight.x > 1 ? 1 : bottomLeft.x < 0 ? -1 : 0;
+                float y2 = topRight.y > 1 ? 1 : bottomLeft.y < 0 ? -1 : 0;
 
                 TargetPosition += new Vector3(x2, y2, 0) * mouseCameraSpeed;
 
