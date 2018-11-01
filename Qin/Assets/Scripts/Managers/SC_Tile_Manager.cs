@@ -140,7 +140,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
         SC_Tile t = null;
 
         foreach (SC_Tile tile in GetTilesAtDistance<SC_Tile>(tiles, target.transform.position, 1))
-            if (tile.CanCharacterSetOn(target))
+            if (target.CanCharacterSetOn(tile))
                 t = tile;
 
         return t;
@@ -280,7 +280,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
             foreach (SC_Tile tile in new List<SC_Tile>(movementRange) { target.Tile }) {
 
-                if (tile.CanCharacterSetOn(target)) {
+                if (target.CanCharacterSetOn(tile)) {
 
                     if (preview)
                         tile.SetFilter(TDisplay.Movement, true);
@@ -308,7 +308,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
         foreach (SC_Tile tile in GetTilesAtDistance(tiles, aTile, 1)) {
 
-            if (list.Contains(tile) || OpenList.Contains(tile) || !tile.CanCharacterGoThrough(target))
+            if (list.Contains(tile) || OpenList.Contains(tile) || !target.CanCharacterGoThrough(tile))
                 continue;
 
             int points = parentPoints - ((target.Hero?.Berserk ?? false) ? 1 : tile.cost);

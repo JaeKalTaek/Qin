@@ -437,6 +437,30 @@ public abstract class SC_Character : NetworkBehaviour {
 
         return modif;
 
-    }    
+    }
+
+    public virtual bool CanCharacterGoThrough (SC_Tile t) {
+
+        if (t.Character)
+            return Qin == t.Character.Qin;
+        else if (t.Construction)
+            return (Qin || !t.Construction.GreatWall) && !t.Pump;
+        else if (t.Qin)
+            return Qin;
+        else
+            return true;
+
+    }
+
+    public virtual bool CanCharacterSetOn (SC_Tile t) {
+
+        if ((t.Character && (t.Character != this)) || t.Qin)
+            return false;
+        else if (t.Construction)
+            return (Qin || !t.Construction.GreatWall) && !t.Pump;
+        else
+            return true;
+
+    }
 
 }

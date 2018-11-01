@@ -21,31 +21,7 @@ public class SC_Tile : NetworkBehaviour {
     [SyncVar]
     public TileInfos infos;
 
-    public int Region { get { return infos.region; } }
-
-    public bool CanCharacterGoThrough (SC_Character c) {
-
-        if (Character)
-            return c.Qin == Character.Qin;
-        else if (Construction)
-            return (c.Qin || !Construction.GreatWall) && !Pump;
-        else if (Qin)
-            return c.Qin;
-        else
-            return true;
-
-    }
-
-    public bool CanCharacterSetOn (SC_Character c) {
-
-        if ((Character && (Character != c)) || Qin)
-            return false;
-        else if (Construction)
-            return (c.Qin || !Construction.GreatWall) && !Pump;
-        else
-            return true;
-
-    }
+    public int Region { get { return infos.region; } }    
 
 	public bool CanCharacterAttack(SC_Character c) {
 

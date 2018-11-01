@@ -17,6 +17,8 @@ public class SC_Demon : SC_BaseQinChara {
 
     SC_Tile spawnTile;
 
+    public int Region { get { return spawnTile.Region; } }
+
     public static SC_Demon[] demons;
 
     public override void OnStartClient () {
@@ -41,7 +43,7 @@ public class SC_Demon : SC_BaseQinChara {
 
         spawnTile = Tile;
 
-        demons[Tile.Region] = this;
+        demons[Region] = this;
 
         transform.parent = uiManager.demonsT;
 
@@ -88,7 +90,7 @@ public class SC_Demon : SC_BaseQinChara {
 
         if (Alive > respawnTime) {
 
-            SC_Tile respawnTile = spawnTile.CanCharacterSetOn(this) ? spawnTile : tileManager.GetUnoccupiedNeighbor(this);
+            SC_Tile respawnTile = CanCharacterSetOn(spawnTile) ? spawnTile : tileManager.GetUnoccupiedNeighbor(this);
 
             if (respawnTile) {
 
@@ -122,7 +124,7 @@ public class SC_Demon : SC_BaseQinChara {
 
         base.DestroyCharacter();
 
-        if (isServer && !SC_Castle.castles[spawnTile.Region]) {
+        if (isServer && !SC_Castle.castles[Region]) {
 
             SC_Player.localPlayer.CmdDestroyGameObject(gameObject);
 
@@ -133,6 +135,18 @@ public class SC_Demon : SC_BaseQinChara {
             gameObject.SetActive(false);
 
         }
+
+    }
+
+    public override bool CanCharacterGoThrough (SC_Tile t) {
+
+        return base.CanCharacterGoThrough(t) && (t.Region == Region);
+
+    }
+
+    public override bool CanCharacterSetOn (SC_Tile t) {
+
+        return base.CanCharacterSetOn(t) && (t.Region == Region);
 
     }
 
