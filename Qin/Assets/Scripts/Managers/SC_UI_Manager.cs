@@ -176,12 +176,14 @@ public class SC_UI_Manager : MonoBehaviour {
 
         for (int i = qin ? 1 : 0; i < panel.childCount; i++) {
 
+            int index = qin ? i - 1 : i;
+
             Transform construction = panel.GetChild(i);
 
-            if (i < constructions.Length) {
+            if (index < constructions.Length) {
 
-                construction.GetChild(0).GetComponentInChildren<Text>().text = constructions[i].Name;
-                construction.GetChild(1).GetComponentInChildren<Text>().text = constructions[i].cost.ToString();
+                construction.GetChild(0).GetComponentInChildren<Text>().text = constructions[index].Name;
+                construction.GetChild(1).GetComponentInChildren<Text>().text = constructions[index].cost.ToString();
 
             } else {
 
