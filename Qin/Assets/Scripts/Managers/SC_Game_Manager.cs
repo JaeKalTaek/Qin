@@ -156,8 +156,6 @@ public class SC_Game_Manager : NetworkBehaviour {
 
                 GameObject go = Instantiate(constructionPrefab, eTile.transform.position, Quaternion.identity);
 
-                NetworkServer.Spawn (go);
-
                 if ((eTile.construction == ConstructionType.Castle) && !prep) {
 
                     go.GetComponent<SC_Castle>().CastleType = eTile.castleType.ToString();
@@ -165,6 +163,8 @@ public class SC_Game_Manager : NetworkBehaviour {
                     SpawnDemon(eTile.transform.position, eTile.castleType.ToString());
 
                 }
+
+                NetworkServer.Spawn (go);                
 
 			}
 

@@ -9,16 +9,10 @@ public class SC_Castle : SC_Construction {
 
     public static bool[] castles;
 
-    public override void OnStartClient () {
-
-        base.OnStartClient();
+    protected override void Start () {
 
         if (!SC_Game_Manager.Instance.prep)
             Setup();
-
-    }
-
-    protected override void Start () {
 
         base.Start();
 
