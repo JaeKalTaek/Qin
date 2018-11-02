@@ -193,16 +193,23 @@ public class SC_Tile : NetworkBehaviour {
 
             }*/
 
+            bool playerMenuAlreadyActivated = true;
+
             if (CurrentDisplay == TDisplay.None && !SC_Player.localPlayer.Busy) {
 
                 if (Character && (Character.Qin == SC_Player.localPlayer.Qin))
                     Character.TryCheckMovements();
                 else if (Workshop && SC_Player.localPlayer.Qin)
                     Workshop.SelectWorkshop();
-                else
+                else if (!uiManager.playerActionsPanel.activeSelf) {
                     uiManager.menuManager.MenuPos(SC_Menu_Manager.actionMenu.Player);
+                    playerMenuAlreadyActivated = false;
+                }
 
             }
+
+            if (uiManager.playerActionsPanel.activeSelf && playerMenuAlreadyActivated)
+                uiManager.playerActionsPanel.SetActive(false);
 
         }
 

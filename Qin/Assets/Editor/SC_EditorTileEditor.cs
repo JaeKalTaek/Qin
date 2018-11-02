@@ -23,8 +23,8 @@ public class SC_EditorTileEditor : Editor {
 
                 tile.SetSprite(0, tile.construction == ConstructionType.None ? "" : (tile.construction == ConstructionType.Castle ? ("Sprites/Constructions/Castles/" + tile.castleType) : ("Sprites/Constructions/" + tile.construction)));
 
-                if (tile.PrevRegion != tile.region)
-                    ChangeTileRegion(tile);
+                /*if (tile.PrevRegion != tile.region)
+                    ChangeTileRegion(tile);*/
 
                 if (tile.Hero != HeroType.None) {
 
