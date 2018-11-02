@@ -48,12 +48,13 @@ public class SC_UI_Manager : MonoBehaviour {
 	[Header("Qin")]
 	public Text energyText;
 	public GameObject qinPanel;
-	public Transform construct;
+	public GameObject construct;
     public Transform constructPanel;
     public Transform soldierConstructPanel;
     public Transform qinPower;
-	public Transform sacrifice;
-	public GameObject workshopPanel;
+	public GameObject sacrifice;
+    public GameObject endSacrifice;
+    public GameObject workshopPanel;
 
     [Header("Transforms")]
     public Transform tilesT;
@@ -144,9 +145,8 @@ public class SC_UI_Manager : MonoBehaviour {
 
         if (gameManager.Qin) {
 
-            SetButtonActivated("construct", true);
-            SetButtonActivated("sacrifice", true);
-            //SetButtonActivated("qinPower", true);
+            construct.SetActive(true);
+            sacrifice.SetActive(true);
 
         }
 
@@ -174,7 +174,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         SC_Construction[] constructions = qin ? qinConstructions : SoldiersConstructions;
 
-        for (int i = 0; i < panel.childCount; i++) {
+        for (int i = qin ? 1 : 0; i < panel.childCount; i++) {
 
             Transform construction = panel.GetChild(i);
 
@@ -275,20 +275,6 @@ public class SC_UI_Manager : MonoBehaviour {
     #endregion
 
     #region Buttons
-    /*public void ToggleButton(string id) {
-
-        foreach(Transform t in (Transform)typeof(SC_UI_Manager).GetField(id).GetValue(this))
-            t.gameObject.SetActive(t.gameObject.activeSelf);
-
-	}*/
-
-    public void SetButtonActivated(string id, bool active) {
-
-        ((Transform)typeof(SC_UI_Manager).GetField(id).GetValue(this)).GetChild(0).gameObject.SetActive(active);
-        ((Transform)typeof(SC_UI_Manager).GetField(id).GetValue(this)).GetChild(1).gameObject.SetActive(!active);
-
-    }
-
     public void SetCancelButton (Action a) {
 
         cancelButton.onClick.RemoveAllListeners();
@@ -583,10 +569,9 @@ public class SC_UI_Manager : MonoBehaviour {
 
             localPlayer.Busy = true;
 
-            if(action != "workshop")
-                SetButtonActivated(action, false);
-
             constructPanel.gameObject.SetActive(action == "construct");
+
+            endSacrifice.SetActive(action == "sacrifice");
 
             workshopPanel.SetActive(action == "workshop");
 
@@ -596,7 +581,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
             TileManager.RemoveAllFilters();
 
-            //SC_Player.localPlayer.CmdRemoveAllFiltersOnClient(false);
+            playerActionsPanel.SetActive(false);
 
         }
 
@@ -604,18 +589,15 @@ public class SC_UI_Manager : MonoBehaviour {
 
     public void EndQinAction(string action) {
 
-        if (action != "workshop") {
-
+        if (action != "workshop")
             SC_Tile_Manager.Instance.RemoveAllFilters();
-
-            SetButtonActivated(action, true);
-
-        }
 
         if (action == "construct")
             cancelButton.gameObject.SetActive(false);
 
         constructPanel.gameObject.SetActive(false);
+
+        endSacrifice.SetActive(false);
 
         workshopPanel.SetActive(false);
 
