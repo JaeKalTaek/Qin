@@ -72,7 +72,8 @@ public class SC_Pump : SC_Construction {
                 hero.PumpSlow = 0;
 
                 foreach (SC_Pump pump in pumps)
-                    TrySlowHero(hero);
+                    if(pump != this)
+                        TrySlowHero(hero);
 
                 uiManager.TryRefreshInfos(hero.gameObject, typeof(SC_Hero));
 

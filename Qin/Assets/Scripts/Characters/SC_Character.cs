@@ -137,7 +137,7 @@ public abstract class SC_Character : NetworkBehaviour {
         Health = maxHealth;
 
         Lifebar = Instantiate(Resources.Load<GameObject>("Prefabs/Characters/Components/P_Lifebar"), transform).GetComponent<SC_Lifebar>();
-        Lifebar.transform.position += new Vector3(0, -.44f, 0);
+        Lifebar.transform.position += new Vector3(0, -.44f, 0);        
 
         baseStrength = loadedCharacter.baseStrength;
 
@@ -170,9 +170,11 @@ public abstract class SC_Character : NetworkBehaviour {
 
 		LastPos = Tile;
 
-        LastPos.Character = this;        
+        LastPos.Character = this;
 
-	}
+        Lifebar.gameObject.SetActive(uiManager.LifeBarsOn);
+
+    }
 
     #region Movement
     public virtual void TryCheckMovements () {
@@ -280,7 +282,7 @@ public abstract class SC_Character : NetworkBehaviour {
 
         } else if (Soldier) {
 
-            uiManager.buildConstruButton.SetActive(SC_Player.localPlayer.Qin && (target.Ruin || Soldier.Builder) && target.Constructable);
+            uiManager.buildConstruButton.SetActive(SC_Player.localPlayer.Qin && (target.Ruin || (Soldier.Builder && target.Constructable)));
 
         } else if (Demon) {
 
@@ -301,7 +303,7 @@ public abstract class SC_Character : NetworkBehaviour {
 
             tileManager.PreviewAttack();
 
-            uiManager.menuManager.MenuPos(SC_Menu_Manager.actionMenu.Character);
+            uiManager.MenuManager.MenuPos(SC_Menu_Manager.actionMenu.Character);
 
             uiManager.SetCancelButton(gameManager.ResetMovement);
 

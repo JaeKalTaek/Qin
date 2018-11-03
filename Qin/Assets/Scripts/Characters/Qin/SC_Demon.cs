@@ -98,6 +98,10 @@ public class SC_Demon : SC_BaseQinChara {
 
                 Health = maxHealth;
 
+                UpdateHealth();
+
+                Lifebar.gameObject.SetActive(uiManager.LifeBarsOn);
+
                 CriticalAmount = 0;
 
                 DodgeAmount = 0;
@@ -124,17 +128,12 @@ public class SC_Demon : SC_BaseQinChara {
 
         base.DestroyCharacter();
 
-        if (isServer && !SC_Castle.castles[Region]) {
+        Alive = SC_Castle.castles[Region] ? 0 : -1;
 
+        if (isServer && !SC_Castle.castles[Region])
             SC_Player.localPlayer.CmdDestroyGameObject(gameObject);
-
-        } else {
-
-            Alive = 0;
-
+        else
             gameObject.SetActive(false);
-
-        }
 
     }
 

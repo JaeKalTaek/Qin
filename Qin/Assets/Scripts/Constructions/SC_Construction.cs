@@ -64,10 +64,13 @@ public class SC_Construction : NetworkBehaviour {
 
             Lifebar = Instantiate(Resources.Load<GameObject>("Prefabs/Characters/Components/P_Lifebar"), transform).GetComponent<SC_Lifebar>();
             Lifebar.transform.position += new Vector3(0, -.44f, 0);
+            Lifebar.gameObject.SetActive(uiManager.LifeBarsOn);
 
         }
 
         Tile.Construction = this;
+
+        Tile.Cost = 1;
 
     }
 
@@ -79,6 +82,8 @@ public class SC_Construction : NetworkBehaviour {
             Tile.Soldier?.DestroyCharacter();
 
         Tile.Construction = null;
+
+        Tile.Cost = Tile.baseCost;
 
         Destroy(gameObject);
 

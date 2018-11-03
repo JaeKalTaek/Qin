@@ -20,39 +20,40 @@ public class SC_UI_Manager : MonoBehaviour {
 
     [Header("Game")]
     public GameObject gamePanel;
-	public GameObject loadingPanel;    
+    public GameObject loadingPanel;
     public Text turnIndicator;
-	public GameObject previewFightPanel;
-	public GameObject endTurn;
-	public GameObject victoryPanel;
+    public GameObject previewFightPanel;
+    public GameObject endTurn;
+    public GameObject victoryPanel;
     public GameObject playerActionsPanel;
+    public GameObject toggleHealthBarsButton; 
 
-	[Header("Characters")]
-	public GameObject statsPanel;
+    [Header("Characters")]
+    public GameObject statsPanel;
     public GameObject characterActionsPanel;
     public GameObject attackButton;
     public GameObject destroyConstruButton;
     public GameObject buildConstruButton;
     public Button cancelButton;
 
-	[Header("Heroes")]
-	public GameObject relationshipPanel;
+    [Header("Heroes")]
+    public GameObject relationshipPanel;
     public GameObject weaponChoicePanel;
     public GameObject weaponChoice1;
     public GameObject weaponChoice2;
-	public GameObject usePower;
+    public GameObject usePower;
 
-	[Header("Constructions")]
-	public GameObject buildingInfosPanel;
+    [Header("Constructions")]
+    public GameObject buildingInfosPanel;
 
-	[Header("Qin")]
-	public Text energyText;
-	public GameObject qinPanel;
-	public GameObject construct;
+    [Header("Qin")]
+    public Text energyText;
+    public GameObject qinPanel;
+    public GameObject construct;
     public Transform constructPanel;
     public Transform soldierConstructPanel;
     public Transform qinPower;
-	public GameObject sacrifice;
+    public GameObject sacrifice;
     public GameObject endSacrifice;
     public GameObject workshopPanel;
 
@@ -72,21 +73,21 @@ public class SC_UI_Manager : MonoBehaviour {
     #region Variables
     public GameObject CurrentGameObject { get; set; }
 
-	static SC_Game_Manager gameManager;
+    static SC_Game_Manager gameManager;
 
     public SC_Tile_Manager TileManager { get; set; }
 
     static SC_Fight_Manager fightManager;
 
-    public SC_Menu_Manager menuManager { get; set; }
+    public SC_Menu_Manager MenuManager { get; set; }
 
     public static SC_UI_Manager Instance { get; set; }
 
     public static bool CanInteract { get {
 
-        return localPlayer.Turn && (!EventSystem.current.IsPointerOverGameObject() || !Cursor.visible) && !gameManager.prep;
+            return localPlayer.Turn && (!EventSystem.current.IsPointerOverGameObject() || !Cursor.visible) && !gameManager.prep;
 
-    } }
+        } }
 
     public float clickSecurityDuration;
 
@@ -99,6 +100,8 @@ public class SC_UI_Manager : MonoBehaviour {
     public SC_Construction[] SoldiersConstructions { get; set; }
 
     GameObject grid;
+
+   public bool LifeBarsOn { get { return toggleHealthBarsButton.name == "On"; } }
     #endregion
 
     #region Setup
@@ -114,7 +117,7 @@ public class SC_UI_Manager : MonoBehaviour {
 
         fightManager = SC_Fight_Manager.Instance;
 
-        menuManager = SC_Menu_Manager.Instance;
+        MenuManager = SC_Menu_Manager.Instance;
 
         basicSoldiers = Resources.LoadAll<SC_Soldier>("Prefabs/Characters/Soldiers/Basic");
 
@@ -637,7 +640,7 @@ public class SC_UI_Manager : MonoBehaviour {
     #region Building
     public void UpdateQinConstructPanel () {
 
-        for (int i = 0; i < constructPanel.childCount; i++)
+        for (int i = 1; i < constructPanel.childCount; i++)
             constructPanel.GetChild(i).GetComponentInChildren<Button>().interactable = (SC_Qin.GetConstruCost(qinConstructions[i].Name) < SC_Qin.Energy) && (TileManager.GetConstructableTiles(qinConstructions[i].Name == "Wall").Count > 0);
 
     }
@@ -736,7 +739,9 @@ public class SC_UI_Manager : MonoBehaviour {
     // Called by UI
     public void ToggleHealth () {
 
-        foreach(SC_Lifebar lifebar in FindObjectsOfType<SC_Lifebar>())
+        toggleHealthBarsButton.name = toggleHealthBarsButton.name == "On" ? "Off" : "On";
+
+        foreach (SC_Lifebar lifebar in FindObjectsOfType<SC_Lifebar>())
             lifebar.Toggle();
 
     }

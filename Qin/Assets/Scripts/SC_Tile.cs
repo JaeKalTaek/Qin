@@ -13,7 +13,9 @@ public class SC_Tile : NetworkBehaviour {
 
     [Header("Tile Variables")]
     [Tooltip("Movement cost to walk on this tile")]
-    public int cost;
+    public int baseCost;
+
+    public int Cost { get; set; }
 
     [Tooltip("Combat modifiers for this tile")]
     public SC_CombatModifiers combatModifers;
@@ -114,7 +116,7 @@ public class SC_Tile : NetworkBehaviour {
 
         SC_Tile t = Resources.Load<SC_Tile>("Prefabs/Tiles/P_" + infos.type);
 
-        cost = t.cost;
+        baseCost = t.baseCost;
         combatModifers = t.combatModifers;
 
         string s = infos.type == "Changing" ? "Changing" : infos.type + "/" + (infos.type == "River" ? (RiverSprite)infos.riverSprite + "" : infos.sprite + "");
@@ -143,6 +145,8 @@ public class SC_Tile : NetworkBehaviour {
         filter = transform.GetChild(0).GetComponent<SpriteRenderer>();
 
         transform.parent = uiManager.tilesT;
+
+        Cost = baseCost;
 
     }
 
@@ -202,7 +206,7 @@ public class SC_Tile : NetworkBehaviour {
                 else if (Workshop && SC_Player.localPlayer.Qin)
                     Workshop.SelectWorkshop();
                 else if (!uiManager.playerActionsPanel.activeSelf) {
-                    uiManager.menuManager.MenuPos(SC_Menu_Manager.actionMenu.Player);
+                    uiManager.MenuManager.MenuPos(SC_Menu_Manager.actionMenu.Player);
                     playerMenuAlreadyActivated = false;
                 }
 

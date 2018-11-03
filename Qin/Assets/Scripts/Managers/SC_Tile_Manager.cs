@@ -41,7 +41,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
         uiManager = SC_UI_Manager.Instance;
         uiManager.TileManager = this;
 
-        uiManager.menuManager.TileManager = this;
+        uiManager.MenuManager.TileManager = this;
 
         SC_Fight_Manager.Instance.TileManager = this;
 
@@ -311,7 +311,7 @@ public class SC_Tile_Manager : NetworkBehaviour {
             if (list.Contains(tile) || OpenList.Contains(tile) || !target.CanCharacterGoThrough(tile))
                 continue;
 
-            int points = parentPoints - ((target.Hero?.Berserk ?? false) ? 1 : tile.cost);
+            int points = parentPoints - ((target.Hero?.Berserk ?? false) ? 1 : tile.Cost);
 
             if (points >= 0) {
 
