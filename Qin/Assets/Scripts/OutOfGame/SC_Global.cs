@@ -38,6 +38,9 @@ public class SC_Global {
         [Tooltip("Range Modifier")]
         public int range;
 
+        [Tooltip("Movement Modifier")]
+        public int movement;
+
     }
 
     public static List<Actions> ActionsUpdate(Actions action, List<Actions> actions, bool add)

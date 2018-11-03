@@ -53,7 +53,7 @@ public abstract class SC_Character : NetworkBehaviour {
     [Tooltip("Base movement distance of this character")]
     public int baseMovement;
     public int MovementModifiers { get; set; }
-    public int Movement { get { return Mathf.Max(0, baseMovement + MovementModifiers); } }    
+    public int Movement { get { return Mathf.Max(0, baseMovement + MovementModifiers + CombatModifiers().movement + DemonsModifier("movement")); } }    
 
     public bool CanMove { get; set; }
 
