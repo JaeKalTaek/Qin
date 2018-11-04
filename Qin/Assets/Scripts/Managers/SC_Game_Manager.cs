@@ -403,15 +403,15 @@ public class SC_Game_Manager : NetworkBehaviour {
 
                 }
 
-            } else {
-
-                tile.Ruin.DestroyRuin();                
+            } else {                                
 
                 uiManager.Wait();
 
             }
 
-        }        
+        }
+
+        tile.Ruin?.DestroyRuin();
 
         if (isServer) {
 
