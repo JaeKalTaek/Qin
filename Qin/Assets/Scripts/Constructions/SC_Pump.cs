@@ -91,7 +91,7 @@ public class SC_Pump : SC_Construction {
 
         if (pumps != null) {
 
-            int pumpSlow = hero.PumpSlow;
+            int pumpSlow = 0;
 
             foreach (SC_Pump pump in pumps) {
 
@@ -100,8 +100,7 @@ public class SC_Pump : SC_Construction {
 
             }
 
-            if (pumpSlow != hero.PumpSlow)
-                hero.MovementModifiers -= (pumpSlow - hero.PumpSlow);
+            hero.MovementModifiers -= (pumpSlow - hero.PumpSlow);
 
         }
 
