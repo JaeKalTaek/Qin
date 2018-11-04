@@ -38,7 +38,11 @@ public class SC_Tile : NetworkBehaviour {
 
     }
 
-    public bool Constructable { get { return (!Character || (gameManager.QinTurnStarting && Soldier)) && !Construction && RegionValid; } }
+    public bool Constructable (bool ignoreChara) {
+
+        return (!Character || ignoreChara) && !Construction && RegionValid;
+
+    }
 
     bool RegionValid { get { return (Region != -1) && SC_Castle.castles[Region]; } }
 

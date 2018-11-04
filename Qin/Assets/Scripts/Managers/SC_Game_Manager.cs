@@ -239,7 +239,8 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 	    Turn++;
 
-        tileManager.RemoveAllFilters();        
+        if(Player.Turn)
+            tileManager.RemoveAllFilters();        
 
         SC_Character.attackingCharacter = null;
 
@@ -273,6 +274,8 @@ public class SC_Game_Manager : NetworkBehaviour {
 		}
 
         foreach (SC_Character character in FindObjectsOfType<SC_Character>()) {
+
+            character.Tile.Character = character;
 
             if (character.Hero) {
 
@@ -348,6 +351,8 @@ public class SC_Game_Manager : NetworkBehaviour {
     }
 
     public void ResetMovement () {
+
+        uiManager.HidePreviewFight();
 
         SC_Player.localPlayer.CmdResetMovement();
 

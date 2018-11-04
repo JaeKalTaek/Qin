@@ -780,6 +780,8 @@ public class SC_UI_Manager : MonoBehaviour {
 
         TileManager.PreviewAttack();
 
+        previewFightPanel.SetActive(false);
+
     }
 
     public void Wait() {

@@ -280,11 +280,13 @@ public abstract class SC_Character : NetworkBehaviour {
 
         } else if (Soldier) {
 
-            uiManager.buildConstruButton.SetActive(SC_Player.localPlayer.Qin && (target.Ruin || (Soldier.Builder && target.Constructable)));
+            uiManager.buildConstruButton.SetActive(SC_Player.localPlayer.Qin && (target.Ruin || (Soldier.Builder && target.Constructable(true))));
 
         } else if (Demon) {
 
             if (moved) {
+
+                uiManager.buildConstruButton.SetActive(false);
 
                 Demon.RemoveAura(false, LastPos);
 
