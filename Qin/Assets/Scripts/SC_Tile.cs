@@ -117,6 +117,8 @@ public class SC_Tile : NetworkBehaviour {
         SC_Tile t = Resources.Load<SC_Tile>("Prefabs/Tiles/P_" + infos.type);
 
         baseCost = t.baseCost;
+        Cost = baseCost;
+
         combatModifers = t.combatModifers;
 
         string s = infos.type == "Changing" ? "Changing" : infos.type + "/" + (infos.type == "River" ? (RiverSprite)infos.riverSprite + "" : infos.sprite + "");
@@ -144,9 +146,7 @@ public class SC_Tile : NetworkBehaviour {
 
         filter = transform.GetChild(0).GetComponent<SpriteRenderer>();
 
-        transform.parent = uiManager.tilesT;
-
-        Cost = baseCost;
+        transform.parent = uiManager.tilesT;        
 
     }
 

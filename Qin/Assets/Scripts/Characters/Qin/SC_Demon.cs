@@ -100,7 +100,7 @@ public class SC_Demon : SC_BaseQinChara {
 
                 UpdateHealth();
 
-                Lifebar.gameObject.SetActive(uiManager.LifeBarsOn);
+                Lifebar.lifebar.SetActive(uiManager.LifeBarsOn);
 
                 CriticalAmount = 0;
 

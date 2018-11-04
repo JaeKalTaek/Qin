@@ -172,8 +172,6 @@ public abstract class SC_Character : NetworkBehaviour {
 
         LastPos.Character = this;
 
-        Lifebar.gameObject.SetActive(uiManager.LifeBarsOn);
-
     }
 
     #region Movement

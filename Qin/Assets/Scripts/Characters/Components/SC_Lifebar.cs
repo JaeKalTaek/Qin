@@ -2,14 +2,12 @@
 
 public class SC_Lifebar : MonoBehaviour {
 
-	Transform health, health2;
-	GameObject lifebar;
+	public Transform health, health2;
+	public GameObject lifebar;
 
     void Start() {
 
-		lifebar = transform.GetChild(0).gameObject;
-		health = lifebar.transform.GetChild(0);
-		health2 = lifebar.transform.GetChild(1);
+        lifebar.SetActive(SC_UI_Manager.Instance.LifeBarsOn);
 
     }
 

@@ -64,7 +64,6 @@ public class SC_Construction : NetworkBehaviour {
 
             Lifebar = Instantiate(Resources.Load<GameObject>("Prefabs/Characters/Components/P_Lifebar"), transform).GetComponent<SC_Lifebar>();
             Lifebar.transform.position += new Vector3(0, -.44f, 0);
-            Lifebar.gameObject.SetActive(uiManager.LifeBarsOn);
 
         }
 
