@@ -324,7 +324,7 @@ public class SC_UI_Manager : MonoBehaviour {
 	public void HideInfos(bool removeFilters) {
 
         if (removeFilters)
-            TileManager.RemoveAllFilters();
+            TileManager.RemoveAllFilters(true);
 
 		statsPanel.SetActive (false);
 		relationshipPanel.SetActive (false);

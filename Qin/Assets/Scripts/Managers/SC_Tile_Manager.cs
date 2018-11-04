@@ -173,10 +173,11 @@ public class SC_Tile_Manager : NetworkBehaviour {
 
     }
 
-    public void RemoveAllFilters () {
+    public void RemoveAllFilters (bool async = false) {
 
-        foreach (SC_Tile tile in tiles)
-            tile.RemoveDisplay();
+        if(SC_Player.localPlayer.Turn || async)
+            foreach (SC_Tile tile in tiles)
+                tile.RemoveDisplay();
 
     }
     #endregion

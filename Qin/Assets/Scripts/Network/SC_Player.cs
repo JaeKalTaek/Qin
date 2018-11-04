@@ -172,9 +172,7 @@ public class SC_Player : NetworkBehaviour {
     }
 
 	[ClientRpc]
-	void RpcPrepareForAttack(int attackRange, GameObject targetTileObject, bool qin) {
-
-        localPlayer.tileManager.RemoveAllFilters();
+	void RpcPrepareForAttack(int attackRange, GameObject targetTileObject, bool qin) {        
 
         if (localPlayer.Qin == qin)
             localPlayer.fightManager.AttackRange = attackRange;

@@ -239,8 +239,7 @@ public class SC_Game_Manager : NetworkBehaviour {
 
 	    Turn++;
 
-        if(Player.Turn)
-            tileManager.RemoveAllFilters();        
+        tileManager.RemoveAllFilters();        
 
         SC_Character.attackingCharacter = null;
 

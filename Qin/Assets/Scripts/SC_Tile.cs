@@ -103,6 +103,8 @@ public class SC_Tile : NetworkBehaviour {
 
         base.OnStartClient();
 
+        CurrentDisplay = TDisplay.None;
+
         SetupTile();
 
         if (infos.region != -1) {
@@ -173,6 +175,8 @@ public class SC_Tile : NetworkBehaviour {
                 SC_Player.localPlayer.CmdMoveCharacterTo(transform.position.x.I(), transform.position.y.I());
 
             } else if (CurrentDisplay == TDisplay.Attack) {
+
+                tileManager.RemoveAllFilters();
 
                 fightManager.AttackRange = SC_Tile_Manager.TileDistance(attackingCharacter.transform.position, this);
 
